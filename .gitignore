@@ -55,3 +55,7 @@ CLAUDE.md
 # ====================================================================
 /.claude/settings.local.json
 /.report
+android/key.properties
+android/app/keystore/
+*.jks
+*.keystore

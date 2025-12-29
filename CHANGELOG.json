@@ -1,0 +1,41 @@
+{
+  "metadata": {
+    "lastUpdated": "2025-12-29T04:04:53Z",
+    "currentVersion": "1.0.5",
+    "projectType": "flutter",
+    "totalReleases": 1
+  },
+  "releases": [
+    {
+      "version": "1.0.5",
+      "project_type": "flutter",
+      "date": "2025-12-29",
+      "pr_number": 2,
+      "raw_summary": "## Summary by CodeRabbit\n\n## 릴리즈 노트\n\n* **새로운 기능**\n  * 통합 텍스트 스타일 및 디자인 시스템 도입\n\n* **개선**\n  * 앱 버전 업데이트 (v1.0.5)\n  * 자동화된 코드 검증 시스템 구성으로 안정성 강화\n  * iOS 최소 지원 버전 업그레이드 (13.0 → 15.0)\n\n* **Chores**\n  * 배포 자동화 워크플로우 설정\n  * 제품 요구사항 문서 추가",
+      "parsed_changes": {
+        "새로운_기능": {
+          "title": "새로운 기능",
+          "items": [
+            "통합 텍스트 스타일 및 디자인 시스템 도입"
+          ]
+        },
+        "개선": {
+          "title": "개선",
+          "items": [
+            "앱 버전 업데이트 (v1.0.5)",
+            "자동화된 코드 검증 시스템 구성으로 안정성 강화",
+            "iOS 최소 지원 버전 업그레이드 (13.0 → 15.0)"
+          ]
+        },
+        "chores": {
+          "title": "Chores",
+          "items": [
+            "배포 자동화 워크플로우 설정",
+            "제품 요구사항 문서 추가"
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    }
+  ]
+}

@@ -49,3 +49,9 @@ app.*.map.json
 # CLAUDE
 .claude/
 CLAUDE.md
+
+# ====================================================================
+# SUH-DEVOPS-TEMPLATE: Auto-added entries
+# ====================================================================
+/.claude/settings.local.json
+/.report

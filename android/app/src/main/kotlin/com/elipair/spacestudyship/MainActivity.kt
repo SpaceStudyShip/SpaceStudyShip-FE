@@ -1,4 +1,4 @@
-package com.example.space_study_ship
+package com.elipair.spacestudyship
 
 import io.flutter.embedding.android.FlutterActivity
 

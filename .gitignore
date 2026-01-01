@@ -44,18 +44,22 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
-.env
+# iOS/macOS build artifacts
+/ios/build/
+/macos/build/
 
-# CLAUDE
-.claude/
+# CocoaPods
++/ios/Pods/  
++/macos/Pods/ 
+
+# ====================================================================
+# TEMPLATE: Auto-added entries
+# ====================================================================
 CLAUDE.md
-
-# ====================================================================
-# SUH-DEVOPS-TEMPLATE: Auto-added entries
-# ====================================================================
 /.claude/settings.local.json
 /.report
-android/key.properties
-android/app/keystore/
-*.jks
-*.keystore
+CLEADME.md
+.env
+/env.*
+/local.properties
+/secrets.json

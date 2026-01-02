@@ -9,8 +9,17 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'firebase_options.dart';
 import 'core/config/env_config.dart';
 import 'core/constants/text_styles.dart';
+import 'core/theme/app_theme.dart';
 import 'core/services/fcm/firebase_messaging_service.dart';
 import 'core/services/fcm/local_notifications_service.dart';
+import 'core/widgets/atoms/buttons/space_primary_button.dart';
+import 'core/widgets/atoms/inputs/space_text_field.dart';
+import 'core/widgets/atoms/indicators/space_loading_indicator.dart';
+import 'core/widgets/molecules/cards/space_card.dart';
+import 'core/widgets/molecules/dialogs/space_dialog.dart';
+import 'core/widgets/organisms/empty_states/space_empty_state.dart';
+import 'core/constants/spacing_and_radius.dart';
+import 'core/utils/snackbar_utils.dart';
 
 void main() async {
   // Flutter 엔진 초기화 보장
@@ -29,9 +38,7 @@ void main() async {
   // ============================================================
   try {
     debugPrint('🔒 [Screen] 화면 방향 고정 시작...');
-    await SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-    ]);
+    await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     debugPrint('✅ [Screen] 화면 방향이 세로 모드로 고정되었습니다.');
   } catch (e, stackTrace) {
     debugPrint('❌ [Screen] 화면 방향 고정 실패: $e');
@@ -209,53 +216,194 @@ class MyApp extends StatelessWidget {
       // Base design screen size (iPhone 12/13/14)
       designSize: const Size(390, 844),
       builder: (context, child) => MaterialApp(
-        title: 'Space Study Ship',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        ),
-        home: const FontTestPage(),
+        title: '우주공부선',
+        theme: AppTheme.spaceTheme,
+        themeMode: ThemeMode.dark, // 항상 다크 모드 (우주 테마)
+        home: const WidgetTestPage(),
       ),
     );
   }
 }
 
-class FontTestPage extends StatelessWidget {
-  const FontTestPage({super.key});
+class WidgetTestPage extends StatelessWidget {
+  const WidgetTestPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text('Pretendard 폰트 테스트', style: AppTextStyles.heading4.bold()),
+        title: Text('🚀 우주공부선 위젯', style: AppTextStyles.heading4.bold()),
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(16.w),
+        padding: EdgeInsets.all(18.w),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text('Heading 1', style: AppTextStyles.heading1),
-            Text('Heading 2', style: AppTextStyles.heading2),
-            Text('Heading 3', style: AppTextStyles.heading3),
-            Text('Heading 4', style: AppTextStyles.heading4),
-            SizedBox(height: 20.h),
-            Text('Body 1', style: AppTextStyles.body1),
-            Text('Body 2', style: AppTextStyles.body2),
-            SizedBox(height: 20.h),
-            Text('Caption', style: AppTextStyles.caption),
-            Text('Overline', style: AppTextStyles.overline),
-            SizedBox(height: 30.h),
-            Text('Weight 테스트:', style: AppTextStyles.heading4.bold()),
-            SizedBox(height: 10.h),
-            Text('Thin (100)', style: AppTextStyles.body1.thin()),
-            Text('ExtraLight (200)', style: AppTextStyles.body1.extraLight()),
-            Text('Light (300)', style: AppTextStyles.body1.light()),
-            Text('Regular (400)', style: AppTextStyles.body1.regular()),
-            Text('Medium (500)', style: AppTextStyles.body1.medium()),
-            Text('SemiBold (600)', style: AppTextStyles.body1.semiBold()),
-            Text('Bold (700)', style: AppTextStyles.body1.bold()),
-            Text('ExtraBold (800)', style: AppTextStyles.body1.extraBold()),
-            Text('Black (900)', style: AppTextStyles.body1.black()),
+            // 버튼 섹션
+            Text('Buttons', style: AppTextStyles.heading3.bold()),
+            SizedBox(height: 16.h),
+            SpacePrimaryButton(
+              text: 'Primary Button',
+              onPressed: () {
+                SpaceSnackBar.success(context, '버튼 클릭!');
+              },
+            ),
+            SizedBox(height: 12.h),
+            SpacePrimaryButton(
+              text: '로딩 중...',
+              onPressed: () {},
+              isLoading: true,
+            ),
+            SizedBox(height: 12.h),
+            const SpacePrimaryButton(text: '비활성 버튼', onPressed: null),
+            SizedBox(height: 32.h),
+
+            // 입력 필드 섹션
+            Text('Text Fields', style: AppTextStyles.heading3.bold()),
+            SizedBox(height: 16.h),
+            const SpaceTextField(
+              hintText: '이름을 입력하세요',
+              prefixIcon: Icons.person,
+            ),
+            SizedBox(height: 12.h),
+            const SpaceTextField(
+              hintText: '비밀번호',
+              prefixIcon: Icons.lock,
+              obscureText: true,
+            ),
+            SizedBox(height: 12.h),
+            const SpaceTextField(hintText: '에러 상태', errorText: '유효한 값을 입력하세요'),
+            SizedBox(height: 32.h),
+
+            // 카드 섹션
+            Text('Cards', style: AppTextStyles.heading3.bold()),
+            SizedBox(height: 16.h),
+            SpaceCard(
+              padding: AppPadding.all16,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('카드 제목', style: AppTextStyles.heading4.bold()),
+                  SizedBox(height: 8.h),
+                  Text(
+                    '이것은 SpaceCard의 예시입니다. 우주 테마의 배경색과 그림자를 사용합니다.',
+                    style: AppTextStyles.body2.regular(),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 12.h),
+            SpaceCard(
+              padding: AppPadding.all16,
+              onTap: () {
+                SpaceSnackBar.info(context, '카드 클릭!');
+              },
+              child: Row(
+                children: [
+                  const Icon(Icons.touch_app, size: 40),
+                  SizedBox(width: 16.w),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '클릭 가능한 카드',
+                          style: AppTextStyles.body1.semiBold(),
+                        ),
+                        SizedBox(height: 4.h),
+                        Text(
+                          '탭하여 상호작용할 수 있습니다',
+                          style: AppTextStyles.caption.regular(),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 32.h),
+
+            // 로딩 인디케이터 섹션
+            Text('Loading Indicators', style: AppTextStyles.heading3.bold()),
+            SizedBox(height: 16.h),
+            SpaceCard(
+              padding: AppPadding.all24,
+              child: const SpaceLoadingIndicator(message: '데이터를 불러오는 중...'),
+            ),
+            SizedBox(height: 32.h),
+
+            // 다이얼로그 섹션
+            Text('Dialogs', style: AppTextStyles.heading3.bold()),
+            SizedBox(height: 16.h),
+            SpacePrimaryButton(
+              text: '다이얼로그 열기',
+              onPressed: () {
+                SpaceDialog.show(
+                  context: context,
+                  title: '알림',
+                  content: '이것은 SpaceDialog의 예시입니다.',
+                  confirmText: '확인',
+                  cancelText: '취소',
+                );
+              },
+            ),
+            SizedBox(height: 32.h),
+
+            // SnackBar 섹션
+            Text('SnackBars', style: AppTextStyles.heading3.bold()),
+            SizedBox(height: 16.h),
+            Wrap(
+              spacing: 8.w,
+              runSpacing: 8.h,
+              children: [
+                SpacePrimaryButton(
+                  text: 'Success',
+                  width: 165.w,
+                  onPressed: () {
+                    SpaceSnackBar.success(context, '성공적으로 처리되었습니다!');
+                  },
+                ),
+                SpacePrimaryButton(
+                  text: 'Error',
+                  width: 165.w,
+                  onPressed: () {
+                    SpaceSnackBar.error(context, '에러가 발생했습니다.');
+                  },
+                ),
+                SpacePrimaryButton(
+                  text: 'Info',
+                  width: 165.w,
+                  onPressed: () {
+                    SpaceSnackBar.info(context, '새로운 정보를 확인하세요.');
+                  },
+                ),
+                SpacePrimaryButton(
+                  text: 'Warning',
+                  width: 165.w,
+                  onPressed: () {
+                    SpaceSnackBar.warning(context, '입력값을 확인해주세요.');
+                  },
+                ),
+              ],
+            ),
+            SizedBox(height: 32.h),
+
+            // 빈 상태 섹션
+            Text('Empty State', style: AppTextStyles.heading3.bold()),
+            SizedBox(height: 16.h),
+            SpaceCard(
+              padding: AppPadding.all16,
+              child: SpaceEmptyState(
+                icon: Icons.inbox,
+                title: '데이터가 없습니다',
+                description: '새로운 항목을 추가해보세요',
+                actionText: '추가하기',
+                onAction: () {
+                  SpaceSnackBar.success(context, '추가 버튼 클릭!');
+                },
+              ),
+            ),
+            SizedBox(height: 32.h),
           ],
         ),
       ),

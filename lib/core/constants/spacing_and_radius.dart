@@ -180,8 +180,8 @@ class AppRadius {
   // 특수 목적 프리셋
   // ============================================
 
-  /// 버튼용 라운드 (8px)
-  static BorderRadius get button => BorderRadius.circular(8.r);
+  /// 버튼용 라운드 (12px)
+  static BorderRadius get button => BorderRadius.circular(12.r);
 
   /// 카드용 라운드 (12px)
   static BorderRadius get card => BorderRadius.circular(12.r);
@@ -195,4 +195,7 @@ class AppRadius {
 
   /// 입력 필드용 라운드 (8px)
   static BorderRadius get input => BorderRadius.circular(8.r);
+
+  /// SnackBar용 라운드 (12px)
+  static BorderRadius get snackbar => BorderRadius.circular(12.r);
 }

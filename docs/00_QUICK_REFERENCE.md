@@ -13,8 +13,9 @@
 4. [필수 명령어](#필수-명령어)
 5. [네이밍 치트시트](#네이밍-치트시트)
 6. [동기화 전략](#동기화-전략)
-7. [자주 하는 실수](#자주-하는-실수)
-8. [빠른 찾기](#빠른-찾기)
+7. [공통 위젯 가이드](#공통-위젯-가이드)
+8. [자주 하는 실수](#자주-하는-실수)
+9. [빠른 찾기](#빠른-찾기)
 
 ---
 
@@ -623,6 +624,97 @@ Future<List<RankingEntity>> getRanking() async {
 
 ---
 
+## 공통 위젯 가이드
+
+### 사용 가능한 공통 위젯 (7개)
+
+**⚠️ 중요: 새 위젯을 만들기 전에 반드시 이 리스트를 확인하세요!**
+
+| 위젯 | 위치 | 용도 | 예시 |
+|-----|------|-----|------|
+| **SpacePrimaryButton** | `core/widgets/atoms/buttons/` | 주요 액션 버튼 | 로그인, 저장, 시작 |
+| **SpaceTextField** | `core/widgets/atoms/inputs/` | 텍스트 입력 필드 | Todo 제목, 검색 |
+| **SpaceLoadingIndicator** | `core/widgets/atoms/feedback/` | 로딩 상태 표시 | API 호출 중 |
+| **SpaceCard** | `core/widgets/molecules/cards/` | 카드 컨테이너 | Todo 아이템, 프로필 |
+| **SpaceDialog** | `core/widgets/molecules/dialogs/` | 다이얼로그 | 확인, 알림, 선택 |
+| **SpaceEmptyState** | `core/widgets/molecules/feedback/` | 빈 상태 표시 | 빈 리스트 |
+| **SpaceSnackBar** | `core/utils/` | 스낵바 (유틸리티) | 성공/에러 메시지 |
+
+### 빠른 사용법
+
+```dart
+// 1. 버튼
+SpacePrimaryButton(
+  text: '저장하기',
+  onPressed: () => _save(),
+  isLoading: state.isLoading, // 로딩 상태
+)
+
+// 2. 텍스트 필드
+SpaceTextField(
+  hintText: 'Todo 제목 입력',
+  onChanged: (value) => _updateTitle(value),
+  errorText: state.error, // 에러 메시지
+)
+
+// 3. 로딩 인디케이터
+SpaceLoadingIndicator() // 기본
+SpaceLoadingIndicator(size: 40.w, message: '로딩 중...') // 커스텀
+
+// 4. 카드
+SpaceCard(
+  child: Text('카드 내용'),
+  onTap: () => _handleTap(),
+)
+
+// 5. 다이얼로그
+SpaceDialog.show(
+  context,
+  title: '삭제 확인',
+  message: '정말 삭제하시겠습니까?',
+  confirmText: '삭제',
+  onConfirm: () => _delete(),
+)
+
+// 6. 빈 상태
+SpaceEmptyState(
+  icon: Icons.inbox,
+  message: '아직 Todo가 없습니다',
+  actionText: '새로 만들기',
+  onAction: () => _create(),
+)
+
+// 7. 스낵바
+SpaceSnackBar.success(context, '저장되었습니다!')
+SpaceSnackBar.error(context, '에러가 발생했습니다')
+SpaceSnackBar.info(context, '새로운 업데이트가 있습니다')
+SpaceSnackBar.warning(context, '입력값을 확인해주세요')
+```
+
+### 새 위젯 생성 전 체크리스트
+
+**❓ 다음 질문에 답하세요:**
+
+1. **기존 위젯으로 해결 가능한가?** → YES면 기존 위젯 사용
+2. **2곳 이상에서 재사용되는가?** → NO면 해당 Feature 내부에만 작성
+3. **프로젝트 전역에서 사용되는가?** → YES면 `core/widgets/`에 추가
+
+**📍 새 위젯 위치 결정:**
+
+```
+✅ 전역 위젯 (3곳 이상 사용) → lib/core/widgets/
+   ├── atoms/        # 가장 작은 단위 (버튼, 인풋)
+   ├── molecules/    # Atoms 조합 (카드, 다이얼로그)
+   └── organisms/    # Molecules 조합 (리스트, 폼)
+
+✅ Feature 위젯 (1-2곳 사용) → lib/features/{feature}/presentation/widgets/
+   예: lib/features/todo/presentation/widgets/todo_item.dart
+```
+
+**📖 상세 가이드:** [05_WIDGETS_GUIDE.md](./05_WIDGETS_GUIDE.md) 참조
+
+---
+
 ## 자주 하는 실수
 
 ### ❌ 실수 1: Layer 경계 위반
@@ -767,6 +859,41 @@ class TodoItem extends StatelessWidget {
 }
 ```
 
+### ❌ 실수 8: 공통 위젯 중복 생성
+```dart
+// ❌ 이미 SpacePrimaryButton이 있는데 새로 만듦
+class MyCustomButton extends StatelessWidget {
+  final String text;
+  final VoidCallback? onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      onPressed: onPressed,
+      child: Text(text),
+    );
+  }
+}
+
+// ✅ 기존 SpacePrimaryButton 사용
+SpacePrimaryButton(
+  text: '저장하기',
+  onPressed: () => _save(),
+)
+
+// ❌ 커스텀 TextField 매번 새로 만듦
+Container(
+  decoration: BoxDecoration(borderRadius: AppRadius.input),
+  child: TextField(...)
+)
+
+// ✅ 기존 SpaceTextField 사용
+SpaceTextField(
+  hintText: 'Todo 제목 입력',
+  onChanged: (value) => _updateTitle(value),
+)
+```
+
 ---
 
 ## 빠른 찾기
@@ -783,7 +910,8 @@ class TodoItem extends StatelessWidget {
 | Auth Interceptor | `lib/core/services/dio/interceptors/auth_interceptor.dart` |
 | Secure Storage | `lib/core/services/storage/secure_storage_service.dart` |
 | 에러 정의 | `lib/core/errors/exceptions.dart` |
-| 공통 버튼 | `lib/core/widgets/buttons/` |
+| 공통 위젯 | `lib/core/widgets/` ([05_WIDGETS_GUIDE.md](./05_WIDGETS_GUIDE.md) 참조) |
+| SnackBar 유틸 | `lib/core/utils/snackbar_utils.dart` |
 | 라우팅 | `lib/routes/app_router.dart` |
 
 ### 에러 메시지 → 해결책
@@ -815,6 +943,7 @@ class TodoItem extends StatelessWidget {
 - [02_FOLDER_STRUCTURE.md](./02_FOLDER_STRUCTURE.md) - 전체 폴더 구조, Barrel Export, Import 순서
 - [03_CODE_CONVENTIONS.md](./03_CODE_CONVENTIONS.md) - Dart 코딩 스타일, 에러 처리, Widget 가이드
 - [04_CODE_GENERATION_GUIDE.md](./04_CODE_GENERATION_GUIDE.md) - 전체 템플릿, MVP 구현 순서 (8 Phase)
+- [05_WIDGETS_GUIDE.md](./05_WIDGETS_GUIDE.md) - **공통 위젯 카탈로그 및 사용 가이드** (중복 방지 필수)
 
 ### 외부 문서
 - [Flutter Clean Architecture Guide](https://resocoder.com/flutter-clean-architecture/)

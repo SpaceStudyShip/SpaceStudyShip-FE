@@ -12,14 +12,8 @@ import 'core/constants/text_styles.dart';
 import 'core/theme/app_theme.dart';
 import 'core/services/fcm/firebase_messaging_service.dart';
 import 'core/services/fcm/local_notifications_service.dart';
-import 'core/widgets/atoms/buttons/space_primary_button.dart';
-import 'core/widgets/atoms/inputs/space_text_field.dart';
-import 'core/widgets/atoms/indicators/space_loading_indicator.dart';
-import 'core/widgets/molecules/cards/space_card.dart';
-import 'core/widgets/molecules/dialogs/space_dialog.dart';
-import 'core/widgets/organisms/empty_states/space_empty_state.dart';
 import 'core/constants/spacing_and_radius.dart';
-import 'core/utils/snackbar_utils.dart';
+import 'core/widgets/widgets.dart';
 
 void main() async {
   // Flutter 엔진 초기화 보장
@@ -242,28 +236,59 @@ class WidgetTestPage extends StatelessWidget {
             // 버튼 섹션
             Text('Buttons', style: AppTextStyles.heading3.bold()),
             SizedBox(height: 16.h),
-            SpacePrimaryButton(
+            SpaceButton(
               text: 'Primary Button',
               onPressed: () {
                 SpaceSnackBar.success(context, '버튼 클릭!');
               },
             ),
             SizedBox(height: 12.h),
-            SpacePrimaryButton(
+            SpaceButton(
+              text: 'Secondary Button',
+              type: SpaceButtonType.secondary,
+              onPressed: () {
+                SpaceSnackBar.info(context, 'Secondary 버튼!');
+              },
+            ),
+            SizedBox(height: 12.h),
+            SpaceButton(
+              text: '삭제하기',
+              type: SpaceButtonType.destructive,
+              icon: Icons.delete,
+              onPressed: () {
+                SpaceSnackBar.warning(context, 'Destructive 버튼!');
+              },
+            ),
+            SizedBox(height: 12.h),
+            SpaceButton(
               text: '로딩 중...',
               onPressed: () {},
               isLoading: true,
             ),
             SizedBox(height: 12.h),
-            const SpacePrimaryButton(text: '비활성 버튼', onPressed: null),
+            const SpaceButton(text: '비활성 버튼', onPressed: null),
             SizedBox(height: 32.h),
 
             // 입력 필드 섹션
             Text('Text Fields', style: AppTextStyles.heading3.bold()),
             SizedBox(height: 16.h),
             const SpaceTextField(
-              hintText: '이름을 입력하세요',
+              hintText: '이름',
               prefixIcon: Icons.person,
+            ),
+            SizedBox(height: 12.h),
+            const SpaceTextField(
+              hintText: '휴대폰 번호',
+              prefixIcon: Icons.phone,
+              autoFormat: SpaceInputFormat.phone,
+              keyboardType: TextInputType.phone,
+            ),
+            SizedBox(height: 12.h),
+            const SpaceTextField(
+              hintText: '금액',
+              prefixIcon: Icons.attach_money,
+              autoFormat: SpaceInputFormat.currency,
+              keyboardType: TextInputType.number,
             ),
             SizedBox(height: 12.h),
             const SpaceTextField(
@@ -272,7 +297,7 @@ class WidgetTestPage extends StatelessWidget {
               obscureText: true,
             ),
             SizedBox(height: 12.h),
-            const SpaceTextField(hintText: '에러 상태', errorText: '유효한 값을 입력하세요'),
+            const SpaceTextField(hintText: '에러 상태', errorText: '올바른 값을 입력해 주세요'),
             SizedBox(height: 32.h),
 
             // 카드 섹션
@@ -283,10 +308,26 @@ class WidgetTestPage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('카드 제목', style: AppTextStyles.heading4.bold()),
+                  Text('Elevated 카드', style: AppTextStyles.heading4.bold()),
                   SizedBox(height: 8.h),
                   Text(
-                    '이것은 SpaceCard의 예시입니다. 우주 테마의 배경색과 그림자를 사용합니다.',
+                    '그림자가 있는 기본 카드 스타일이에요.',
+                    style: AppTextStyles.body2.regular(),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 12.h),
+            SpaceCard(
+              style: SpaceCardStyle.outlined,
+              padding: AppPadding.all16,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Outlined 카드', style: AppTextStyles.heading4.bold()),
+                  SizedBox(height: 8.h),
+                  Text(
+                    '테두리만 있는 카드 스타일이에요.',
                     style: AppTextStyles.body2.regular(),
                   ),
                 ],
@@ -295,6 +336,7 @@ class WidgetTestPage extends StatelessWidget {
             SizedBox(height: 12.h),
             SpaceCard(
               padding: AppPadding.all16,
+              isSelected: true,
               onTap: () {
                 SpaceSnackBar.info(context, '카드 클릭!');
               },
@@ -307,12 +349,12 @@ class WidgetTestPage extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          '클릭 가능한 카드',
+                          '선택된 카드',
                           style: AppTextStyles.body1.semiBold(),
                         ),
                         SizedBox(height: 4.h),
                         Text(
-                          '탭하여 상호작용할 수 있습니다',
+                          '탭하면 애니메이션이 적용돼요',
                           style: AppTextStyles.caption.regular(),
                         ),
                       ],
@@ -324,28 +366,101 @@ class WidgetTestPage extends StatelessWidget {
             SizedBox(height: 32.h),
 
             // 로딩 인디케이터 섹션
-            Text('Loading Indicators', style: AppTextStyles.heading3.bold()),
+            Text('Loading & Skeleton', style: AppTextStyles.heading3.bold()),
             SizedBox(height: 16.h),
             SpaceCard(
               padding: AppPadding.all24,
-              child: const SpaceLoadingIndicator(message: '데이터를 불러오는 중...'),
+              child: const SpaceLoading(message: '불러오는 중...'),
+            ),
+            SizedBox(height: 12.h),
+            SpaceCard(
+              padding: AppPadding.all24,
+              child: const SpaceLoading(
+                type: SpaceLoadingType.dots,
+                message: '처리 중...',
+              ),
+            ),
+            SizedBox(height: 12.h),
+            SpaceCard(
+              padding: AppPadding.all16,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Skeleton UI', style: AppTextStyles.body1.semiBold()),
+                  SizedBox(height: 12.h),
+                  SpaceSkeleton.listTile(),
+                  SizedBox(height: 8.h),
+                  SpaceSkeleton.listTile(),
+                ],
+              ),
             ),
             SizedBox(height: 32.h),
 
             // 다이얼로그 섹션
             Text('Dialogs', style: AppTextStyles.heading3.bold()),
             SizedBox(height: 16.h),
-            SpacePrimaryButton(
-              text: '다이얼로그 열기',
-              onPressed: () {
-                SpaceDialog.show(
-                  context: context,
-                  title: '알림',
-                  content: '이것은 SpaceDialog의 예시입니다.',
-                  confirmText: '확인',
-                  cancelText: '취소',
-                );
-              },
+            Wrap(
+              spacing: 8.w,
+              runSpacing: 8.h,
+              children: [
+                SpaceButton(
+                  text: '기본',
+                  size: SpaceButtonSize.small,
+                  onPressed: () {
+                    SpaceDialog.show(
+                      context: context,
+                      title: '저장할까요?',
+                      message: '변경사항이 저장돼요',
+                      confirmText: '저장',
+                      cancelText: '취소',
+                    );
+                  },
+                ),
+                SpaceButton(
+                  text: '성공',
+                  size: SpaceButtonSize.small,
+                  onPressed: () {
+                    SpaceDialog.show(
+                      context: context,
+                      title: '저장했어요!',
+                      message: '변경사항이 성공적으로 저장됐어요.',
+                      emotion: SpaceDialogEmotion.success,
+                      confirmText: '확인',
+                    );
+                  },
+                ),
+                SpaceButton(
+                  text: '경고',
+                  size: SpaceButtonSize.small,
+                  type: SpaceButtonType.secondary,
+                  onPressed: () {
+                    SpaceDialog.show(
+                      context: context,
+                      title: '삭제할까요?',
+                      message: '삭제하면 되돌릴 수 없어요',
+                      emotion: SpaceDialogEmotion.warning,
+                      confirmText: '삭제',
+                      cancelText: '취소',
+                      confirmButtonType: SpaceButtonType.destructive,
+                    );
+                  },
+                ),
+                SpaceButton(
+                  text: '에러',
+                  size: SpaceButtonSize.small,
+                  type: SpaceButtonType.destructive,
+                  onPressed: () {
+                    SpaceDialog.show(
+                      context: context,
+                      title: '오류가 발생했어요',
+                      message: '네트워크 연결을 확인해 주세요',
+                      emotion: SpaceDialogEmotion.error,
+                      confirmText: '다시 시도',
+                      cancelText: '취소',
+                    );
+                  },
+                ),
+              ],
             ),
             SizedBox(height: 32.h),
 
@@ -356,32 +471,49 @@ class WidgetTestPage extends StatelessWidget {
               spacing: 8.w,
               runSpacing: 8.h,
               children: [
-                SpacePrimaryButton(
+                SpaceButton(
                   text: 'Success',
-                  width: 165.w,
+                  size: SpaceButtonSize.small,
                   onPressed: () {
-                    SpaceSnackBar.success(context, '성공적으로 처리되었습니다!');
+                    SpaceSnackBar.success(context, '저장했어요!');
                   },
                 ),
-                SpacePrimaryButton(
+                SpaceButton(
                   text: 'Error',
-                  width: 165.w,
+                  size: SpaceButtonSize.small,
+                  type: SpaceButtonType.destructive,
                   onPressed: () {
-                    SpaceSnackBar.error(context, '에러가 발생했습니다.');
+                    SpaceSnackBar.error(context, '저장에 실패했어요');
                   },
                 ),
-                SpacePrimaryButton(
+                SpaceButton(
                   text: 'Info',
-                  width: 165.w,
+                  size: SpaceButtonSize.small,
+                  type: SpaceButtonType.secondary,
                   onPressed: () {
-                    SpaceSnackBar.info(context, '새로운 정보를 확인하세요.');
+                    SpaceSnackBar.info(context, '새로운 업데이트가 있어요');
                   },
                 ),
-                SpacePrimaryButton(
+                SpaceButton(
                   text: 'Warning',
-                  width: 165.w,
+                  size: SpaceButtonSize.small,
+                  type: SpaceButtonType.secondary,
                   onPressed: () {
-                    SpaceSnackBar.warning(context, '입력값을 확인해주세요.');
+                    SpaceSnackBar.warning(context, '입력값을 확인해 주세요');
+                  },
+                ),
+                SpaceButton(
+                  text: 'Undo',
+                  size: SpaceButtonSize.small,
+                  type: SpaceButtonType.text,
+                  onPressed: () {
+                    SpaceSnackBar.showWithUndo(
+                      context: context,
+                      message: '삭제했어요',
+                      onUndo: () {
+                        SpaceSnackBar.success(context, '복구했어요!');
+                      },
+                    );
                   },
                 ),
               ],
@@ -392,15 +524,27 @@ class WidgetTestPage extends StatelessWidget {
             Text('Empty State', style: AppTextStyles.heading3.bold()),
             SizedBox(height: 16.h),
             SpaceCard(
+              style: SpaceCardStyle.outlined,
               padding: AppPadding.all16,
               child: SpaceEmptyState(
                 icon: Icons.inbox,
-                title: '데이터가 없습니다',
-                description: '새로운 항목을 추가해보세요',
-                actionText: '추가하기',
+                title: '아직 할 일이 없어요',
+                description: '첫 번째 할 일을 만들어볼까요?',
+                actionText: '할 일 만들기',
                 onAction: () {
-                  SpaceSnackBar.success(context, '추가 버튼 클릭!');
+                  SpaceSnackBar.success(context, '할 일 추가!');
                 },
+              ),
+            ),
+            SizedBox(height: 12.h),
+            SpaceCard(
+              style: SpaceCardStyle.outlined,
+              padding: AppPadding.all16,
+              child: SpaceEmptyState(
+                type: SpaceEmptyType.noSearch,
+                icon: Icons.search_off,
+                title: '검색 결과가 없어요',
+                description: '다른 검색어로 찾아볼까요?',
               ),
             ),
             SizedBox(height: 32.h),

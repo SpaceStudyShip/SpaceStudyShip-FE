@@ -2660,5 +2660,3 @@ GET /statistics?period={period}&startDate={startDate}&endDate={endDate}
 | **합계** | **44** | **24** | **68** |
 
 ---
-
-**API 명세서 완료!** 🚀

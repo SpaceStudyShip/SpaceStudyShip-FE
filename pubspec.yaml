@@ -39,6 +39,8 @@ dependencies:
   flutter_local_notifications: ^19.4.2 # 로컬 알림 생성 및 관리
   firebase_crashlytics: ^5.0.6 # 에러 리포팅 및 크래시 수집
   firebase_analytics: ^12.1.0 # Firebase 분석 및 이벤트 추적
+  # 광고
+  google_mobile_ads: ^5.2.0 # Google AdMob (배너, 전면, 보상형 광고)
   # 기기 정보
   device_info_plus: ^10.1.2 # 기기 정보 수집 (FCM 기기 식별용)
   package_info_plus: ^9.0.0 # 앱 버전 및 패키지 정보

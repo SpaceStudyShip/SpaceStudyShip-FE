@@ -66,9 +66,9 @@ class SpaceEmptyState extends StatelessWidget {
     this.secondaryActionText,
     this.onSecondaryAction,
   }) : assert(
-          icon != null || iconWidget != null,
-          'icon 또는 iconWidget 중 하나는 필수입니다',
-        );
+         icon != null || iconWidget != null,
+         'icon 또는 iconWidget 중 하나는 필수입니다',
+       );
 
   /// 빈 상태 타입
   final SpaceEmptyType type;
@@ -140,8 +140,8 @@ class SpaceEmptyState extends StatelessWidget {
             Text(
               title,
               style: AppTextStyles.heading4.semiBold().copyWith(
-                    color: AppColors.textPrimary,
-                  ),
+                color: AppColors.textPrimary,
+              ),
               textAlign: TextAlign.center,
             ),
 
@@ -151,8 +151,8 @@ class SpaceEmptyState extends StatelessWidget {
               Text(
                 description!,
                 style: AppTextStyles.body2.regular().copyWith(
-                      color: AppColors.textSecondary,
-                    ),
+                  color: AppColors.textSecondary,
+                ),
                 textAlign: TextAlign.center,
               ),
             ],
@@ -162,10 +162,7 @@ class SpaceEmptyState extends StatelessWidget {
               SizedBox(height: 32.h),
               SizedBox(
                 width: 200.w,
-                child: SpaceButton(
-                  text: actionText!,
-                  onPressed: onAction,
-                ),
+                child: SpaceButton(text: actionText!, onPressed: onAction),
               ),
             ],
 
@@ -199,11 +196,7 @@ class SpaceEmptyState extends StatelessWidget {
         color: _iconColor.withValues(alpha: 0.1),
         shape: BoxShape.circle,
       ),
-      child: Icon(
-        icon ?? _defaultIcon,
-        size: 48.w,
-        color: _iconColor,
-      ),
+      child: Icon(icon ?? _defaultIcon, size: 48.w, color: _iconColor),
     );
   }
 }

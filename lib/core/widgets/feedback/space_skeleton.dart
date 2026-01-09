@@ -70,22 +70,12 @@ class SpaceSkeleton extends StatelessWidget {
 
   /// 아바타 스켈레톤
   factory SpaceSkeleton.avatar({double size = 48}) {
-    return SpaceSkeleton(
-      width: size,
-      height: size,
-      isCircle: true,
-    );
+    return SpaceSkeleton(width: size, height: size, isCircle: true);
   }
 
   /// 카드 스켈레톤
-  factory SpaceSkeleton.card({
-    double? width,
-    double height = 120,
-  }) {
-    return _SpaceSkeletonCard(
-      width: width,
-      height: height,
-    );
+  factory SpaceSkeleton.card({double? width, double height = 120}) {
+    return _SpaceSkeletonCard(width: width, height: height);
   }
 
   /// 리스트 타일 스켈레톤
@@ -103,9 +93,7 @@ class SpaceSkeleton extends StatelessWidget {
         height: height?.h,
         decoration: BoxDecoration(
           color: AppColors.spaceDivider,
-          borderRadius: isCircle
-              ? null
-              : (borderRadius ?? AppRadius.small),
+          borderRadius: isCircle ? null : (borderRadius ?? AppRadius.small),
           shape: isCircle ? BoxShape.circle : BoxShape.rectangle,
         ),
       ),
@@ -162,10 +150,8 @@ class _SpaceSkeletonText extends SpaceSkeleton {
 
 /// 카드 스켈레톤 (내부 구현)
 class _SpaceSkeletonCard extends SpaceSkeleton {
-  const _SpaceSkeletonCard({
-    super.width,
-    required double height,
-  }) : super(height: height);
+  const _SpaceSkeletonCard({super.width, required double height})
+    : super(height: height);
 
   @override
   Widget build(BuildContext context) {

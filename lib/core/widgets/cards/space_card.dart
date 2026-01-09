@@ -235,10 +235,7 @@ class _SpaceCardState extends State<SpaceCard>
 
   Widget _buildContent() {
     if (widget.padding != null) {
-      return Padding(
-        padding: widget.padding!,
-        child: widget.child,
-      );
+      return Padding(padding: widget.padding!, child: widget.child);
     }
     return widget.child;
   }

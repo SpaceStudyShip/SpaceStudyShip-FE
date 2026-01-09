@@ -187,9 +187,6 @@ class EmailInputFormatter extends TextInputFormatter {
     // 소문자로 변환 (이메일은 대소문자 구분 없음)
     final lowercased = newValue.text.toLowerCase();
 
-    return TextEditingValue(
-      text: lowercased,
-      selection: newValue.selection,
-    );
+    return TextEditingValue(text: lowercased, selection: newValue.selection);
   }
 }

@@ -293,26 +293,14 @@ class _SpaceButtonState extends State<SpaceButton>
       return Center(child: textWidget);
     }
 
-    final iconWidget = Icon(
-      widget.icon,
-      color: _foregroundColor,
-      size: 20.w,
-    );
+    final iconWidget = Icon(widget.icon, color: _foregroundColor, size: 20.w);
 
     return Center(
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: widget.iconPosition == SpaceButtonIconPosition.leading
-            ? [
-                iconWidget,
-                SizedBox(width: 8.w),
-                textWidget,
-              ]
-            : [
-                textWidget,
-                SizedBox(width: 8.w),
-                iconWidget,
-              ],
+            ? [iconWidget, SizedBox(width: 8.w), textWidget]
+            : [textWidget, SizedBox(width: 8.w), iconWidget],
       ),
     );
   }
@@ -321,7 +309,9 @@ class _SpaceButtonState extends State<SpaceButton>
 /// 기존 코드 호환을 위한 deprecated alias
 ///
 /// [SpaceButton]을 사용하세요.
-@Deprecated('Use SpaceButton instead. Migration: SpaceButton(text: ..., onPressed: ...)')
+@Deprecated(
+  'Use SpaceButton instead. Migration: SpaceButton(text: ..., onPressed: ...)',
+)
 class SpacePrimaryButton extends StatelessWidget {
   const SpacePrimaryButton({
     super.key,

@@ -270,8 +270,8 @@ class _SpaceTextFieldState extends State<SpaceTextField> {
           onFieldSubmitted: widget.onSubmitted,
           validator: widget.validator,
           style: AppTextStyles.body1.regular().copyWith(
-                color: AppColors.textPrimary,
-              ),
+            color: AppColors.textPrimary,
+          ),
           decoration: InputDecoration(
             hintText: widget.hintText,
             labelText: widget.labelText,
@@ -281,10 +281,7 @@ class _SpaceTextFieldState extends State<SpaceTextField> {
             fillColor: AppColors.spaceElevated,
             counterText: widget.showCharacterCount ? null : '',
             prefixIcon: widget.prefixIcon != null
-                ? Icon(
-                    widget.prefixIcon,
-                    color: AppColors.textSecondary,
-                  )
+                ? Icon(widget.prefixIcon, color: AppColors.textSecondary)
                 : null,
             suffixIcon: widget.suffixIcon,
             border: OutlineInputBorder(
@@ -315,17 +312,17 @@ class _SpaceTextFieldState extends State<SpaceTextField> {
             ),
             contentPadding: AppPadding.all16,
             hintStyle: AppTextStyles.body2.regular().copyWith(
-                  color: AppColors.textTertiary,
-                ),
+              color: AppColors.textTertiary,
+            ),
             labelStyle: AppTextStyles.body2.medium().copyWith(
-                  color: AppColors.textSecondary,
-                ),
+              color: AppColors.textSecondary,
+            ),
             helperStyle: AppTextStyles.caption.regular().copyWith(
-                  color: AppColors.textTertiary,
-                ),
+              color: AppColors.textTertiary,
+            ),
             errorStyle: AppTextStyles.caption.regular().copyWith(
-                  color: AppColors.error,
-                ),
+              color: AppColors.error,
+            ),
           ),
         ),
       ],

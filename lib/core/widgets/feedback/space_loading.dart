@@ -198,9 +198,7 @@ class _SpaceLoadingState extends State<SpaceLoading>
           if (widget.progress != null)
             Text(
               '${(widget.progress! * 100).toInt()}%',
-              style: AppTextStyles.caption.semiBold().copyWith(
-                    color: _color,
-                  ),
+              style: AppTextStyles.caption.semiBold().copyWith(color: _color),
             ),
         ],
       ),
@@ -220,13 +218,15 @@ class _SpaceLoadingState extends State<SpaceLoading>
 
     return Column(
       children: messages
-          .map((msg) => Text(
-                msg,
-                style: AppTextStyles.body2.regular().copyWith(
-                      color: AppColors.textSecondary,
-                    ),
-                textAlign: TextAlign.center,
-              ))
+          .map(
+            (msg) => Text(
+              msg,
+              style: AppTextStyles.body2.regular().copyWith(
+                color: AppColors.textSecondary,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          )
           .toList(),
     );
   }

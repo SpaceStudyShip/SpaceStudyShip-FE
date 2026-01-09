@@ -260,11 +260,7 @@ class WidgetTestPage extends StatelessWidget {
               },
             ),
             SizedBox(height: 12.h),
-            SpaceButton(
-              text: '로딩 중...',
-              onPressed: () {},
-              isLoading: true,
-            ),
+            SpaceButton(text: '로딩 중...', onPressed: () {}, isLoading: true),
             SizedBox(height: 12.h),
             const SpaceButton(text: '비활성 버튼', onPressed: null),
             SizedBox(height: 32.h),
@@ -272,10 +268,7 @@ class WidgetTestPage extends StatelessWidget {
             // 입력 필드 섹션
             Text('Text Fields', style: AppTextStyles.heading3.bold()),
             SizedBox(height: 16.h),
-            const SpaceTextField(
-              hintText: '이름',
-              prefixIcon: Icons.person,
-            ),
+            const SpaceTextField(hintText: '이름', prefixIcon: Icons.person),
             SizedBox(height: 12.h),
             const SpaceTextField(
               hintText: '휴대폰 번호',
@@ -297,7 +290,10 @@ class WidgetTestPage extends StatelessWidget {
               obscureText: true,
             ),
             SizedBox(height: 12.h),
-            const SpaceTextField(hintText: '에러 상태', errorText: '올바른 값을 입력해 주세요'),
+            const SpaceTextField(
+              hintText: '에러 상태',
+              errorText: '올바른 값을 입력해 주세요',
+            ),
             SizedBox(height: 32.h),
 
             // 카드 섹션
@@ -348,10 +344,7 @@ class WidgetTestPage extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          '선택된 카드',
-                          style: AppTextStyles.body1.semiBold(),
-                        ),
+                        Text('선택된 카드', style: AppTextStyles.body1.semiBold()),
                         SizedBox(height: 4.h),
                         Text(
                           '탭하면 애니메이션이 적용돼요',

@@ -177,14 +177,8 @@ class SpaceDialog extends StatelessWidget {
       },
       transitionBuilder: (context, animation, secondaryAnimation, child) {
         return ScaleTransition(
-          scale: CurvedAnimation(
-            parent: animation,
-            curve: Curves.easeOutBack,
-          ),
-          child: FadeTransition(
-            opacity: animation,
-            child: child,
-          ),
+          scale: CurvedAnimation(parent: animation, curve: Curves.easeOutBack),
+          child: FadeTransition(opacity: animation, child: child),
         );
       },
     );
@@ -216,10 +210,7 @@ class SpaceDialog extends StatelessWidget {
     return Center(
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: 24.w),
-        constraints: BoxConstraints(
-          maxWidth: 320.w,
-          minWidth: 280.w,
-        ),
+        constraints: BoxConstraints(maxWidth: 320.w, minWidth: 280.w),
         decoration: BoxDecoration(
           color: AppColors.spaceSurface,
           borderRadius: AppRadius.large,
@@ -241,11 +232,7 @@ class SpaceDialog extends StatelessWidget {
                 // 아이콘 (피크엔드 법칙)
                 if (headerIcon != null || _emotionIcon != null) ...[
                   headerIcon ??
-                      Icon(
-                        _emotionIcon,
-                        size: 48.w,
-                        color: _emotionColor,
-                      ),
+                      Icon(_emotionIcon, size: 48.w, color: _emotionColor),
                   SizedBox(height: 16.h),
                 ],
 
@@ -254,8 +241,8 @@ class SpaceDialog extends StatelessWidget {
                   Text(
                     title!,
                     style: AppTextStyles.heading4.bold().copyWith(
-                          color: AppColors.textPrimary,
-                        ),
+                      color: AppColors.textPrimary,
+                    ),
                     textAlign: TextAlign.center,
                   ),
                   SizedBox(height: 8.h),
@@ -266,8 +253,8 @@ class SpaceDialog extends StatelessWidget {
                   Text(
                     message!,
                     style: AppTextStyles.body2.regular().copyWith(
-                          color: AppColors.textSecondary,
-                        ),
+                      color: AppColors.textSecondary,
+                    ),
                     textAlign: TextAlign.center,
                   ),
 

@@ -49,11 +49,9 @@ class AppTheme {
         elevation: 0,
         centerTitle: true,
         titleTextStyle: AppTextStyles.heading4.bold().copyWith(
-              color: AppColors.textPrimary,
-            ),
-        iconTheme: const IconThemeData(
           color: AppColors.textPrimary,
         ),
+        iconTheme: const IconThemeData(color: AppColors.textPrimary),
         systemOverlayStyle: const SystemUiOverlayStyle(
           statusBarColor: Colors.transparent, // 투명 상태바
           statusBarIconBrightness: Brightness.light, // 밝은 아이콘
@@ -74,9 +72,7 @@ class AppTheme {
           elevation: 2,
           shadowColor: AppColors.primary.withValues(alpha: 0.3),
           padding: AppPadding.buttonPadding,
-          shape: RoundedRectangleBorder(
-            borderRadius: AppRadius.button,
-          ),
+          shape: RoundedRectangleBorder(borderRadius: AppRadius.button),
           textStyle: AppTextStyles.body1.semiBold(),
         ),
       ),
@@ -89,9 +85,7 @@ class AppTheme {
           foregroundColor: AppColors.primary,
           disabledForegroundColor: AppColors.textDisabled,
           padding: AppPadding.buttonPadding,
-          shape: RoundedRectangleBorder(
-            borderRadius: AppRadius.button,
-          ),
+          shape: RoundedRectangleBorder(borderRadius: AppRadius.button),
           textStyle: AppTextStyles.body1.medium(),
         ),
       ),
@@ -105,9 +99,7 @@ class AppTheme {
           disabledForegroundColor: AppColors.textDisabled,
           side: const BorderSide(color: AppColors.primary, width: 1.5),
           padding: AppPadding.buttonPadding,
-          shape: RoundedRectangleBorder(
-            borderRadius: AppRadius.button,
-          ),
+          shape: RoundedRectangleBorder(borderRadius: AppRadius.button),
           textStyle: AppTextStyles.body1.medium(),
         ),
       ),
@@ -120,9 +112,7 @@ class AppTheme {
         shadowColor: AppColors.primary.withValues(alpha: 0.1),
         elevation: 2,
         margin: EdgeInsets.zero,
-        shape: RoundedRectangleBorder(
-          borderRadius: AppRadius.card,
-        ),
+        shape: RoundedRectangleBorder(borderRadius: AppRadius.card),
       ),
 
       // ============================================
@@ -132,9 +122,7 @@ class AppTheme {
         backgroundColor: AppColors.primary,
         foregroundColor: AppColors.textOnPrimary,
         elevation: 4,
-        shape: RoundedRectangleBorder(
-          borderRadius: AppRadius.large,
-        ),
+        shape: RoundedRectangleBorder(borderRadius: AppRadius.large),
       ),
 
       // ============================================
@@ -161,11 +149,11 @@ class AppTheme {
         ),
         contentPadding: AppPadding.all16,
         hintStyle: AppTextStyles.body2.regular().copyWith(
-              color: AppColors.textTertiary,
-            ),
+          color: AppColors.textTertiary,
+        ),
         labelStyle: AppTextStyles.body2.medium().copyWith(
-              color: AppColors.textSecondary,
-            ),
+          color: AppColors.textSecondary,
+        ),
       ),
 
       // ============================================
@@ -173,15 +161,13 @@ class AppTheme {
       // ============================================
       dialogTheme: DialogThemeData(
         backgroundColor: AppColors.spaceSurface,
-        shape: RoundedRectangleBorder(
-          borderRadius: AppRadius.large,
-        ),
+        shape: RoundedRectangleBorder(borderRadius: AppRadius.large),
         titleTextStyle: AppTextStyles.heading4.bold().copyWith(
-              color: AppColors.textPrimary,
-            ),
+          color: AppColors.textPrimary,
+        ),
         contentTextStyle: AppTextStyles.body2.regular().copyWith(
-              color: AppColors.textSecondary,
-            ),
+          color: AppColors.textSecondary,
+        ),
       ),
 
       // ============================================
@@ -189,9 +175,7 @@ class AppTheme {
       // ============================================
       bottomSheetTheme: BottomSheetThemeData(
         backgroundColor: AppColors.spaceSurface,
-        shape: RoundedRectangleBorder(
-          borderRadius: AppRadius.modal,
-        ),
+        shape: RoundedRectangleBorder(borderRadius: AppRadius.modal),
         modalBackgroundColor: AppColors.spaceSurface,
       ),
 
@@ -207,9 +191,7 @@ class AppTheme {
       // ============================================
       // Icon 테마
       // ============================================
-      iconTheme: const IconThemeData(
-        color: AppColors.textPrimary,
-      ),
+      iconTheme: const IconThemeData(color: AppColors.textPrimary),
 
       // ============================================
       // ListTile 테마
@@ -219,9 +201,7 @@ class AppTheme {
         textColor: AppColors.textPrimary,
         iconColor: AppColors.textSecondary,
         tileColor: AppColors.spaceSurface,
-        shape: RoundedRectangleBorder(
-          borderRadius: AppRadius.medium,
-        ),
+        shape: RoundedRectangleBorder(borderRadius: AppRadius.medium),
       ),
 
       // ============================================
@@ -283,11 +263,9 @@ class AppTheme {
       snackBarTheme: SnackBarThemeData(
         backgroundColor: AppColors.spaceElevated,
         contentTextStyle: AppTextStyles.body2.medium().copyWith(
-              color: AppColors.textPrimary,
-            ),
-        shape: RoundedRectangleBorder(
-          borderRadius: AppRadius.medium,
+          color: AppColors.textPrimary,
         ),
+        shape: RoundedRectangleBorder(borderRadius: AppRadius.medium),
         behavior: SnackBarBehavior.floating,
       ),
 
@@ -311,8 +289,8 @@ class AppTheme {
           borderRadius: AppRadius.small,
         ),
         textStyle: AppTextStyles.caption.regular().copyWith(
-              color: AppColors.textPrimary,
-            ),
+          color: AppColors.textPrimary,
+        ),
       ),
     );
   }

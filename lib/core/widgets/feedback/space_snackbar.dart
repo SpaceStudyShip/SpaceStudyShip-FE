@@ -126,18 +126,12 @@ class SpaceSnackBar {
       SnackBar(
         content: Row(
           children: [
-            Icon(
-              icon,
-              color: textColor,
-              size: 20.w,
-            ),
+            Icon(icon, color: textColor, size: 20.w),
             SizedBox(width: 12.w),
             Expanded(
               child: Text(
                 message,
-                style: AppTextStyles.body2.medium().copyWith(
-                      color: textColor,
-                    ),
+                style: AppTextStyles.body2.medium().copyWith(color: textColor),
               ),
             ),
             if (actionLabel != null && onAction != null) ...[
@@ -158,8 +152,8 @@ class SpaceSnackBar {
                 child: Text(
                   actionLabel,
                   style: AppTextStyles.body2.semiBold().copyWith(
-                        color: textColor,
-                      ),
+                    color: textColor,
+                  ),
                 ),
               ),
             ],
@@ -167,17 +161,9 @@ class SpaceSnackBar {
         ),
         backgroundColor: backgroundColor,
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: AppRadius.snackbar,
-        ),
-        margin: EdgeInsets.symmetric(
-          horizontal: 20.w,
-          vertical: 16.h,
-        ),
-        padding: EdgeInsets.symmetric(
-          horizontal: 16.w,
-          vertical: 14.h,
-        ),
+        shape: RoundedRectangleBorder(borderRadius: AppRadius.snackbar),
+        margin: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
         duration: duration,
         elevation: 4,
       ),

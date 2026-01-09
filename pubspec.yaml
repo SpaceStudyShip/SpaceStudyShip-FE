@@ -21,7 +21,6 @@ dependencies:
   flutter_secure_storage: ^9.2.4 # 민감 데이터 안전 저장
   google_sign_in: ^7.2.0 # 구글 소셜 로그인 (Firebase 없이)
   flutter_dotenv: ^6.0.0 # 환경 변수 관리 (.env 파일)
-  device_info_plus: ^10.1.2 # 기기 정보 수집 (FCM 기기 식별용)
   uuid: ^4.5.2 # 앱 내 고유 식별자 생성
   # UI/UX 레이아웃
   flutter_screenutil: ^5.9.3 # 화면, 해상도 대응 유틸리티
@@ -41,7 +40,10 @@ dependencies:
   firebase_crashlytics: ^5.0.6 # 에러 리포팅 및 크래시 수집
   firebase_analytics: ^12.1.0 # Firebase 분석 및 이벤트 추적
   # 기기 정보
-  package_info_plus: ^9.0.0
+  device_info_plus: ^10.1.2 # 기기 정보 수집 (FCM 기기 식별용)
+  package_info_plus: ^9.0.0 # 앱 버전 및 패키지 정보
+
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

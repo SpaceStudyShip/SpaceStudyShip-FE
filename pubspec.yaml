@@ -1,7 +1,7 @@
 name: space_study_ship
 description: "A new Flutter project."
 publish_to: 'none'
-version: 1.0.12+12
+version: 1.0.13+13
 environment:
   sdk: ^3.9.2
 dependencies:
@@ -42,8 +42,6 @@ dependencies:
   # 기기 정보
   device_info_plus: ^10.1.2 # 기기 정보 수집 (FCM 기기 식별용)
   package_info_plus: ^9.0.0 # 앱 버전 및 패키지 정보
-
-
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -1,11 +1,41 @@
 {
   "metadata": {
-    "lastUpdated": "2026-01-09T02:04:10Z",
-    "currentVersion": "1.0.13",
+    "lastUpdated": "2026-01-09T05:12:15Z",
+    "currentVersion": "1.0.15",
     "projectType": "flutter",
-    "totalReleases": 2
+    "totalReleases": 3
   },
   "releases": [
+    {
+      "version": "1.0.15",
+      "project_type": "flutter",
+      "date": "2026-01-09",
+      "pr_number": 4,
+      "raw_summary": "## Summary by CodeRabbit\n\n## 릴리스 노트\n\n* **문서**\n  * README 최신 버전 정보 업데이트\n\n* **스타일**\n  * 코드 형식 및 들여쓰기 최적화로 가독성 개선\n\n* **작업**\n  * 애플리케이션 버전을 1.0.15로 업데이트\n  * iOS 프로덕션 환경 설정 적용\n  * CI/CD 워크플로우 개선",
+      "parsed_changes": {
+        "문서": {
+          "title": "문서",
+          "items": [
+            "README 최신 버전 정보 업데이트"
+          ]
+        },
+        "스타일": {
+          "title": "스타일",
+          "items": [
+            "코드 형식 및 들여쓰기 최적화로 가독성 개선"
+          ]
+        },
+        "작업": {
+          "title": "작업",
+          "items": [
+            "애플리케이션 버전을 1.0.15로 업데이트",
+            "iOS 프로덕션 환경 설정 적용",
+            "CI/CD 워크플로우 개선"
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "1.0.13",
       "project_type": "flutter",

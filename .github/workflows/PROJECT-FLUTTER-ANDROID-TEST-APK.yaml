@@ -214,17 +214,16 @@ jobs:
 
       # google-services.json 생성 (선택적)
       - name: Create google-services.json
-        shell: bash
         run: |
           if [ -n "${{ secrets.GOOGLE_SERVICES_JSON }}" ]; then
             mkdir -p android/app
-            printf '%s' "${GOOGLE_SERVICES_JSON}" > android/app/google-services.json
+            cat << 'EOF' > android/app/google-services.json
+          ${{ secrets.GOOGLE_SERVICES_JSON }}
+          EOF
             echo "✅ google-services.json created"
           else
             echo "ℹ️ GOOGLE_SERVICES_JSON secret not provided, skipping"
           fi
-        env:
-          GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
 
       # Flutter 설정
       - name: Set up Flutter

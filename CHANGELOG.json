@@ -1,11 +1,39 @@
 {
   "metadata": {
-    "lastUpdated": "2025-12-29T04:04:53Z",
-    "currentVersion": "1.0.5",
+    "lastUpdated": "2026-01-09T02:04:10Z",
+    "currentVersion": "1.0.13",
     "projectType": "flutter",
-    "totalReleases": 1
+    "totalReleases": 2
   },
   "releases": [
+    {
+      "version": "1.0.13",
+      "project_type": "flutter",
+      "date": "2026-01-09",
+      "pr_number": 3,
+      "raw_summary": "## Summary by CodeRabbit\n\n# 릴리스 노트\n\n* **새로운 기능**\n  * Firebase 클라우드 메시징(FCM) 기반 푸시 알림 지원 추가\n  * Toss UX 디자인 원칙을 따르는 새로운 UI 컴포넌트 시스템 도입 (버튼, 텍스트 필드, 카드, 대화상자, 로딩 표시기, 스켈레톤, 스낵바, 빈 상태)\n  * 자동 포맷팅 기능이 있는 향상된 텍스트 입력 필드\n  * Android Play Store 배포 자동화 마법사 도구 추가\n  * iOS 백그라운드 알림 지원 추가\n\n* **개선사항**\n  * 앱 이름을 \"우주공부선\"으로 한글화\n  * 향상된 Firebase Crashlytics 통합\n  * 기기 정보 및 FCM 토큰 관리 서비스 추가",
+      "parsed_changes": {
+        "새로운_기능": {
+          "title": "새로운 기능",
+          "items": [
+            "Firebase 클라우드 메시징(FCM) 기반 푸시 알림 지원 추가",
+            "Toss UX 디자인 원칙을 따르는 새로운 UI 컴포넌트 시스템 도입 (버튼, 텍스트 필드, 카드, 대화상자, 로딩 표시기, 스켈레톤, 스낵바, 빈 상태)",
+            "자동 포맷팅 기능이 있는 향상된 텍스트 입력 필드",
+            "Android Play Store 배포 자동화 마법사 도구 추가",
+            "iOS 백그라운드 알림 지원 추가"
+          ]
+        },
+        "개선사항": {
+          "title": "개선사항",
+          "items": [
+            "앱 이름을 \"우주공부선\"으로 한글화",
+            "향상된 Firebase Crashlytics 통합",
+            "기기 정보 및 FCM 토큰 관리 서비스 추가"
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "1.0.5",
       "project_type": "flutter",

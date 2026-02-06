@@ -34,12 +34,12 @@
 # - 버전은 항상 높은 버전으로 자동 동기화됩니다
 # ===================================================================
 
-version: "1.0.19"
-version_code: 19  # app build number
-project_type: "flutter"  # spring, flutter, react, react-native, react-native-expo, node, python, basic
+version: "1.0.20"
+version_code: 20 # app build number
+project_type: "flutter" # spring, flutter, react, react-native, react-native-expo, node, python, basic
 metadata:
-  last_updated: "2026-02-06 02:34:20"
-  last_updated_by: "template_integrator"
+  last_updated: "2026-02-06 03:04:21"
+  last_updated_by: "EM-H20"
   default_branch: "main"
   integrated_from: "SUH-DEVOPS-TEMPLATE"
   integration_date: "2026-02-06"

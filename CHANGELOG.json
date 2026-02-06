@@ -1,11 +1,38 @@
 {
   "metadata": {
-    "lastUpdated": "2026-02-06T03:19:42Z",
-    "currentVersion": "1.0.21",
+    "lastUpdated": "2026-02-06T05:26:47Z",
+    "currentVersion": "1.0.23",
     "projectType": "flutter",
-    "totalReleases": 7
+    "totalReleases": 8
   },
   "releases": [
+    {
+      "version": "1.0.23",
+      "project_type": "flutter",
+      "date": "2026-02-06",
+      "pr_number": 9,
+      "raw_summary": "## Summary by CodeRabbit\n\n* **New Features**\n  * 새로운 인증 흐름 추가 (Splash, 로그인, 온보딩 화면)\n  * 5개 탭을 가진 메인 네비게이션 시스템 (홈, 타이머, 탐험, 소셜, 프로필)\n  * 통합 디자인 시스템으로 재설계된 UI 컴포넌트 (버튼, 입력 필드, 카드, 다이얼로그, 로딩)\n  * 우주 테마 위젯 및 화면 추가\n\n* **Refactor**\n  * 기존 레거시 위젯 컴포넌트를 새로운 디자인 시스템으로 교체\n  * GoRouter 기반 라우팅 시스템으로 마이그레이션\n  * 텍스트 스타일 및 간격 시스템 재구성",
+      "parsed_changes": {
+        "new_features": {
+          "title": "New Features",
+          "items": [
+            "새로운 인증 흐름 추가 (Splash, 로그인, 온보딩 화면)",
+            "5개 탭을 가진 메인 네비게이션 시스템 (홈, 타이머, 탐험, 소셜, 프로필)",
+            "통합 디자인 시스템으로 재설계된 UI 컴포넌트 (버튼, 입력 필드, 카드, 다이얼로그, 로딩)",
+            "우주 테마 위젯 및 화면 추가"
+          ]
+        },
+        "refactor": {
+          "title": "Refactor",
+          "items": [
+            "기존 레거시 위젯 컴포넌트를 새로운 디자인 시스템으로 교체",
+            "GoRouter 기반 라우팅 시스템으로 마이그레이션",
+            "텍스트 스타일 및 간격 시스템 재구성"
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "1.0.21",
       "project_type": "flutter",

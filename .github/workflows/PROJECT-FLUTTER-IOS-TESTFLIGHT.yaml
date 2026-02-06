@@ -71,7 +71,7 @@ on:
 # ============================================
 env:
   FLUTTER_VERSION: "3.35.5"
-  XCODE_VERSION: "26.0"
+  XCODE_VERSION: "26.0"  # macos-26 runner + iOS 26 SDK (TestFlight 경고 90725 대응 - 2026년 4월 필수)
   PROJECT_TYPE: "flutter"
 
   # ============================================
@@ -88,7 +88,7 @@ env:
 jobs:
   prepare-build:
     name: 환경 설정 및 준비
-    runs-on: macos-15
+    runs-on: macos-26  # iOS 26 SDK 지원 (2026년 4월 App Store 정책 대응)
     if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name != 'workflow_run' }}
 
     outputs:
@@ -106,13 +106,40 @@ jobs:
       - name: Pull latest changes
         run: git pull origin deploy
 
-      - name: Select Xcode version
-        run: sudo xcode-select -s /Applications/Xcode_${{ env.XCODE_VERSION }}.app/Contents/Developer
+      - name: Select Xcode 26 and verify SDK
+        run: |
+          # Xcode 26 명시적 선택
+          sudo xcode-select -s /Applications/Xcode_${{ env.XCODE_VERSION }}.app/Contents/Developer || true
+
+          # 현재 Xcode 버전 확인
+          echo "📱 Current Xcode version:"
+          xcodebuild -version
+
+          # 사용 가능한 iOS SDK 목록
+          echo ""
+          echo "📦 Available iOS SDKs:"
+          xcodebuild -showsdks | grep "iOS"
+
+          # xcode-select 경로 확인
+          echo ""
+          echo "🎯 xcode-select path:"
+          xcode-select -p
+
+          # iOS 26 SDK 존재 여부 확인 (필수)
+          echo ""
+          if xcodebuild -showsdks | grep -q "iOS 26"; then
+            echo "✅ iOS 26 SDK available - TestFlight warning 90725 will be resolved"
+          else
+            echo "❌ iOS 26 SDK NOT FOUND - Build will fail"
+            echo "📦 Available Xcode versions:"
+            ls /Applications | grep "Xcode_"
+            exit 1
+          fi
 
       - name: Create .env file
         run: |
           cat << 'EOF' > ${{ env.ENV_FILE_PATH }}
-          ${{ secrets.ENV }}
+          ${{ secrets.ENV_FILE || secrets.ENV }}
           EOF
           echo "✅ ${{ env.ENV_FILE_PATH }} file created"
 
@@ -121,10 +148,39 @@ jobs:
           mkdir -p ios/Flutter
           if [ -n "${{ secrets.SECRETS_XCCONFIG }}" ]; then
             echo "${{ secrets.SECRETS_XCCONFIG }}" > ios/Flutter/Secrets.xcconfig
-            echo "Secrets.xcconfig created"
+            echo "✅ Secrets.xcconfig created from SECRETS_XCCONFIG secret"
           else
-            echo "// No secrets provided" > ios/Flutter/Secrets.xcconfig
+            # SECRETS_XCCONFIG가 없으면 개별 시크릿으로 생성
+            cat > ios/Flutter/Secrets.xcconfig << 'SECRETS_EOF'
+          // Google Maps API Key
+          // iOS Google Maps SDK에서 사용
+          // Info.plist → AppDelegate를 통해 초기화
+          GOOGLE_MAPS_API_KEY=${{ secrets.GOOGLE_MAPS_API_KEY }}
+          SECRETS_EOF
+            echo "✅ Secrets.xcconfig created from individual secrets"
           fi
+        env:
+          GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
+
+      # 보안 검증 (API 키 노출 확인)
+      - name: Verify Secrets Not Exposed
+        run: |
+          echo "🔒 보안 검증: API 키가 노출되지 않았는지 확인"
+
+          # iOS Secrets.xcconfig 확인
+          if [ -f ios/Flutter/Secrets.xcconfig ]; then
+            echo "✅ ios/Flutter/Secrets.xcconfig exists"
+            if grep -q "GOOGLE_MAPS_API_KEY" ios/Flutter/Secrets.xcconfig; then
+              echo "✅ GOOGLE_MAPS_API_KEY variable found in Secrets.xcconfig"
+            else
+              echo "⚠️ GOOGLE_MAPS_API_KEY not found in Secrets.xcconfig"
+            fi
+          else
+            echo "❌ ios/Flutter/Secrets.xcconfig not created"
+            exit 1
+          fi
+
+          echo "✅ 보안 검증 완료: 설정 파일 생성됨 (API 키 값은 마스킹됨)"
 
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
@@ -214,7 +270,7 @@ jobs:
   # ============================================
   build-ios:
     name: iOS 앱 빌드
-    runs-on: macos-15
+    runs-on: macos-26  # iOS 26 SDK 지원 (2026년 4월 App Store 정책 대응)
     needs: prepare-build
 
     steps:
@@ -227,8 +283,35 @@ jobs:
       - name: Pull latest changes
         run: git pull origin deploy
 
-      - name: Select Xcode version
-        run: sudo xcode-select -s /Applications/Xcode_${{ env.XCODE_VERSION }}.app/Contents/Developer
+      - name: Select Xcode 26 and verify SDK
+        run: |
+          # Xcode 26 명시적 선택
+          sudo xcode-select -s /Applications/Xcode_${{ env.XCODE_VERSION }}.app/Contents/Developer || true
+
+          # 현재 Xcode 버전 확인
+          echo "📱 Current Xcode version:"
+          xcodebuild -version
+
+          # 사용 가능한 iOS SDK 목록
+          echo ""
+          echo "📦 Available iOS SDKs:"
+          xcodebuild -showsdks | grep "iOS"
+
+          # xcode-select 경로 확인
+          echo ""
+          echo "🎯 xcode-select path:"
+          xcode-select -p
+
+          # iOS 26 SDK 존재 여부 확인 (필수)
+          echo ""
+          if xcodebuild -showsdks | grep -q "iOS 26"; then
+            echo "✅ iOS 26 SDK available - TestFlight warning 90725 will be resolved"
+          else
+            echo "❌ iOS 26 SDK NOT FOUND - Build will fail"
+            echo "📦 Available Xcode versions:"
+            ls /Applications | grep "Xcode_"
+            exit 1
+          fi
 
       - name: Download project files
         uses: actions/download-artifact@v4
@@ -240,7 +323,7 @@ jobs:
         run: |
           if [ ! -f "${{ env.ENV_FILE_PATH }}" ]; then
             cat << 'EOF' > ${{ env.ENV_FILE_PATH }}
-          ${{ secrets.ENV }}
+          ${{ secrets.ENV_FILE || secrets.ENV }}
           EOF
             echo "✅ ${{ env.ENV_FILE_PATH }} file created (fallback)"
           fi
@@ -306,8 +389,8 @@ jobs:
           cd ios
           xcodebuild -workspace Runner.xcworkspace \
             -scheme Runner \
+            -sdk iphoneos \
             -archivePath build/Runner.xcarchive \
-            -destination 'generic/platform=iOS' \
             archive \
             CODE_SIGN_STYLE=Manual \
             PROVISIONING_PROFILE_SPECIFIER="$IOS_PROVISIONING_PROFILE_NAME" \

@@ -4,88 +4,123 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 /// 앱 전역 TextStyle 상수
 ///
 /// 사용법:
-/// - 기본: AppTextStyles.heading1
-/// - Weight 변경: AppTextStyles.heading1.bold()
-/// - 색상 추가: AppTextStyles.body1.medium().copyWith(color: Colors.red)
+/// ```dart
+/// // 기본 사용
+/// Text('제목', style: AppTextStyles.heading_24)
+/// Text('본문', style: AppTextStyles.paragraph_14)
+///
+/// // 색상 변경
+/// Text('빨간 제목', style: AppTextStyles.heading_24.copyWith(color: Colors.red))
+/// ```
+///
+/// Weight:
+/// - SemiBold: heading01, heading02, subHeading, label
+/// - Medium: paragraph, toast, callout, calloutSmall
 class AppTextStyles {
   // Private 생성자 - 인스턴스화 방지
   AppTextStyles._();
 
   // ============================================
-  // Heading Styles (제목)
+  // Heading Styles (SemiBold)
   // ============================================
 
-  /// Heading 1 - 메인 타이틀 (32sp)
-  static TextStyle get heading1 =>
-      TextStyle(fontFamily: 'Pretendard-Regular', fontSize: 32.sp);
+  /// SemiBold28 - 초대 코드 (28px SemiBold)
+  /// Line Height: 100%, Letter Spacing: -0.32px
+  static TextStyle get semibold28 => TextStyle(
+    fontFamily: 'Pretendard-SemiBold',
+    fontSize: 28.sp,
+    height: 1.0, // 100% line height
+    letterSpacing: -0.32,
+  );
 
-  /// Heading 2 - 섹션 제목 (28sp)
-  static TextStyle get heading2 =>
-      TextStyle(fontFamily: 'Pretendard-Regular', fontSize: 28.sp);
+  /// Heading01 - 메인 타이틀 (24px SemiBold)
+  /// Line Height: 100%, Letter Spacing: -0.32px
+  static TextStyle get heading_24 => TextStyle(
+    fontFamily: 'Pretendard-SemiBold',
+    fontSize: 24.sp,
+    height: 1.0, // 100% line height
+    letterSpacing: -0.32,
+  );
 
-  /// Heading 3 - 서브 제목 (24sp)
-  static TextStyle get heading3 =>
-      TextStyle(fontFamily: 'Pretendard-Regular', fontSize: 24.sp);
+  /// Heading02 - 섹션 제목 (20px SemiBold)
+  /// Line Height: 100%, Letter Spacing: -0.32px
+  static TextStyle get heading_20 => TextStyle(
+    fontFamily: 'Pretendard-SemiBold',
+    fontSize: 20.sp,
+    height: 1.0, // 100% line height
+    letterSpacing: -0.32,
+  );
 
-  /// Heading 4 - 작은 제목 (20sp)
-  static TextStyle get heading4 =>
-      TextStyle(fontFamily: 'Pretendard-Regular', fontSize: 20.sp);
+  /// SubHeading - 서브 제목 (18px SemiBold)
+  /// Line Height: 100%, Letter Spacing: -0.32px
+  static TextStyle get subHeading_18 => TextStyle(
+    fontFamily: 'Pretendard-SemiBold',
+    fontSize: 18.sp,
+    height: 1.0, // 100% line height
+    letterSpacing: -0.32,
+  );
 
   // ============================================
-  // Body Styles (본문)
+  // Body Styles (Medium)
   // ============================================
 
-  /// Body 1 - 본문 강조 (16sp)
-  static TextStyle get body1 =>
-      TextStyle(fontFamily: 'Pretendard-Regular', fontSize: 16.sp);
+  /// Label - 라벨, 강조 텍스트 (16px SemiBold)
+  /// Line Height: 140%, Letter Spacing: -0.32px
+  static TextStyle get label_16 => TextStyle(
+    fontFamily: 'Pretendard-SemiBold',
+    fontSize: 16.sp,
+    height: 1.0, // 140% line height
+    letterSpacing: -0.32,
+  );
 
-  /// Body 2 - 본문 기본 (14sp)
-  static TextStyle get body2 =>
-      TextStyle(fontFamily: 'Pretendard-Regular', fontSize: 14.sp);
+  static TextStyle get label16Medium => TextStyle(
+    fontFamily: 'Pretendard-Medium',
+    fontSize: 16.sp,
+    height: 1.0, // 140% line height
+    letterSpacing: -0.32,
+  );
+
+  /// Paragraph - 본문 (14px Medium)
+  /// Line Height: 140%, Letter Spacing: -0.32px
+  static TextStyle get paragraph_14 => TextStyle(
+    fontFamily: 'Pretendard-Medium',
+    fontSize: 14.sp,
+    height: 1.4, // 140% line height
+    letterSpacing: -0.32,
+  );
+
+  static TextStyle get paragraph_14_100 => TextStyle(
+    fontFamily: 'Pretendard-Medium',
+    fontSize: 14.sp,
+    height: 1.0, // 100% line height
+    letterSpacing: -0.32,
+  );
+
+  static TextStyle get paragraph14Semibold => TextStyle(
+    fontFamily: 'Pretendard-SemiBold',
+    fontSize: 14.sp,
+    height: 1.0, // 100% line height
+    letterSpacing: -0.32,
+  );
 
   // ============================================
-  // Small Styles (작은 텍스트)
+  // Small Styles (Medium)
   // ============================================
 
-  /// Caption - 설명, 라벨 (12sp)
-  static TextStyle get caption =>
-      TextStyle(fontFamily: 'Pretendard-Regular', fontSize: 12.sp);
+  /// Callout / Tag - 작은 라벨, 태그 (12px Medium)
+  /// Line Height: 140%, Letter Spacing: -0.32px
 
-  /// Overline - 작은 라벨 (10sp)
-  static TextStyle get overline =>
-      TextStyle(fontFamily: 'Pretendard-Regular', fontSize: 10.sp);
-}
+  static TextStyle get tag_12 => TextStyle(
+    fontFamily: 'Pretendard-Medium',
+    fontSize: 12.sp,
+    height: 1.0, // 100% line height
+    letterSpacing: -0.32,
+  );
 
-/// TextStyle Extension - Pretendard Weight 변경 메서드
-///
-/// 사용 예시:
-/// - AppTextStyles.heading1.bold()
-/// - AppTextStyles.body1.medium()
-extension TextStyleExtension on TextStyle {
-  /// Thin (100) - 장식적 대형 텍스트
-  TextStyle thin() => copyWith(fontFamily: 'Pretendard-Thin');
-
-  /// ExtraLight (200) - 매우 얇은 텍스트
-  TextStyle extraLight() => copyWith(fontFamily: 'Pretendard-ExtraLight');
-
-  /// Light (300) - 부드러운 제목
-  TextStyle light() => copyWith(fontFamily: 'Pretendard-Light');
-
-  /// Regular (400) - 기본 본문
-  TextStyle regular() => copyWith(fontFamily: 'Pretendard-Regular');
-
-  /// Medium (500) - 강조 본문
-  TextStyle medium() => copyWith(fontFamily: 'Pretendard-Medium');
-
-  /// SemiBold (600) - 서브 제목
-  TextStyle semiBold() => copyWith(fontFamily: 'Pretendard-SemiBold');
-
-  /// Bold (700) - 강조 제목
-  TextStyle bold() => copyWith(fontFamily: 'Pretendard-Bold');
-
-  /// ExtraBold (800) - 매우 강한 강조
-  TextStyle extraBold() => copyWith(fontFamily: 'Pretendard-ExtraBold');
-
-  /// Black (900) - 특별 강조
-  TextStyle black() => copyWith(fontFamily: 'Pretendard-Black');
+  static TextStyle get tag_10 => TextStyle(
+    fontFamily: 'Pretendard-Medium',
+    fontSize: 10.sp,
+    height: 1.0, // 100% line height
+    letterSpacing: -0.32,
+  );
 }

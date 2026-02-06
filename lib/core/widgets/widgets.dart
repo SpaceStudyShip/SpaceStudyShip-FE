@@ -1,54 +1,54 @@
-/// 우주공부선 공용 위젯 라이브러리
+/// Space Study Ship - Common Widgets
 ///
-/// Toss UX 원칙이 적용된 위젯 모음입니다.
+/// 앱 전역에서 사용하는 공통 위젯 모음
 ///
-/// **사용 방법:**
+/// **사용법**:
 /// ```dart
 /// import 'package:space_study_ship/core/widgets/widgets.dart';
-///
-/// // 버튼
-/// SpaceButton(text: '시작하기', onPressed: () {})
-///
-/// // 입력
-/// SpaceTextField(hintText: '이름')
-///
-/// // 카드
-/// SpaceCard(child: Text('내용'))
-///
-/// // 다이얼로그
-/// SpaceDialog.show(context: context, title: '알림')
-///
-/// // 스낵바
-/// SpaceSnackBar.success(context, '저장했어요')
-///
-/// // 로딩
-/// SpaceLoading()
-///
-/// // 스켈레톤
-/// SpaceSkeleton.listTile()
-///
-/// // 빈 상태
-/// SpaceEmptyState(icon: Icons.inbox, title: '데이터 없음')
 /// ```
 library;
 
-// Buttons
-export 'buttons/space_button.dart';
+// ============================================
+// Buttons - 버튼 위젯
+// ============================================
+export 'buttons/app_button.dart';
 
-// Inputs
-export 'inputs/space_text_field.dart';
-export 'inputs/formatters/input_formatters.dart';
+// ============================================
+// Inputs - 입력 위젯
+// ============================================
+export 'inputs/app_text_field.dart';
 
-// Cards
-export 'cards/space_card.dart';
+// ============================================
+// Cards - 카드 위젯
+// ============================================
+export 'cards/app_card.dart';
 
-// Dialogs
-export 'dialogs/space_dialog.dart';
+// ============================================
+// Feedback - 피드백 위젯
+// ============================================
+export 'feedback/app_loading.dart';
+export 'feedback/app_skeleton.dart';
+export 'feedback/app_snackbar.dart';
 
-// Feedback
-export 'feedback/space_loading.dart';
-export 'feedback/space_skeleton.dart';
-export 'feedback/space_snackbar.dart';
+// ============================================
+// Dialogs - 다이얼로그 위젯
+// ============================================
+export 'dialogs/app_dialog.dart';
 
-// States
-export 'states/space_empty_state.dart';
+// ============================================
+// States - 상태 표시 위젯
+// ============================================
+export 'states/app_empty_state.dart';
+
+// ============================================
+// Space Theme - 우주 테마 위젯
+// ============================================
+export 'space/badge_card.dart';
+export 'space/booster_banner.dart';
+export 'space/fuel_gauge.dart';
+export 'space/ranking_item.dart';
+export 'space/spaceship_card.dart';
+export 'space/status_card.dart';
+export 'space/streak_badge.dart';
+export 'space/timer_display.dart';
+export 'space/todo_item.dart';

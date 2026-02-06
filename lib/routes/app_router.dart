@@ -239,10 +239,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text(
-              '🚀',
-              style: TextStyle(fontSize: 64),
-            ),
+            const Text('🚀', style: TextStyle(fontSize: 64)),
             const SizedBox(height: 16),
             Text(
               '페이지를 찾을 수 없습니다',
@@ -267,38 +264,27 @@ final appRouterProvider = Provider<GoRouter>((ref) {
 
 /// 임시 플레이스홀더 스크린
 class PlaceholderScreen extends StatelessWidget {
-  const PlaceholderScreen({
-    super.key,
-    required this.title,
-  });
+  const PlaceholderScreen({super.key, required this.title});
 
   final String title;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(title),
-      ),
+      appBar: AppBar(title: Text(title)),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text(
-              '🛠️',
-              style: TextStyle(fontSize: 64),
-            ),
+            const Text('🛠️', style: TextStyle(fontSize: 64)),
             const SizedBox(height: 16),
-            Text(
-              title,
-              style: Theme.of(context).textTheme.headlineSmall,
-            ),
+            Text(title, style: Theme.of(context).textTheme.headlineSmall),
             const SizedBox(height: 8),
             Text(
               '개발 중...',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Colors.grey,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.bodyMedium?.copyWith(color: Colors.grey),
             ),
           ],
         ),

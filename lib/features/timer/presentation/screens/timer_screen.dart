@@ -27,11 +27,7 @@ class TimerScreen extends StatelessWidget {
         ),
         actions: [
           IconButton(
-            icon: Icon(
-              Icons.history,
-              color: Colors.white,
-              size: 24.w,
-            ),
+            icon: Icon(Icons.history, color: Colors.white, size: 24.w),
             onPressed: () {
               // TODO: 타이머 기록 화면
             },
@@ -79,10 +75,7 @@ class TimerScreen extends StatelessWidget {
               decoration: BoxDecoration(
                 color: AppColors.spaceSurface,
                 borderRadius: BorderRadius.circular(12.r),
-                border: Border.all(
-                  color: AppColors.spaceDivider,
-                  width: 1,
-                ),
+                border: Border.all(color: AppColors.spaceDivider, width: 1),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,

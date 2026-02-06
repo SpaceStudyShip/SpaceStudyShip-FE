@@ -47,11 +47,7 @@ class SocialScreen extends StatelessWidget {
           ),
         ),
         body: TabBarView(
-          children: [
-            _buildFriendsTab(),
-            _buildGroupsTab(),
-            _buildRankingTab(),
-          ],
+          children: [_buildFriendsTab(), _buildGroupsTab(), _buildRankingTab()],
         ),
       ),
     );
@@ -62,10 +58,7 @@ class SocialScreen extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(
-            '👥',
-            style: TextStyle(fontSize: 64.sp),
-          ),
+          Text('👥', style: TextStyle(fontSize: 64.sp)),
           SizedBox(height: 16.h),
           Text(
             '아직 친구가 없어요',
@@ -94,10 +87,7 @@ class SocialScreen extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(
-            '🏠',
-            style: TextStyle(fontSize: 64.sp),
-          ),
+          Text('🏠', style: TextStyle(fontSize: 64.sp)),
           SizedBox(height: 16.h),
           Text(
             '참여 중인 그룹이 없어요',
@@ -126,10 +116,7 @@ class SocialScreen extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(
-            '🏆',
-            style: TextStyle(fontSize: 64.sp),
-          ),
+          Text('🏆', style: TextStyle(fontSize: 64.sp)),
           SizedBox(height: 16.h),
           Text(
             '랭킹 준비 중',

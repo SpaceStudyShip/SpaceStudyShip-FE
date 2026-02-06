@@ -24,10 +24,7 @@ class LoginScreen extends StatelessWidget {
               const Spacer(flex: 2),
 
               // 로고 및 타이틀
-              Text(
-                '🚀',
-                style: TextStyle(fontSize: 64.sp),
-              ),
+              Text('🚀', style: TextStyle(fontSize: 64.sp)),
               SizedBox(height: 16.h),
               Text(
                 '우주공부선에 오신 것을\n환영합니다!',

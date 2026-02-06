@@ -8,10 +8,7 @@ import '../core/constants/app_colors.dart';
 ///
 /// StatefulShellRoute와 함께 사용되어 탭 간 상태를 유지합니다.
 class MainShell extends StatelessWidget {
-  const MainShell({
-    super.key,
-    required this.navigationShell,
-  });
+  const MainShell({super.key, required this.navigationShell});
 
   final StatefulNavigationShell navigationShell;
 
@@ -23,10 +20,7 @@ class MainShell extends StatelessWidget {
         decoration: BoxDecoration(
           color: AppColors.spaceBackground,
           border: Border(
-            top: BorderSide(
-              color: AppColors.spaceDivider,
-              width: 1,
-            ),
+            top: BorderSide(color: AppColors.spaceDivider, width: 1),
           ),
         ),
         child: SafeArea(

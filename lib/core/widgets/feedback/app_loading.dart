@@ -65,7 +65,8 @@ class AppLoading extends StatefulWidget {
   State<AppLoading> createState() => _AppLoadingState();
 }
 
-class _AppLoadingState extends State<AppLoading> with SingleTickerProviderStateMixin {
+class _AppLoadingState extends State<AppLoading>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
 
   @override

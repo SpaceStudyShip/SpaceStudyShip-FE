@@ -274,7 +274,9 @@ class _AppTextFieldState extends State<AppTextField> {
           duration: TossDesignTokens.animationFast,
           curve: TossDesignTokens.smoothCurve,
           decoration: BoxDecoration(
-            color: widget.enabled ? AppColors.spaceSurface : AppColors.spaceBackground,
+            color: widget.enabled
+                ? AppColors.spaceSurface
+                : AppColors.spaceBackground,
             borderRadius: AppRadius.large,
             border: Border.all(
               color: _getBorderColor(hasError),
@@ -315,7 +317,9 @@ class _AppTextFieldState extends State<AppTextField> {
                   ? Icon(
                       widget.prefixIcon,
                       size: 20.w,
-                      color: _isFocused ? AppColors.primary : AppColors.textTertiary,
+                      color: _isFocused
+                          ? AppColors.primary
+                          : AppColors.textTertiary,
                     )
                   : null,
               suffixIcon: _buildSuffixIcon(),

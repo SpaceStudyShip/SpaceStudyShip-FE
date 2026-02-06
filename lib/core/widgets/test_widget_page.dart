@@ -300,21 +300,36 @@ class _TestWidgetPageState extends State<TestWidgetPage> {
               children: [
                 const AppLoading(type: AppLoadingType.spinner),
                 SizedBox(height: 8.h),
-                Text('Spinner', style: AppTextStyles.tag_12.copyWith(color: AppColors.textSecondary)),
+                Text(
+                  'Spinner',
+                  style: AppTextStyles.tag_12.copyWith(
+                    color: AppColors.textSecondary,
+                  ),
+                ),
               ],
             ),
             Column(
               children: [
                 const AppLoading(type: AppLoadingType.dots),
                 SizedBox(height: 8.h),
-                Text('Dots', style: AppTextStyles.tag_12.copyWith(color: AppColors.textSecondary)),
+                Text(
+                  'Dots',
+                  style: AppTextStyles.tag_12.copyWith(
+                    color: AppColors.textSecondary,
+                  ),
+                ),
               ],
             ),
             Column(
               children: [
                 const AppLoading(type: AppLoadingType.progress, progress: 0.7),
                 SizedBox(height: 8.h),
-                Text('Progress', style: AppTextStyles.tag_12.copyWith(color: AppColors.textSecondary)),
+                Text(
+                  'Progress',
+                  style: AppTextStyles.tag_12.copyWith(
+                    color: AppColors.textSecondary,
+                  ),
+                ),
               ],
             ),
           ],
@@ -387,12 +402,7 @@ class _TestWidgetPageState extends State<TestWidgetPage> {
   }
 
   Widget _dialogButton(String label, VoidCallback onTap) {
-    return AppButton(
-      text: label,
-      width: 80.w,
-      height: 40.h,
-      onPressed: onTap,
-    );
+    return AppButton(text: label, width: 80.w, height: 40.h, onPressed: onTap);
   }
 
   // ============================================
@@ -631,10 +641,7 @@ class _TestWidgetPageState extends State<TestWidgetPage> {
         SizedBox(height: 24.h),
 
         // Ranking Items
-        Text(
-          '랭킹',
-          style: AppTextStyles.label_16.copyWith(color: Colors.white),
-        ),
+        Text('랭킹', style: AppTextStyles.label_16.copyWith(color: Colors.white)),
         SizedBox(height: 12.h),
         RankingItem(
           rank: 1,

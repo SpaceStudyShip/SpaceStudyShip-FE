@@ -215,8 +215,9 @@ class _AppButtonState extends State<AppButton> {
               widget.onPressed!();
             }
           : null,
-      onTapCancel:
-          widget.onPressed != null && !widget.isLoading ? () => setState(() => _isPressed = false) : null,
+      onTapCancel: widget.onPressed != null && !widget.isLoading
+          ? () => setState(() => _isPressed = false)
+          : null,
       child: AnimatedScale(
         scale: _isPressed ? TossDesignTokens.buttonTapScale : 1.0,
         duration: TossDesignTokens.animationFast,
@@ -230,11 +231,16 @@ class _AppButtonState extends State<AppButton> {
             color: _effectiveBackgroundColor,
             borderRadius: _effectiveBorderRadius,
             border: widget.showBorder
-                ? Border.all(color: _effectiveBorderColor, width: widget.borderWidth)
+                ? Border.all(
+                    color: _effectiveBorderColor,
+                    width: widget.borderWidth,
+                  )
                 : null,
           ),
           child: Center(
-            child: widget.isLoading ? _buildLoadingIndicator() : _buildButtonContent(),
+            child: widget.isLoading
+                ? _buildLoadingIndicator()
+                : _buildButtonContent(),
           ),
         ),
       ),
@@ -298,7 +304,8 @@ class _AppButtonState extends State<AppButton> {
 
     // 아이콘 + 텍스트
     final iconWidget = widget.icon!;
-    final isSpaceBetween = _effectiveContentAlignment == MainAxisAlignment.spaceBetween;
+    final isSpaceBetween =
+        _effectiveContentAlignment == MainAxisAlignment.spaceBetween;
 
     return Row(
       mainAxisAlignment: _effectiveContentAlignment,

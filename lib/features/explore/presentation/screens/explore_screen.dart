@@ -40,10 +40,7 @@ class ExploreScreen extends StatelessWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
-                  '⛽',
-                  style: TextStyle(fontSize: 14.sp),
-                ),
+                Text('⛽', style: TextStyle(fontSize: 14.sp)),
                 SizedBox(width: 4.w),
                 Text(
                   '0.0통',
@@ -83,10 +80,7 @@ class ExploreScreen extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
-                      '🌍',
-                      style: TextStyle(fontSize: 64.sp),
-                    ),
+                    Text('🌍', style: TextStyle(fontSize: 64.sp)),
                     SizedBox(height: 16.h),
                     Text(
                       '지구',
@@ -129,17 +123,11 @@ class ExploreScreen extends StatelessWidget {
               decoration: BoxDecoration(
                 color: AppColors.spaceSurface,
                 borderRadius: BorderRadius.circular(12.r),
-                border: Border.all(
-                  color: AppColors.spaceDivider,
-                  width: 1,
-                ),
+                border: Border.all(color: AppColors.spaceDivider, width: 1),
               ),
               child: Row(
                 children: [
-                  Text(
-                    '🔒',
-                    style: TextStyle(fontSize: 24.sp),
-                  ),
+                  Text('🔒', style: TextStyle(fontSize: 24.sp)),
                   SizedBox(width: 12.w),
                   Expanded(
                     child: Column(

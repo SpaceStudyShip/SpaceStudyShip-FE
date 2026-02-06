@@ -69,19 +69,13 @@ class ProfileScreen extends StatelessWidget {
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             gradient: LinearGradient(
-              colors: [
-                AppColors.primary,
-                AppColors.secondary,
-              ],
+              colors: [AppColors.primary, AppColors.secondary],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
           ),
           child: Center(
-            child: Text(
-              '👨‍🚀',
-              style: TextStyle(fontSize: 40.sp),
-            ),
+            child: Text('👨‍🚀', style: TextStyle(fontSize: 40.sp)),
           ),
         ),
         SizedBox(height: 16.h),
@@ -123,26 +117,15 @@ class ProfileScreen extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.spaceSurface,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(
-          color: AppColors.spaceDivider,
-          width: 1,
-        ),
+        border: Border.all(color: AppColors.spaceDivider, width: 1),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           _buildStatItem('총 공부', '0시간'),
-          Container(
-            width: 1,
-            height: 40.h,
-            color: AppColors.spaceDivider,
-          ),
+          Container(width: 1, height: 40.h, color: AppColors.spaceDivider),
           _buildStatItem('연속', '0일'),
-          Container(
-            width: 1,
-            height: 40.h,
-            color: AppColors.spaceDivider,
-          ),
+          Container(width: 1, height: 40.h, color: AppColors.spaceDivider),
           _buildStatItem('배지', '0개'),
         ],
       ),
@@ -207,19 +190,12 @@ class ProfileScreen extends StatelessWidget {
         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
         decoration: BoxDecoration(
           border: Border(
-            bottom: BorderSide(
-              color: AppColors.spaceDivider,
-              width: 1,
-            ),
+            bottom: BorderSide(color: AppColors.spaceDivider, width: 1),
           ),
         ),
         child: Row(
           children: [
-            Icon(
-              icon,
-              size: 24.w,
-              color: AppColors.textSecondary,
-            ),
+            Icon(icon, size: 24.w, color: AppColors.textSecondary),
             SizedBox(width: 16.w),
             Expanded(
               child: Text(

@@ -126,7 +126,8 @@ class _SpaceshipCardState extends State<SpaceshipCard> {
               color: _borderColor,
               width: widget.isSelected ? 2.5 : 1.5,
             ),
-            boxShadow: widget.isUnlocked && widget.rarity == SpaceshipRarity.legendary
+            boxShadow:
+                widget.isUnlocked && widget.rarity == SpaceshipRarity.legendary
                 ? [
                     BoxShadow(
                       color: AppColors.accentGold.withValues(alpha: 0.3),
@@ -151,20 +152,13 @@ class _SpaceshipCardState extends State<SpaceshipCard> {
                     ),
                   ),
                   if (!widget.isUnlocked)
-                    Icon(
-                      Icons.lock,
-                      size: 20.w,
-                      color: AppColors.textTertiary,
-                    ),
+                    Icon(Icons.lock, size: 20.w, color: AppColors.textTertiary),
                   // 애니메이션 마크
                   if (widget.isAnimated && widget.isUnlocked)
                     Positioned(
                       top: 0,
                       right: 0,
-                      child: Text(
-                        '✨',
-                        style: TextStyle(fontSize: 12.w),
-                      ),
+                      child: Text('✨', style: TextStyle(fontSize: 12.w)),
                     ),
                 ],
               ),
@@ -175,7 +169,8 @@ class _SpaceshipCardState extends State<SpaceshipCard> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  if (widget.isUnlocked && widget.rarity != SpaceshipRarity.normal)
+                  if (widget.isUnlocked &&
+                      widget.rarity != SpaceshipRarity.normal)
                     Container(
                       width: 6.w,
                       height: 6.w,
@@ -189,7 +184,9 @@ class _SpaceshipCardState extends State<SpaceshipCard> {
                     child: Text(
                       widget.isUnlocked ? widget.name : '???',
                       style: AppTextStyles.tag_12.copyWith(
-                        color: widget.isUnlocked ? Colors.white : AppColors.textTertiary,
+                        color: widget.isUnlocked
+                            ? Colors.white
+                            : AppColors.textTertiary,
                       ),
                       textAlign: TextAlign.center,
                       maxLines: 1,
@@ -202,11 +199,7 @@ class _SpaceshipCardState extends State<SpaceshipCard> {
               // 선택 체크 표시
               if (widget.isSelected) ...[
                 SizedBox(height: 4.h),
-                Icon(
-                  Icons.check_circle,
-                  size: 16.w,
-                  color: AppColors.primary,
-                ),
+                Icon(Icons.check_circle, size: 16.w, color: AppColors.primary),
               ],
             ],
           ),

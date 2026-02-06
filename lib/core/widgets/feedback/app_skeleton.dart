@@ -36,11 +36,7 @@ class AppSkeleton extends StatefulWidget {
 
   /// 원형 아바타 스켈레톤
   factory AppSkeleton.avatar({double size = 48}) {
-    return AppSkeleton(
-      width: size,
-      height: size,
-      shape: BoxShape.circle,
-    );
+    return AppSkeleton(width: size, height: size, shape: BoxShape.circle);
   }
 
   /// 텍스트 줄 스켈레톤
@@ -53,7 +49,9 @@ class AppSkeleton extends StatefulWidget {
         return Padding(
           padding: EdgeInsets.only(bottom: isLast ? 0 : 8.h),
           child: AppSkeleton(
-            width: isLast && lines > 1 ? (width ?? double.infinity) * 0.7 : width,
+            width: isLast && lines > 1
+                ? (width ?? double.infinity) * 0.7
+                : width,
             height: 14.h,
             borderRadius: AppRadius.small,
           ),
@@ -118,7 +116,8 @@ class AppSkeleton extends StatefulWidget {
   State<AppSkeleton> createState() => _AppSkeletonState();
 }
 
-class _AppSkeletonState extends State<AppSkeleton> with SingleTickerProviderStateMixin {
+class _AppSkeletonState extends State<AppSkeleton>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
 
@@ -151,7 +150,9 @@ class _AppSkeletonState extends State<AppSkeleton> with SingleTickerProviderStat
           height: widget.height,
           decoration: BoxDecoration(
             shape: widget.shape,
-            borderRadius: widget.shape == BoxShape.rectangle ? widget.borderRadius ?? AppRadius.medium : null,
+            borderRadius: widget.shape == BoxShape.rectangle
+                ? widget.borderRadius ?? AppRadius.medium
+                : null,
             gradient: LinearGradient(
               begin: Alignment(_animation.value - 1, 0),
               end: Alignment(_animation.value + 1, 0),

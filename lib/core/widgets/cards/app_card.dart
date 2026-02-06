@@ -173,7 +173,8 @@ class _AppCardState extends State<AppCard> {
 
   @override
   Widget build(BuildContext context) {
-    final isInteractive = widget.enabled && (widget.onTap != null || widget.onLongPress != null);
+    final isInteractive =
+        widget.enabled && (widget.onTap != null || widget.onLongPress != null);
 
     Widget card = AnimatedScale(
       scale: _isPressed ? TossDesignTokens.cardTapScale : 1.0,

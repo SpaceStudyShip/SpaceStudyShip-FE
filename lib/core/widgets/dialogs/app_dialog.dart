@@ -145,10 +145,7 @@ class AppDialog extends StatelessWidget {
             parent: animation,
             curve: TossDesignTokens.springCurve,
           ),
-          child: FadeTransition(
-            opacity: animation,
-            child: child,
-          ),
+          child: FadeTransition(opacity: animation, child: child),
         );
       },
     );
@@ -188,10 +185,7 @@ class AppDialog extends StatelessWidget {
             parent: animation,
             curve: TossDesignTokens.springCurve,
           ),
-          child: FadeTransition(
-            opacity: animation,
-            child: child,
-          ),
+          child: FadeTransition(opacity: animation, child: child),
         );
       },
     );
@@ -233,9 +227,7 @@ class AppDialog extends StatelessWidget {
               // 제목
               Text(
                 title,
-                style: AppTextStyles.heading_20.copyWith(
-                  color: Colors.white,
-                ),
+                style: AppTextStyles.heading_20.copyWith(color: Colors.white),
                 textAlign: TextAlign.center,
               ),
 
@@ -291,11 +283,7 @@ class AppDialog extends StatelessWidget {
         color: color.withValues(alpha: 0.15),
         shape: BoxShape.circle,
       ),
-      child: Icon(
-        icon,
-        size: 32.w,
-        color: color,
-      ),
+      child: Icon(icon, size: 32.w, color: color),
     );
   }
 
@@ -324,8 +312,12 @@ class AppDialog extends StatelessWidget {
           Expanded(
             child: AppButton(
               text: confirmText,
-              backgroundColor: isDestructive ? AppColors.error : AppColors.primary,
-              borderColor: isDestructive ? AppColors.error : AppColors.primaryDark,
+              backgroundColor: isDestructive
+                  ? AppColors.error
+                  : AppColors.primary,
+              borderColor: isDestructive
+                  ? AppColors.error
+                  : AppColors.primaryDark,
               height: 48.h,
               onPressed: () {
                 Navigator.of(context).pop();

@@ -104,10 +104,7 @@ class _RankingItemState extends State<RankingItem> {
         duration: TossDesignTokens.animationFast,
         curve: TossDesignTokens.springCurve,
         child: Container(
-          padding: EdgeInsets.symmetric(
-            horizontal: 16.w,
-            vertical: 12.h,
-          ),
+          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
           decoration: BoxDecoration(
             color: widget.isCurrentUser
                 ? AppColors.primary.withValues(alpha: 0.15)
@@ -149,7 +146,9 @@ class _RankingItemState extends State<RankingItem> {
                   color: AppColors.spaceElevated,
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: widget.rank <= 3 ? _rankColor : AppColors.spaceDivider,
+                    color: widget.rank <= 3
+                        ? _rankColor
+                        : AppColors.spaceDivider,
                     width: 2,
                   ),
                 ),
@@ -209,11 +208,9 @@ class _RankingItemState extends State<RankingItem> {
                         widget.rank == 1
                             ? '이번 주 1등!'
                             : widget.rank == 2
-                                ? '조금만 더!'
-                                : '분발하세요!',
-                        style: AppTextStyles.tag_12.copyWith(
-                          color: _rankColor,
-                        ),
+                            ? '조금만 더!'
+                            : '분발하세요!',
+                        style: AppTextStyles.tag_12.copyWith(color: _rankColor),
                       ),
                   ],
                 ),
@@ -226,7 +223,9 @@ class _RankingItemState extends State<RankingItem> {
                   Text(
                     _studyTimeText,
                     style: AppTextStyles.paragraph_14.copyWith(
-                      color: widget.rank <= 3 ? _rankColor : AppColors.textSecondary,
+                      color: widget.rank <= 3
+                          ? _rankColor
+                          : AppColors.textSecondary,
                       fontWeight: FontWeight.w600,
                     ),
                   ),

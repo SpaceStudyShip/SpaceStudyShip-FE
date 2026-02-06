@@ -146,19 +146,13 @@ class AppSnackBar {
       content: Row(
         children: [
           if (icon != null) ...[
-            Icon(
-              icon,
-              size: 20.w,
-              color: iconColor ?? Colors.white,
-            ),
+            Icon(icon, size: 20.w, color: iconColor ?? Colors.white),
             SizedBox(width: 12.w),
           ],
           Expanded(
             child: Text(
               message,
-              style: AppTextStyles.paragraph_14.copyWith(
-                color: Colors.white,
-              ),
+              style: AppTextStyles.paragraph_14.copyWith(color: Colors.white),
             ),
           ),
         ],
@@ -166,17 +160,9 @@ class AppSnackBar {
       duration: duration ?? _defaultDuration,
       behavior: SnackBarBehavior.floating,
       backgroundColor: AppColors.spaceElevated,
-      shape: RoundedRectangleBorder(
-        borderRadius: AppRadius.snackbar,
-      ),
-      margin: EdgeInsets.symmetric(
-        horizontal: 16.w,
-        vertical: 16.h,
-      ),
-      padding: EdgeInsets.symmetric(
-        horizontal: 16.w,
-        vertical: 14.h,
-      ),
+      shape: RoundedRectangleBorder(borderRadius: AppRadius.snackbar),
+      margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
       action: action,
     );
 

@@ -105,11 +105,6 @@ class TimerDisplay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      _formattedTime,
-      style: _textStyle.copyWith(
-        color: _textColor,
-      ),
-    );
+    return Text(_formattedTime, style: _textStyle.copyWith(color: _textColor));
   }
 }

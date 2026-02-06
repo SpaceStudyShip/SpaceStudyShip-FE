@@ -97,10 +97,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(
-                          page.emoji,
-                          style: TextStyle(fontSize: 80.sp),
-                        ),
+                        Text(page.emoji, style: TextStyle(fontSize: 80.sp)),
                         SizedBox(height: 32.h),
                         Text(
                           page.title,

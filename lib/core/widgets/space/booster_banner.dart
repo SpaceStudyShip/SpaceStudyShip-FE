@@ -54,10 +54,7 @@ class BoosterBanner extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: EdgeInsets.symmetric(
-          horizontal: 16.w,
-          vertical: 12.h,
-        ),
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
         decoration: BoxDecoration(
           color: AppColors.accentGold.withValues(alpha: 0.15),
           borderRadius: AppRadius.large,
@@ -69,10 +66,7 @@ class BoosterBanner extends StatelessWidget {
         child: Row(
           children: [
             // 로켓 아이콘
-            Text(
-              '🚀',
-              style: TextStyle(fontSize: 20.w),
-            ),
+            Text('🚀', style: TextStyle(fontSize: 20.w)),
             SizedBox(width: 8.w),
 
             // 메시지
@@ -98,10 +92,7 @@ class BoosterBanner extends StatelessWidget {
 
             // 남은 시간
             Container(
-              padding: EdgeInsets.symmetric(
-                horizontal: 8.w,
-                vertical: 4.h,
-              ),
+              padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
               decoration: BoxDecoration(
                 color: AppColors.accentGold.withValues(alpha: 0.2),
                 borderRadius: AppRadius.small,

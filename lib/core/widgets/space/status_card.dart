@@ -63,10 +63,7 @@ class StatusCard extends StatelessWidget {
           // 현재 위치
           Row(
             children: [
-              Text(
-                '🌍',
-                style: TextStyle(fontSize: 18.w),
-              ),
+              Text('🌍', style: TextStyle(fontSize: 18.w)),
               SizedBox(width: 8.w),
               Text(
                 '현재 위치: ',
@@ -75,17 +72,12 @@ class StatusCard extends StatelessWidget {
                 ),
               ),
               if (locationFlag != null) ...[
-                Text(
-                  locationFlag!,
-                  style: TextStyle(fontSize: 16.w),
-                ),
+                Text(locationFlag!, style: TextStyle(fontSize: 16.w)),
                 SizedBox(width: 4.w),
               ],
               Text(
                 location,
-                style: AppTextStyles.label_16.copyWith(
-                  color: Colors.white,
-                ),
+                style: AppTextStyles.label_16.copyWith(color: Colors.white),
               ),
             ],
           ),

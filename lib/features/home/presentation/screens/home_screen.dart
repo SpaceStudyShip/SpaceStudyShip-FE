@@ -85,10 +85,7 @@ class HomeScreen extends StatelessWidget {
         children: [
           Row(
             children: [
-              Text(
-                '⛽',
-                style: TextStyle(fontSize: 24.sp),
-              ),
+              Text('⛽', style: TextStyle(fontSize: 24.sp)),
               SizedBox(width: 8.w),
               Text(
                 '보유 연료',
@@ -140,17 +137,11 @@ class HomeScreen extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.spaceSurface,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(
-          color: AppColors.spaceDivider,
-          width: 1,
-        ),
+        border: Border.all(color: AppColors.spaceDivider, width: 1),
       ),
       child: Column(
         children: [
-          Text(
-            '📝',
-            style: TextStyle(fontSize: 40.sp),
-          ),
+          Text('📝', style: TextStyle(fontSize: 40.sp)),
           SizedBox(height: 12.h),
           Text(
             '오늘의 할 일이 없어요',
@@ -180,17 +171,11 @@ class HomeScreen extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.spaceSurface,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(
-          color: AppColors.spaceDivider,
-          width: 1,
-        ),
+        border: Border.all(color: AppColors.spaceDivider, width: 1),
       ),
       child: Column(
         children: [
-          Text(
-            '🌟',
-            style: TextStyle(fontSize: 40.sp),
-          ),
+          Text('🌟', style: TextStyle(fontSize: 40.sp)),
           SizedBox(height: 12.h),
           Text(
             '아직 활동 기록이 없어요',

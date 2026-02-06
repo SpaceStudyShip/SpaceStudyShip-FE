@@ -135,9 +135,7 @@ class AppEmptyState extends StatelessWidget {
             // 제목
             Text(
               title,
-              style: AppTextStyles.heading_20.copyWith(
-                color: Colors.white,
-              ),
+              style: AppTextStyles.heading_20.copyWith(color: Colors.white),
               textAlign: TextAlign.center,
             ),
 

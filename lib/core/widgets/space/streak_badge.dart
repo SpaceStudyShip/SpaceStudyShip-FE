@@ -99,8 +99,4 @@ class StreakBadge extends StatelessWidget {
   }
 }
 
-enum StreakBadgeSize {
-  small,
-  medium,
-  large,
-}
+enum StreakBadgeSize { small, medium, large }

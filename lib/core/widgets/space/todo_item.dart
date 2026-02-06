@@ -72,10 +72,7 @@ class _TodoItemState extends State<TodoItem> {
         duration: TossDesignTokens.animationFast,
         curve: TossDesignTokens.springCurve,
         child: Container(
-          padding: EdgeInsets.symmetric(
-            horizontal: 16.w,
-            vertical: 12.h,
-          ),
+          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
           decoration: BoxDecoration(
             color: AppColors.spaceSurface,
             borderRadius: AppRadius.large,
@@ -154,16 +151,14 @@ class _TodoItemState extends State<TodoItem> {
           color: widget.isCompleted ? AppColors.success : Colors.transparent,
           borderRadius: AppRadius.small,
           border: Border.all(
-            color: widget.isCompleted ? AppColors.success : AppColors.textTertiary,
+            color: widget.isCompleted
+                ? AppColors.success
+                : AppColors.textTertiary,
             width: 2,
           ),
         ),
         child: widget.isCompleted
-            ? Icon(
-                Icons.check,
-                size: 16.w,
-                color: Colors.white,
-              )
+            ? Icon(Icons.check, size: 16.w, color: Colors.white)
             : null,
       ),
     );

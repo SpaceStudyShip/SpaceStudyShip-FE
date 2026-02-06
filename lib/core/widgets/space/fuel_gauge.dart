@@ -86,18 +86,13 @@ class FuelGauge extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         if (showIcon) ...[
-          Text(
-            '⛽',
-            style: TextStyle(fontSize: _iconSize),
-          ),
+          Text('⛽', style: TextStyle(fontSize: _iconSize)),
           SizedBox(width: 4.w),
         ],
         if (showLabel) ...[
           Text(
             '보유 연료: ',
-            style: _textStyle.copyWith(
-              color: AppColors.textSecondary,
-            ),
+            style: _textStyle.copyWith(color: AppColors.textSecondary),
           ),
         ],
         Text(
@@ -112,8 +107,4 @@ class FuelGauge extends StatelessWidget {
   }
 }
 
-enum FuelGaugeSize {
-  small,
-  medium,
-  large,
-}
+enum FuelGaugeSize { small, medium, large }

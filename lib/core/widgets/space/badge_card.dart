@@ -121,11 +121,9 @@ class _BadgeCardState extends State<BadgeCard> {
           decoration: BoxDecoration(
             color: AppColors.spaceSurface,
             borderRadius: AppRadius.large,
-            border: Border.all(
-              color: _borderColor,
-              width: _borderWidth,
-            ),
-            boxShadow: widget.isUnlocked && widget.rarity == BadgeRarity.legendary
+            border: Border.all(color: _borderColor, width: _borderWidth),
+            boxShadow:
+                widget.isUnlocked && widget.rarity == BadgeRarity.legendary
                 ? [
                     BoxShadow(
                       color: AppColors.accentGold.withValues(alpha: 0.3),
@@ -150,11 +148,7 @@ class _BadgeCardState extends State<BadgeCard> {
                     ),
                   ),
                   if (!widget.isUnlocked)
-                    Icon(
-                      Icons.lock,
-                      size: 20.w,
-                      color: AppColors.textTertiary,
-                    ),
+                    Icon(Icons.lock, size: 20.w, color: AppColors.textTertiary),
                 ],
               ),
               SizedBox(height: 8.h),
@@ -163,7 +157,9 @@ class _BadgeCardState extends State<BadgeCard> {
               Text(
                 widget.isUnlocked ? widget.name : '???',
                 style: AppTextStyles.tag_12.copyWith(
-                  color: widget.isUnlocked ? Colors.white : AppColors.textTertiary,
+                  color: widget.isUnlocked
+                      ? Colors.white
+                      : AppColors.textTertiary,
                 ),
                 textAlign: TextAlign.center,
                 maxLines: 1,

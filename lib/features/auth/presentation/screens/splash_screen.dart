@@ -41,10 +41,7 @@ class _SplashScreenState extends State<SplashScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             // 로고
-            Text(
-              '🚀',
-              style: TextStyle(fontSize: 80.sp),
-            ),
+            Text('🚀', style: TextStyle(fontSize: 80.sp)),
             SizedBox(height: 24.h),
             Text(
               '우주공부선',

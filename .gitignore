@@ -63,3 +63,8 @@ CLAUDE.md
 /env.*
 /local.properties
 /secrets.json
+
+# ====================================================================
+# SUH-DEVOPS-TEMPLATE: Auto-added entries
+# ====================================================================
+/.claude/settings.local.json

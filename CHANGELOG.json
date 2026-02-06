@@ -1,11 +1,44 @@
 {
   "metadata": {
-    "lastUpdated": "2026-01-09T12:08:33Z",
-    "currentVersion": "1.0.19",
+    "lastUpdated": "2026-02-06T03:07:05Z",
+    "currentVersion": "1.0.20",
     "projectType": "flutter",
-    "totalReleases": 5
+    "totalReleases": 6
   },
   "releases": [
+    {
+      "version": "1.0.20",
+      "project_type": "flutter",
+      "date": "2026-02-06",
+      "pr_number": 7,
+      "raw_summary": "## Summary by CodeRabbit\n\n## 릴리스 노트\n\n* **새로운 기능**\n  * 플레이스토어 및 테스트플라이트 마법사에 맞춤형 시크릿(secrets) 관리 기능 추가 (v1.2.0)\n  * 파일 업로드 시 자동 타입 감지 및 변환 기능 추가\n  * 다양한 내보내기 형식(JSON, TXT, ZIP)에서 맞춤형 시크릿 지원\n\n* **버그 수정 및 개선**\n  * iOS 프로비저닝 프로필 설정 업데이트\n  * 깃 푸시 실패에 대한 재시도 메커니즘 추가\n\n* **Chores**\n  * 앱 버전 1.0.20으로 업데이트\n  * 구글 모바일 광고 의존성 제거\n  * 이슈 라벨 정규화 및 워크플로우 동기화 개선",
+      "parsed_changes": {
+        "새로운_기능": {
+          "title": "새로운 기능",
+          "items": [
+            "플레이스토어 및 테스트플라이트 마법사에 맞춤형 시크릿(secrets) 관리 기능 추가 (v1.2.0)",
+            "파일 업로드 시 자동 타입 감지 및 변환 기능 추가",
+            "다양한 내보내기 형식(JSON, TXT, ZIP)에서 맞춤형 시크릿 지원"
+          ]
+        },
+        "버그_수정_및_개선": {
+          "title": "버그 수정 및 개선",
+          "items": [
+            "iOS 프로비저닝 프로필 설정 업데이트",
+            "깃 푸시 실패에 대한 재시도 메커니즘 추가"
+          ]
+        },
+        "chores": {
+          "title": "Chores",
+          "items": [
+            "앱 버전 1.0.20으로 업데이트",
+            "구글 모바일 광고 의존성 제거",
+            "이슈 라벨 정규화 및 워크플로우 동기화 개선"
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "1.0.19",
       "project_type": "flutter",

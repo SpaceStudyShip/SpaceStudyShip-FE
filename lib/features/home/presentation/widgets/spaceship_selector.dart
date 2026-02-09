@@ -151,6 +151,7 @@ Future<void> showSpaceshipSelector({
   return showModalBottomSheet(
     context: context,
     backgroundColor: Colors.transparent,
+    barrierColor: Colors.black54,
     isScrollControlled: true,
     builder: (context) => DraggableScrollableSheet(
       initialChildSize: 0.5,

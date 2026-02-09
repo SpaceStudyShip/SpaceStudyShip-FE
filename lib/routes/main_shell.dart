@@ -125,19 +125,10 @@ class _NavItem extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            AnimatedSwitcher(
-              duration: const Duration(milliseconds: 200),
-              switchInCurve: Curves.easeOutCubic,
-              switchOutCurve: Curves.easeInCubic,
-              transitionBuilder: (child, animation) {
-                return ScaleTransition(scale: animation, child: child);
-              },
-              child: Icon(
-                isSelected ? activeIcon : icon,
-                key: ValueKey(isSelected),
-                size: 24.w,
-                color: isSelected ? Colors.white : AppColors.textTertiary,
-              ),
+            Icon(
+              isSelected ? activeIcon : icon,
+              size: 24.w,
+              color: isSelected ? Colors.white : AppColors.textTertiary,
             ),
             SizedBox(height: 4.h),
             Text(
@@ -152,25 +143,24 @@ class _NavItem extends StatelessWidget {
             ),
             SizedBox(height: 4.h),
             // Active dot indicator
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              curve: Curves.easeInOut,
-              width: isSelected ? 4.w : 0,
-              height: isSelected ? 4.w : 0,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: AppColors.primary,
-                boxShadow: isSelected
-                    ? [
-                        BoxShadow(
-                          color: AppColors.primary.withValues(alpha: 0.5),
-                          blurRadius: 4,
-                          spreadRadius: 0,
-                        ),
-                      ]
-                    : null,
-              ),
-            ),
+            if (isSelected)
+              Container(
+                width: 4.w,
+                height: 4.w,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: AppColors.primary,
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.primary.withValues(alpha: 0.5),
+                      blurRadius: 4,
+                      spreadRadius: 0,
+                    ),
+                  ],
+                ),
+              )
+            else
+              SizedBox(height: 4.w),
           ],
         ),
       ),

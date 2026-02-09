@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'route_paths.dart';
 import 'main_shell.dart';
+import '../core/widgets/backgrounds/space_background.dart';
 import '../features/auth/presentation/screens/splash_screen.dart';
 import '../features/auth/presentation/screens/login_screen.dart';
 import '../features/auth/presentation/screens/onboarding_screen.dart';
@@ -55,6 +56,13 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                 name: 'home',
                 builder: (context, state) => const HomeScreen(),
                 routes: [
+                  // Todo 목록
+                  GoRoute(
+                    path: 'todo',
+                    name: 'todoList',
+                    builder: (context, state) =>
+                        const PlaceholderScreen(title: '오늘의 할 일'),
+                  ),
                   // Todo 상세
                   GoRoute(
                     path: 'todo/:id',
@@ -246,36 +254,41 @@ final appRouterProvider = Provider<GoRouter>((ref) {
     // 에러 페이지
     errorBuilder: (context, state) => Scaffold(
       backgroundColor: const Color(0xFF0A0E27),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.explore_off_rounded,
-              size: 64,
-              color: Colors.white.withValues(alpha: 0.5),
+      body: Stack(
+        children: [
+          const Positioned.fill(child: SpaceBackground()),
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.explore_off_rounded,
+                  size: 64,
+                  color: Colors.white.withValues(alpha: 0.5),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  '페이지를 찾을 수 없습니다',
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    color: Colors.white,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  state.uri.toString(),
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Colors.white.withValues(alpha: 0.5),
+                  ),
+                ),
+                const SizedBox(height: 24),
+                ElevatedButton(
+                  onPressed: () => context.go(RoutePaths.home),
+                  child: const Text('홈으로 돌아가기'),
+                ),
+              ],
             ),
-            const SizedBox(height: 16),
-            Text(
-              '페이지를 찾을 수 없습니다',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                color: Colors.white,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              state.uri.toString(),
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: Colors.white.withValues(alpha: 0.5),
-              ),
-            ),
-            const SizedBox(height: 24),
-            ElevatedButton(
-              onPressed: () => context.go(RoutePaths.home),
-              child: const Text('홈으로 돌아가기'),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     ),
   );
@@ -291,36 +304,42 @@ class PlaceholderScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFF0A0E27),
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF0A0E27),
+        backgroundColor: Colors.transparent,
         elevation: 0,
         title: Text(title),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.construction_rounded,
-              size: 64,
-              color: Colors.white.withValues(alpha: 0.5),
+      body: Stack(
+        children: [
+          const Positioned.fill(child: SpaceBackground()),
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.construction_rounded,
+                  size: 64,
+                  color: Colors.white.withValues(alpha: 0.5),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  title,
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    color: Colors.white,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  '개발 중...',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Colors.white.withValues(alpha: 0.5),
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: 16),
-            Text(
-              title,
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                color: Colors.white,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              '개발 중...',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Colors.white.withValues(alpha: 0.5),
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

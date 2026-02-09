@@ -21,6 +21,7 @@ abstract class RoutePaths {
   // ═══════════════════════════════════════════════════
   // Home 하위 화면
   // ═══════════════════════════════════════════════════
+  static const todoList = '/home/todo';
   static const todoDetail = '/home/todo/:id';
   static String todoDetailPath(String id) => '/home/todo/$id';
 

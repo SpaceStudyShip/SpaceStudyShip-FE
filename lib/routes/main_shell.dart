@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../core/constants/app_colors.dart';
+import '../core/constants/spacing_and_radius.dart';
 import '../core/widgets/backgrounds/space_background.dart';
 
 /// 메인 네비게이션 쉘 (바텀 네비게이션)
@@ -42,7 +43,7 @@ class MainShell extends StatelessWidget {
             ),
             child: SafeArea(
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),
+                padding: AppPadding.all8,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
@@ -130,7 +131,7 @@ class _NavItem extends StatelessWidget {
               size: 24.w,
               color: isSelected ? Colors.white : AppColors.textTertiary,
             ),
-            SizedBox(height: 4.h),
+            SizedBox(height: AppSpacing.s4),
             Text(
               label,
               style: TextStyle(
@@ -141,7 +142,7 @@ class _NavItem extends StatelessWidget {
                 color: isSelected ? Colors.white : AppColors.textTertiary,
               ),
             ),
-            SizedBox(height: 4.h),
+            SizedBox(height: AppSpacing.s4),
             // Active dot indicator
             if (isSelected)
               Container(

@@ -39,18 +39,52 @@ class _SpaceBackgroundState extends State<SpaceBackground>
     )..repeat(reverse: true);
 
     final random = Random(42); // 고정 시드로 일관된 별 배치
-    _stars = List.generate(30, (i) {
-      final hasTint = i % 5 == 0;
+
+    // Jittered grid: 화면을 구역으로 나눠 골고루 분포시킴
+    const cols = 7;
+    const rows = 8;
+    const totalStars = 50;
+
+    _stars = List.generate(totalStars, (i) {
+      final double x;
+      final double y;
+
+      if (i < cols * rows) {
+        // 그리드 기반 jittered 배치 (균일 분포)
+        final col = i % cols;
+        final row = i ~/ cols;
+        x = (col + 0.15 + random.nextDouble() * 0.7) / cols;
+        y = (row + 0.15 + random.nextDouble() * 0.7) / rows;
+      } else {
+        // 나머지는 순수 랜덤 (자연스러운 불규칙성)
+        x = random.nextDouble();
+        y = random.nextDouble();
+      }
+
+      // 크기: 지수 분포 → 작은 별이 많고 큰 별은 드물게 (실제 밤하늘)
+      final sizeRoll = random.nextDouble();
+      final size = sizeRoll < 0.6
+          ? 0.3 + random.nextDouble() * 0.5 // 60%: 아주 작은 별 (0.3~0.8)
+          : sizeRoll < 0.85
+              ? 0.8 + random.nextDouble() * 0.8 // 25%: 중간 별 (0.8~1.6)
+              : 1.6 + random.nextDouble() * 1.0; // 15%: 큰 별 (1.6~2.6)
+
+      // 틴트: 큰 별일수록 색상 가질 확률 높음
+      final hasTint = size > 1.0 && random.nextDouble() < 0.4;
       final tintColor = hasTint
           ? _starTintColors[random.nextInt(_starTintColors.length)]
           : null;
 
+      // 반짝임: 큰 별 + 일부 중간 별 (총 ~12개)
+      final twinkle = size > 1.4 || (size > 0.8 && random.nextDouble() < 0.15);
+
       return _Star(
-        x: random.nextDouble(),
-        y: random.nextDouble(),
-        size: random.nextDouble() * 2.0 + 0.5,
-        twinkle: i < 5, // 처음 5개만 반짝임
+        x: x.clamp(0.0, 1.0),
+        y: y.clamp(0.0, 1.0),
+        size: size,
+        twinkle: twinkle,
         twinkleOffset: random.nextDouble(),
+        baseOpacity: 0.3 + random.nextDouble() * 0.4, // 별마다 기본 밝기 다르게
         tintColor: tintColor,
       );
     });
@@ -116,6 +150,7 @@ class _Star {
     required this.size,
     required this.twinkle,
     required this.twinkleOffset,
+    required this.baseOpacity,
     this.tintColor,
   });
 
@@ -124,6 +159,7 @@ class _Star {
   final double size;
   final bool twinkle;
   final double twinkleOffset;
+  final double baseOpacity;
   final Color? tintColor;
 }
 
@@ -189,9 +225,10 @@ class _StarPainter extends CustomPainter {
       double opacity;
       if (star.twinkle) {
         final phase = (twinkleValue + star.twinkleOffset) % 1.0;
-        opacity = 0.3 + 0.7 * (0.5 + 0.5 * sin(phase * pi * 2));
+        opacity = star.baseOpacity +
+            (1.0 - star.baseOpacity) * (0.5 + 0.5 * sin(phase * pi * 2));
       } else {
-        opacity = 0.4 + star.size * 0.15;
+        opacity = star.baseOpacity;
       }
 
       final baseColor = star.tintColor ?? Colors.white;

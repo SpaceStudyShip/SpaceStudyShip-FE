@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../constants/app_colors.dart';
+import '../../constants/app_gradients.dart';
 import '../../constants/text_styles.dart';
 import '../../constants/toss_design_tokens.dart';
 
@@ -54,16 +55,16 @@ class RankingItem extends StatefulWidget {
 class _RankingItemState extends State<RankingItem> {
   bool _isPressed = false;
 
-  String get _rankEmoji {
+  LinearGradient get _medalGradient {
     switch (widget.rank) {
       case 1:
-        return '🥇';
+        return AppGradients.goldMedal;
       case 2:
-        return '🥈';
+        return AppGradients.silverMedal;
       case 3:
-        return '🥉';
+        return AppGradients.bronzeMedal;
       default:
-        return '';
+        return const LinearGradient(colors: [Colors.grey, Colors.grey]);
     }
   }
 
@@ -123,10 +124,29 @@ class _RankingItemState extends State<RankingItem> {
               SizedBox(
                 width: 36.w,
                 child: widget.rank <= 3
-                    ? Text(
-                        _rankEmoji,
-                        style: TextStyle(fontSize: 24.w),
-                        textAlign: TextAlign.center,
+                    ? Container(
+                        width: 28.w,
+                        height: 28.w,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          gradient: _medalGradient,
+                          boxShadow: [
+                            BoxShadow(
+                              color: _rankColor.withValues(alpha: 0.3),
+                              blurRadius: 6,
+                              spreadRadius: 0,
+                            ),
+                          ],
+                        ),
+                        child: Center(
+                          child: Text(
+                            '${widget.rank}',
+                            style: AppTextStyles.tag_12.copyWith(
+                              color: widget.rank == 2 ? Colors.black87 : Colors.white,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
+                        ),
                       )
                     : Text(
                         '${widget.rank}',
@@ -153,9 +173,10 @@ class _RankingItemState extends State<RankingItem> {
                   ),
                 ),
                 child: Center(
-                  child: Text(
-                    widget.avatarEmoji,
-                    style: TextStyle(fontSize: 20.w),
+                  child: Icon(
+                    Icons.person_rounded,
+                    size: 22.w,
+                    color: widget.rank <= 3 ? _rankColor : AppColors.textSecondary,
                   ),
                 ),
               ),

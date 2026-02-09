@@ -3,6 +3,9 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/text_styles.dart';
+import '../../../../core/widgets/atoms/space_stat_item.dart';
+import '../../../../core/widgets/backgrounds/space_background.dart';
 import '../../../../routes/route_paths.dart';
 
 /// 프로필 스크린
@@ -15,16 +18,14 @@ class ProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.spaceBackground,
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        backgroundColor: AppColors.spaceBackground,
+        backgroundColor: Colors.transparent,
+        scrolledUnderElevation: 0,
         elevation: 0,
         title: Text(
           '프로필',
-          style: TextStyle(
-            fontSize: 20.sp,
-            fontFamily: 'Pretendard-Bold',
-            color: Colors.white,
-          ),
+          style: AppTextStyles.heading_20.copyWith(color: Colors.white),
         ),
         actions: [
           IconButton(
@@ -39,22 +40,29 @@ class ProfileScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(20.w),
-        child: Column(
-          children: [
-            // 프로필 정보
-            _buildProfileHeader(),
-            SizedBox(height: 24.h),
+      body: Stack(
+        children: [
+          const Positioned.fill(child: SpaceBackground()),
+          SafeArea(
+            child: SingleChildScrollView(
+              padding: EdgeInsets.all(20.w),
+              child: Column(
+                children: [
+                  // 프로필 정보
+                  _buildProfileHeader(),
+                  SizedBox(height: 24.h),
 
-            // 통계 요약
-            _buildStatsCard(),
-            SizedBox(height: 24.h),
+                  // 통계 요약
+                  _buildStatsCard(),
+                  SizedBox(height: 24.h),
 
-            // 메뉴 리스트
-            _buildMenuList(context),
-          ],
-        ),
+                  // 메뉴 리스트
+                  _buildMenuList(context),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -75,7 +83,11 @@ class ProfileScreen extends StatelessWidget {
             ),
           ),
           child: Center(
-            child: Text('👨‍🚀', style: TextStyle(fontSize: 40.sp)),
+            child: Icon(
+              Icons.person_rounded,
+              size: 40.sp,
+              color: Colors.white,
+            ),
           ),
         ),
         SizedBox(height: 16.h),
@@ -83,11 +95,7 @@ class ProfileScreen extends StatelessWidget {
         // 이름
         Text(
           '우주 탐험가',
-          style: TextStyle(
-            fontSize: 20.sp,
-            fontFamily: 'Pretendard-Bold',
-            color: Colors.white,
-          ),
+          style: AppTextStyles.heading_20.copyWith(color: Colors.white),
         ),
         SizedBox(height: 4.h),
 
@@ -100,11 +108,7 @@ class ProfileScreen extends StatelessWidget {
           ),
           child: Text(
             'Lv.1 신입 탐험가',
-            style: TextStyle(
-              fontSize: 12.sp,
-              fontFamily: 'Pretendard-Medium',
-              color: AppColors.primary,
-            ),
+            style: AppTextStyles.tag_12.copyWith(color: AppColors.primary),
           ),
         ),
       ],
@@ -122,37 +126,13 @@ class ProfileScreen extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          _buildStatItem('총 공부', '0시간'),
+          SpaceStatItem(label: '총 공부', value: '0시간', valueFirst: true),
           Container(width: 1, height: 40.h, color: AppColors.spaceDivider),
-          _buildStatItem('연속', '0일'),
+          SpaceStatItem(label: '연속', value: '0일', valueFirst: true),
           Container(width: 1, height: 40.h, color: AppColors.spaceDivider),
-          _buildStatItem('배지', '0개'),
+          SpaceStatItem(label: '배지', value: '0개', valueFirst: true),
         ],
       ),
-    );
-  }
-
-  Widget _buildStatItem(String label, String value) {
-    return Column(
-      children: [
-        Text(
-          value,
-          style: TextStyle(
-            fontSize: 18.sp,
-            fontFamily: 'Pretendard-Bold',
-            color: Colors.white,
-          ),
-        ),
-        SizedBox(height: 4.h),
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 12.sp,
-            fontFamily: 'Pretendard-Regular',
-            color: AppColors.textTertiary,
-          ),
-        ),
-      ],
     );
   }
 
@@ -200,11 +180,7 @@ class ProfileScreen extends StatelessWidget {
             Expanded(
               child: Text(
                 title,
-                style: TextStyle(
-                  fontSize: 16.sp,
-                  fontFamily: 'Pretendard-Medium',
-                  color: Colors.white,
-                ),
+                style: AppTextStyles.label16Medium.copyWith(color: Colors.white),
               ),
             ),
             Icon(

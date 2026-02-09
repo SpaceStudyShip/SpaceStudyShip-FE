@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../constants/app_colors.dart';
+import '../../constants/app_gradients.dart';
 import '../../constants/spacing_and_radius.dart';
 import '../../constants/toss_design_tokens.dart';
 
@@ -66,6 +67,7 @@ class AppCard extends StatefulWidget {
     this.borderRadius,
     this.elevation,
     this.enabled = true,
+    this.gradient,
   });
 
   /// 카드 내용 (필수)
@@ -110,6 +112,9 @@ class AppCard extends StatefulWidget {
   /// 활성화 여부
   final bool enabled;
 
+  /// 그라데이션 배경 (null이면 단색 배경)
+  final Gradient? gradient;
+
   @override
   State<AppCard> createState() => _AppCardState();
 }
@@ -151,10 +156,17 @@ class _AppCardState extends State<AppCard> {
 
     final elevation = widget.elevation ?? 4.0;
     return [
+      // Outer shadow - depth
       BoxShadow(
-        color: Colors.black.withValues(alpha: 0.15),
+        color: Colors.black.withValues(alpha: 0.2),
         blurRadius: elevation * 2,
         offset: Offset(0, elevation / 2),
+      ),
+      // Inner glow - subtle primary tint
+      BoxShadow(
+        color: AppColors.primary.withValues(alpha: 0.04),
+        blurRadius: elevation * 3,
+        spreadRadius: -2,
       ),
     ];
   }
@@ -188,7 +200,8 @@ class _AppCardState extends State<AppCard> {
         margin: widget.margin,
         padding: _padding,
         decoration: BoxDecoration(
-          color: _backgroundColor,
+          color: widget.gradient == null ? _backgroundColor : null,
+          gradient: widget.gradient ?? (widget.style == AppCardStyle.elevated ? AppGradients.cardSurface : null),
           borderRadius: _borderRadius,
           border: _borderWidth > 0
               ? Border.all(color: _borderColor, width: _borderWidth)

@@ -3,6 +3,10 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/text_styles.dart';
+import '../../../../core/widgets/animations/entrance_animations.dart';
+import '../../../../core/widgets/atoms/gradient_circle_icon.dart';
+import '../../../../core/widgets/backgrounds/space_background.dart';
 import '../../../../core/widgets/buttons/app_button.dart';
 import '../../../../routes/route_paths.dart';
 
@@ -22,17 +26,20 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   final List<_OnboardingData> _pages = [
     _OnboardingData(
-      emoji: '📋',
+      icon: Icons.checklist_rounded,
+      color: AppColors.primary,
       title: '할 일을 정리하고',
       description: '오늘의 공부 계획을 세워보세요.\n작은 목표부터 하나씩 달성해 나가요.',
     ),
     _OnboardingData(
-      emoji: '⏱️',
+      icon: Icons.timer_rounded,
+      color: AppColors.accentGold,
       title: '시간을 측정하고',
       description: '집중 시간을 기록하면 연료가 충전돼요.\n꾸준히 공부하면 더 멀리 탐험할 수 있어요.',
     ),
     _OnboardingData(
-      emoji: '🌌',
+      icon: Icons.explore_rounded,
+      color: AppColors.secondary,
       title: '우주를 탐험해요',
       description: '새로운 행성을 발견하고\n친구들과 함께 우주를 탐험해요!',
     ),
@@ -63,19 +70,20 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.spaceBackground,
-      body: SafeArea(
-        child: Column(
-          children: [
-            // 스킵 버튼
+      body: Stack(
+        children: [
+          const Positioned.fill(child: SpaceBackground()),
+          SafeArea(
+            child: Column(
+              children: [
+                // 스킵 버튼
             Align(
               alignment: Alignment.topRight,
               child: TextButton(
                 onPressed: _skip,
                 child: Text(
                   '건너뛰기',
-                  style: TextStyle(
-                    fontSize: 14.sp,
-                    fontFamily: 'Pretendard-Medium',
+                  style: AppTextStyles.paragraph_14_100.copyWith(
                     color: AppColors.textTertiary,
                   ),
                 ),
@@ -97,25 +105,35 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(page.emoji, style: TextStyle(fontSize: 80.sp)),
+                        // 그라데이션 원형 아이콘
+                        FadeSlideIn(
+                          child: GradientCircleIcon(
+                            icon: page.icon,
+                            color: page.color,
+                            size: 96,
+                            iconSize: 42,
+                          ),
+                        ),
                         SizedBox(height: 32.h),
-                        Text(
-                          page.title,
-                          style: TextStyle(
-                            fontSize: 24.sp,
-                            fontFamily: 'Pretendard-Bold',
-                            color: Colors.white,
+                        FadeSlideIn(
+                          delay: const Duration(milliseconds: 100),
+                          child: Text(
+                            page.title,
+                            style: AppTextStyles.heading_24.copyWith(
+                              color: Colors.white,
+                            ),
                           ),
                         ),
                         SizedBox(height: 16.h),
-                        Text(
-                          page.description,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 14.sp,
-                            fontFamily: 'Pretendard-Regular',
-                            color: AppColors.textSecondary,
-                            height: 1.6,
+                        FadeSlideIn(
+                          delay: const Duration(milliseconds: 200),
+                          child: Text(
+                            page.description,
+                            textAlign: TextAlign.center,
+                            style: AppTextStyles.paragraph_14.copyWith(
+                              color: AppColors.textSecondary,
+                              height: 1.6,
+                            ),
                           ),
                         ),
                       ],
@@ -162,18 +180,22 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           ],
         ),
       ),
+        ],
+      ),
     );
   }
 }
 
 class _OnboardingData {
   const _OnboardingData({
-    required this.emoji,
+    required this.icon,
+    required this.color,
     required this.title,
     required this.description,
   });
 
-  final String emoji;
+  final IconData icon;
+  final Color color;
   final String title;
   final String description;
 }

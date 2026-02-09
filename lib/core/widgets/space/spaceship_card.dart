@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../constants/app_colors.dart';
+import '../../constants/space_icons.dart';
 import '../../constants/spacing_and_radius.dart';
 import '../../constants/text_styles.dart';
 import '../../constants/toss_design_tokens.dart';
@@ -144,21 +145,28 @@ class _SpaceshipCardState extends State<SpaceshipCard> {
               Stack(
                 alignment: Alignment.center,
                 children: [
-                  Text(
-                    widget.icon,
-                    style: TextStyle(
-                      fontSize: 32.w,
-                      color: widget.isUnlocked ? null : AppColors.textTertiary,
-                    ),
-                  ),
+                  widget.isUnlocked
+                      ? SpaceIcons.buildIcon(
+                          widget.icon,
+                          size: 32.w,
+                        )
+                      : Icon(
+                          SpaceIcons.resolve(widget.icon),
+                          size: 32.w,
+                          color: AppColors.textTertiary,
+                        ),
                   if (!widget.isUnlocked)
-                    Icon(Icons.lock, size: 20.w, color: AppColors.textTertiary),
+                    Icon(Icons.lock_rounded, size: 20.w, color: AppColors.textTertiary),
                   // 애니메이션 마크
                   if (widget.isAnimated && widget.isUnlocked)
                     Positioned(
                       top: 0,
                       right: 0,
-                      child: Text('✨', style: TextStyle(fontSize: 12.w)),
+                      child: Icon(
+                        Icons.auto_awesome,
+                        size: 12.w,
+                        color: AppColors.accentGold,
+                      ),
                     ),
                 ],
               ),

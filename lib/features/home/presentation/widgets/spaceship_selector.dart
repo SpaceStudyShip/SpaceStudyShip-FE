@@ -83,9 +83,10 @@ class SpaceshipSelector extends StatelessWidget {
             padding: EdgeInsets.all(20.w),
             child: Row(
               children: [
-                Text(
-                  '🚀',
-                  style: TextStyle(fontSize: 24.w),
+                Icon(
+                  Icons.rocket_launch_rounded,
+                  size: 24.w,
+                  color: AppColors.primary,
                 ),
                 SizedBox(width: 8.w),
                 Text(

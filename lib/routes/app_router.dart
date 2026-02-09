@@ -10,6 +10,7 @@ import '../features/auth/presentation/screens/onboarding_screen.dart';
 import '../features/home/presentation/screens/home_screen.dart';
 import '../features/timer/presentation/screens/timer_screen.dart';
 import '../features/explore/presentation/screens/explore_screen.dart';
+import '../features/exploration/presentation/screens/exploration_detail_screen.dart';
 import '../features/social/presentation/screens/social_screen.dart';
 import '../features/profile/presentation/screens/profile_screen.dart';
 
@@ -101,6 +102,15 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                 name: 'explore',
                 builder: (context, state) => const ExploreScreen(),
                 routes: [
+                  // 행성 상세 (지역 목록)
+                  GoRoute(
+                    path: 'planet/:id',
+                    name: 'planetDetail',
+                    builder: (context, state) {
+                      final id = state.pathParameters['id']!;
+                      return ExplorationDetailScreen(planetId: id);
+                    },
+                  ),
                   GoRoute(
                     path: 'location/:id',
                     name: 'locationDetail',
@@ -235,20 +245,29 @@ final appRouterProvider = Provider<GoRouter>((ref) {
 
     // 에러 페이지
     errorBuilder: (context, state) => Scaffold(
+      backgroundColor: const Color(0xFF0A0E27),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text('🚀', style: TextStyle(fontSize: 64)),
+            Icon(
+              Icons.explore_off_rounded,
+              size: 64,
+              color: Colors.white.withValues(alpha: 0.5),
+            ),
             const SizedBox(height: 16),
             Text(
               '페이지를 찾을 수 없습니다',
-              style: Theme.of(context).textTheme.titleLarge,
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                color: Colors.white,
+              ),
             ),
             const SizedBox(height: 8),
             Text(
               state.uri.toString(),
-              style: Theme.of(context).textTheme.bodySmall,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: Colors.white.withValues(alpha: 0.5),
+              ),
             ),
             const SizedBox(height: 24),
             ElevatedButton(
@@ -271,20 +290,34 @@ class PlaceholderScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(title)),
+      backgroundColor: const Color(0xFF0A0E27),
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF0A0E27),
+        elevation: 0,
+        title: Text(title),
+      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text('🛠️', style: TextStyle(fontSize: 64)),
+            Icon(
+              Icons.construction_rounded,
+              size: 64,
+              color: Colors.white.withValues(alpha: 0.5),
+            ),
             const SizedBox(height: 16),
-            Text(title, style: Theme.of(context).textTheme.headlineSmall),
+            Text(
+              title,
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                color: Colors.white,
+              ),
+            ),
             const SizedBox(height: 8),
             Text(
               '개발 중...',
-              style: Theme.of(
-                context,
-              ).textTheme.bodyMedium?.copyWith(color: Colors.grey),
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Colors.white.withValues(alpha: 0.5),
+              ),
             ),
           ],
         ),

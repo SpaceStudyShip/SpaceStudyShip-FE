@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/app_gradients.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
 
@@ -12,7 +13,7 @@ import '../../../../core/constants/text_styles.dart';
 /// **사용 예시**:
 /// ```dart
 /// HomeStatChip(
-///   icon: '⛽',
+///   iconData: Icons.local_gas_station_rounded,
 ///   value: '85',
 ///   label: '연료',
 ///   valueColor: AppColors.fuelFull,
@@ -21,15 +22,15 @@ import '../../../../core/constants/text_styles.dart';
 class HomeStatChip extends StatelessWidget {
   const HomeStatChip({
     super.key,
-    required this.icon,
+    required this.iconData,
     required this.value,
     required this.label,
     this.valueColor,
     this.onTap,
   });
 
-  /// 아이콘 (이모지)
-  final String icon;
+  /// 아이콘
+  final IconData iconData;
 
   /// 값 (예: 85, 1,234)
   final String value;
@@ -45,15 +46,17 @@ class HomeStatChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final color = valueColor ?? Colors.white;
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
         decoration: BoxDecoration(
-          color: AppColors.spaceSurface,
+          gradient: AppGradients.statChip,
           borderRadius: AppRadius.large,
           border: Border.all(
-            color: AppColors.spaceDivider,
+            color: AppColors.spaceDivider.withValues(alpha: 0.6),
             width: 1,
           ),
         ),
@@ -64,12 +67,12 @@ class HomeStatChip extends StatelessWidget {
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(icon, style: TextStyle(fontSize: 16.w)),
+                Icon(iconData, size: 16.w, color: color),
                 SizedBox(width: 4.w),
                 Text(
                   value,
                   style: AppTextStyles.label_16.copyWith(
-                    color: valueColor ?? Colors.white,
+                    color: color,
                     fontWeight: FontWeight.w700,
                   ),
                 ),

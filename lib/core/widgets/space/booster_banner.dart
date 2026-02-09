@@ -66,7 +66,11 @@ class BoosterBanner extends StatelessWidget {
         child: Row(
           children: [
             // 로켓 아이콘
-            Text('🚀', style: TextStyle(fontSize: 20.w)),
+            Icon(
+              Icons.rocket_launch_rounded,
+              size: 20.w,
+              color: AppColors.accentGold,
+            ),
             SizedBox(width: 8.w),
 
             // 메시지

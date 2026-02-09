@@ -2,27 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/app_gradients.dart';
+import '../../../../core/constants/space_icons.dart';
+import '../../../../core/widgets/atoms/gradient_circle_icon.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../../../core/constants/toss_design_tokens.dart';
+import '../../../../core/widgets/animations/entrance_animations.dart';
 import '../../../../core/widgets/space/streak_badge.dart';
 import 'home_stat_chip.dart';
 
 /// 우주선 헤더 위젯 - SliverAppBar의 flexibleSpace용
 ///
 /// 스크롤에 따라 우주선이 축소되는 애니메이션을 제공합니다.
-///
-/// **사용 예시**:
-/// ```dart
-/// SpaceshipHeader(
-///   spaceshipIcon: '🚀',
-///   spaceshipName: '화성 탐사선',
-///   fuel: 85.0,
-///   experience: 1234,
-///   streakDays: 5,
-///   isStreakActive: true,
-///   onSpaceshipTap: () => showSpaceshipSelector(),
-/// )
-/// ```
 class SpaceshipHeader extends StatefulWidget {
   const SpaceshipHeader({
     super.key,
@@ -36,28 +27,13 @@ class SpaceshipHeader extends StatefulWidget {
     this.expandedHeight = 320.0,
   });
 
-  /// 현재 우주선 아이콘 (이모지)
   final String spaceshipIcon;
-
-  /// 우주선 이름
   final String spaceshipName;
-
-  /// 연료량
   final double fuel;
-
-  /// 경험치
   final int experience;
-
-  /// 연속 공부 일수
   final int streakDays;
-
-  /// 오늘 공부 여부
   final bool isStreakActive;
-
-  /// 우주선 탭 콜백 (변경하기)
   final VoidCallback onSpaceshipTap;
-
-  /// 확장 높이
   final double expandedHeight;
 
   @override
@@ -67,7 +43,6 @@ class SpaceshipHeader extends StatefulWidget {
 class _SpaceshipHeaderState extends State<SpaceshipHeader> {
   bool _isSpaceshipPressed = false;
 
-  /// 연료 상태에 따른 색상
   Color get _fuelColor {
     if (widget.fuel >= 75) return AppColors.fuelFull;
     if (widget.fuel >= 50) return AppColors.fuelMedium;
@@ -75,7 +50,6 @@ class _SpaceshipHeaderState extends State<SpaceshipHeader> {
     return AppColors.fuelEmpty;
   }
 
-  /// 경험치 포맷팅 (1234 → 1,234)
   String get _formattedExperience {
     if (widget.experience >= 1000) {
       final thousands = widget.experience ~/ 1000;
@@ -90,17 +64,8 @@ class _SpaceshipHeaderState extends State<SpaceshipHeader> {
     return Container(
       width: double.infinity,
       height: widget.expandedHeight.h,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          stops: const [0.0, 0.7, 1.0],
-          colors: [
-            AppColors.spaceBackground,
-            AppColors.spaceBackground,
-            AppColors.spaceBackground.withValues(alpha: 0.0),
-          ],
-        ),
+      decoration: const BoxDecoration(
+        gradient: AppGradients.cosmicHeader,
       ),
       child: SafeArea(
         bottom: false,
@@ -110,11 +75,14 @@ class _SpaceshipHeaderState extends State<SpaceshipHeader> {
 
             // 스트릭 배지
             if (widget.streakDays > 0)
-              StreakBadge(
-                days: widget.streakDays,
-                isActive: widget.isStreakActive,
-                showLabel: true,
-                size: StreakBadgeSize.medium,
+              FadeSlideIn(
+                delay: const Duration(milliseconds: 100),
+                child: StreakBadge(
+                  days: widget.streakDays,
+                  isActive: widget.isStreakActive,
+                  showLabel: true,
+                  size: StreakBadgeSize.medium,
+                ),
               ),
 
             const Spacer(),
@@ -136,12 +104,9 @@ class _SpaceshipHeaderState extends State<SpaceshipHeader> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    // 우주선 아이콘
-                    Text(
-                      widget.spaceshipIcon,
-                      style: TextStyle(fontSize: 80.w),
-                    ),
-                    SizedBox(height: 8.h),
+                    // 우주선 아이콘 - 그라데이션 원형 + glow
+                    _buildSpaceshipIcon(),
+                    SizedBox(height: 12.h),
 
                     // 우주선 이름
                     Text(
@@ -178,28 +143,28 @@ class _SpaceshipHeaderState extends State<SpaceshipHeader> {
             const Spacer(),
 
             // 상태 칩들
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.w),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // 연료 칩
-                  HomeStatChip(
-                    icon: '⛽',
-                    value: widget.fuel.toStringAsFixed(0),
-                    label: '연료',
-                    valueColor: _fuelColor,
-                  ),
-                  SizedBox(width: 16.w),
-
-                  // 경험치 칩
-                  HomeStatChip(
-                    icon: '⭐',
-                    value: _formattedExperience,
-                    label: '경험치',
-                    valueColor: AppColors.accentGold,
-                  ),
-                ],
+            FadeSlideIn(
+              delay: const Duration(milliseconds: 200),
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20.w),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    HomeStatChip(
+                      iconData: Icons.local_gas_station_rounded,
+                      value: widget.fuel.toStringAsFixed(0),
+                      label: '연료',
+                      valueColor: _fuelColor,
+                    ),
+                    SizedBox(width: 16.w),
+                    HomeStatChip(
+                      iconData: Icons.star_rounded,
+                      value: _formattedExperience,
+                      label: '경험치',
+                      valueColor: AppColors.accentGold,
+                    ),
+                  ],
+                ),
               ),
             ),
 
@@ -207,6 +172,19 @@ class _SpaceshipHeaderState extends State<SpaceshipHeader> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildSpaceshipIcon() {
+    final gradient = SpaceIcons.gradientOf(widget.spaceshipIcon);
+    final baseColor = SpaceIcons.colorOf(widget.spaceshipIcon);
+
+    return GradientCircleIcon(
+      icon: SpaceIcons.resolve(widget.spaceshipIcon),
+      color: baseColor,
+      size: 80,
+      iconSize: 40,
+      gradientColors: gradient,
     );
   }
 }

@@ -58,11 +58,11 @@ class StreakBadge extends StatelessWidget {
     }
   }
 
-  /// 스트릭 레벨에 따른 불꽃 이모지
-  String get _fireEmoji {
-    if (days >= 100) return '🔥🔥🔥';
-    if (days >= 30) return '🔥🔥';
-    return '🔥';
+  /// 스트릭 레벨에 따른 불꽃 개수
+  int get _fireCount {
+    if (days >= 100) return 3;
+    if (days >= 30) return 2;
+    return 1;
   }
 
   @override
@@ -70,11 +70,15 @@ class StreakBadge extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text(
-          _fireEmoji,
-          style: TextStyle(
-            fontSize: _iconSize,
-            color: isActive ? null : AppColors.textTertiary,
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: List.generate(
+            _fireCount,
+            (i) => Icon(
+              Icons.local_fire_department_rounded,
+              size: _iconSize,
+              color: _color,
+            ),
           ),
         ),
         SizedBox(width: 4.w),

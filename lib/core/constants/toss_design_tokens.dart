@@ -89,4 +89,17 @@ class TossDesignTokens {
 
   /// 최소 터치 영역 너비
   static const double minTouchTargetWidth = 56.0;
+
+  // ============================================
+  // Entrance 애니메이션 Duration
+  // ============================================
+
+  /// 빠른 진입 애니메이션 (간단한 fade/slide)
+  static const Duration entranceFast = Duration(milliseconds: 300);
+
+  /// 보통 진입 애니메이션 (카드, 섹션)
+  static const Duration entranceNormal = Duration(milliseconds: 450);
+
+  /// 시차(Stagger) 간격 (리스트 아이템 간)
+  static const Duration staggerInterval = Duration(milliseconds: 60);
 }

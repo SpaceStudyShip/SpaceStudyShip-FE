@@ -63,7 +63,7 @@ class StatusCard extends StatelessWidget {
           // 현재 위치
           Row(
             children: [
-              Text('🌍', style: TextStyle(fontSize: 18.w)),
+              Icon(Icons.public_rounded, size: 18.w, color: AppColors.primary),
               SizedBox(width: 8.w),
               Text(
                 '현재 위치: ',

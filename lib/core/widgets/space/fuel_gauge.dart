@@ -86,7 +86,11 @@ class FuelGauge extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         if (showIcon) ...[
-          Text('⛽', style: TextStyle(fontSize: _iconSize)),
+          Icon(
+            Icons.local_gas_station_rounded,
+            size: _iconSize,
+            color: _fuelColor,
+          ),
           SizedBox(width: 4.w),
         ],
         if (showLabel) ...[

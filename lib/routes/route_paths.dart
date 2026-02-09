@@ -33,6 +33,9 @@ abstract class RoutePaths {
   // ═══════════════════════════════════════════════════
   // Explore 하위 화면
   // ═══════════════════════════════════════════════════
+  static const planetDetail = '/explore/planet/:id';
+  static String planetDetailPath(String id) => '/explore/planet/$id';
+
   static const locationDetail = '/explore/location/:id';
   static String locationDetailPath(String id) => '/explore/location/$id';
 

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/text_styles.dart';
+import '../../../../core/widgets/backgrounds/space_background.dart';
+import '../../../../core/widgets/states/space_empty_state.dart';
 
 /// 소셜 스크린
 ///
@@ -15,30 +17,22 @@ class SocialScreen extends StatelessWidget {
       length: 3,
       child: Scaffold(
         backgroundColor: AppColors.spaceBackground,
+        extendBodyBehindAppBar: true,
         appBar: AppBar(
-          backgroundColor: AppColors.spaceBackground,
+          backgroundColor: Colors.transparent,
+          scrolledUnderElevation: 0,
           elevation: 0,
           title: Text(
             '소셜',
-            style: TextStyle(
-              fontSize: 20.sp,
-              fontFamily: 'Pretendard-Bold',
-              color: Colors.white,
-            ),
+            style: AppTextStyles.heading_20.copyWith(color: Colors.white),
           ),
           bottom: TabBar(
             indicatorColor: AppColors.primary,
             indicatorWeight: 3,
             labelColor: Colors.white,
             unselectedLabelColor: AppColors.textTertiary,
-            labelStyle: TextStyle(
-              fontSize: 14.sp,
-              fontFamily: 'Pretendard-SemiBold',
-            ),
-            unselectedLabelStyle: TextStyle(
-              fontSize: 14.sp,
-              fontFamily: 'Pretendard-Regular',
-            ),
+            labelStyle: AppTextStyles.paragraph14Semibold,
+            unselectedLabelStyle: AppTextStyles.paragraph_14_100,
             tabs: const [
               Tab(text: '친구'),
               Tab(text: '그룹'),
@@ -46,97 +40,42 @@ class SocialScreen extends StatelessWidget {
             ],
           ),
         ),
-        body: TabBarView(
-          children: [_buildFriendsTab(), _buildGroupsTab(), _buildRankingTab()],
+        body: Stack(
+          children: [
+            const Positioned.fill(child: SpaceBackground()),
+            TabBarView(
+              children: [_buildFriendsTab(), _buildGroupsTab(), _buildRankingTab()],
+            ),
+          ],
         ),
       ),
     );
   }
 
   Widget _buildFriendsTab() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text('👥', style: TextStyle(fontSize: 64.sp)),
-          SizedBox(height: 16.h),
-          Text(
-            '아직 친구가 없어요',
-            style: TextStyle(
-              fontSize: 16.sp,
-              fontFamily: 'Pretendard-Medium',
-              color: Colors.white,
-            ),
-          ),
-          SizedBox(height: 8.h),
-          Text(
-            '친구를 추가해서 함께 공부해요',
-            style: TextStyle(
-              fontSize: 14.sp,
-              fontFamily: 'Pretendard-Regular',
-              color: AppColors.textSecondary,
-            ),
-          ),
-        ],
-      ),
+    return SpaceEmptyState(
+      icon: Icons.people_rounded,
+      color: AppColors.primary,
+      title: '아직 친구가 없어요',
+      subtitle: '친구를 추가해서 함께 공부해요',
     );
   }
 
   Widget _buildGroupsTab() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text('🏠', style: TextStyle(fontSize: 64.sp)),
-          SizedBox(height: 16.h),
-          Text(
-            '참여 중인 그룹이 없어요',
-            style: TextStyle(
-              fontSize: 16.sp,
-              fontFamily: 'Pretendard-Medium',
-              color: Colors.white,
-            ),
-          ),
-          SizedBox(height: 8.h),
-          Text(
-            '그룹에 참여해서 함께 목표를 달성해요',
-            style: TextStyle(
-              fontSize: 14.sp,
-              fontFamily: 'Pretendard-Regular',
-              color: AppColors.textSecondary,
-            ),
-          ),
-        ],
-      ),
+    return SpaceEmptyState(
+      icon: Icons.groups_rounded,
+      color: AppColors.secondary,
+      title: '참여 중인 그룹이 없어요',
+      subtitle: '그룹에 참여해서 함께 목표를 달성해요',
     );
   }
 
   Widget _buildRankingTab() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text('🏆', style: TextStyle(fontSize: 64.sp)),
-          SizedBox(height: 16.h),
-          Text(
-            '랭킹 준비 중',
-            style: TextStyle(
-              fontSize: 16.sp,
-              fontFamily: 'Pretendard-Medium',
-              color: Colors.white,
-            ),
-          ),
-          SizedBox(height: 8.h),
-          Text(
-            '공부 시간을 기록하면 랭킹에 참여할 수 있어요',
-            style: TextStyle(
-              fontSize: 14.sp,
-              fontFamily: 'Pretendard-Regular',
-              color: AppColors.textSecondary,
-            ),
-          ),
-        ],
-      ),
+    return SpaceEmptyState(
+      icon: Icons.emoji_events_rounded,
+      color: AppColors.accentGold,
+      title: '랭킹 준비 중',
+      subtitle: '공부 시간을 기록하면 랭킹에 참여할 수 있어요',
     );
   }
 }

@@ -2,8 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/space_icons.dart';
 import '../../../../core/constants/text_styles.dart';
+import '../../../../core/widgets/animations/entrance_animations.dart';
+import '../../../../core/widgets/backgrounds/space_background.dart';
+import '../../../../core/widgets/cards/app_card.dart';
 import '../../../../core/widgets/space/spaceship_card.dart';
+import '../../../../core/widgets/states/space_empty_state.dart';
 import '../widgets/spaceship_header.dart';
 import '../widgets/spaceship_selector.dart';
 
@@ -95,19 +100,18 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.spaceBackground,
-      body: CustomScrollView(
-        slivers: [
-          // ═══════════════════════════════════════════════════
-          // SliverAppBar - 우주선 헤더
-          // ═══════════════════════════════════════════════════
-          SliverAppBar(
-            expandedHeight: 320.h,
-            pinned: true,
-            backgroundColor: AppColors.spaceBackground,
+      body: Stack(
+        children: [
+          const Positioned.fill(child: SpaceBackground()),
+          CustomScrollView(
+            slivers: [
+              // SliverAppBar - 우주선 헤더
+              SliverAppBar(
+                expandedHeight: 320.h,
+                pinned: true,
+                backgroundColor: Colors.transparent,
             elevation: 0,
-            // 축소 시 표시될 제목
             title: _buildCollapsedTitle(),
-            // 액션 버튼
             actions: [
               IconButton(
                 icon: Icon(
@@ -120,7 +124,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
               ),
             ],
-            // 확장 영역
             flexibleSpace: FlexibleSpaceBar(
               background: SpaceshipHeader(
                 spaceshipIcon: _selectedSpaceshipIcon,
@@ -134,45 +137,53 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
 
-          // ═══════════════════════════════════════════════════
           // 오늘의 할 일 섹션
-          // ═══════════════════════════════════════════════════
           SliverToBoxAdapter(
-            child: Padding(
-              padding: EdgeInsets.fromLTRB(20.w, 24.h, 20.w, 12.h),
-              child: _buildSectionTitle('오늘의 할 일'),
+            child: FadeSlideIn(
+              delay: const Duration(milliseconds: 100),
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(20.w, 24.h, 20.w, 12.h),
+                child: _buildSectionTitle('오늘의 할 일'),
+              ),
             ),
           ),
           SliverToBoxAdapter(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.w),
-              child: _buildEmptyTodoCard(),
+            child: FadeSlideIn(
+              delay: const Duration(milliseconds: 160),
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20.w),
+                child: _buildEmptyTodoCard(),
+              ),
             ),
           ),
 
-          // ═══════════════════════════════════════════════════
           // 최근 활동 섹션
-          // ═══════════════════════════════════════════════════
           SliverToBoxAdapter(
-            child: Padding(
-              padding: EdgeInsets.fromLTRB(20.w, 24.h, 20.w, 12.h),
-              child: _buildSectionTitle('최근 활동'),
+            child: FadeSlideIn(
+              delay: const Duration(milliseconds: 220),
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(20.w, 24.h, 20.w, 12.h),
+                child: _buildSectionTitle('최근 활동'),
+              ),
             ),
           ),
           SliverToBoxAdapter(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.w),
-              child: _buildEmptyActivityCard(),
+            child: FadeSlideIn(
+              delay: const Duration(milliseconds: 280),
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20.w),
+                child: _buildEmptyActivityCard(),
+              ),
             ),
           ),
 
-          // ═══════════════════════════════════════════════════
-          // 바텀 여백 (콘텐츠 부족 시에도 스크롤 가능하도록)
-          // ═══════════════════════════════════════════════════
+          // 바텀 여백
           SliverFillRemaining(
             hasScrollBody: false,
             child: SizedBox(height: 100.h),
           ),
+        ],
+      ),
         ],
       ),
     );
@@ -183,10 +194,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text(
-          _selectedSpaceshipIcon,
-          style: TextStyle(fontSize: 24.w),
-        ),
+        SpaceIcons.buildIcon(_selectedSpaceshipIcon, size: 24.w),
         SizedBox(width: 8.w),
         Text(
           _selectedSpaceshipName,
@@ -198,7 +206,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  /// 섹션 제목
   Widget _buildSectionTitle(String title) {
     return Text(
       title,
@@ -211,62 +218,30 @@ class _HomeScreenState extends State<HomeScreen> {
 
   /// 빈 할 일 카드
   Widget _buildEmptyTodoCard() {
-    return Container(
+    return AppCard(
+      style: AppCardStyle.outlined,
       padding: EdgeInsets.all(24.w),
-      decoration: BoxDecoration(
-        color: AppColors.spaceSurface,
-        borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: AppColors.spaceDivider, width: 1),
-      ),
-      child: Column(
-        children: [
-          Text('📝', style: TextStyle(fontSize: 40.w)),
-          SizedBox(height: 12.h),
-          Text(
-            '오늘의 할 일이 없어요',
-            style: AppTextStyles.paragraph_14.copyWith(
-              color: Colors.white,
-            ),
-          ),
-          SizedBox(height: 4.h),
-          Text(
-            '할 일을 추가해보세요',
-            style: AppTextStyles.tag_12.copyWith(
-              color: AppColors.textTertiary,
-            ),
-          ),
-        ],
+      child: SpaceEmptyState(
+        icon: Icons.edit_note_rounded,
+        title: '오늘의 할 일이 없어요',
+        subtitle: '할 일을 추가해보세요',
+        iconSize: 40,
+        animated: false,
       ),
     );
   }
 
   /// 빈 활동 카드
   Widget _buildEmptyActivityCard() {
-    return Container(
+    return AppCard(
+      style: AppCardStyle.outlined,
       padding: EdgeInsets.all(24.w),
-      decoration: BoxDecoration(
-        color: AppColors.spaceSurface,
-        borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: AppColors.spaceDivider, width: 1),
-      ),
-      child: Column(
-        children: [
-          Text('🌟', style: TextStyle(fontSize: 40.w)),
-          SizedBox(height: 12.h),
-          Text(
-            '아직 활동 기록이 없어요',
-            style: AppTextStyles.paragraph_14.copyWith(
-              color: Colors.white,
-            ),
-          ),
-          SizedBox(height: 4.h),
-          Text(
-            '타이머로 공부를 시작해보세요',
-            style: AppTextStyles.tag_12.copyWith(
-              color: AppColors.textTertiary,
-            ),
-          ),
-        ],
+      child: SpaceEmptyState(
+        icon: Icons.auto_awesome_rounded,
+        title: '아직 활동 기록이 없어요',
+        subtitle: '타이머로 공부를 시작해보세요',
+        iconSize: 40,
+        animated: false,
       ),
     );
   }

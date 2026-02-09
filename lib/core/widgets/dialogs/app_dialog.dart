@@ -200,8 +200,8 @@ class AppDialog extends StatelessWidget {
     return Center(
       child: Container(
         width: 300.w,
-        margin: EdgeInsets.symmetric(horizontal: 24.w),
-        padding: EdgeInsets.all(24.w),
+        margin: AppPadding.horizontal24,
+        padding: AppPadding.all24,
         decoration: BoxDecoration(
           color: AppColors.spaceElevated,
           borderRadius: AppRadius.xxlarge,
@@ -221,7 +221,7 @@ class AppDialog extends StatelessWidget {
               // 감정 아이콘
               if (emotion != AppDialogEmotion.none) ...[
                 _buildEmotionIcon(),
-                SizedBox(height: 16.h),
+                SizedBox(height: AppSpacing.s16),
               ],
 
               // 제목
@@ -233,7 +233,7 @@ class AppDialog extends StatelessWidget {
 
               // 메시지 또는 커스텀 콘텐츠
               if (message != null || customContent != null) ...[
-                SizedBox(height: 12.h),
+                SizedBox(height: AppSpacing.s12),
                 customContent ??
                     Text(
                       message!,
@@ -244,7 +244,7 @@ class AppDialog extends StatelessWidget {
                     ),
               ],
 
-              SizedBox(height: 24.h),
+              SizedBox(height: AppSpacing.s24),
 
               // 버튼들
               _buildButtons(context),
@@ -307,7 +307,7 @@ class AppDialog extends StatelessWidget {
               },
             ),
           ),
-          SizedBox(width: 12.w),
+          SizedBox(width: AppSpacing.s12),
           // 확인 버튼
           Expanded(
             child: AppButton(

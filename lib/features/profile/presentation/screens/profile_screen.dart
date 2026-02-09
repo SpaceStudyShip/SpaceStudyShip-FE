@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../../../core/widgets/atoms/space_stat_item.dart';
 import '../../../../core/widgets/backgrounds/space_background.dart';
@@ -45,16 +46,16 @@ class ProfileScreen extends StatelessWidget {
           const Positioned.fill(child: SpaceBackground()),
           SafeArea(
             child: SingleChildScrollView(
-              padding: EdgeInsets.all(20.w),
+              padding: AppPadding.all20,
               child: Column(
                 children: [
                   // 프로필 정보
                   _buildProfileHeader(),
-                  SizedBox(height: 24.h),
+                  SizedBox(height: AppSpacing.s24),
 
                   // 통계 요약
                   _buildStatsCard(),
-                  SizedBox(height: 24.h),
+                  SizedBox(height: AppSpacing.s24),
 
                   // 메뉴 리스트
                   _buildMenuList(context),
@@ -90,21 +91,21 @@ class ProfileScreen extends StatelessWidget {
             ),
           ),
         ),
-        SizedBox(height: 16.h),
+        SizedBox(height: AppSpacing.s16),
 
         // 이름
         Text(
           '우주 탐험가',
           style: AppTextStyles.heading_20.copyWith(color: Colors.white),
         ),
-        SizedBox(height: 4.h),
+        SizedBox(height: AppSpacing.s4),
 
         // 레벨/칭호
         Container(
           padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 4.h),
           decoration: BoxDecoration(
             color: AppColors.primary.withValues(alpha: 0.2),
-            borderRadius: BorderRadius.circular(12.r),
+            borderRadius: AppRadius.large,
           ),
           child: Text(
             'Lv.1 신입 탐험가',
@@ -117,10 +118,10 @@ class ProfileScreen extends StatelessWidget {
 
   Widget _buildStatsCard() {
     return Container(
-      padding: EdgeInsets.all(20.w),
+      padding: AppPadding.all20,
       decoration: BoxDecoration(
         color: AppColors.spaceSurface,
-        borderRadius: BorderRadius.circular(12.r),
+        borderRadius: AppRadius.large,
         border: Border.all(color: AppColors.spaceDivider, width: 1),
       ),
       child: Row(
@@ -165,9 +166,9 @@ class ProfileScreen extends StatelessWidget {
   }) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(12.r),
+      borderRadius: AppRadius.large,
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+        padding: AppPadding.all16,
         decoration: BoxDecoration(
           border: Border(
             bottom: BorderSide(color: AppColors.spaceDivider, width: 1),
@@ -176,7 +177,7 @@ class ProfileScreen extends StatelessWidget {
         child: Row(
           children: [
             Icon(icon, size: 24.w, color: AppColors.textSecondary),
-            SizedBox(width: 16.w),
+            SizedBox(width: AppSpacing.s16),
             Expanded(
               child: Text(
                 title,

@@ -118,7 +118,7 @@ class _BadgeCardState extends State<BadgeCard> {
         curve: TossDesignTokens.springCurve,
         child: Container(
           width: 80.w,
-          padding: EdgeInsets.all(12.w),
+          padding: AppPadding.all12,
           decoration: BoxDecoration(
             color: AppColors.spaceSurface,
             borderRadius: AppRadius.large,
@@ -155,7 +155,7 @@ class _BadgeCardState extends State<BadgeCard> {
                     Icon(Icons.lock_rounded, size: 20.w, color: AppColors.textTertiary),
                 ],
               ),
-              SizedBox(height: 8.h),
+              SizedBox(height: AppSpacing.s8),
 
               // 이름
               Text(

@@ -266,7 +266,7 @@ class _AppTextFieldState extends State<AppTextField> {
               color: hasError ? AppColors.error : AppColors.textSecondary,
             ),
           ),
-          SizedBox(height: 8.h),
+          SizedBox(height: AppSpacing.s8),
         ],
 
         // 입력 필드
@@ -329,7 +329,7 @@ class _AppTextFieldState extends State<AppTextField> {
 
         // 에러/도움 메시지
         if (errorMessage != null || widget.helperText != null) ...[
-          SizedBox(height: 8.h),
+          SizedBox(height: AppSpacing.s8),
           Text(
             errorMessage ?? widget.helperText!,
             style: AppTextStyles.tag_12.copyWith(

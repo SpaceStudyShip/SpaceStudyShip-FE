@@ -144,7 +144,7 @@ class ExplorationDetailScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SizedBox(height: 16.h),
+            SizedBox(height: AppSpacing.s16),
             // 행성 아이콘
             Container(
               width: 72.w,
@@ -161,7 +161,7 @@ class ExplorationDetailScreen extends StatelessWidget {
                 child: Text(planet.icon, style: TextStyle(fontSize: 36.sp)),
               ),
             ),
-            SizedBox(height: 8.h),
+            SizedBox(height: AppSpacing.s8),
             // 설명
             if (planet.description.isNotEmpty)
               Text(
@@ -178,10 +178,10 @@ class ExplorationDetailScreen extends StatelessWidget {
 
   Widget _buildProgressSection(ExplorationProgressEntity progress) {
     return Container(
-      padding: EdgeInsets.all(16.w),
+      padding: AppPadding.all16,
       decoration: BoxDecoration(
         color: AppColors.spaceSurface,
-        borderRadius: BorderRadius.circular(12.r),
+        borderRadius: AppRadius.large,
         border: Border.all(
           color: AppColors.spaceDivider,
           width: 1,
@@ -242,7 +242,7 @@ class ExplorationDetailScreen extends StatelessWidget {
       builder: (ctx) => AlertDialog(
         backgroundColor: AppColors.spaceElevated,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16.r),
+          borderRadius: AppRadius.xlarge,
         ),
         title: Text(
           '${region.name} 해금',

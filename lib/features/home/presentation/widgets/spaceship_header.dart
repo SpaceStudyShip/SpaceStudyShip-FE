@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_gradients.dart';
 import '../../../../core/constants/space_icons.dart';
+import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/widgets/atoms/gradient_circle_icon.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../../../core/constants/toss_design_tokens.dart';
@@ -71,7 +72,7 @@ class _SpaceshipHeaderState extends State<SpaceshipHeader> {
         bottom: false,
         child: Column(
           children: [
-            SizedBox(height: 8.h),
+            SizedBox(height: AppSpacing.s8),
 
             // 스트릭 배지
             if (widget.streakDays > 0)
@@ -106,7 +107,7 @@ class _SpaceshipHeaderState extends State<SpaceshipHeader> {
                   children: [
                     // 우주선 아이콘 - 그라데이션 원형 + glow
                     _buildSpaceshipIcon(),
-                    SizedBox(height: 12.h),
+                    SizedBox(height: AppSpacing.s12),
 
                     // 우주선 이름
                     Text(
@@ -115,7 +116,7 @@ class _SpaceshipHeaderState extends State<SpaceshipHeader> {
                         color: Colors.white,
                       ),
                     ),
-                    SizedBox(height: 4.h),
+                    SizedBox(height: AppSpacing.s4),
 
                     // 변경하기 버튼
                     Row(
@@ -146,7 +147,7 @@ class _SpaceshipHeaderState extends State<SpaceshipHeader> {
             FadeSlideIn(
               delay: const Duration(milliseconds: 200),
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20.w),
+                padding: AppPadding.horizontal20,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -156,7 +157,7 @@ class _SpaceshipHeaderState extends State<SpaceshipHeader> {
                       label: '연료',
                       valueColor: _fuelColor,
                     ),
-                    SizedBox(width: 16.w),
+                    SizedBox(width: AppSpacing.s16),
                     HomeStatChip(
                       iconData: Icons.star_rounded,
                       value: _formattedExperience,
@@ -168,7 +169,7 @@ class _SpaceshipHeaderState extends State<SpaceshipHeader> {
               ),
             ),
 
-            SizedBox(height: 20.h),
+            SizedBox(height: AppSpacing.s20),
           ],
         ),
       ),

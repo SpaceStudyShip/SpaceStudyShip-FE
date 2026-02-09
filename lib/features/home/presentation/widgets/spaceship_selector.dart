@@ -80,7 +80,7 @@ class SpaceshipSelector extends StatelessWidget {
 
           // 제목
           Padding(
-            padding: EdgeInsets.all(20.w),
+            padding: AppPadding.all20,
             child: Row(
               children: [
                 Icon(
@@ -88,7 +88,7 @@ class SpaceshipSelector extends StatelessWidget {
                   size: 24.w,
                   color: AppColors.primary,
                 ),
-                SizedBox(width: 8.w),
+                SizedBox(width: AppSpacing.s8),
                 Text(
                   '우주선 선택',
                   style: AppTextStyles.heading_20.copyWith(
@@ -110,8 +110,8 @@ class SpaceshipSelector extends StatelessWidget {
             child: SingleChildScrollView(
               padding: AppPadding.all20,
               child: Wrap(
-                spacing: 12.w,
-                runSpacing: 12.h,
+                spacing: AppSpacing.s12,
+                runSpacing: AppSpacing.s12,
                 alignment: WrapAlignment.center,
                 children: spaceships.map((spaceship) {
                   return SpaceshipCard(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../constants/app_colors.dart';
+import '../../constants/spacing_and_radius.dart';
 import '../../constants/text_styles.dart';
 import '../buttons/app_button.dart';
 
@@ -130,7 +131,7 @@ class AppEmptyState extends StatelessWidget {
                 color: _effectiveIconColor,
               ),
             ),
-            SizedBox(height: 24.h),
+            SizedBox(height: AppSpacing.s24),
 
             // 제목
             Text(
@@ -141,7 +142,7 @@ class AppEmptyState extends StatelessWidget {
 
             // 설명
             if (description != null) ...[
-              SizedBox(height: 8.h),
+              SizedBox(height: AppSpacing.s8),
               Text(
                 description!,
                 style: AppTextStyles.paragraph_14.copyWith(
@@ -153,7 +154,7 @@ class AppEmptyState extends StatelessWidget {
 
             // 액션 버튼
             if (actionText != null && onAction != null) ...[
-              SizedBox(height: 24.h),
+              SizedBox(height: AppSpacing.s24),
               AppButton(
                 text: actionText!,
                 width: 200.w,

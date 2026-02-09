@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/space_icons.dart';
+import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../../../core/constants/toss_design_tokens.dart';
 import '../../domain/entities/exploration_node_entity.dart';
@@ -72,7 +73,7 @@ class _RegionCardState extends State<RegionCard> {
                 : isLocked
                     ? AppColors.spaceBackground
                     : AppColors.spaceSurface,
-            borderRadius: BorderRadius.circular(12.r),
+            borderRadius: AppRadius.large,
             border: Border.all(
               color: isCleared
                   ? AppColors.success.withValues(alpha: 0.4)
@@ -86,7 +87,7 @@ class _RegionCardState extends State<RegionCard> {
             children: [
               // 지역 아이콘
               _buildRegionIcon(isLocked, isCleared),
-              SizedBox(width: 12.w),
+              SizedBox(width: AppSpacing.s12),
 
               // 지역 정보
               Expanded(
@@ -131,7 +132,7 @@ class _RegionCardState extends State<RegionCard> {
 
               // 해금 버튼 또는 상태 표시
               if (isLocked) ...[
-                SizedBox(width: 8.w),
+                SizedBox(width: AppSpacing.s8),
                 _buildUnlockButton(),
               ],
             ],
@@ -209,7 +210,7 @@ class _RegionCardState extends State<RegionCard> {
         color: _canUnlock
             ? AppColors.primary
             : AppColors.spaceDivider.withValues(alpha: 0.3),
-        borderRadius: BorderRadius.circular(8.r),
+        borderRadius: AppRadius.medium,
       ),
       child: Text(
         '해금',

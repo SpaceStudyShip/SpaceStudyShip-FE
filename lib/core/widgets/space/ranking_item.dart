@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../constants/app_colors.dart';
 import '../../constants/app_gradients.dart';
+import '../../constants/spacing_and_radius.dart';
 import '../../constants/text_styles.dart';
 import '../../constants/toss_design_tokens.dart';
 
@@ -105,12 +106,12 @@ class _RankingItemState extends State<RankingItem> {
         duration: TossDesignTokens.animationFast,
         curve: TossDesignTokens.springCurve,
         child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+          padding: AppPadding.listItemPadding,
           decoration: BoxDecoration(
             color: widget.isCurrentUser
                 ? AppColors.primary.withValues(alpha: 0.15)
                 : AppColors.spaceSurface,
-            borderRadius: BorderRadius.circular(12.r),
+            borderRadius: AppRadius.large,
             border: widget.isCurrentUser
                 ? Border.all(
                     color: AppColors.primary.withValues(alpha: 0.5),
@@ -156,7 +157,7 @@ class _RankingItemState extends State<RankingItem> {
                         textAlign: TextAlign.center,
                       ),
               ),
-              SizedBox(width: 12.w),
+              SizedBox(width: AppSpacing.s12),
 
               // 아바타
               Container(
@@ -180,7 +181,7 @@ class _RankingItemState extends State<RankingItem> {
                   ),
                 ),
               ),
-              SizedBox(width: 12.w),
+              SizedBox(width: AppSpacing.s12),
 
               // 이름
               Expanded(
@@ -211,7 +212,7 @@ class _RankingItemState extends State<RankingItem> {
                             ),
                             decoration: BoxDecoration(
                               color: AppColors.primary,
-                              borderRadius: BorderRadius.circular(4.r),
+                              borderRadius: AppRadius.small,
                             ),
                             child: Text(
                               '나',

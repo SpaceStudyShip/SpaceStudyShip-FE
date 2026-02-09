@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../../../core/widgets/animations/entrance_animations.dart';
 import '../../../../core/widgets/backgrounds/space_background.dart';
@@ -64,7 +65,7 @@ class TimerScreen extends StatelessWidget {
                     ),
                     // 시간 텍스트
                     Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 16.w),
+                      padding: AppPadding.horizontal16,
                       child: FittedBox(
                         fit: BoxFit.scaleDown,
                         child: Column(
@@ -79,7 +80,7 @@ class TimerScreen extends StatelessWidget {
                                 fontWeight: FontWeight.w700,
                               ),
                             ),
-                            SizedBox(height: 4.h),
+                            SizedBox(height: AppSpacing.s4),
                             Text(
                               '집중 시간을 측정해보세요',
                               style: AppTextStyles.tag_12.copyWith(
@@ -94,7 +95,7 @@ class TimerScreen extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(height: 48.h),
+            SizedBox(height: AppSpacing.s48),
 
             // 시작 버튼
             FadeSlideIn(
@@ -106,16 +107,16 @@ class TimerScreen extends StatelessWidget {
                 },
               ),
             ),
-            SizedBox(height: 48.h),
+            SizedBox(height: AppSpacing.s48),
 
             // 오늘의 통계
             FadeSlideIn(
               delay: const Duration(milliseconds: 200),
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20.w),
+                padding: AppPadding.horizontal20,
                 child: AppCard(
                   style: AppCardStyle.outlined,
-                  padding: EdgeInsets.all(20.w),
+                  padding: AppPadding.all20,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [

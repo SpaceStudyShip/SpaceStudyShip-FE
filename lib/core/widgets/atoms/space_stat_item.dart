@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../constants/app_colors.dart';
+import '../../constants/spacing_and_radius.dart';
 import '../../constants/text_styles.dart';
 
 /// 통계 아이템 위젯
@@ -35,14 +36,14 @@ class SpaceStatItem extends StatelessWidget {
       children: [
         if (icon != null && !valueFirst) ...[
           Icon(icon, size: 16.w, color: AppColors.textTertiary),
-          SizedBox(height: 4.h),
+          SizedBox(height: AppSpacing.s4),
         ],
         if (valueFirst) ...[
           Text(
             value,
             style: AppTextStyles.subHeading_18.copyWith(color: Colors.white),
           ),
-          SizedBox(height: 4.h),
+          SizedBox(height: AppSpacing.s4),
           Text(
             label,
             style: AppTextStyles.tag_12.copyWith(color: AppColors.textTertiary),
@@ -52,7 +53,7 @@ class SpaceStatItem extends StatelessWidget {
             label,
             style: AppTextStyles.tag_12.copyWith(color: AppColors.textTertiary),
           ),
-          SizedBox(height: 4.h),
+          SizedBox(height: AppSpacing.s4),
           Text(
             value,
             style: AppTextStyles.paragraph_14.copyWith(

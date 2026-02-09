@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../constants/app_colors.dart';
+import '../../constants/spacing_and_radius.dart';
 import '../../constants/text_styles.dart';
 import '../animations/entrance_animations.dart';
 
@@ -62,12 +63,12 @@ class SpaceEmptyState extends StatelessWidget {
             color: effectiveColor,
           ),
         ),
-        SizedBox(height: 16.h),
+        SizedBox(height: AppSpacing.s16),
         Text(
           title,
           style: AppTextStyles.label_16.copyWith(color: Colors.white),
         ),
-        SizedBox(height: 8.h),
+        SizedBox(height: AppSpacing.s8),
         Text(
           subtitle,
           style: AppTextStyles.paragraph_14.copyWith(

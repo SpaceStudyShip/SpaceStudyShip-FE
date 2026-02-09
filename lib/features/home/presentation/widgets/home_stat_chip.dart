@@ -51,7 +51,7 @@ class HomeStatChip extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+        padding: AppPadding.listItemPadding,
         decoration: BoxDecoration(
           gradient: AppGradients.statChip,
           borderRadius: AppRadius.large,
@@ -78,7 +78,7 @@ class HomeStatChip extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: 4.h),
+            SizedBox(height: AppSpacing.s4),
             // 라벨
             Text(
               label,

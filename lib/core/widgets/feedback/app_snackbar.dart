@@ -147,7 +147,7 @@ class AppSnackBar {
         children: [
           if (icon != null) ...[
             Icon(icon, size: 20.w, color: iconColor ?? Colors.white),
-            SizedBox(width: 12.w),
+            SizedBox(width: AppSpacing.s12),
           ],
           Expanded(
             child: Text(

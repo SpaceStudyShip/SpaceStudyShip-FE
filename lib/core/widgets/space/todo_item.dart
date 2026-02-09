@@ -72,7 +72,7 @@ class _TodoItemState extends State<TodoItem> {
         duration: TossDesignTokens.animationFast,
         curve: TossDesignTokens.springCurve,
         child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+          padding: AppPadding.listItemPadding,
           decoration: BoxDecoration(
             color: AppColors.spaceSurface,
             borderRadius: AppRadius.large,
@@ -87,7 +87,7 @@ class _TodoItemState extends State<TodoItem> {
             children: [
               // 체크박스 또는 커스텀 리딩
               widget.leading ?? _buildCheckbox(),
-              SizedBox(width: 12.w),
+              SizedBox(width: AppSpacing.s12),
 
               // 제목 및 부제목
               Expanded(
@@ -107,7 +107,7 @@ class _TodoItemState extends State<TodoItem> {
                       ),
                     ),
                     if (widget.subtitle != null) ...[
-                      SizedBox(height: 4.h),
+                      SizedBox(height: AppSpacing.s4),
                       Text(
                         widget.subtitle!,
                         style: AppTextStyles.tag_12.copyWith(
@@ -124,7 +124,7 @@ class _TodoItemState extends State<TodoItem> {
                 GestureDetector(
                   onTap: widget.onDelete,
                   child: Padding(
-                    padding: EdgeInsets.all(8.w),
+                    padding: AppPadding.all8,
                     child: Icon(
                       Icons.close,
                       size: 18.w,

@@ -64,7 +64,7 @@ class StatusCard extends StatelessWidget {
           Row(
             children: [
               Icon(Icons.public_rounded, size: 18.w, color: AppColors.primary),
-              SizedBox(width: 8.w),
+              SizedBox(width: AppSpacing.s8),
               Text(
                 '현재 위치: ',
                 style: AppTextStyles.paragraph_14.copyWith(
@@ -81,7 +81,7 @@ class StatusCard extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: 12.h),
+          SizedBox(height: AppSpacing.s12),
 
           // 연료
           FuelGauge(
@@ -90,7 +90,7 @@ class StatusCard extends StatelessWidget {
             showIcon: true,
             size: FuelGaugeSize.medium,
           ),
-          SizedBox(height: 12.h),
+          SizedBox(height: AppSpacing.s12),
 
           // 스트릭
           StreakBadge(

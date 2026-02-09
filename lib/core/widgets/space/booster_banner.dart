@@ -54,7 +54,7 @@ class BoosterBanner extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+        padding: AppPadding.listItemPadding,
         decoration: BoxDecoration(
           color: AppColors.accentGold.withValues(alpha: 0.15),
           borderRadius: AppRadius.large,
@@ -71,7 +71,7 @@ class BoosterBanner extends StatelessWidget {
               size: 20.w,
               color: AppColors.accentGold,
             ),
-            SizedBox(width: 8.w),
+            SizedBox(width: AppSpacing.s8),
 
             // 메시지
             Expanded(

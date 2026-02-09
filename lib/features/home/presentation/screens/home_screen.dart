@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/space_icons.dart';
+import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../../../core/widgets/animations/entrance_animations.dart';
 import '../../../../core/widgets/backgrounds/space_background.dart';
@@ -151,7 +152,7 @@ class _HomeScreenState extends State<HomeScreen> {
             child: FadeSlideIn(
               delay: const Duration(milliseconds: 160),
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20.w),
+                padding: AppPadding.horizontal20,
                 child: _buildEmptyTodoCard(),
               ),
             ),
@@ -171,7 +172,7 @@ class _HomeScreenState extends State<HomeScreen> {
             child: FadeSlideIn(
               delay: const Duration(milliseconds: 280),
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20.w),
+                padding: AppPadding.horizontal20,
                 child: _buildEmptyActivityCard(),
               ),
             ),
@@ -195,7 +196,7 @@ class _HomeScreenState extends State<HomeScreen> {
       mainAxisSize: MainAxisSize.min,
       children: [
         SpaceIcons.buildIcon(_selectedSpaceshipIcon, size: 24.w),
-        SizedBox(width: 8.w),
+        SizedBox(width: AppSpacing.s8),
         Text(
           _selectedSpaceshipName,
           style: AppTextStyles.label_16.copyWith(
@@ -220,7 +221,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildEmptyTodoCard() {
     return AppCard(
       style: AppCardStyle.outlined,
-      padding: EdgeInsets.all(24.w),
+      padding: AppPadding.all24,
       child: SpaceEmptyState(
         icon: Icons.edit_note_rounded,
         title: '오늘의 할 일이 없어요',
@@ -235,7 +236,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildEmptyActivityCard() {
     return AppCard(
       style: AppCardStyle.outlined,
-      padding: EdgeInsets.all(24.w),
+      padding: AppPadding.all24,
       child: SpaceEmptyState(
         icon: Icons.auto_awesome_rounded,
         title: '아직 활동 기록이 없어요',

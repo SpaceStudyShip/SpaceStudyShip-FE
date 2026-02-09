@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../constants/app_colors.dart';
+import '../../constants/spacing_and_radius.dart';
 import '../../constants/text_styles.dart';
 
 /// 로딩 타입
@@ -94,7 +95,7 @@ class _AppLoadingState extends State<AppLoading>
       children: [
         _buildLoader(),
         if (widget.message != null) ...[
-          SizedBox(height: 12.h),
+          SizedBox(height: AppSpacing.s12),
           Text(
             widget.message!,
             style: AppTextStyles.paragraph_14.copyWith(
@@ -139,7 +140,7 @@ class _AppLoadingState extends State<AppLoading>
                 borderRadius: BorderRadius.circular(2.r),
               ),
               if (widget.progress != null) ...[
-                SizedBox(height: 8.h),
+                SizedBox(height: AppSpacing.s8),
                 Text(
                   '${(widget.progress! * 100).toInt()}%',
                   style: AppTextStyles.tag_12.copyWith(

@@ -47,7 +47,7 @@ class AppSkeleton extends StatefulWidget {
       children: List.generate(lines, (index) {
         final isLast = index == lines - 1;
         return Padding(
-          padding: EdgeInsets.only(bottom: isLast ? 0 : 8.h),
+          padding: EdgeInsets.only(bottom: isLast ? 0 : AppSpacing.s8),
           child: AppSkeleton(
             width: isLast && lines > 1
                 ? (width ?? double.infinity) * 0.7
@@ -72,11 +72,11 @@ class AppSkeleton extends StatefulWidget {
   /// 리스트 아이템 스켈레톤 (아바타 + 텍스트)
   static Widget listTile() {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 8.h),
+      padding: AppPadding.vertical8,
       child: Row(
         children: [
           AppSkeleton.avatar(size: 48.w),
-          SizedBox(width: 12.w),
+          SizedBox(width: AppSpacing.s12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -86,7 +86,7 @@ class AppSkeleton extends StatefulWidget {
                   height: 14.h,
                   borderRadius: AppRadius.small,
                 ),
-                SizedBox(height: 8.h),
+                SizedBox(height: AppSpacing.s8),
                 AppSkeleton(
                   width: 120.w,
                   height: 12.h,

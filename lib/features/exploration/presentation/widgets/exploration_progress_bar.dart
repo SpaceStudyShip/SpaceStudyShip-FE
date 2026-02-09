@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../domain/entities/exploration_progress_entity.dart';
 
@@ -71,7 +72,7 @@ class ExplorationProgressBar extends StatelessWidget {
 
         // 라벨
         if (showLabel) ...[
-          SizedBox(width: 8.w),
+          SizedBox(width: AppSpacing.s8),
           Text(
             '${progress.clearedChildren}/${progress.totalChildren}',
             style: AppTextStyles.tag_12.copyWith(

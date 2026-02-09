@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../../../core/widgets/animations/entrance_animations.dart';
 import '../../../../core/widgets/atoms/gradient_circle_icon.dart';
@@ -101,7 +102,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     itemBuilder: (context, index) {
                       final page = _pages[index];
                       return Padding(
-                        padding: EdgeInsets.all(20.w),
+                        padding: AppPadding.all20,
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -114,7 +115,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                 iconSize: 42,
                               ),
                             ),
-                            SizedBox(height: 32.h),
+                            SizedBox(height: AppSpacing.s32),
                             FadeSlideIn(
                               delay: const Duration(milliseconds: 100),
                               child: Text(
@@ -124,7 +125,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                 ),
                               ),
                             ),
-                            SizedBox(height: 16.h),
+                            SizedBox(height: AppSpacing.s16),
                             FadeSlideIn(
                               delay: const Duration(milliseconds: 200),
                               child: Text(
@@ -157,17 +158,17 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         color: _currentPage == index
                             ? AppColors.primary
                             : AppColors.spaceDivider,
-                        borderRadius: BorderRadius.circular(4.r),
+                        borderRadius: AppRadius.small,
                       ),
                     ),
                   ),
                 ),
 
-                SizedBox(height: 32.h),
+                SizedBox(height: AppSpacing.s32),
 
                 // 다음/시작 버튼
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20.w),
+                  padding: AppPadding.horizontal20,
                   child: AppButton(
                     text: _currentPage == _pages.length - 1 ? '시작하기' : '다음',
                     onPressed: _nextPage,
@@ -176,7 +177,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   ),
                 ),
 
-                SizedBox(height: 32.h),
+                SizedBox(height: AppSpacing.s32),
               ],
             ),
           ),

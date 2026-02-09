@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../constants/app_colors.dart';
+import '../../constants/spacing_and_radius.dart';
 import '../../constants/text_styles.dart';
 
 /// 연료 게이지 위젯 - 우주 테마
@@ -91,7 +92,7 @@ class FuelGauge extends StatelessWidget {
             size: _iconSize,
             color: _fuelColor,
           ),
-          SizedBox(width: 4.w),
+          SizedBox(width: AppSpacing.s4),
         ],
         if (showLabel) ...[
           Text(

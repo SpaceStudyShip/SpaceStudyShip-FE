@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/space_icons.dart';
+import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../../../core/constants/toss_design_tokens.dart';
 import '../../domain/entities/exploration_node_entity.dart';
@@ -88,7 +89,7 @@ class _PlanetNodeState extends State<PlanetNode>
               // 행성 원형 아이콘
               _buildPlanetCircle(isLocked, isCleared),
 
-              SizedBox(height: 4.h),
+              SizedBox(height: AppSpacing.s4),
 
               // 행성 이름
               Text(

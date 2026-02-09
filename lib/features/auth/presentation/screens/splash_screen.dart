@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../../../core/widgets/animations/entrance_animations.dart';
 import '../../../../core/widgets/atoms/gradient_circle_icon.dart';
@@ -57,7 +58,7 @@ class _SplashScreenState extends State<SplashScreen> {
                     gradientColors: [AppColors.primaryLight, AppColors.primary],
                   ),
                 ),
-                SizedBox(height: 24.h),
+                SizedBox(height: AppSpacing.s24),
                 FadeSlideIn(
                   delay: const Duration(milliseconds: 100),
                   child: Text(
@@ -67,7 +68,7 @@ class _SplashScreenState extends State<SplashScreen> {
                     ),
                   ),
                 ),
-                SizedBox(height: 8.h),
+                SizedBox(height: AppSpacing.s8),
                 FadeSlideIn(
                   delay: const Duration(milliseconds: 200),
                   child: Text(
@@ -77,7 +78,7 @@ class _SplashScreenState extends State<SplashScreen> {
                     ),
                   ),
                 ),
-                SizedBox(height: 48.h),
+                SizedBox(height: AppSpacing.s48),
                 FadeSlideIn(
                   delay: const Duration(milliseconds: 300),
                   child: SizedBox(

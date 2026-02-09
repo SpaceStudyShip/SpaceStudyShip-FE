@@ -208,7 +208,7 @@ class _RankingItemState extends State<RankingItem> {
                           ),
                         ),
                         if (widget.isCurrentUser) ...[
-                          SizedBox(width: 4.w),
+                          SizedBox(width: AppSpacing.s4),
                           Container(
                             padding: EdgeInsets.symmetric(
                               horizontal: 6.w,

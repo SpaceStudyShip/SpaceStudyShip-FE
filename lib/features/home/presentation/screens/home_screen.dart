@@ -201,7 +201,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   size: 18.w,
                   color: _fuelColor,
                 ),
-                SizedBox(width: 4.w),
+                SizedBox(width: AppSpacing.s4),
                 Text(
                   _fuel.toStringAsFixed(0),
                   style: AppTextStyles.label_16.copyWith(
@@ -425,7 +425,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         color: AppColors.primary,
                       ),
                     ),
-                    SizedBox(width: 4.w),
+                    SizedBox(width: AppSpacing.s4),
                     Icon(
                       Icons.arrow_forward_rounded,
                       size: 16.w,
@@ -437,7 +437,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
         ],
 
-        SizedBox(height: 40.h),
+        SizedBox(height: AppSpacing.s40),
       ],
     );
   }

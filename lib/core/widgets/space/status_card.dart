@@ -73,7 +73,7 @@ class StatusCard extends StatelessWidget {
               ),
               if (locationFlag != null) ...[
                 Text(locationFlag!, style: TextStyle(fontSize: 16.w)),
-                SizedBox(width: 4.w),
+                SizedBox(width: AppSpacing.s4),
               ],
               Text(
                 location,

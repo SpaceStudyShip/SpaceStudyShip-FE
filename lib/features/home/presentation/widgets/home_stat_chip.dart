@@ -68,7 +68,7 @@ class HomeStatChip extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(iconData, size: 16.w, color: color),
-                SizedBox(width: 4.w),
+                SizedBox(width: AppSpacing.s4),
                 Text(
                   value,
                   style: AppTextStyles.label_16.copyWith(

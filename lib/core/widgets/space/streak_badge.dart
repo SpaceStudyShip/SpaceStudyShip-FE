@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../constants/app_colors.dart';
+import '../../constants/spacing_and_radius.dart';
 import '../../constants/text_styles.dart';
 
 /// 스트릭 뱃지 위젯 - 우주 테마
@@ -81,7 +82,7 @@ class StreakBadge extends StatelessWidget {
             ),
           ),
         ),
-        SizedBox(width: 4.w),
+        SizedBox(width: AppSpacing.s4),
         if (showLabel)
           Text(
             '연속 $days일째',

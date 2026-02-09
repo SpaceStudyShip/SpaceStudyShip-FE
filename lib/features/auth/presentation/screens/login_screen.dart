@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../../../core/widgets/animations/entrance_animations.dart';
 import '../../../../core/widgets/atoms/gradient_circle_icon.dart';
@@ -25,7 +26,7 @@ class LoginScreen extends StatelessWidget {
           const Positioned.fill(child: SpaceBackground()),
           SafeArea(
             child: Padding(
-              padding: EdgeInsets.all(20.w),
+              padding: AppPadding.all20,
               child: Column(
                 children: [
                   const Spacer(flex: 2),
@@ -43,7 +44,7 @@ class LoginScreen extends StatelessWidget {
                       ],
                     ),
                   ),
-                  SizedBox(height: 16.h),
+                  SizedBox(height: AppSpacing.s16),
                   FadeSlideIn(
                     delay: const Duration(milliseconds: 100),
                     child: Text(
@@ -55,7 +56,7 @@ class LoginScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  SizedBox(height: 12.h),
+                  SizedBox(height: AppSpacing.s12),
                   FadeSlideIn(
                     delay: const Duration(milliseconds: 200),
                     child: Text(
@@ -82,7 +83,7 @@ class LoginScreen extends StatelessWidget {
                     ),
                   ),
 
-                  SizedBox(height: 16.h),
+                  SizedBox(height: AppSpacing.s16),
 
                   // 약관 안내
                   FadeSlideIn(
@@ -97,7 +98,7 @@ class LoginScreen extends StatelessWidget {
                     ),
                   ),
 
-                  SizedBox(height: 32.h),
+                  SizedBox(height: AppSpacing.s32),
                 ],
               ),
             ),

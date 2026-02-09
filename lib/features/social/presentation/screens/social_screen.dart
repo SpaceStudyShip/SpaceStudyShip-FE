@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/text_styles.dart';
-import '../../../../core/widgets/backgrounds/space_background.dart';
 import '../../../../core/widgets/states/space_empty_state.dart';
 
 /// 소셜 스크린
@@ -16,8 +15,9 @@ class SocialScreen extends StatelessWidget {
     return DefaultTabController(
       length: 3,
       child: Scaffold(
-        backgroundColor: AppColors.spaceBackground,
+        backgroundColor: Colors.transparent,
         extendBodyBehindAppBar: true,
+        extendBody: true,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           scrolledUnderElevation: 0,
@@ -40,14 +40,9 @@ class SocialScreen extends StatelessWidget {
             ],
           ),
         ),
-        body: Stack(
-          children: [
-            const Positioned.fill(child: SpaceBackground()),
-            TabBarView(
+        body: TabBarView(
               children: [_buildFriendsTab(), _buildGroupsTab(), _buildRankingTab()],
             ),
-          ],
-        ),
       ),
     );
   }

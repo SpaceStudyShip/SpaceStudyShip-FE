@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../core/constants/app_colors.dart';
+import '../core/widgets/backgrounds/space_background.dart';
 
 /// 메인 네비게이션 쉘 (바텀 네비게이션)
 ///
@@ -18,7 +19,13 @@ class MainShell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: navigationShell,
+      backgroundColor: AppColors.spaceBackground,
+      body: Stack(
+        children: [
+          const Positioned.fill(child: SpaceBackground()),
+          navigationShell,
+        ],
+      ),
       extendBody: true,
       bottomNavigationBar: ClipRect(
         child: BackdropFilter(
@@ -137,7 +144,9 @@ class _NavItem extends StatelessWidget {
               label,
               style: TextStyle(
                 fontSize: 10.sp,
-                fontFamily: isSelected ? 'Pretendard-SemiBold' : 'Pretendard-Medium',
+                fontFamily: isSelected
+                    ? 'Pretendard-SemiBold'
+                    : 'Pretendard-Medium',
                 color: isSelected ? Colors.white : AppColors.textTertiary,
               ),
             ),

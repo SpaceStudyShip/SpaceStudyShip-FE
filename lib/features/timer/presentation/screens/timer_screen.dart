@@ -5,7 +5,6 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../../../core/widgets/animations/entrance_animations.dart';
-import '../../../../core/widgets/backgrounds/space_background.dart';
 import '../../../../core/widgets/buttons/app_button.dart';
 import '../../../../core/widgets/atoms/space_stat_item.dart';
 import '../../../../core/widgets/cards/app_card.dart';
@@ -20,8 +19,9 @@ class TimerScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.spaceBackground,
+      backgroundColor: Colors.transparent,
       extendBodyBehindAppBar: true,
+      extendBody: true,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         scrolledUnderElevation: 0,
@@ -39,10 +39,7 @@ class TimerScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: Stack(
-        children: [
-          const Positioned.fill(child: SpaceBackground()),
-          Center(
+      body: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -152,8 +149,6 @@ class TimerScreen extends StatelessWidget {
             ),
           ],
         ),
-      ),
-        ],
       ),
     );
   }

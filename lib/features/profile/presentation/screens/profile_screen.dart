@@ -6,7 +6,6 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../../../core/widgets/atoms/space_stat_item.dart';
-import '../../../../core/widgets/backgrounds/space_background.dart';
 import '../../../../routes/route_paths.dart';
 
 /// 프로필 스크린
@@ -18,8 +17,9 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.spaceBackground,
+      backgroundColor: Colors.transparent,
       extendBodyBehindAppBar: true,
+      extendBody: true,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         scrolledUnderElevation: 0,
@@ -41,29 +41,24 @@ class ProfileScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: Stack(
-        children: [
-          const Positioned.fill(child: SpaceBackground()),
-          SafeArea(
-            child: SingleChildScrollView(
-              padding: AppPadding.all20,
-              child: Column(
-                children: [
-                  // 프로필 정보
-                  _buildProfileHeader(),
-                  SizedBox(height: AppSpacing.s24),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: AppPadding.all20,
+          child: Column(
+            children: [
+              // 프로필 정보
+              _buildProfileHeader(),
+              SizedBox(height: AppSpacing.s24),
 
-                  // 통계 요약
-                  _buildStatsCard(),
-                  SizedBox(height: AppSpacing.s24),
+              // 통계 요약
+              _buildStatsCard(),
+              SizedBox(height: AppSpacing.s24),
 
-                  // 메뉴 리스트
-                  _buildMenuList(context),
-                ],
-              ),
-            ),
+              // 메뉴 리스트
+              _buildMenuList(context),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
@@ -84,11 +79,7 @@ class ProfileScreen extends StatelessWidget {
             ),
           ),
           child: Center(
-            child: Icon(
-              Icons.person_rounded,
-              size: 40.sp,
-              color: Colors.white,
-            ),
+            child: Icon(Icons.person_rounded, size: 40.sp, color: Colors.white),
           ),
         ),
         SizedBox(height: AppSpacing.s16),
@@ -155,6 +146,11 @@ class ProfileScreen extends StatelessWidget {
           title: '우주선 컬렉션',
           onTap: () => context.push(RoutePaths.spaceships),
         ),
+        _buildMenuItem(
+          icon: Icons.login_outlined,
+          title: '[테스트] 로그인 화면',
+          onTap: () => context.push(RoutePaths.login),
+        ),
       ],
     );
   }
@@ -181,7 +177,9 @@ class ProfileScreen extends StatelessWidget {
             Expanded(
               child: Text(
                 title,
-                style: AppTextStyles.label16Medium.copyWith(color: Colors.white),
+                style: AppTextStyles.label16Medium.copyWith(
+                  color: Colors.white,
+                ),
               ),
             ),
             Icon(

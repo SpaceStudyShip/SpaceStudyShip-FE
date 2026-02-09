@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/space_icons.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../../../core/widgets/animations/entrance_animations.dart';
-import '../../../../core/widgets/backgrounds/space_background.dart';
 import '../../../../core/widgets/cards/app_card.dart';
 import '../../../../core/widgets/space/spaceship_card.dart';
 import '../../../../core/widgets/states/space_empty_state.dart';
@@ -100,11 +98,9 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.spaceBackground,
-      body: Stack(
-        children: [
-          const Positioned.fill(child: SpaceBackground()),
-          CustomScrollView(
+      backgroundColor: Colors.transparent,
+      extendBody: true,
+      body: CustomScrollView(
             slivers: [
               // SliverAppBar - 우주선 헤더
               SliverAppBar(
@@ -183,8 +179,6 @@ class _HomeScreenState extends State<HomeScreen> {
             hasScrollBody: false,
             child: SizedBox(height: 100.h),
           ),
-        ],
-      ),
         ],
       ),
     );

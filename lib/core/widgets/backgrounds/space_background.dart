@@ -64,10 +64,14 @@ class _SpaceBackgroundState extends State<SpaceBackground>
       // 크기: 지수 분포 → 작은 별이 많고 큰 별은 드물게 (실제 밤하늘)
       final sizeRoll = random.nextDouble();
       final size = sizeRoll < 0.6
-          ? 0.3 + random.nextDouble() * 0.5 // 60%: 아주 작은 별 (0.3~0.8)
+          ? 0.3 +
+                random.nextDouble() *
+                    0.5 // 60%: 아주 작은 별 (0.3~0.8)
           : sizeRoll < 0.85
-              ? 0.8 + random.nextDouble() * 0.8 // 25%: 중간 별 (0.8~1.6)
-              : 1.6 + random.nextDouble() * 1.0; // 15%: 큰 별 (1.6~2.6)
+          ? 0.8 +
+                random.nextDouble() *
+                    0.8 // 25%: 중간 별 (0.8~1.6)
+          : 1.6 + random.nextDouble() * 1.0; // 15%: 큰 별 (1.6~2.6)
 
       // 틴트: 큰 별일수록 색상 가질 확률 높음
       final hasTint = size > 1.0 && random.nextDouble() < 0.4;
@@ -116,11 +120,7 @@ class _SpaceBackgroundState extends State<SpaceBackground>
         child: Stack(
           children: [
             // Layer 1: 네뷸라 오버레이
-            Positioned.fill(
-              child: CustomPaint(
-                painter: _NebulaPainter(),
-              ),
-            ),
+            Positioned.fill(child: CustomPaint(painter: _NebulaPainter())),
 
             // Layer 2: 별 필드
             Positioned.fill(
@@ -211,10 +211,7 @@ class _NebulaPainter extends CustomPainter {
 }
 
 class _StarPainter extends CustomPainter {
-  _StarPainter({
-    required this.stars,
-    required this.twinkleValue,
-  });
+  _StarPainter({required this.stars, required this.twinkleValue});
 
   final List<_Star> stars;
   final double twinkleValue;
@@ -225,7 +222,8 @@ class _StarPainter extends CustomPainter {
       double opacity;
       if (star.twinkle) {
         final phase = (twinkleValue + star.twinkleOffset) % 1.0;
-        opacity = star.baseOpacity +
+        opacity =
+            star.baseOpacity +
             (1.0 - star.baseOpacity) * (0.5 + 0.5 * sin(phase * pi * 2));
       } else {
         opacity = star.baseOpacity;

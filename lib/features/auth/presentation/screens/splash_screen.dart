@@ -45,51 +45,55 @@ class _SplashScreenState extends State<SplashScreen> {
           const Positioned.fill(child: SpaceBackground()),
           Center(
             child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // 로고 - 그라데이션 원형 아이콘
-            FadeSlideIn(
-              child: GradientCircleIcon(
-                icon: Icons.rocket_launch_rounded,
-                color: AppColors.primary,
-                size: 96,
-                iconSize: 44,
-                gradientColors: [AppColors.primaryLight, AppColors.primary],
-              ),
-            ),
-            SizedBox(height: 24.h),
-            FadeSlideIn(
-              delay: const Duration(milliseconds: 100),
-              child: Text(
-                '우주공부선',
-                style: AppTextStyles.semibold28.copyWith(color: Colors.white),
-              ),
-            ),
-            SizedBox(height: 8.h),
-            FadeSlideIn(
-              delay: const Duration(milliseconds: 200),
-              child: Text(
-                'Space Study Ship',
-                style: AppTextStyles.paragraph_14.copyWith(
-                  color: AppColors.textSecondary,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // 로고 - 그라데이션 원형 아이콘
+                FadeSlideIn(
+                  child: GradientCircleIcon(
+                    icon: Icons.rocket_launch_rounded,
+                    color: AppColors.primary,
+                    size: 96,
+                    iconSize: 44,
+                    gradientColors: [AppColors.primaryLight, AppColors.primary],
+                  ),
                 ),
-              ),
-            ),
-            SizedBox(height: 48.h),
-            FadeSlideIn(
-              delay: const Duration(milliseconds: 300),
-              child: SizedBox(
-                width: 24.w,
-                height: 24.w,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
+                SizedBox(height: 24.h),
+                FadeSlideIn(
+                  delay: const Duration(milliseconds: 100),
+                  child: Text(
+                    '우주공부선',
+                    style: AppTextStyles.semibold28.copyWith(
+                      color: Colors.white,
+                    ),
+                  ),
                 ),
-              ),
+                SizedBox(height: 8.h),
+                FadeSlideIn(
+                  delay: const Duration(milliseconds: 200),
+                  child: Text(
+                    'Space Study Ship',
+                    style: AppTextStyles.paragraph_14.copyWith(
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                ),
+                SizedBox(height: 48.h),
+                FadeSlideIn(
+                  delay: const Duration(milliseconds: 300),
+                  child: SizedBox(
+                    width: 24.w,
+                    height: 24.w,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        AppColors.primary,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
+          ),
         ],
       ),
     );

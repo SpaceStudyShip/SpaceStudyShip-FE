@@ -239,25 +239,18 @@ class _HomeScreenState extends State<HomeScreen> {
         },
         onTapCancel: () => setState(() => _isSpaceshipPressed = false),
         child: AnimatedScale(
-          scale: _isSpaceshipPressed
-              ? TossDesignTokens.buttonTapScale
-              : 1.0,
+          scale: _isSpaceshipPressed ? TossDesignTokens.buttonTapScale : 1.0,
           duration: TossDesignTokens.animationFast,
           curve: TossDesignTokens.springCurve,
           child: FadeSlideIn(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                SpaceshipAvatar(
-                  icon: _selectedSpaceshipIcon,
-                  size: 200,
-                ),
+                SpaceshipAvatar(icon: _selectedSpaceshipIcon, size: 200),
                 SizedBox(height: AppSpacing.s16),
                 Text(
                   _selectedSpaceshipName,
-                  style: AppTextStyles.heading_20.copyWith(
-                    color: Colors.white,
-                  ),
+                  style: AppTextStyles.heading_20.copyWith(color: Colors.white),
                 ),
                 SizedBox(height: AppSpacing.s4),
                 Row(
@@ -298,9 +291,7 @@ class _HomeScreenState extends State<HomeScreen> {
         return Container(
           decoration: BoxDecoration(
             color: AppColors.spaceSurface,
-            borderRadius: BorderRadius.vertical(
-              top: Radius.circular(20.r),
-            ),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withValues(alpha: 0.3),
@@ -474,5 +465,4 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-
 }

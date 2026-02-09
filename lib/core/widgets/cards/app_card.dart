@@ -201,7 +201,11 @@ class _AppCardState extends State<AppCard> {
         padding: _padding,
         decoration: BoxDecoration(
           color: widget.gradient == null ? _backgroundColor : null,
-          gradient: widget.gradient ?? (widget.style == AppCardStyle.elevated ? AppGradients.cardSurface : null),
+          gradient:
+              widget.gradient ??
+              (widget.style == AppCardStyle.elevated
+                  ? AppGradients.cardSurface
+                  : null),
           borderRadius: _borderRadius,
           border: _borderWidth > 0
               ? Border.all(color: _borderColor, width: _borderWidth)

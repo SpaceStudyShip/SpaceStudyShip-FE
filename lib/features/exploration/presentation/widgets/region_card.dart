@@ -41,8 +41,7 @@ class _RegionCardState extends State<RegionCard> {
   bool _isPressed = false;
 
   bool get _canUnlock =>
-      !widget.node.isUnlocked &&
-      widget.currentFuel >= widget.node.requiredFuel;
+      !widget.node.isUnlocked && widget.currentFuel >= widget.node.requiredFuel;
 
   @override
   Widget build(BuildContext context) {
@@ -71,15 +70,15 @@ class _RegionCardState extends State<RegionCard> {
             color: isCleared
                 ? AppColors.success.withValues(alpha: 0.08)
                 : isLocked
-                    ? AppColors.spaceBackground
-                    : AppColors.spaceSurface,
+                ? AppColors.spaceBackground
+                : AppColors.spaceSurface,
             borderRadius: AppRadius.large,
             border: Border.all(
               color: isCleared
                   ? AppColors.success.withValues(alpha: 0.4)
                   : isLocked
-                      ? AppColors.spaceDivider.withValues(alpha: 0.5)
-                      : AppColors.spaceDivider,
+                  ? AppColors.spaceDivider.withValues(alpha: 0.5)
+                  : AppColors.spaceDivider,
               width: 1,
             ),
           ),
@@ -146,8 +145,8 @@ class _RegionCardState extends State<RegionCard> {
     final iconColor = isCleared
         ? AppColors.success
         : isLocked
-            ? AppColors.textTertiary
-            : SpaceIcons.colorOf(widget.node.icon);
+        ? AppColors.textTertiary
+        : SpaceIcons.colorOf(widget.node.icon);
 
     return Container(
       width: 40.w,
@@ -157,8 +156,8 @@ class _RegionCardState extends State<RegionCard> {
         color: isCleared
             ? AppColors.success.withValues(alpha: 0.15)
             : isLocked
-                ? AppColors.spaceDivider.withValues(alpha: 0.2)
-                : iconColor.withValues(alpha: 0.1),
+            ? AppColors.spaceDivider.withValues(alpha: 0.2)
+            : iconColor.withValues(alpha: 0.1),
       ),
       child: Center(
         child: isLocked
@@ -173,14 +172,12 @@ class _RegionCardState extends State<RegionCard> {
   }
 
   Widget _buildLockedInfo() {
-    final fuelColor = _canUnlock ? AppColors.accentGold : AppColors.textTertiary;
+    final fuelColor = _canUnlock
+        ? AppColors.accentGold
+        : AppColors.textTertiary;
     return Row(
       children: [
-        Icon(
-          Icons.local_gas_station_rounded,
-          size: 12.sp,
-          color: fuelColor,
-        ),
+        Icon(Icons.local_gas_station_rounded, size: 12.sp, color: fuelColor),
         SizedBox(width: 2.w),
         Text(
           '${widget.node.requiredFuel.toStringAsFixed(1)}통',

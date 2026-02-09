@@ -165,10 +165,7 @@ class SpaceIcons {
             gradient[1].withValues(alpha: 0.15),
           ],
         ),
-        border: Border.all(
-          color: baseColor.withValues(alpha: 0.5),
-          width: 1.5,
-        ),
+        border: Border.all(color: baseColor.withValues(alpha: 0.5), width: 1.5),
         boxShadow: glowOpacity > 0
             ? [
                 BoxShadow(
@@ -186,11 +183,7 @@ class SpaceIcons {
             end: Alignment.bottomRight,
             colors: gradient,
           ).createShader(bounds),
-          child: Icon(
-            resolve(emoji),
-            size: iconSize,
-            color: Colors.white,
-          ),
+          child: Icon(resolve(emoji), size: iconSize, color: Colors.white),
         ),
       ),
     );

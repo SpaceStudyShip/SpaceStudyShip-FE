@@ -269,9 +269,9 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                 const SizedBox(height: 16),
                 Text(
                   '페이지를 찾을 수 없습니다',
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    color: Colors.white,
-                  ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleLarge?.copyWith(color: Colors.white),
                 ),
                 const SizedBox(height: 8),
                 Text(
@@ -325,9 +325,9 @@ class PlaceholderScreen extends StatelessWidget {
                 const SizedBox(height: 16),
                 Text(
                   title,
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    color: Colors.white,
-                  ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.headlineSmall?.copyWith(color: Colors.white),
                 ),
                 const SizedBox(height: 8),
                 Text(

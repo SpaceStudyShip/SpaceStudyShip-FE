@@ -40,8 +40,8 @@ class TimerScreen extends StatelessWidget {
         ],
       ),
       body: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             // 타이머 링 + 시간 표시
             FadeSlideIn(
@@ -152,5 +152,4 @@ class TimerScreen extends StatelessWidget {
       ),
     );
   }
-
 }

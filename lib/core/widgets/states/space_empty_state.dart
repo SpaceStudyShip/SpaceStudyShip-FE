@@ -57,11 +57,7 @@ class SpaceEmptyState extends StatelessWidget {
               width: 1.5,
             ),
           ),
-          child: Icon(
-            icon,
-            size: (iconSize * 0.44).sp,
-            color: effectiveColor,
-          ),
+          child: Icon(icon, size: (iconSize * 0.44).sp, color: effectiveColor),
         ),
         SizedBox(height: AppSpacing.s16),
         Text(

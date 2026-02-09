@@ -10,10 +10,7 @@ import '../../../../core/constants/app_colors.dart';
 /// 일부 별에 컬러 틴트를 적용하고 서틀 네뷸라 오버레이를 추가합니다.
 /// RepaintBoundary로 감싸서 성능을 보호합니다.
 class SpaceMapBackground extends StatefulWidget {
-  const SpaceMapBackground({
-    super.key,
-    required this.height,
-  });
+  const SpaceMapBackground({super.key, required this.height});
 
   /// 맵 전체 높이
   final double height;
@@ -178,10 +175,7 @@ class _NebulaPainter extends CustomPainter {
 }
 
 class _StarPainter extends CustomPainter {
-  _StarPainter({
-    required this.stars,
-    required this.twinkleValue,
-  });
+  _StarPainter({required this.stars, required this.twinkleValue});
 
   final List<_Star> stars;
   final double twinkleValue;

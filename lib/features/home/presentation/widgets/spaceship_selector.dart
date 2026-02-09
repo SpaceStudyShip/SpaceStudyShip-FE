@@ -91,19 +91,14 @@ class SpaceshipSelector extends StatelessWidget {
                 SizedBox(width: AppSpacing.s8),
                 Text(
                   '우주선 선택',
-                  style: AppTextStyles.heading_20.copyWith(
-                    color: Colors.white,
-                  ),
+                  style: AppTextStyles.heading_20.copyWith(color: Colors.white),
                 ),
               ],
             ),
           ),
 
           // 구분선
-          Divider(
-            height: 1,
-            color: AppColors.spaceDivider,
-          ),
+          Divider(height: 1, color: AppColors.spaceDivider),
 
           // 우주선 그리드
           Flexible(

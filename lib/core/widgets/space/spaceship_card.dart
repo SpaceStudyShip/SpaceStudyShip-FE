@@ -146,17 +146,18 @@ class _SpaceshipCardState extends State<SpaceshipCard> {
                 alignment: Alignment.center,
                 children: [
                   widget.isUnlocked
-                      ? SpaceIcons.buildIcon(
-                          widget.icon,
-                          size: 32.w,
-                        )
+                      ? SpaceIcons.buildIcon(widget.icon, size: 32.w)
                       : Icon(
                           SpaceIcons.resolve(widget.icon),
                           size: 32.w,
                           color: AppColors.textTertiary,
                         ),
                   if (!widget.isUnlocked)
-                    Icon(Icons.lock_rounded, size: 20.w, color: AppColors.textTertiary),
+                    Icon(
+                      Icons.lock_rounded,
+                      size: 20.w,
+                      color: AppColors.textTertiary,
+                    ),
                   // 애니메이션 마크
                   if (widget.isAnimated && widget.isUnlocked)
                     Positioned(

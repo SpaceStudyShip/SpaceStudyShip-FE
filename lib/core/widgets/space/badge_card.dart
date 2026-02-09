@@ -142,17 +142,18 @@ class _BadgeCardState extends State<BadgeCard> {
                 alignment: Alignment.center,
                 children: [
                   widget.isUnlocked
-                      ? SpaceIcons.buildIcon(
-                          widget.icon,
-                          size: 32.w,
-                        )
+                      ? SpaceIcons.buildIcon(widget.icon, size: 32.w)
                       : Icon(
                           SpaceIcons.resolve(widget.icon),
                           size: 32.w,
                           color: AppColors.textTertiary,
                         ),
                   if (!widget.isUnlocked)
-                    Icon(Icons.lock_rounded, size: 20.w, color: AppColors.textTertiary),
+                    Icon(
+                      Icons.lock_rounded,
+                      size: 20.w,
+                      color: AppColors.textTertiary,
+                    ),
                 ],
               ),
               SizedBox(height: AppSpacing.s8),

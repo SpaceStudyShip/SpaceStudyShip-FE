@@ -84,23 +84,11 @@ class TimerRingPainter extends CustomPainter {
         ..strokeCap = StrokeCap.round
         ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8);
 
-      canvas.drawArc(
-        rect,
-        -pi / 2,
-        2 * pi * progress,
-        false,
-        glowPaint,
-      );
+      canvas.drawArc(rect, -pi / 2, 2 * pi * progress, false, glowPaint);
     }
 
     // 진행 아크
-    canvas.drawArc(
-      rect,
-      -pi / 2,
-      2 * pi * progress,
-      false,
-      progressPaint,
-    );
+    canvas.drawArc(rect, -pi / 2, 2 * pi * progress, false, progressPaint);
   }
 
   @override

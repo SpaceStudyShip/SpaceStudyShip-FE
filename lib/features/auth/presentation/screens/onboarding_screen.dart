@@ -77,109 +77,109 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             child: Column(
               children: [
                 // 스킵 버튼
-            Align(
-              alignment: Alignment.topRight,
-              child: TextButton(
-                onPressed: _skip,
-                child: Text(
-                  '건너뛰기',
-                  style: AppTextStyles.paragraph_14_100.copyWith(
-                    color: AppColors.textTertiary,
-                  ),
-                ),
-              ),
-            ),
-
-            // 페이지 뷰
-            Expanded(
-              child: PageView.builder(
-                controller: _pageController,
-                onPageChanged: (index) {
-                  setState(() => _currentPage = index);
-                },
-                itemCount: _pages.length,
-                itemBuilder: (context, index) {
-                  final page = _pages[index];
-                  return Padding(
-                    padding: EdgeInsets.all(20.w),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        // 그라데이션 원형 아이콘
-                        FadeSlideIn(
-                          child: GradientCircleIcon(
-                            icon: page.icon,
-                            color: page.color,
-                            size: 96,
-                            iconSize: 42,
-                          ),
-                        ),
-                        SizedBox(height: 32.h),
-                        FadeSlideIn(
-                          delay: const Duration(milliseconds: 100),
-                          child: Text(
-                            page.title,
-                            style: AppTextStyles.heading_24.copyWith(
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: 16.h),
-                        FadeSlideIn(
-                          delay: const Duration(milliseconds: 200),
-                          child: Text(
-                            page.description,
-                            textAlign: TextAlign.center,
-                            style: AppTextStyles.paragraph_14.copyWith(
-                              color: AppColors.textSecondary,
-                              height: 1.6,
-                            ),
-                          ),
-                        ),
-                      ],
+                Align(
+                  alignment: Alignment.topRight,
+                  child: TextButton(
+                    onPressed: _skip,
+                    child: Text(
+                      '건너뛰기',
+                      style: AppTextStyles.paragraph_14_100.copyWith(
+                        color: AppColors.textTertiary,
+                      ),
                     ),
-                  );
-                },
-              ),
-            ),
-
-            // 인디케이터
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: List.generate(
-                _pages.length,
-                (index) => AnimatedContainer(
-                  duration: const Duration(milliseconds: 200),
-                  margin: EdgeInsets.symmetric(horizontal: 4.w),
-                  width: _currentPage == index ? 24.w : 8.w,
-                  height: 8.w,
-                  decoration: BoxDecoration(
-                    color: _currentPage == index
-                        ? AppColors.primary
-                        : AppColors.spaceDivider,
-                    borderRadius: BorderRadius.circular(4.r),
                   ),
                 ),
-              ),
+
+                // 페이지 뷰
+                Expanded(
+                  child: PageView.builder(
+                    controller: _pageController,
+                    onPageChanged: (index) {
+                      setState(() => _currentPage = index);
+                    },
+                    itemCount: _pages.length,
+                    itemBuilder: (context, index) {
+                      final page = _pages[index];
+                      return Padding(
+                        padding: EdgeInsets.all(20.w),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            // 그라데이션 원형 아이콘
+                            FadeSlideIn(
+                              child: GradientCircleIcon(
+                                icon: page.icon,
+                                color: page.color,
+                                size: 96,
+                                iconSize: 42,
+                              ),
+                            ),
+                            SizedBox(height: 32.h),
+                            FadeSlideIn(
+                              delay: const Duration(milliseconds: 100),
+                              child: Text(
+                                page.title,
+                                style: AppTextStyles.heading_24.copyWith(
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 16.h),
+                            FadeSlideIn(
+                              delay: const Duration(milliseconds: 200),
+                              child: Text(
+                                page.description,
+                                textAlign: TextAlign.center,
+                                style: AppTextStyles.paragraph_14.copyWith(
+                                  color: AppColors.textSecondary,
+                                  height: 1.6,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ),
+
+                // 인디케이터
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: List.generate(
+                    _pages.length,
+                    (index) => AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      margin: EdgeInsets.symmetric(horizontal: 4.w),
+                      width: _currentPage == index ? 24.w : 8.w,
+                      height: 8.w,
+                      decoration: BoxDecoration(
+                        color: _currentPage == index
+                            ? AppColors.primary
+                            : AppColors.spaceDivider,
+                        borderRadius: BorderRadius.circular(4.r),
+                      ),
+                    ),
+                  ),
+                ),
+
+                SizedBox(height: 32.h),
+
+                // 다음/시작 버튼
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20.w),
+                  child: AppButton(
+                    text: _currentPage == _pages.length - 1 ? '시작하기' : '다음',
+                    onPressed: _nextPage,
+                    width: double.infinity,
+                    height: 56.h,
+                  ),
+                ),
+
+                SizedBox(height: 32.h),
+              ],
             ),
-
-            SizedBox(height: 32.h),
-
-            // 다음/시작 버튼
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.w),
-              child: AppButton(
-                text: _currentPage == _pages.length - 1 ? '시작하기' : '다음',
-                onPressed: _nextPage,
-                width: double.infinity,
-                height: 56.h,
-              ),
-            ),
-
-            SizedBox(height: 32.h),
-          ],
-        ),
-      ),
+          ),
         ],
       ),
     );

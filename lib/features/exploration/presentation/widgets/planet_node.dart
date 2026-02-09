@@ -94,9 +94,7 @@ class _PlanetNodeState extends State<PlanetNode>
               Text(
                 widget.node.name,
                 style: AppTextStyles.tag_12.copyWith(
-                  color: isLocked
-                      ? AppColors.textTertiary
-                      : Colors.white,
+                  color: isLocked ? AppColors.textTertiary : Colors.white,
                   fontWeight: FontWeight.w600,
                 ),
                 textAlign: TextAlign.center,
@@ -179,8 +177,12 @@ class _PlanetNodeState extends State<PlanetNode>
                     center: const Alignment(-0.3, -0.3),
                     radius: 0.9,
                     colors: [
-                      planetGradient[0].withValues(alpha: isCleared ? 0.15 : 0.3),
-                      planetGradient[1].withValues(alpha: isCleared ? 0.08 : 0.15),
+                      planetGradient[0].withValues(
+                        alpha: isCleared ? 0.15 : 0.3,
+                      ),
+                      planetGradient[1].withValues(
+                        alpha: isCleared ? 0.08 : 0.15,
+                      ),
                     ],
                   ),
             color: isLocked
@@ -190,8 +192,8 @@ class _PlanetNodeState extends State<PlanetNode>
               color: isCleared
                   ? AppColors.success.withValues(alpha: 0.6)
                   : isLocked
-                      ? AppColors.spaceDivider.withValues(alpha: 0.5)
-                      : planetColor.withValues(alpha: 0.5),
+                  ? AppColors.spaceDivider.withValues(alpha: 0.5)
+                  : planetColor.withValues(alpha: 0.5),
               width: isCleared ? 2.0 : 1.5,
             ),
             boxShadow: glowOpacity > 0

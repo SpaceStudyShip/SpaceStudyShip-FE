@@ -143,7 +143,9 @@ class _RankingItemState extends State<RankingItem> {
                           child: Text(
                             '${widget.rank}',
                             style: AppTextStyles.tag_12.copyWith(
-                              color: widget.rank == 2 ? Colors.black87 : Colors.white,
+                              color: widget.rank == 2
+                                  ? Colors.black87
+                                  : Colors.white,
                               fontWeight: FontWeight.w800,
                             ),
                           ),
@@ -177,7 +179,9 @@ class _RankingItemState extends State<RankingItem> {
                   child: Icon(
                     Icons.person_rounded,
                     size: 22.w,
-                    color: widget.rank <= 3 ? _rankColor : AppColors.textSecondary,
+                    color: widget.rank <= 3
+                        ? _rankColor
+                        : AppColors.textSecondary,
                   ),
                 ),
               ),

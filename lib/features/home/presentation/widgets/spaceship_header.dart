@@ -64,9 +64,7 @@ class _SpaceshipHeaderState extends State<SpaceshipHeader> {
     return Container(
       width: double.infinity,
       height: widget.expandedHeight.h,
-      decoration: const BoxDecoration(
-        gradient: AppGradients.cosmicHeader,
-      ),
+      decoration: const BoxDecoration(gradient: AppGradients.cosmicHeader),
       child: SafeArea(
         bottom: false,
         child: Column(
@@ -176,9 +174,6 @@ class _SpaceshipHeaderState extends State<SpaceshipHeader> {
   }
 
   Widget _buildSpaceshipIcon() {
-    return SpaceshipAvatar(
-      icon: widget.spaceshipIcon,
-      size: 120,
-    );
+    return SpaceshipAvatar(icon: widget.spaceshipIcon, size: 120);
   }
 }

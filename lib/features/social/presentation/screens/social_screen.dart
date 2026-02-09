@@ -41,8 +41,8 @@ class SocialScreen extends StatelessWidget {
           ),
         ),
         body: TabBarView(
-              children: [_buildFriendsTab(), _buildGroupsTab(), _buildRankingTab()],
-            ),
+          children: [_buildFriendsTab(), _buildGroupsTab(), _buildRankingTab()],
+        ),
       ),
     );
   }

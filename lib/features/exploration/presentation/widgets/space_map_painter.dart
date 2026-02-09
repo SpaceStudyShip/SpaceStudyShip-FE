@@ -9,10 +9,7 @@ import '../../../../core/constants/app_colors.dart';
 /// sortOrder 순서대로 행성들을 곡선 점선으로 연결합니다.
 /// 해금된 경로는 그라데이션 + glow, 잠금 경로는 어둡게 표시합니다.
 class SpaceMapPainter extends CustomPainter {
-  SpaceMapPainter({
-    required this.planetPositions,
-    required this.unlockedIds,
-  });
+  SpaceMapPainter({required this.planetPositions, required this.unlockedIds});
 
   final List<MapEntry<String, Offset>> planetPositions;
   final Set<String> unlockedIds;
@@ -36,11 +33,7 @@ class SpaceMapPainter extends CustomPainter {
       final controlX1 = from.value.dx;
       final controlX2 = to.value.dx;
 
-      path.cubicTo(
-        controlX1, midY,
-        controlX2, midY,
-        to.value.dx, to.value.dy,
-      );
+      path.cubicTo(controlX1, midY, controlX2, midY, to.value.dx, to.value.dy);
 
       if (isUnlockedPath) {
         // Glow pass (해금 경로)
@@ -58,14 +51,10 @@ class SpaceMapPainter extends CustomPainter {
           ..strokeWidth = 2.0
           ..style = PaintingStyle.stroke
           ..strokeCap = StrokeCap.round
-          ..shader = ui.Gradient.linear(
-            from.value,
-            to.value,
-            [
-              AppColors.primary.withValues(alpha: 0.7),
-              AppColors.primaryLight.withValues(alpha: 0.5),
-            ],
-          );
+          ..shader = ui.Gradient.linear(from.value, to.value, [
+            AppColors.primary.withValues(alpha: 0.7),
+            AppColors.primaryLight.withValues(alpha: 0.5),
+          ]);
 
         canvas.drawPath(path, paint);
       } else {

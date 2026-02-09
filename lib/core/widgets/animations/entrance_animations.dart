@@ -38,24 +38,15 @@ class _FadeSlideInState extends State<FadeSlideIn>
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: widget.duration,
-    );
+    _controller = AnimationController(vsync: this, duration: widget.duration);
 
-    _opacity = CurvedAnimation(
-      parent: _controller,
-      curve: widget.curve,
-    );
+    _opacity = CurvedAnimation(parent: _controller, curve: widget.curve);
 
     // SlideTransition은 부모 크기 비율 기반이므로 직접 Offset 애니메이션 사용
     _slideOffset = Tween<Offset>(
       begin: Offset(0, widget.offsetY),
       end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: widget.curve,
-    ));
+    ).animate(CurvedAnimation(parent: _controller, curve: widget.curve));
 
     if (widget.delay == Duration.zero) {
       _controller.forward();
@@ -76,15 +67,9 @@ class _FadeSlideInState extends State<FadeSlideIn>
   Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: _slideOffset,
-      child: FadeTransition(
-        opacity: _opacity,
-        child: widget.child,
-      ),
+      child: FadeTransition(opacity: _opacity, child: widget.child),
       builder: (context, child) {
-        return Transform.translate(
-          offset: _slideOffset.value,
-          child: child,
-        );
+        return Transform.translate(offset: _slideOffset.value, child: child);
       },
     );
   }
@@ -168,26 +153,19 @@ class ScaleIn extends StatefulWidget {
   State<ScaleIn> createState() => _ScaleInState();
 }
 
-class _ScaleInState extends State<ScaleIn>
-    with SingleTickerProviderStateMixin {
+class _ScaleInState extends State<ScaleIn> with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
   late final Animation<double> _scale;
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: widget.duration,
-    );
+    _controller = AnimationController(vsync: this, duration: widget.duration);
 
     _scale = Tween<double>(
       begin: widget.beginScale,
       end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: widget.curve,
-    ));
+    ).animate(CurvedAnimation(parent: _controller, curve: widget.curve));
 
     if (widget.delay == Duration.zero) {
       _controller.forward();
@@ -206,9 +184,6 @@ class _ScaleInState extends State<ScaleIn>
 
   @override
   Widget build(BuildContext context) {
-    return ScaleTransition(
-      scale: _scale,
-      child: widget.child,
-    );
+    return ScaleTransition(scale: _scale, child: widget.child);
   }
 }

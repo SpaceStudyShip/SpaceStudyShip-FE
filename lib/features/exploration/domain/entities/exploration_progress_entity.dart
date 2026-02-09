@@ -36,8 +36,7 @@ class ExplorationProgressEntity {
       totalChildren > 0 ? clearedChildren / totalChildren : 0.0;
 
   /// 클리어 완료 여부
-  bool get isCompleted =>
-      clearedChildren >= totalChildren && totalChildren > 0;
+  bool get isCompleted => clearedChildren >= totalChildren && totalChildren > 0;
 
   /// copyWith
   ExplorationProgressEntity copyWith({

@@ -16,10 +16,7 @@ import '../widgets/region_card.dart';
 /// 특정 행성의 하위 지역(Region) 목록을 표시합니다.
 /// 연료를 소비하여 지역을 해금하고 클리어할 수 있습니다.
 class ExplorationDetailScreen extends StatelessWidget {
-  const ExplorationDetailScreen({
-    super.key,
-    required this.planetId,
-  });
+  const ExplorationDetailScreen({super.key, required this.planetId});
 
   /// 행성 ID
   final String planetId;
@@ -44,81 +41,82 @@ class ExplorationDetailScreen extends StatelessWidget {
                 expandedHeight: 200.h,
                 pinned: true,
                 backgroundColor: Colors.transparent,
-            leading: IconButton(
-              icon: Icon(
-                Icons.arrow_back_ios_new_rounded,
-                color: Colors.white,
-                size: 20.w,
-              ),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-            flexibleSpace: FlexibleSpaceBar(
-              title: Text(
-                planet.name,
-                style: AppTextStyles.label_16.copyWith(color: Colors.white),
-              ),
-              background: _buildPlanetHeader(planet, progress),
-            ),
-            actions: [
-              Container(
-                margin: EdgeInsets.only(right: 16.w),
-                padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
-                decoration: BoxDecoration(
-                  color: AppColors.spaceSurface.withValues(alpha: 0.8),
-                  borderRadius: AppRadius.xlarge,
-                  border: Border.all(
-                    color: AppColors.primary.withValues(alpha: 0.4),
-                    width: 1,
+                leading: IconButton(
+                  icon: Icon(
+                    Icons.arrow_back_ios_new_rounded,
+                    color: Colors.white,
+                    size: 20.w,
                   ),
+                  onPressed: () => Navigator.of(context).pop(),
                 ),
-                child: FuelGauge(
-                  currentFuel: currentFuel,
-                  showLabel: false,
-                  size: FuelGaugeSize.small,
+                flexibleSpace: FlexibleSpaceBar(
+                  title: Text(
+                    planet.name,
+                    style: AppTextStyles.label_16.copyWith(color: Colors.white),
+                  ),
+                  background: _buildPlanetHeader(planet, progress),
+                ),
+                actions: [
+                  Container(
+                    margin: EdgeInsets.only(right: 16.w),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 10.w,
+                      vertical: 4.h,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.spaceSurface.withValues(alpha: 0.8),
+                      borderRadius: AppRadius.xlarge,
+                      border: Border.all(
+                        color: AppColors.primary.withValues(alpha: 0.4),
+                        width: 1,
+                      ),
+                    ),
+                    child: FuelGauge(
+                      currentFuel: currentFuel,
+                      showLabel: false,
+                      size: FuelGaugeSize.small,
+                    ),
+                  ),
+                ],
+              ),
+
+              // 진행도 섹션
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, 0),
+                  child: _buildProgressSection(progress),
+                ),
+              ),
+
+              // 지역 목록
+              SliverPadding(
+                padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, 32.h),
+                sliver: SliverList(
+                  delegate: SliverChildBuilderDelegate((context, index) {
+                    final region = regions[index];
+                    return RegionCard(
+                      node: region,
+                      currentFuel: currentFuel,
+                      onUnlock: () =>
+                          _handleUnlock(context, region, currentFuel),
+                      onTap: () {
+                        // 클리어된 지역 재방문 시
+                        if (region.isCleared) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('${region.name} - 이미 클리어한 지역입니다!'),
+                              behavior: SnackBarBehavior.floating,
+                              duration: const Duration(seconds: 2),
+                            ),
+                          );
+                        }
+                      },
+                    );
+                  }, childCount: regions.length),
                 ),
               ),
             ],
           ),
-
-          // 진행도 섹션
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, 0),
-              child: _buildProgressSection(progress),
-            ),
-          ),
-
-          // 지역 목록
-          SliverPadding(
-            padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, 32.h),
-            sliver: SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (context, index) {
-                  final region = regions[index];
-                  return RegionCard(
-                    node: region,
-                    currentFuel: currentFuel,
-                    onUnlock: () => _handleUnlock(context, region, currentFuel),
-                    onTap: () {
-                      // 클리어된 지역 재방문 시
-                      if (region.isCleared) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('${region.name} - 이미 클리어한 지역입니다!'),
-                            behavior: SnackBarBehavior.floating,
-                            duration: const Duration(seconds: 2),
-                          ),
-                        );
-                      }
-                    },
-                  );
-                },
-                childCount: regions.length,
-              ),
-            ),
-          ),
-        ],
-      ),
         ],
       ),
     );
@@ -182,10 +180,7 @@ class ExplorationDetailScreen extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.spaceSurface,
         borderRadius: AppRadius.large,
-        border: Border.all(
-          color: AppColors.spaceDivider,
-          width: 1,
-        ),
+        border: Border.all(color: AppColors.spaceDivider, width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -210,10 +205,7 @@ class ExplorationDetailScreen extends StatelessWidget {
             ],
           ),
           SizedBox(height: 10.h),
-          ExplorationProgressBar(
-            progress: progress,
-            height: 8.h,
-          ),
+          ExplorationProgressBar(progress: progress, height: 8.h),
         ],
       ),
     );
@@ -241,9 +233,7 @@ class ExplorationDetailScreen extends StatelessWidget {
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: AppColors.spaceElevated,
-        shape: RoundedRectangleBorder(
-          borderRadius: AppRadius.xlarge,
-        ),
+        shape: RoundedRectangleBorder(borderRadius: AppRadius.xlarge),
         title: Text(
           '${region.name} 해금',
           style: AppTextStyles.subHeading_18.copyWith(color: Colors.white),

@@ -44,15 +44,9 @@ class GradientCircleIcon extends StatelessWidget {
         gradient: RadialGradient(
           center: const Alignment(-0.3, -0.3),
           radius: 0.9,
-          colors: [
-            color.withValues(alpha: 0.3),
-            color.withValues(alpha: 0.1),
-          ],
+          colors: [color.withValues(alpha: 0.3), color.withValues(alpha: 0.1)],
         ),
-        border: Border.all(
-          color: color.withValues(alpha: 0.4),
-          width: 2,
-        ),
+        border: Border.all(color: color.withValues(alpha: 0.4), width: 2),
         boxShadow: [
           BoxShadow(
             color: color.withValues(alpha: 0.2),
@@ -68,11 +62,7 @@ class GradientCircleIcon extends StatelessWidget {
             end: Alignment.bottomRight,
             colors: effectiveGradient,
           ).createShader(bounds),
-          child: Icon(
-            icon,
-            size: effectiveIconSize,
-            color: Colors.white,
-          ),
+          child: Icon(icon, size: effectiveIconSize, color: Colors.white),
         ),
       ),
     );

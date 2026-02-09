@@ -32,8 +32,8 @@ class _SplashScreenState extends State<SplashScreen> {
 
     if (!mounted) return;
 
-    // 임시: 바로 홈으로 이동
-    context.go(RoutePaths.home);
+    // TODO: 인증 상태 확인 후 분기 (API 연동 시 로그인 상태면 홈으로)
+    context.go(RoutePaths.login);
   }
 
   @override

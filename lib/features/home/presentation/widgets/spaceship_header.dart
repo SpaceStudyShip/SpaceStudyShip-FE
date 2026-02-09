@@ -3,9 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_gradients.dart';
-import '../../../../core/constants/space_icons.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
-import '../../../../core/widgets/atoms/gradient_circle_icon.dart';
+import '../../../../core/widgets/space/spaceship_avatar.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../../../core/constants/toss_design_tokens.dart';
 import '../../../../core/widgets/animations/entrance_animations.dart';
@@ -177,15 +176,9 @@ class _SpaceshipHeaderState extends State<SpaceshipHeader> {
   }
 
   Widget _buildSpaceshipIcon() {
-    final gradient = SpaceIcons.gradientOf(widget.spaceshipIcon);
-    final baseColor = SpaceIcons.colorOf(widget.spaceshipIcon);
-
-    return GradientCircleIcon(
-      icon: SpaceIcons.resolve(widget.spaceshipIcon),
-      color: baseColor,
-      size: 80,
-      iconSize: 40,
-      gradientColors: gradient,
+    return SpaceshipAvatar(
+      icon: widget.spaceshipIcon,
+      size: 120,
     );
   }
 }

@@ -63,6 +63,7 @@ abstract class RoutePaths {
   static const badges = '/profile/badges';
   static const spaceships = '/profile/spaceships';
   static const statistics = '/profile/statistics';
+  static const about = '/profile/about';
 
   static const badgeDetail = '/profile/badges/:id';
   static String badgeDetailPath(String id) => '/profile/badges/$id';

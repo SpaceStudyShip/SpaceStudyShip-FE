@@ -147,6 +147,11 @@ class ProfileScreen extends StatelessWidget {
           onTap: () => context.push(RoutePaths.spaceships),
         ),
         _buildMenuItem(
+          icon: Icons.info_outline_rounded,
+          title: '앱 정보',
+          onTap: () => context.push(RoutePaths.about),
+        ),
+        _buildMenuItem(
           icon: Icons.login_outlined,
           title: '[테스트] 로그인 화면',
           onTap: () => context.push(RoutePaths.login),

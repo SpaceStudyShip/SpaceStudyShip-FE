@@ -14,6 +14,7 @@ import '../features/explore/presentation/screens/explore_screen.dart';
 import '../features/exploration/presentation/screens/exploration_detail_screen.dart';
 import '../features/social/presentation/screens/social_screen.dart';
 import '../features/profile/presentation/screens/profile_screen.dart';
+import '../features/profile/presentation/screens/about_screen.dart';
 
 /// 앱 라우터 Provider
 final appRouterProvider = Provider<GoRouter>((ref) {
@@ -242,6 +243,12 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                     name: 'statistics',
                     builder: (context, state) =>
                         const PlaceholderScreen(title: '통계'),
+                  ),
+                  GoRoute(
+                    path: 'about',
+                    name: 'about',
+                    builder: (context, state) =>
+                        const AboutScreen(),
                   ),
                 ],
               ),

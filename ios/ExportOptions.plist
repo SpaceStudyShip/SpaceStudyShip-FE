@@ -9,7 +9,7 @@
     <key>provisioningProfiles</key>
     <dict>
         <key>com.elipair.spacestudyship</key>
-        <string>CopsAndRobbers-AppStore-2025</string>
+        <string>SpaceStudyShip-AppStore-2026</string>
     </dict>
     <key>signingStyle</key>
     <string>manual</string>

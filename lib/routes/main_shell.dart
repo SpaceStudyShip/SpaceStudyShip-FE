@@ -135,12 +135,15 @@ class _NavItem extends StatelessWidget {
             SizedBox(height: AppSpacing.s4),
             Text(
               label,
-              style: (isSelected
-                      ? AppTextStyles.tag10Semibold
-                      : AppTextStyles.tag_10)
-                  .copyWith(
-                color: isSelected ? Colors.white : AppColors.textTertiary,
-              ),
+              style:
+                  (isSelected
+                          ? AppTextStyles.tag10Semibold
+                          : AppTextStyles.tag_10)
+                      .copyWith(
+                        color: isSelected
+                            ? Colors.white
+                            : AppColors.textTertiary,
+                      ),
             ),
             SizedBox(height: AppSpacing.s4),
             // Active dot indicator

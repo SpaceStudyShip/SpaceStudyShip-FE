@@ -31,10 +31,7 @@ class SpaceshipAvatar extends StatelessWidget {
       return SizedBox(
         width: size.w,
         height: size.w,
-        child: Lottie.asset(
-          lottieAsset!,
-          fit: BoxFit.contain,
-        ),
+        child: Lottie.asset(lottieAsset!, fit: BoxFit.contain),
       );
     }
 

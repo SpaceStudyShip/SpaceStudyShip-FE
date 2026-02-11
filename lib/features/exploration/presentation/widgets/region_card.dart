@@ -187,7 +187,7 @@ class _RegionCardState extends State<RegionCard> {
           ),
         ),
         if (!_canUnlock) ...[
-          SizedBox(width: 4.w),
+          SizedBox(width: AppSpacing.s4),
           Text(
             '(부족)',
             style: AppTextStyles.tag_10.copyWith(

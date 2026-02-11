@@ -104,8 +104,9 @@ class SpaceshipCollectionScreen extends StatelessWidget {
 
   Widget _buildCollectionCard(SpaceshipData spaceship) {
     final rarityColor = _rarityColor(spaceship.rarity);
-    final borderColor =
-        spaceship.isUnlocked ? rarityColor : AppColors.spaceDivider;
+    final borderColor = spaceship.isUnlocked
+        ? rarityColor
+        : AppColors.spaceDivider;
 
     return Container(
       padding: AppPadding.all16,
@@ -113,7 +114,8 @@ class SpaceshipCollectionScreen extends StatelessWidget {
         color: AppColors.spaceSurface,
         borderRadius: AppRadius.large,
         border: Border.all(color: borderColor, width: 1.5),
-        boxShadow: spaceship.isUnlocked &&
+        boxShadow:
+            spaceship.isUnlocked &&
                 spaceship.rarity == SpaceshipRarity.legendary
             ? [
                 BoxShadow(
@@ -162,8 +164,9 @@ class SpaceshipCollectionScreen extends StatelessWidget {
           Text(
             spaceship.isUnlocked ? spaceship.name : '???',
             style: AppTextStyles.label16Medium.copyWith(
-              color:
-                  spaceship.isUnlocked ? Colors.white : AppColors.textTertiary,
+              color: spaceship.isUnlocked
+                  ? Colors.white
+                  : AppColors.textTertiary,
             ),
             textAlign: TextAlign.center,
             maxLines: 1,
@@ -175,8 +178,9 @@ class SpaceshipCollectionScreen extends StatelessWidget {
           Container(
             padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.h),
             decoration: BoxDecoration(
-              color: (spaceship.isUnlocked ? rarityColor : AppColors.spaceDivider)
-                  .withValues(alpha: 0.15),
+              color:
+                  (spaceship.isUnlocked ? rarityColor : AppColors.spaceDivider)
+                      .withValues(alpha: 0.15),
               borderRadius: AppRadius.chip,
             ),
             child: Text(

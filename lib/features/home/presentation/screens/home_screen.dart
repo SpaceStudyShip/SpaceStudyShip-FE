@@ -125,7 +125,7 @@ class _HomeScreenState extends State<HomeScreen> {
   /// 상단 바: 스트릭 배지 + 알림 아이콘
   Widget _buildTopBar() {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h),
+      padding: EdgeInsets.only(left: 20.w, right: 10.w, top: 8.h, bottom: 8.h),
       child: Row(
         children: [
           if (_streakDays > 0)
@@ -134,7 +134,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 days: _streakDays,
                 isActive: _isStreakActive,
                 showLabel: true,
-                size: StreakBadgeSize.medium,
+                size: StreakBadgeSize.large,
               ),
             ),
           const Spacer(),
@@ -144,6 +144,8 @@ class _HomeScreenState extends State<HomeScreen> {
               color: Colors.white,
               size: 24.w,
             ),
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
             onPressed: () {
               // TODO: 알림 화면
             },

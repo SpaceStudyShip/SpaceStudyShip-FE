@@ -112,8 +112,7 @@ class _AboutScreenState extends State<AboutScreen> {
               SizedBox(height: AppSpacing.s16),
               Text(
                 '우주공부선',
-                style:
-                    AppTextStyles.heading_20.copyWith(color: Colors.white),
+                style: AppTextStyles.heading_20.copyWith(color: Colors.white),
               ),
               SizedBox(height: AppSpacing.s4),
               Text(
@@ -157,8 +156,7 @@ class _AboutScreenState extends State<AboutScreen> {
         children: [
           Text(
             title,
-            style:
-                AppTextStyles.label16Medium.copyWith(color: Colors.white),
+            style: AppTextStyles.label16Medium.copyWith(color: Colors.white),
           ),
           SizedBox(height: AppSpacing.s8),
           _buildInfoRow('Author', author),
@@ -179,15 +177,15 @@ class _AboutScreenState extends State<AboutScreen> {
           width: 70.w,
           child: Text(
             label,
-            style: AppTextStyles.tag_12
-                .copyWith(color: AppColors.textTertiary),
+            style: AppTextStyles.tag_12.copyWith(color: AppColors.textTertiary),
           ),
         ),
         Expanded(
           child: Text(
             value,
-            style: AppTextStyles.tag_12
-                .copyWith(color: AppColors.textSecondary),
+            style: AppTextStyles.tag_12.copyWith(
+              color: AppColors.textSecondary,
+            ),
           ),
         ),
       ],
@@ -247,8 +245,9 @@ class _AboutScreenState extends State<AboutScreen> {
         ),
         child: Text(
           '오픈소스 라이선스',
-          style: AppTextStyles.label_16
-              .copyWith(color: AppColors.textSecondary),
+          style: AppTextStyles.label_16.copyWith(
+            color: AppColors.textSecondary,
+          ),
         ),
       ),
     );

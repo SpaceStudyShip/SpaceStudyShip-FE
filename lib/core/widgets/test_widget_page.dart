@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../constants/app_colors.dart';
+import '../constants/spacing_and_radius.dart';
 import '../constants/text_styles.dart';
 import 'widgets.dart';
 
@@ -57,7 +58,7 @@ class _TestWidgetPageState extends State<TestWidgetPage> {
         elevation: 0,
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(20.w),
+        padding: AppPadding.all20,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -125,18 +126,18 @@ class _TestWidgetPageState extends State<TestWidgetPage> {
           title,
           style: AppTextStyles.heading_20.copyWith(color: Colors.white),
         ),
-        SizedBox(height: 8.h),
+        SizedBox(height: AppSpacing.s8),
         Text(
           description,
           style: AppTextStyles.paragraph_14.copyWith(
             color: AppColors.textSecondary,
           ),
         ),
-        SizedBox(height: 16.h),
+        SizedBox(height: AppSpacing.s16),
         content,
-        SizedBox(height: 24.h),
+        SizedBox(height: AppSpacing.s24),
         Divider(color: AppColors.spaceDivider, thickness: 1),
-        SizedBox(height: 24.h),
+        SizedBox(height: AppSpacing.s24),
       ],
     );
   }
@@ -152,21 +153,21 @@ class _TestWidgetPageState extends State<TestWidgetPage> {
           text: 'Primary 버튼',
           onPressed: () => AppSnackBar.success(context, 'Primary 클릭!'),
         ),
-        SizedBox(height: 12.h),
+        SizedBox(height: AppSpacing.s12),
         AppButton(
           text: 'Secondary 버튼',
           backgroundColor: AppColors.secondary,
           borderColor: AppColors.secondaryDark,
           onPressed: () => AppSnackBar.info(context, 'Secondary 클릭!'),
         ),
-        SizedBox(height: 12.h),
+        SizedBox(height: AppSpacing.s12),
         AppButton(
           text: '로켓 발사',
           icon: Icon(Icons.rocket_launch, size: 20.w, color: Colors.white),
           iconPosition: IconPosition.leading,
           onPressed: () => AppSnackBar.success(context, '🚀 발사!'),
         ),
-        SizedBox(height: 12.h),
+        SizedBox(height: AppSpacing.s12),
         AppButton(
           text: '로딩 상태',
           isLoading: _isLoading,
@@ -177,7 +178,7 @@ class _TestWidgetPageState extends State<TestWidgetPage> {
             });
           },
         ),
-        SizedBox(height: 12.h),
+        SizedBox(height: AppSpacing.s12),
         const AppButton(text: '비활성 버튼', onPressed: null),
       ],
     );
@@ -195,7 +196,7 @@ class _TestWidgetPageState extends State<TestWidgetPage> {
           hintText: '내용을 입력하세요',
           prefixIcon: Icons.edit,
         ),
-        SizedBox(height: 16.h),
+        SizedBox(height: AppSpacing.s16),
         AppTextField(
           controller: _phoneController,
           labelText: '전화번호 (자동 포맷)',
@@ -204,7 +205,7 @@ class _TestWidgetPageState extends State<TestWidgetPage> {
           autoFormat: AppInputFormat.phone,
           keyboardType: TextInputType.phone,
         ),
-        SizedBox(height: 16.h),
+        SizedBox(height: AppSpacing.s16),
         AppTextField(
           controller: _emailController,
           labelText: '이메일',
@@ -213,14 +214,14 @@ class _TestWidgetPageState extends State<TestWidgetPage> {
           autoFormat: AppInputFormat.email,
           keyboardType: TextInputType.emailAddress,
         ),
-        SizedBox(height: 16.h),
+        SizedBox(height: AppSpacing.s16),
         AppTextField(
           labelText: '에러 상태',
           hintText: '에러 메시지 표시',
           errorText: '올바른 형식이 아니에요',
           prefixIcon: Icons.warning,
         ),
-        SizedBox(height: 16.h),
+        SizedBox(height: AppSpacing.s16),
         const AppTextField(
           labelText: '비활성 상태',
           hintText: '입력 불가',
@@ -240,17 +241,17 @@ class _TestWidgetPageState extends State<TestWidgetPage> {
           style: AppCardStyle.elevated,
           child: _cardContent('Elevated 카드', '그림자가 있는 카드'),
         ),
-        SizedBox(height: 12.h),
+        SizedBox(height: AppSpacing.s12),
         AppCard(
           style: AppCardStyle.outlined,
           child: _cardContent('Outlined 카드', '테두리가 있는 카드'),
         ),
-        SizedBox(height: 12.h),
+        SizedBox(height: AppSpacing.s12),
         AppCard(
           style: AppCardStyle.filled,
           child: _cardContent('Filled 카드', '배경색이 채워진 카드'),
         ),
-        SizedBox(height: 12.h),
+        SizedBox(height: AppSpacing.s12),
         AppCard(
           onTap: () => AppSnackBar.info(context, '카드 탭!'),
           child: _cardContent('탭 가능한 카드', '눌러보세요'),
@@ -261,11 +262,11 @@ class _TestWidgetPageState extends State<TestWidgetPage> {
 
   Widget _cardContent(String title, String subtitle) {
     return Padding(
-      padding: EdgeInsets.all(16.w),
+      padding: AppPadding.all16,
       child: Row(
         children: [
           Icon(Icons.credit_card, color: AppColors.primary, size: 24.w),
-          SizedBox(width: 12.w),
+          SizedBox(width: AppSpacing.s12),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -299,7 +300,7 @@ class _TestWidgetPageState extends State<TestWidgetPage> {
             Column(
               children: [
                 const AppLoading(type: AppLoadingType.spinner),
-                SizedBox(height: 8.h),
+                SizedBox(height: AppSpacing.s8),
                 Text(
                   'Spinner',
                   style: AppTextStyles.tag_12.copyWith(
@@ -311,7 +312,7 @@ class _TestWidgetPageState extends State<TestWidgetPage> {
             Column(
               children: [
                 const AppLoading(type: AppLoadingType.dots),
-                SizedBox(height: 8.h),
+                SizedBox(height: AppSpacing.s8),
                 Text(
                   'Dots',
                   style: AppTextStyles.tag_12.copyWith(
@@ -323,7 +324,7 @@ class _TestWidgetPageState extends State<TestWidgetPage> {
             Column(
               children: [
                 const AppLoading(type: AppLoadingType.progress, progress: 0.7),
-                SizedBox(height: 8.h),
+                SizedBox(height: AppSpacing.s8),
                 Text(
                   'Progress',
                   style: AppTextStyles.tag_12.copyWith(
@@ -334,18 +335,18 @@ class _TestWidgetPageState extends State<TestWidgetPage> {
             ),
           ],
         ),
-        SizedBox(height: 24.h),
+        SizedBox(height: AppSpacing.s24),
 
         // 스켈레톤 UI
         Text(
           '스켈레톤 UI',
           style: AppTextStyles.label_16.copyWith(color: Colors.white),
         ),
-        SizedBox(height: 12.h),
+        SizedBox(height: AppSpacing.s12),
         AppSkeleton.listTile(),
-        SizedBox(height: 8.h),
+        SizedBox(height: AppSpacing.s8),
         AppSkeleton.listTile(),
-        SizedBox(height: 16.h),
+        SizedBox(height: AppSpacing.s16),
         AppSkeleton.card(height: 100),
       ],
     );
@@ -453,7 +454,7 @@ class _TestWidgetPageState extends State<TestWidgetPage> {
           actionText: '추가하기',
           onAction: () => AppSnackBar.info(context, '추가!'),
         ),
-        SizedBox(height: 24.h),
+        SizedBox(height: AppSpacing.s24),
         AppEmptyState(
           type: AppEmptyType.noSearch,
           title: '검색 결과가 없어요',
@@ -480,7 +481,7 @@ class _TestWidgetPageState extends State<TestWidgetPage> {
             FuelGauge(currentFuel: 0.5, maxFuel: 5.0, showLabel: false),
           ],
         ),
-        SizedBox(height: 24.h),
+        SizedBox(height: AppSpacing.s24),
 
         // Streak Badge
         Wrap(
@@ -493,7 +494,7 @@ class _TestWidgetPageState extends State<TestWidgetPage> {
             StreakBadge(days: 100, showLabel: false),
           ],
         ),
-        SizedBox(height: 24.h),
+        SizedBox(height: AppSpacing.s24),
 
         // Status Card
         StatusCard(
@@ -502,7 +503,7 @@ class _TestWidgetPageState extends State<TestWidgetPage> {
           fuel: 75.0,
           streakDays: 14,
         ),
-        SizedBox(height: 24.h),
+        SizedBox(height: AppSpacing.s24),
 
         // Timer Display
         Row(
@@ -518,7 +519,7 @@ class _TestWidgetPageState extends State<TestWidgetPage> {
             ),
           ],
         ),
-        SizedBox(height: 24.h),
+        SizedBox(height: AppSpacing.s24),
 
         // Todo Item
         TodoItem(
@@ -528,7 +529,7 @@ class _TestWidgetPageState extends State<TestWidgetPage> {
           onToggle: () => setState(() => _todoCompleted = !_todoCompleted),
           onTap: () => AppSnackBar.info(context, '할일 상세'),
         ),
-        SizedBox(height: 24.h),
+        SizedBox(height: AppSpacing.s24),
 
         // Booster Banner
         BoosterBanner(
@@ -551,7 +552,7 @@ class _TestWidgetPageState extends State<TestWidgetPage> {
           '뱃지 컬렉션',
           style: AppTextStyles.label_16.copyWith(color: Colors.white),
         ),
-        SizedBox(height: 12.h),
+        SizedBox(height: AppSpacing.s12),
         SizedBox(
           height: 100.h,
           child: ListView(
@@ -564,7 +565,7 @@ class _TestWidgetPageState extends State<TestWidgetPage> {
                 rarity: BadgeRarity.normal,
                 onTap: () => AppSnackBar.info(context, '첫 발걸음 뱃지'),
               ),
-              SizedBox(width: 12.w),
+              SizedBox(width: AppSpacing.s12),
               BadgeCard(
                 icon: '🌟',
                 name: '스타 학습자',
@@ -572,7 +573,7 @@ class _TestWidgetPageState extends State<TestWidgetPage> {
                 rarity: BadgeRarity.rare,
                 onTap: () {},
               ),
-              SizedBox(width: 12.w),
+              SizedBox(width: AppSpacing.s12),
               BadgeCard(
                 icon: '🔥',
                 name: '7일 연속',
@@ -580,7 +581,7 @@ class _TestWidgetPageState extends State<TestWidgetPage> {
                 rarity: BadgeRarity.epic,
                 onTap: () {},
               ),
-              SizedBox(width: 12.w),
+              SizedBox(width: AppSpacing.s12),
               const BadgeCard(
                 icon: '👑',
                 name: '???',
@@ -590,14 +591,14 @@ class _TestWidgetPageState extends State<TestWidgetPage> {
             ],
           ),
         ),
-        SizedBox(height: 24.h),
+        SizedBox(height: AppSpacing.s24),
 
         // Spaceship Cards
         Text(
           '우주선 컬렉션',
           style: AppTextStyles.label_16.copyWith(color: Colors.white),
         ),
-        SizedBox(height: 12.h),
+        SizedBox(height: AppSpacing.s12),
         SizedBox(
           height: 120.h,
           child: ListView(
@@ -611,7 +612,7 @@ class _TestWidgetPageState extends State<TestWidgetPage> {
                 rarity: SpaceshipRarity.normal,
                 onTap: () {},
               ),
-              SizedBox(width: 12.w),
+              SizedBox(width: AppSpacing.s12),
               SpaceshipCard(
                 icon: '🛸',
                 name: 'UFO',
@@ -619,7 +620,7 @@ class _TestWidgetPageState extends State<TestWidgetPage> {
                 rarity: SpaceshipRarity.rare,
                 onTap: () {},
               ),
-              SizedBox(width: 12.w),
+              SizedBox(width: AppSpacing.s12),
               SpaceshipCard(
                 icon: '🚁',
                 name: '헬리콥터',
@@ -628,7 +629,7 @@ class _TestWidgetPageState extends State<TestWidgetPage> {
                 rarity: SpaceshipRarity.epic,
                 onTap: () {},
               ),
-              SizedBox(width: 12.w),
+              SizedBox(width: AppSpacing.s12),
               const SpaceshipCard(
                 icon: '🌌',
                 name: '???',
@@ -638,11 +639,11 @@ class _TestWidgetPageState extends State<TestWidgetPage> {
             ],
           ),
         ),
-        SizedBox(height: 24.h),
+        SizedBox(height: AppSpacing.s24),
 
         // Ranking Items
         Text('랭킹', style: AppTextStyles.label_16.copyWith(color: Colors.white)),
-        SizedBox(height: 12.h),
+        SizedBox(height: AppSpacing.s12),
         RankingItem(
           rank: 1,
           userName: '김우주',
@@ -650,7 +651,7 @@ class _TestWidgetPageState extends State<TestWidgetPage> {
           studyTime: const Duration(hours: 8, minutes: 30),
           onTap: () {},
         ),
-        SizedBox(height: 8.h),
+        SizedBox(height: AppSpacing.s8),
         RankingItem(
           rank: 2,
           userName: '이스타',
@@ -658,7 +659,7 @@ class _TestWidgetPageState extends State<TestWidgetPage> {
           studyTime: const Duration(hours: 7, minutes: 15),
           onTap: () {},
         ),
-        SizedBox(height: 8.h),
+        SizedBox(height: AppSpacing.s8),
         RankingItem(
           rank: 3,
           userName: '박코딩',
@@ -666,7 +667,7 @@ class _TestWidgetPageState extends State<TestWidgetPage> {
           studyTime: const Duration(hours: 6, minutes: 45),
           onTap: () {},
         ),
-        SizedBox(height: 8.h),
+        SizedBox(height: AppSpacing.s8),
         RankingItem(
           rank: 4,
           userName: '나',

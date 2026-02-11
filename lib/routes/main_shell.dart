@@ -164,7 +164,7 @@ class _NavItem extends StatelessWidget {
                 ),
               )
             else
-              SizedBox(height: 4.w),
+              SizedBox(height: AppSpacing.s4),
           ],
         ),
       ),

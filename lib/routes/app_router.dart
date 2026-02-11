@@ -248,8 +248,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                   GoRoute(
                     path: 'about',
                     name: 'about',
-                    builder: (context, state) =>
-                        const AboutScreen(),
+                    builder: (context, state) => const AboutScreen(),
                   ),
                 ],
               ),

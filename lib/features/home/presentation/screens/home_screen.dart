@@ -32,7 +32,6 @@ class _HomeScreenState extends State<HomeScreen> {
   String _selectedSpaceshipId = 'default';
   String _selectedSpaceshipIcon = '🚀';
   String? _selectedLottieAsset = 'assets/lotties/default_rocket.json';
-  final double _fuel = 85.0;
   final int _streakDays = 5;
   final bool _isStreakActive = true;
   bool _isSpaceshipPressed = false;
@@ -69,13 +68,6 @@ class _HomeScreenState extends State<HomeScreen> {
     if (expanded != _isSheetExpanded) {
       setState(() => _isSheetExpanded = expanded);
     }
-  }
-
-  Color get _fuelColor {
-    if (_fuel >= 75) return AppColors.fuelFull;
-    if (_fuel >= 50) return AppColors.fuelMedium;
-    if (_fuel >= 25) return AppColors.fuelLow;
-    return AppColors.fuelEmpty;
   }
 
   void _showSpaceshipSelector() {
@@ -146,28 +138,6 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
           const Spacer(),
-          FadeSlideIn(
-            delay: const Duration(milliseconds: 200),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  Icons.local_gas_station_rounded,
-                  size: 18.w,
-                  color: _fuelColor,
-                ),
-                SizedBox(width: AppSpacing.s4),
-                Text(
-                  _fuel.toStringAsFixed(0),
-                  style: AppTextStyles.label_16.copyWith(
-                    color: _fuelColor,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          SizedBox(width: AppSpacing.s4),
           IconButton(
             icon: Icon(
               Icons.notifications_outlined,

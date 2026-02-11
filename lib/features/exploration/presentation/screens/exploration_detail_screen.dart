@@ -57,24 +57,12 @@ class ExplorationDetailScreen extends StatelessWidget {
                   background: _buildPlanetHeader(planet, progress),
                 ),
                 actions: [
-                  Container(
-                    margin: EdgeInsets.only(right: 16.w),
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 10.w,
-                      vertical: 4.h,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppColors.spaceSurface.withValues(alpha: 0.8),
-                      borderRadius: AppRadius.xlarge,
-                      border: Border.all(
-                        color: AppColors.primary.withValues(alpha: 0.4),
-                        width: 1,
-                      ),
-                    ),
+                  Padding(
+                    padding: EdgeInsets.only(right: 16.w),
                     child: FuelGauge(
                       currentFuel: currentFuel,
                       showLabel: false,
-                      size: FuelGaugeSize.small,
+                      size: FuelGaugeSize.medium,
                     ),
                   ),
                 ],

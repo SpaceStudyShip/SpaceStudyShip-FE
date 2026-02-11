@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/text_styles.dart';
-import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/widgets/animations/entrance_animations.dart';
 import '../../../../core/widgets/states/space_empty_state.dart';
 import '../../../exploration/domain/entities/exploration_node_entity.dart';
@@ -63,21 +62,12 @@ class ExploreScreen extends StatelessWidget {
           style: AppTextStyles.heading_20.copyWith(color: Colors.white),
         ),
         actions: [
-          Container(
-            margin: EdgeInsets.only(right: 16.w),
-            padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
-            decoration: BoxDecoration(
-              color: AppColors.spaceSurface,
-              borderRadius: AppRadius.xlarge,
-              border: Border.all(
-                color: AppColors.primary.withValues(alpha: 0.5),
-                width: 1,
-              ),
-            ),
+          Padding(
+            padding: EdgeInsets.only(right: 16.w),
             child: FuelGauge(
               currentFuel: currentFuel,
               showLabel: false,
-              size: FuelGaugeSize.small,
+              size: FuelGaugeSize.medium,
             ),
           ),
         ],

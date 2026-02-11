@@ -15,6 +15,7 @@ import '../features/exploration/presentation/screens/exploration_detail_screen.d
 import '../features/social/presentation/screens/social_screen.dart';
 import '../features/profile/presentation/screens/profile_screen.dart';
 import '../features/profile/presentation/screens/about_screen.dart';
+import '../features/profile/presentation/screens/spaceship_collection_screen.dart';
 
 /// 앱 라우터 Provider
 final appRouterProvider = Provider<GoRouter>((ref) {
@@ -226,7 +227,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                     path: 'spaceships',
                     name: 'spaceships',
                     builder: (context, state) =>
-                        const PlaceholderScreen(title: '우주선 컬렉션'),
+                        const SpaceshipCollectionScreen(),
                     routes: [
                       GoRoute(
                         path: ':id',

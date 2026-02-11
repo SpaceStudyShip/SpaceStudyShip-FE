@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/space_icons.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../../../core/widgets/space/spaceship_card.dart';
@@ -60,6 +62,32 @@ class SpaceshipCollectionScreen extends StatelessWidget {
     ),
   ];
 
+  String _rarityLabel(SpaceshipRarity rarity) {
+    switch (rarity) {
+      case SpaceshipRarity.normal:
+        return '일반';
+      case SpaceshipRarity.rare:
+        return '희귀';
+      case SpaceshipRarity.epic:
+        return '에픽';
+      case SpaceshipRarity.legendary:
+        return '레전더리';
+    }
+  }
+
+  Color _rarityColor(SpaceshipRarity rarity) {
+    switch (rarity) {
+      case SpaceshipRarity.normal:
+        return AppColors.textTertiary;
+      case SpaceshipRarity.rare:
+        return AppColors.primary;
+      case SpaceshipRarity.epic:
+        return AppColors.secondary;
+      case SpaceshipRarity.legendary:
+        return AppColors.accentGold;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final unlocked = _spaceships.where((s) => s.isUnlocked).length;
@@ -91,23 +119,115 @@ class SpaceshipCollectionScreen extends StatelessWidget {
               ),
               SizedBox(height: AppSpacing.s20),
 
-              // 우주선 그리드
-              Wrap(
-                spacing: AppSpacing.s12,
-                runSpacing: AppSpacing.s12,
-                children: _spaceships.map((spaceship) {
-                  return SpaceshipCard(
-                    icon: spaceship.icon,
-                    name: spaceship.name,
-                    isUnlocked: spaceship.isUnlocked,
-                    isAnimated: spaceship.isAnimated,
-                    rarity: spaceship.rarity,
-                  );
-                }).toList(),
+              // 우주선 그리드 (2열)
+              GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: AppSpacing.s12,
+                  mainAxisSpacing: AppSpacing.s12,
+                  childAspectRatio: 0.85,
+                ),
+                itemCount: _spaceships.length,
+                itemBuilder: (context, index) {
+                  return _buildCollectionCard(_spaceships[index]);
+                },
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildCollectionCard(SpaceshipData spaceship) {
+    final rarityColor = _rarityColor(spaceship.rarity);
+    final borderColor =
+        spaceship.isUnlocked ? rarityColor : AppColors.spaceDivider;
+
+    return Container(
+      padding: AppPadding.all16,
+      decoration: BoxDecoration(
+        color: AppColors.spaceSurface,
+        borderRadius: AppRadius.large,
+        border: Border.all(color: borderColor, width: 1.5),
+        boxShadow: spaceship.isUnlocked &&
+                spaceship.rarity == SpaceshipRarity.legendary
+            ? [
+                BoxShadow(
+                  color: AppColors.accentGold.withValues(alpha: 0.3),
+                  blurRadius: 8,
+                  spreadRadius: 1,
+                ),
+              ]
+            : null,
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          // 아이콘
+          Stack(
+            alignment: Alignment.center,
+            children: [
+              spaceship.isUnlocked
+                  ? SpaceIcons.buildIcon(spaceship.icon, size: 48.w)
+                  : Icon(
+                      SpaceIcons.resolve(spaceship.icon),
+                      size: 48.w,
+                      color: AppColors.textTertiary,
+                    ),
+              if (!spaceship.isUnlocked)
+                Icon(
+                  Icons.lock_rounded,
+                  size: 24.w,
+                  color: AppColors.textTertiary,
+                ),
+              if (spaceship.isAnimated && spaceship.isUnlocked)
+                Positioned(
+                  top: 0,
+                  right: 0,
+                  child: Icon(
+                    Icons.auto_awesome,
+                    size: 14.w,
+                    color: AppColors.accentGold,
+                  ),
+                ),
+            ],
+          ),
+          SizedBox(height: AppSpacing.s12),
+
+          // 이름
+          Text(
+            spaceship.isUnlocked ? spaceship.name : '???',
+            style: AppTextStyles.label16Medium.copyWith(
+              color:
+                  spaceship.isUnlocked ? Colors.white : AppColors.textTertiary,
+            ),
+            textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          SizedBox(height: AppSpacing.s4),
+
+          // 희귀도 태그
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.h),
+            decoration: BoxDecoration(
+              color: (spaceship.isUnlocked ? rarityColor : AppColors.spaceDivider)
+                  .withValues(alpha: 0.15),
+              borderRadius: AppRadius.chip,
+            ),
+            child: Text(
+              _rarityLabel(spaceship.rarity),
+              style: AppTextStyles.tag_10.copyWith(
+                color: spaceship.isUnlocked
+                    ? rarityColor
+                    : AppColors.textTertiary,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -1,11 +1,33 @@
 {
   "metadata": {
-    "lastUpdated": "2026-02-06T05:26:47Z",
-    "currentVersion": "1.0.23",
+    "lastUpdated": "2026-02-11T16:09:18Z",
+    "currentVersion": "1.0.31",
     "projectType": "flutter",
-    "totalReleases": 8
+    "totalReleases": 9
   },
   "releases": [
+    {
+      "version": "1.0.31",
+      "project_type": "flutter",
+      "date": "2026-02-11",
+      "pr_number": 11,
+      "raw_summary": "## Summary by CodeRabbit\n\n## 릴리스 노트\n\n* **새 기능**\n  - 행성과 지역을 탐험하는 새로운 탐험 시스템 추가\n  - 홈 화면 UI 개선 및 우주선 중심 레이아웃 재설계\n  - 앱 정보 및 크레딧 페이지 추가\n  - 우주선 컬렉션 갤러리 추가\n  - 애니메이션 효과가 적용된 타이머 링 디스플레이\n\n* **개선사항**\n  - 글래스모피즘 효과가 적용된 하단 네비게이션 바 재디자인\n  - 앱 전역의 일관된 우주 배경 적용\n  - 향상된 입장 애니메이션 및 전환 효과\n  - 디자인 시스템 강화로 시각적 일관성 개선\n\n* **버그 수정**\n  - 타이머 텍스트 클리핑 문제 해결\n  - iOS 빌드 구성 최적화",
+      "parsed_changes": {
+        "새_기능": {
+          "title": "새 기능",
+          "items": []
+        },
+        "개선사항": {
+          "title": "개선사항",
+          "items": []
+        },
+        "버그_수정": {
+          "title": "버그 수정",
+          "items": []
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "1.0.23",
       "project_type": "flutter",

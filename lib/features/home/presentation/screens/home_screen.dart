@@ -32,7 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
   // 임시 상태 (나중에 Riverpod Provider로 이동)
   String _selectedSpaceshipId = 'default';
   String _selectedSpaceshipIcon = '🚀';
-  String _selectedSpaceshipName = '화성 탐사선';
+  String? _selectedLottieAsset = 'assets/lotties/default_rocket.json';
   final double _fuel = 85.0;
   final int _streakDays = 5;
   final bool _isStreakActive = true;
@@ -54,9 +54,10 @@ class _HomeScreenState extends State<HomeScreen> {
     const SpaceshipData(
       id: 'default',
       icon: '🚀',
-      name: '화성 탐사선',
+      name: '우주공부선',
       isUnlocked: true,
       rarity: SpaceshipRarity.normal,
+      lottieAsset: 'assets/lotties/default_rocket.json',
     ),
     const SpaceshipData(
       id: 'ufo',
@@ -133,7 +134,7 @@ class _HomeScreenState extends State<HomeScreen> {
         setState(() {
           _selectedSpaceshipId = id;
           _selectedSpaceshipIcon = selected.icon;
-          _selectedSpaceshipName = selected.name;
+          _selectedLottieAsset = selected.lottieAsset;
         });
       },
     );
@@ -246,11 +247,10 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                SpaceshipAvatar(icon: _selectedSpaceshipIcon, size: 200),
-                SizedBox(height: AppSpacing.s24),
-                Text(
-                  _selectedSpaceshipName,
-                  style: AppTextStyles.heading_20.copyWith(color: Colors.white),
+                SpaceshipAvatar(
+                  icon: _selectedSpaceshipIcon,
+                  size: 280,
+                  lottieAsset: _selectedLottieAsset,
                 ),
                 SizedBox(height: 58.h),
               ],

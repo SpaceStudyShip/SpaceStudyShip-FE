@@ -5,12 +5,26 @@ import 'package:package_info_plus/package_info_plus.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
+import '../../../../core/widgets/backgrounds/space_background.dart';
 
 /// About / Credits 페이지
 ///
 /// 앱 정보와 에셋 크레딧/라이선스를 표시합니다.
-class AboutScreen extends StatelessWidget {
+class AboutScreen extends StatefulWidget {
   const AboutScreen({super.key});
+
+  @override
+  State<AboutScreen> createState() => _AboutScreenState();
+}
+
+class _AboutScreenState extends State<AboutScreen> {
+  late final Future<PackageInfo> _packageInfoFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _packageInfoFuture = PackageInfo.fromPlatform();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,45 +40,48 @@ class AboutScreen extends StatelessWidget {
           style: AppTextStyles.heading_20.copyWith(color: Colors.white),
         ),
       ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: AppPadding.all20,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // 앱 정보 섹션
-              _buildAppInfoSection(),
-              SizedBox(height: AppSpacing.s32),
+      body: Stack(
+        children: [
+          const Positioned.fill(child: SpaceBackground()),
+          SafeArea(
+            child: SingleChildScrollView(
+              padding: AppPadding.all20,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // 앱 정보 섹션
+                  _buildAppInfoSection(),
+                  SizedBox(height: AppSpacing.s32),
 
-              // 크레딧 섹션
-              _buildSectionTitle('Credits'),
-              SizedBox(height: AppSpacing.s16),
-              _buildCreditItem(
-                title: 'Rocket Animation',
-                author: 'Sokol Laliçi',
-                source: 'LottieFiles',
-                url:
-                    'https://lottiefiles.com/free-animation/rocket-lunch-x9j9TboyaP',
-                license: 'Lottie Simple License',
+                  // 크레딧 섹션
+                  _buildSectionTitle('Credits'),
+                  SizedBox(height: AppSpacing.s16),
+                  _buildCreditItem(
+                    title: 'Rocket Animation',
+                    author: 'Sokol Laliçi',
+                    source: 'LottieFiles',
+                    license: 'Lottie Simple License',
+                  ),
+                  SizedBox(height: AppSpacing.s32),
+
+                  // 라이선스 안내
+                  _buildSectionTitle('Licenses'),
+                  SizedBox(height: AppSpacing.s16),
+                  _buildLicenseNote(),
+                  SizedBox(height: AppSpacing.s16),
+                  _buildOpenSourceButton(context),
+                ],
               ),
-              SizedBox(height: AppSpacing.s32),
-
-              // 라이선스 안내
-              _buildSectionTitle('Licenses'),
-              SizedBox(height: AppSpacing.s16),
-              _buildLicenseNote(),
-              SizedBox(height: AppSpacing.s16),
-              _buildOpenSourceButton(context),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
 
   Widget _buildAppInfoSection() {
     return FutureBuilder<PackageInfo>(
-      future: PackageInfo.fromPlatform(),
+      future: _packageInfoFuture,
       builder: (context, snapshot) {
         final version = snapshot.data?.version ?? '-';
         final buildNumber = snapshot.data?.buildNumber ?? '-';
@@ -126,7 +143,6 @@ class AboutScreen extends StatelessWidget {
     required String title,
     required String author,
     required String source,
-    required String url,
     required String license,
   }) {
     return Container(

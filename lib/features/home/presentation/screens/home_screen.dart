@@ -9,7 +9,6 @@ import '../../../../core/constants/toss_design_tokens.dart';
 import '../../../../core/widgets/animations/entrance_animations.dart';
 import '../../../../core/widgets/cards/app_card.dart';
 import '../../../../core/widgets/space/spaceship_avatar.dart';
-import '../../../../core/widgets/space/spaceship_card.dart';
 import '../../../../core/widgets/space/streak_badge.dart';
 import '../../../../core/widgets/space/todo_item.dart';
 import '../../../../core/widgets/states/space_empty_state.dart';
@@ -49,53 +48,8 @@ class _HomeScreenState extends State<HomeScreen> {
     {'title': '물리 노트 정리', 'subtitle': '40분', 'completed': false},
   ];
 
-  // 샘플 우주선 데이터
-  final List<SpaceshipData> _spaceships = [
-    const SpaceshipData(
-      id: 'default',
-      icon: '🚀',
-      name: '우주공부선',
-      isUnlocked: true,
-      rarity: SpaceshipRarity.normal,
-      lottieAsset: 'assets/lotties/default_rocket.json',
-    ),
-    const SpaceshipData(
-      id: 'ufo',
-      icon: '🛸',
-      name: 'UFO',
-      isUnlocked: true,
-      rarity: SpaceshipRarity.rare,
-    ),
-    const SpaceshipData(
-      id: 'satellite',
-      icon: '🛰️',
-      name: '인공위성',
-      isUnlocked: true,
-      isAnimated: true,
-      rarity: SpaceshipRarity.epic,
-    ),
-    const SpaceshipData(
-      id: 'star',
-      icon: '🌟',
-      name: '스타쉽',
-      isUnlocked: false,
-      rarity: SpaceshipRarity.legendary,
-    ),
-    const SpaceshipData(
-      id: 'shuttle',
-      icon: '🚁',
-      name: '셔틀',
-      isUnlocked: false,
-      rarity: SpaceshipRarity.normal,
-    ),
-    const SpaceshipData(
-      id: 'moon',
-      icon: '🌙',
-      name: '달 탐사선',
-      isUnlocked: false,
-      rarity: SpaceshipRarity.rare,
-    ),
-  ];
+  // 샘플 우주선 데이터 (SpaceshipData.sampleList 공유)
+  final List<SpaceshipData> _spaceships = SpaceshipData.sampleList;
 
   @override
   void initState() {
@@ -261,6 +215,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   size: 320,
                   lottieAsset: _selectedLottieAsset,
                 ),
+                // 바텀시트와 우주선 간 여백 확보
                 SizedBox(height: 58.h),
               ],
             ),

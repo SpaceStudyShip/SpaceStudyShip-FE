@@ -5,6 +5,7 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/space_icons.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
+import '../../../../core/widgets/backgrounds/space_background.dart';
 import '../../../../core/widgets/space/spaceship_card.dart';
 import '../../../home/presentation/widgets/spaceship_selector.dart';
 
@@ -14,53 +15,8 @@ import '../../../home/presentation/widgets/spaceship_selector.dart';
 class SpaceshipCollectionScreen extends StatelessWidget {
   const SpaceshipCollectionScreen({super.key});
 
-  // 임시 데이터 (나중에 Riverpod Provider로 이동)
-  static const _spaceships = [
-    SpaceshipData(
-      id: 'default',
-      icon: '🚀',
-      name: '우주공부선',
-      isUnlocked: true,
-      rarity: SpaceshipRarity.normal,
-      lottieAsset: 'assets/lotties/default_rocket.json',
-    ),
-    SpaceshipData(
-      id: 'ufo',
-      icon: '🛸',
-      name: 'UFO',
-      isUnlocked: true,
-      rarity: SpaceshipRarity.rare,
-    ),
-    SpaceshipData(
-      id: 'satellite',
-      icon: '🛰️',
-      name: '인공위성',
-      isUnlocked: true,
-      isAnimated: true,
-      rarity: SpaceshipRarity.epic,
-    ),
-    SpaceshipData(
-      id: 'star',
-      icon: '🌟',
-      name: '스타쉽',
-      isUnlocked: false,
-      rarity: SpaceshipRarity.legendary,
-    ),
-    SpaceshipData(
-      id: 'shuttle',
-      icon: '🚁',
-      name: '셔틀',
-      isUnlocked: false,
-      rarity: SpaceshipRarity.normal,
-    ),
-    SpaceshipData(
-      id: 'moon',
-      icon: '🌙',
-      name: '달 탐사선',
-      isUnlocked: false,
-      rarity: SpaceshipRarity.rare,
-    ),
-  ];
+  // 샘플 우주선 데이터 (SpaceshipData.sampleList 공유)
+  static const _spaceships = SpaceshipData.sampleList;
 
   String _rarityLabel(SpaceshipRarity rarity) {
     switch (rarity) {
@@ -104,39 +60,44 @@ class SpaceshipCollectionScreen extends StatelessWidget {
           style: AppTextStyles.heading_20.copyWith(color: Colors.white),
         ),
       ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: AppPadding.all20,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // 수집 현황
-              Text(
-                '$unlocked / ${_spaceships.length} 해금',
-                style: AppTextStyles.tag_12.copyWith(
-                  color: AppColors.textTertiary,
-                ),
-              ),
-              SizedBox(height: AppSpacing.s20),
+      body: Stack(
+        children: [
+          const Positioned.fill(child: SpaceBackground()),
+          SafeArea(
+            child: SingleChildScrollView(
+              padding: AppPadding.all20,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // 수집 현황
+                  Text(
+                    '$unlocked / ${_spaceships.length} 해금',
+                    style: AppTextStyles.tag_12.copyWith(
+                      color: AppColors.textTertiary,
+                    ),
+                  ),
+                  SizedBox(height: AppSpacing.s20),
 
-              // 우주선 그리드 (2열)
-              GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: AppSpacing.s12,
-                  mainAxisSpacing: AppSpacing.s12,
-                  childAspectRatio: 0.85,
-                ),
-                itemCount: _spaceships.length,
-                itemBuilder: (context, index) {
-                  return _buildCollectionCard(_spaceships[index]);
-                },
+                  // 우주선 그리드 (2열)
+                  GridView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: AppSpacing.s12,
+                      mainAxisSpacing: AppSpacing.s12,
+                      childAspectRatio: 0.85,
+                    ),
+                    itemCount: _spaceships.length,
+                    itemBuilder: (context, index) {
+                      return _buildCollectionCard(_spaceships[index]);
+                    },
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }

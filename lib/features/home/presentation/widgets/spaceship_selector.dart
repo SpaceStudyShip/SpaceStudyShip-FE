@@ -25,6 +25,54 @@ class SpaceshipData {
   final bool isAnimated;
   final SpaceshipRarity rarity;
   final String? lottieAsset;
+
+  /// 임시 샘플 데이터 (나중에 Riverpod Provider로 이동)
+  static const sampleList = [
+    SpaceshipData(
+      id: 'default',
+      icon: '🚀',
+      name: '우주공부선',
+      isUnlocked: true,
+      rarity: SpaceshipRarity.normal,
+      lottieAsset: 'assets/lotties/default_rocket.json',
+    ),
+    SpaceshipData(
+      id: 'ufo',
+      icon: '🛸',
+      name: 'UFO',
+      isUnlocked: true,
+      rarity: SpaceshipRarity.rare,
+    ),
+    SpaceshipData(
+      id: 'satellite',
+      icon: '🛰️',
+      name: '인공위성',
+      isUnlocked: true,
+      isAnimated: true,
+      rarity: SpaceshipRarity.epic,
+    ),
+    SpaceshipData(
+      id: 'star',
+      icon: '🌟',
+      name: '스타쉽',
+      isUnlocked: false,
+      rarity: SpaceshipRarity.legendary,
+    ),
+    SpaceshipData(
+      id: 'shuttle',
+      icon: '🚁',
+      name: '셔틀',
+      isUnlocked: false,
+      rarity: SpaceshipRarity.normal,
+    ),
+    SpaceshipData(
+      id: 'moon',
+      icon: '🌙',
+      name: '달 탐사선',
+      isUnlocked: false,
+      rarity: SpaceshipRarity.rare,
+    ),
+  ];
 }
 
 /// 우주선 선택 바텀시트
@@ -85,16 +133,12 @@ class SpaceshipSelector extends StatelessWidget {
           // 제목 (홈 시트와 동일 스타일)
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
-            child: Row(
-              children: [
-                Text(
-                  '우주선 선택',
-                  style: AppTextStyles.subHeading_18.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ],
+            child: Text(
+              '우주선 선택',
+              style: AppTextStyles.subHeading_18.copyWith(
+                color: Colors.white,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ),
 

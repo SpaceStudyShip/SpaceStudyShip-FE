@@ -158,7 +158,7 @@ class ExplorationDetailScreen extends StatelessWidget {
               child: Center(
                 child: Text(
                   planet.icon,
-                  style: AppTextStyles.heading_24.copyWith(fontSize: 36.sp),
+                  style: TextStyle(fontSize: 36.sp),
                 ),
               ),
             ),

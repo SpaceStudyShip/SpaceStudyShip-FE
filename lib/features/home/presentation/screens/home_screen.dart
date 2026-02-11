@@ -237,7 +237,15 @@ class _HomeScreenState extends State<HomeScreen> {
         onTapDown: (_) => setState(() => _isSpaceshipPressed = true),
         onTapUp: (_) {
           setState(() => _isSpaceshipPressed = false);
-          _showSpaceshipSelector();
+          if (_isSheetExpanded) {
+            _sheetController.animateTo(
+              0.22,
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeOut,
+            );
+          } else {
+            _showSpaceshipSelector();
+          }
         },
         onTapCancel: () => setState(() => _isSpaceshipPressed = false),
         child: AnimatedScale(

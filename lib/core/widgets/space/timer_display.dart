@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../../constants/text_styles.dart';
 
 import '../../constants/app_colors.dart';
 
@@ -71,29 +71,13 @@ class TimerDisplay extends StatelessWidget {
   TextStyle get _textStyle {
     switch (size) {
       case TimerDisplaySize.small:
-        return TextStyle(
-          fontFamily: 'Pretendard-SemiBold',
-          fontSize: 24.sp,
-          letterSpacing: 2,
-        );
+        return AppTextStyles.timer_24;
       case TimerDisplaySize.medium:
-        return TextStyle(
-          fontFamily: 'Pretendard-SemiBold',
-          fontSize: 32.sp,
-          letterSpacing: 2,
-        );
+        return AppTextStyles.timer_32;
       case TimerDisplaySize.large:
-        return TextStyle(
-          fontFamily: 'Pretendard-SemiBold',
-          fontSize: 48.sp,
-          letterSpacing: 3,
-        );
+        return AppTextStyles.timer_48;
       case TimerDisplaySize.xlarge:
-        return TextStyle(
-          fontFamily: 'Pretendard-SemiBold',
-          fontSize: 64.sp,
-          letterSpacing: 4,
-        );
+        return AppTextStyles.timer_64;
     }
   }
 

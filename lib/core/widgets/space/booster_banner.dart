@@ -83,9 +83,8 @@ class BoosterBanner extends StatelessWidget {
                   children: [
                     TextSpan(
                       text: _multiplierText,
-                      style: TextStyle(
+                      style: AppTextStyles.paragraph14Semibold.copyWith(
                         color: AppColors.accentGold,
-                        fontWeight: FontWeight.w700,
                       ),
                     ),
                     const TextSpan(text: ' 부스터 활성화 중!'),

@@ -123,4 +123,57 @@ class AppTextStyles {
     height: 1.0, // 100% line height
     letterSpacing: -0.32,
   );
+
+  // ============================================
+  // Navigation Styles
+  // ============================================
+
+  /// Tag SemiBold - 네비게이션 탭 선택 상태 (10px SemiBold)
+  /// Line Height: 100%, Letter Spacing: -0.32px
+  static TextStyle get tag10Semibold => TextStyle(
+    fontFamily: 'Pretendard-SemiBold',
+    fontSize: 10.sp,
+    height: 1.0, // 100% line height
+    letterSpacing: -0.32,
+  );
+
+  // ============================================
+  // Timer Styles (SemiBold, wide letter spacing)
+  // ============================================
+
+  /// Timer Small - 리스트 아이템용 타이머 (24px SemiBold)
+  /// Line Height: 100%, Letter Spacing: 2px
+  static TextStyle get timer_24 => TextStyle(
+    fontFamily: 'Pretendard-SemiBold',
+    fontSize: 24.sp,
+    height: 1.0, // 100% line height
+    letterSpacing: 2,
+  );
+
+  /// Timer Medium - 서브 타이머 (32px SemiBold)
+  /// Line Height: 100%, Letter Spacing: 2px
+  static TextStyle get timer_32 => TextStyle(
+    fontFamily: 'Pretendard-SemiBold',
+    fontSize: 32.sp,
+    height: 1.0, // 100% line height
+    letterSpacing: 2,
+  );
+
+  /// Timer Large - 메인 타이머 (48px SemiBold)
+  /// Line Height: 100%, Letter Spacing: 3px
+  static TextStyle get timer_48 => TextStyle(
+    fontFamily: 'Pretendard-SemiBold',
+    fontSize: 48.sp,
+    height: 1.0, // 100% line height
+    letterSpacing: 3,
+  );
+
+  /// Timer XLarge - 집중 화면 타이머 (64px SemiBold)
+  /// Line Height: 100%, Letter Spacing: 4px
+  static TextStyle get timer_64 => TextStyle(
+    fontFamily: 'Pretendard-SemiBold',
+    fontSize: 64.sp,
+    height: 1.0, // 100% line height
+    letterSpacing: 4,
+  );
 }

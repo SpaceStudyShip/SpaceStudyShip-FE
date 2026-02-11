@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../core/constants/app_colors.dart';
 import '../core/constants/spacing_and_radius.dart';
+import '../core/constants/text_styles.dart';
 import '../core/widgets/backgrounds/space_background.dart';
 
 /// 메인 네비게이션 쉘 (바텀 네비게이션)
@@ -134,11 +135,10 @@ class _NavItem extends StatelessWidget {
             SizedBox(height: AppSpacing.s4),
             Text(
               label,
-              style: TextStyle(
-                fontSize: 10.sp,
-                fontFamily: isSelected
-                    ? 'Pretendard-SemiBold'
-                    : 'Pretendard-Medium',
+              style: (isSelected
+                      ? AppTextStyles.tag10Semibold
+                      : AppTextStyles.tag_10)
+                  .copyWith(
                 color: isSelected ? Colors.white : AppColors.textTertiary,
               ),
             ),

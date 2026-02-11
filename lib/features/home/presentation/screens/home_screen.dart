@@ -247,29 +247,12 @@ class _HomeScreenState extends State<HomeScreen> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 SpaceshipAvatar(icon: _selectedSpaceshipIcon, size: 200),
-                SizedBox(height: AppSpacing.s16),
+                SizedBox(height: AppSpacing.s24),
                 Text(
                   _selectedSpaceshipName,
                   style: AppTextStyles.heading_20.copyWith(color: Colors.white),
                 ),
-                SizedBox(height: AppSpacing.s4),
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      '변경하기',
-                      style: AppTextStyles.tag_12.copyWith(
-                        color: AppColors.primary,
-                      ),
-                    ),
-                    SizedBox(width: 2.w),
-                    Icon(
-                      Icons.chevron_right,
-                      size: 14.w,
-                      color: AppColors.primary,
-                    ),
-                  ],
-                ),
+                SizedBox(height: 58.h),
               ],
             ),
           ),

@@ -119,6 +119,7 @@ class _SpaceshipCardState extends State<SpaceshipCard> {
         curve: TossDesignTokens.springCurve,
         child: Container(
           width: 80.w,
+          height: 110.h,
           padding: AppPadding.all12,
           decoration: BoxDecoration(
             color: AppColors.spaceSurface,
@@ -139,7 +140,7 @@ class _SpaceshipCardState extends State<SpaceshipCard> {
                 : null,
           ),
           child: Column(
-            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               // 우주선 아이콘 + 애니메이션 마크
               Stack(
@@ -204,12 +205,6 @@ class _SpaceshipCardState extends State<SpaceshipCard> {
                   ),
                 ],
               ),
-
-              // 선택 체크 표시
-              if (widget.isSelected) ...[
-                SizedBox(height: AppSpacing.s4),
-                Icon(Icons.check_circle, size: 16.w, color: AppColors.primary),
-              ],
             ],
           ),
         ),

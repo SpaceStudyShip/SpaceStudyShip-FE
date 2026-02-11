@@ -229,9 +229,10 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  /// 우주선 영역: 중앙 우주선
+  /// 우주선 영역: 중앙보다 살짝 위
   Widget _buildSpaceshipArea() {
-    return Center(
+    return Align(
+      alignment: const Alignment(0, -0.3),
       child: GestureDetector(
         onTapDown: (_) => setState(() => _isSpaceshipPressed = true),
         onTapUp: (_) {
@@ -249,7 +250,7 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 SpaceshipAvatar(
                   icon: _selectedSpaceshipIcon,
-                  size: 280,
+                  size: 320,
                   lottieAsset: _selectedLottieAsset,
                 ),
                 SizedBox(height: 58.h),

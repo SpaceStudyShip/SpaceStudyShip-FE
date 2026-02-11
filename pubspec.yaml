@@ -27,6 +27,7 @@ dependencies:
   flutter_screenutil: ^5.9.3 # 화면, 해상도 대응 유틸리티
   cached_network_image: ^3.4.1 # 네트워크 이미지 캐싱
   shimmer: ^3.0.0 # 로딩 애니메이션 효과
+  lottie: ^3.3.1 # Lottie 애니메이션 재생
   smooth_page_indicator: ^1.2.1 # 페이지 이동 인디케이터 UI
   toggle_switch: ^2.3.0 # 토글 버튼 UI
   flutter_svg: ^2.2.1 # 앱 아이콘
@@ -61,6 +62,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/fonts/
+    - assets/lotties/
     - .env
   fonts:
     - family: Pretendard-Thin

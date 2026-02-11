@@ -15,6 +15,7 @@ class SpaceshipData {
     this.isUnlocked = false,
     this.isAnimated = false,
     this.rarity = SpaceshipRarity.normal,
+    this.lottieAsset,
   });
 
   final String id;
@@ -23,6 +24,7 @@ class SpaceshipData {
   final bool isUnlocked;
   final bool isAnimated;
   final SpaceshipRarity rarity;
+  final String? lottieAsset;
 }
 
 /// 우주선 선택 바텀시트
@@ -67,38 +69,34 @@ class SpaceshipSelector extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // 드래그 핸들
-          Container(
-            margin: EdgeInsets.only(top: 12.h),
-            width: 40.w,
-            height: 4.h,
-            decoration: BoxDecoration(
-              color: AppColors.spaceDivider,
-              borderRadius: BorderRadius.circular(2.r),
+          // 드래그 핸들 (홈 시트와 동일)
+          Center(
+            child: Container(
+              margin: EdgeInsets.only(top: 12.h, bottom: 8.h),
+              width: 40.w,
+              height: 4.h,
+              decoration: BoxDecoration(
+                color: AppColors.textTertiary.withValues(alpha: 0.4),
+                borderRadius: BorderRadius.circular(2.r),
+              ),
             ),
           ),
 
-          // 제목
+          // 제목 (홈 시트와 동일 스타일)
           Padding(
-            padding: AppPadding.all20,
+            padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
             child: Row(
               children: [
-                Icon(
-                  Icons.rocket_launch_rounded,
-                  size: 24.w,
-                  color: AppColors.primary,
-                ),
-                SizedBox(width: AppSpacing.s8),
                 Text(
                   '우주선 선택',
-                  style: AppTextStyles.heading_20.copyWith(color: Colors.white),
+                  style: AppTextStyles.subHeading_18.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
               ],
             ),
           ),
-
-          // 구분선
-          Divider(height: 1, color: AppColors.spaceDivider),
 
           // 우주선 그리드
           Flexible(
@@ -148,17 +146,12 @@ Future<void> showSpaceshipSelector({
     backgroundColor: Colors.transparent,
     barrierColor: Colors.black54,
     isScrollControlled: true,
-    builder: (context) => DraggableScrollableSheet(
-      initialChildSize: 0.5,
-      minChildSize: 0.3,
-      maxChildSize: 0.8,
-      builder: (context, scrollController) {
-        return SpaceshipSelector(
-          spaceships: spaceships,
-          selectedId: selectedId,
-          onSelect: onSelect,
-        );
-      },
+    isDismissible: true,
+    enableDrag: true,
+    builder: (context) => SpaceshipSelector(
+      spaceships: spaceships,
+      selectedId: selectedId,
+      onSelect: onSelect,
     ),
   );
 }

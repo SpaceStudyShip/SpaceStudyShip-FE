@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 /// 환경 설정 관리 클래스
 /// API URL, WebSocket URL 등 환경별 설정을 중앙에서 관리합니다
@@ -12,11 +13,23 @@ class EnvConfig {
   static String? _webSocketUrl;
   static bool _isInitialized = false;
 
-  /// API Base URL
+  /// API Base URL (DioClient에서 사용)
+  static String get apiBaseUrl => _apiUrl ?? '';
+
+  /// API Base URL (기존 호환)
   static String get apiUrl => _apiUrl ?? '';
 
   /// WebSocket URL
   static String get webSocketUrl => _webSocketUrl ?? '';
+
+  /// Mock API 사용 여부
+  ///
+  /// `.env` 파일의 `USE_MOCK_API` 값으로 판단합니다.
+  /// `true`이면 MockApiInterceptor가 실제 네트워크 요청을 가로챕니다.
+  static bool get useMockApi {
+    final value = dotenv.env['USE_MOCK_API'] ?? 'false';
+    return value.toLowerCase() == 'true';
+  }
 
   /// 초기화 여부
   static bool get isInitialized => _isInitialized;
@@ -38,16 +51,17 @@ class EnvConfig {
     try {
       debugPrint('🔧 [EnvConfig] 환경 설정 초기화 시작...');
 
-      // TODO: 실제 환경 변수 로드 로직 구현
-      // 현재는 기본값만 설정
-      // 향후 .env 파일이나 Firebase Remote Config에서 로드 가능
-      _apiUrl = _getDefaultApiUrl();
+      // .env 파일 로드
+      await dotenv.load(fileName: '.env');
+
+      // 환경 변수에서 읽기 (없으면 기본값)
+      _apiUrl = dotenv.env['API_BASE_URL'] ?? _getDefaultApiUrl();
       _webSocketUrl = _getDefaultWebSocketUrl();
 
       _isInitialized = true;
       debugPrint('✅ [EnvConfig] 환경 설정 초기화 완료');
       debugPrint('📡 [EnvConfig] API URL: $_apiUrl');
-      debugPrint('📡 [EnvConfig] WebSocket URL: $_webSocketUrl');
+      debugPrint('📡 [EnvConfig] Mock API: $useMockApi');
     } catch (e, stackTrace) {
       debugPrint('❌ [EnvConfig] 환경 설정 초기화 실패: $e');
       debugPrint('Stack trace: $stackTrace');
@@ -63,7 +77,7 @@ class EnvConfig {
   static String _getDefaultApiUrl() {
     if (kDebugMode) {
       // 개발 환경
-      return 'http://localhost:8000';
+      return 'http://localhost:8080';
     } else {
       // 프로덕션 환경
       return 'https://api.production.com';
@@ -75,7 +89,7 @@ class EnvConfig {
   static String _getDefaultWebSocketUrl() {
     if (kDebugMode) {
       // 개발 환경
-      return 'ws://localhost:8000/ws';
+      return 'ws://localhost:8080/ws';
     } else {
       // 프로덕션 환경
       return 'wss://api.production.com/ws';

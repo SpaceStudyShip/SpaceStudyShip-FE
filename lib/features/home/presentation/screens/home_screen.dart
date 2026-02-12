@@ -91,6 +91,36 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       backgroundColor: Colors.transparent,
       extendBody: true,
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        title: _streakDays > 0
+            ? FadeSlideIn(
+                child: StreakBadge(
+                  days: _streakDays,
+                  isActive: _isStreakActive,
+                  showLabel: true,
+                  size: StreakBadgeSize.large,
+                ),
+              )
+            : null,
+        centerTitle: false,
+        actions: [
+          IconButton(
+            icon: Icon(
+              Icons.notifications_outlined,
+              color: Colors.white,
+              size: 24.w,
+            ),
+            onPressed: () {
+              // TODO: 알림 화면
+            },
+          ),
+          SizedBox(width: 2.w),
+        ],
+      ),
       body: Stack(
         children: [
           // 메인 콘텐츠
@@ -103,53 +133,19 @@ class _HomeScreenState extends State<HomeScreen> {
               );
             },
             behavior: HitTestBehavior.translucent,
-            child: SafeArea(
-              bottom: false,
-              child: Column(
-                children: [
-                  _buildTopBar(),
-                  Expanded(child: _buildSpaceshipArea()),
-                  SizedBox(height: 80.h),
-                ],
-              ),
+            child: Column(
+              children: [
+                SizedBox(
+                  height: MediaQuery.of(context).padding.top + kToolbarHeight,
+                ),
+                Expanded(child: _buildSpaceshipArea()),
+                SizedBox(height: 80.h),
+              ],
             ),
           ),
 
           // 하단 시트
           _buildBottomSheet(),
-        ],
-      ),
-    );
-  }
-
-  /// 상단 바: 스트릭 배지 + 알림 아이콘
-  Widget _buildTopBar() {
-    return Padding(
-      padding: EdgeInsets.only(left: 20.w, right: 10.w, top: 8.h, bottom: 8.h),
-      child: Row(
-        children: [
-          if (_streakDays > 0)
-            FadeSlideIn(
-              child: StreakBadge(
-                days: _streakDays,
-                isActive: _isStreakActive,
-                showLabel: true,
-                size: StreakBadgeSize.large,
-              ),
-            ),
-          const Spacer(),
-          IconButton(
-            icon: Icon(
-              Icons.notifications_outlined,
-              color: Colors.white,
-              size: 24.w,
-            ),
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(),
-            onPressed: () {
-              // TODO: 알림 화면
-            },
-          ),
         ],
       ),
     );
@@ -363,9 +359,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildSectionTitle(String title) {
     return Text(
       title,
-      style: AppTextStyles.subHeading_18.copyWith(
-        color: Colors.white,
-      ),
+      style: AppTextStyles.subHeading_18.copyWith(color: Colors.white),
     );
   }
 

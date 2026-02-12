@@ -5,6 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'route_paths.dart';
 import 'main_shell.dart';
 import '../core/widgets/backgrounds/space_background.dart';
+import '../features/auth/domain/entities/auth_result_entity.dart';
+import '../features/auth/presentation/providers/auth_provider.dart';
 import '../features/auth/presentation/screens/splash_screen.dart';
 import '../features/auth/presentation/screens/login_screen.dart';
 import '../features/auth/presentation/screens/onboarding_screen.dart';
@@ -17,11 +19,54 @@ import '../features/profile/presentation/screens/profile_screen.dart';
 import '../features/profile/presentation/screens/about_screen.dart';
 import '../features/profile/presentation/screens/spaceship_collection_screen.dart';
 
+/// GoRouter의 refreshListenable로 사용되는 ChangeNotifier
+///
+/// authNotifierProvider 상태 변경 시 GoRouter redirect를 재평가합니다.
+class RouterNotifier extends ChangeNotifier {
+  RouterNotifier(this._ref) {
+    _ref.listen<AsyncValue<AuthResultEntity?>>(
+      authNotifierProvider,
+      (prev, next) => notifyListeners(),
+    );
+  }
+
+  final Ref _ref;
+}
+
 /// 앱 라우터 Provider
 final appRouterProvider = Provider<GoRouter>((ref) {
+  final routerNotifier = RouterNotifier(ref);
+
   return GoRouter(
     initialLocation: RoutePaths.splash,
     debugLogDiagnostics: true,
+    refreshListenable: routerNotifier,
+    redirect: (context, state) {
+      final authState = ref.read(authNotifierProvider);
+      final location = state.matchedLocation;
+
+      final isAuthRoute =
+          location == RoutePaths.splash ||
+          location == RoutePaths.login ||
+          location == RoutePaths.onboarding;
+
+      // 초기 로딩 중에는 리디렉트하지 않음 (스플래시 유지)
+      if (authState.isLoading) return null;
+
+      final user = authState.valueOrNull;
+
+      // 미로그인 → 로그인 화면으로
+      if (user == null) {
+        return (location == RoutePaths.login) ? null : RoutePaths.login;
+      }
+
+      // 로그인됨 + 인증 화면에 있으면 → 홈으로
+      if (isAuthRoute) {
+        return RoutePaths.home;
+      }
+
+      return null;
+    },
     routes: [
       // ═══════════════════════════════════════════════════
       // 인증 플로우 (ShellRoute 외부)

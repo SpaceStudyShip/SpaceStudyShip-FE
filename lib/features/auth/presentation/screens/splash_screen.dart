@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/constants/app_colors.dart';
@@ -8,34 +7,13 @@ import '../../../../core/constants/text_styles.dart';
 import '../../../../core/widgets/animations/entrance_animations.dart';
 import '../../../../core/widgets/atoms/gradient_circle_icon.dart';
 import '../../../../core/widgets/backgrounds/space_background.dart';
-import '../../../../routes/route_paths.dart';
 
 /// 스플래시 스크린
 ///
-/// 앱 시작 시 로고를 표시하고 인증 상태를 확인합니다.
-class SplashScreen extends StatefulWidget {
+/// 앱 시작 시 로고를 표시합니다.
+/// GoRouter redirect가 인증 상태를 확인하고 자동으로 네비게이션합니다.
+class SplashScreen extends StatelessWidget {
   const SplashScreen({super.key});
-
-  @override
-  State<SplashScreen> createState() => _SplashScreenState();
-}
-
-class _SplashScreenState extends State<SplashScreen> {
-  @override
-  void initState() {
-    super.initState();
-    _checkAuthAndNavigate();
-  }
-
-  Future<void> _checkAuthAndNavigate() async {
-    // TODO: 실제 인증 상태 확인 로직 추가
-    await Future.delayed(const Duration(seconds: 2));
-
-    if (!mounted) return;
-
-    // TODO: 인증 상태 확인 후 분기 (API 연동 시 로그인 상태면 홈으로)
-    context.go(RoutePaths.login);
-  }
 
   @override
   Widget build(BuildContext context) {

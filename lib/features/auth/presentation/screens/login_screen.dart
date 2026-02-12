@@ -1,24 +1,69 @@
+import 'dart:io' show Platform;
+
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../../../core/widgets/animations/entrance_animations.dart';
 import '../../../../core/widgets/atoms/gradient_circle_icon.dart';
-import '../../../../core/widgets/buttons/app_button.dart';
+import '../../../../core/errors/app_exception.dart';
+import '../../../../core/widgets/buttons/social_login_button.dart';
 import '../../../../core/widgets/backgrounds/space_background.dart';
-import '../../../../routes/route_paths.dart';
+import '../../../../core/widgets/feedback/app_snackbar.dart';
+import '../providers/auth_provider.dart';
 
 /// 로그인 스크린
 ///
-/// Google 소셜 로그인을 제공합니다.
-class LoginScreen extends StatelessWidget {
+/// Google / Apple 소셜 로그인을 제공합니다.
+/// Apple 로그인은 iOS에서만 표시됩니다.
+/// 로그인 성공 시 GoRouter redirect가 자동으로 홈 화면으로 이동합니다.
+class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
 
   @override
+  ConsumerState<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends ConsumerState<LoginScreen> {
+  Future<void> _handleGoogleSignIn() async {
+    try {
+      await ref.read(authNotifierProvider.notifier).signInWithGoogle();
+    } catch (_) {
+      if (!mounted) return;
+      _showLoginError();
+    }
+  }
+
+  Future<void> _handleAppleSignIn() async {
+    try {
+      await ref.read(authNotifierProvider.notifier).signInWithApple();
+    } catch (_) {
+      if (!mounted) return;
+      _showLoginError();
+    }
+  }
+
+  void _showLoginError() {
+    final authState = ref.read(authNotifierProvider);
+    final error = authState.error;
+    final message = (error is AuthException)
+        ? error.message
+        : '로그인에 실패했어요. 다시 시도해 주세요.';
+    AppSnackBar.error(context, message);
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final authState = ref.watch(authNotifierProvider);
+    final activeLogin = ref.watch(activeLoginNotifierProvider);
+    final isLoading = authState.isLoading;
+    final isGoogleLoading =
+        isLoading && activeLogin == SocialLoginProvider.google;
+    final isAppleLoading =
+        isLoading && activeLogin == SocialLoginProvider.apple;
+
     return Scaffold(
       backgroundColor: AppColors.spaceBackground,
       body: Stack(
@@ -72,22 +117,29 @@ class LoginScreen extends StatelessWidget {
                   // Google 로그인 버튼
                   FadeSlideIn(
                     delay: const Duration(milliseconds: 300),
-                    child: AppButton(
-                      text: 'Google로 시작하기',
-                      onPressed: () {
-                        // TODO: Google 로그인 구현
-                        context.go(RoutePaths.onboarding);
-                      },
-                      width: double.infinity,
-                      height: 56.h,
+                    child: GoogleLoginButton(
+                      isLoading: isGoogleLoading,
+                      onPressed: isLoading ? null : _handleGoogleSignIn,
                     ),
                   ),
+
+                  // Apple 로그인 버튼 (iOS만)
+                  if (Platform.isIOS) ...[
+                    SizedBox(height: AppSpacing.s12),
+                    FadeSlideIn(
+                      delay: const Duration(milliseconds: 400),
+                      child: AppleLoginButton(
+                        isLoading: isAppleLoading,
+                        onPressed: isLoading ? null : _handleAppleSignIn,
+                      ),
+                    ),
+                  ],
 
                   SizedBox(height: AppSpacing.s16),
 
                   // 약관 안내
                   FadeSlideIn(
-                    delay: const Duration(milliseconds: 400),
+                    delay: const Duration(milliseconds: 500),
                     child: Text(
                       '로그인 시 서비스 이용약관 및 개인정보 처리방침에\n동의하는 것으로 간주됩니다.',
                       textAlign: TextAlign.center,

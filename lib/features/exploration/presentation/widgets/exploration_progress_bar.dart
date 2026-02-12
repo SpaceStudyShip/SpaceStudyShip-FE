@@ -79,7 +79,6 @@ class ExplorationProgressBar extends StatelessWidget {
               color: progress.isCompleted
                   ? AppColors.success
                   : AppColors.textSecondary,
-              fontWeight: FontWeight.w500,
             ),
           ),
         ],

@@ -144,7 +144,10 @@ class ExplorationDetailScreen extends StatelessWidget {
                 ),
               ),
               child: Center(
-                child: Text(planet.icon, style: TextStyle(fontSize: 36.sp)),
+                child: Text(
+                  planet.icon,
+                  style: TextStyle(fontSize: 36.sp), // 이모지 아이콘 크기 (typography 아님)
+                ),
               ),
             ),
             SizedBox(height: AppSpacing.s8),

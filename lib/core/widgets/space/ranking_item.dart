@@ -146,7 +146,6 @@ class _RankingItemState extends State<RankingItem> {
                               color: widget.rank == 2
                                   ? Colors.black87
                                   : Colors.white,
-                              fontWeight: FontWeight.w800,
                             ),
                           ),
                         ),
@@ -199,9 +198,6 @@ class _RankingItemState extends State<RankingItem> {
                             widget.userName,
                             style: AppTextStyles.paragraph_14.copyWith(
                               color: Colors.white,
-                              fontWeight: widget.isCurrentUser
-                                  ? FontWeight.w700
-                                  : FontWeight.w500,
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -222,7 +218,6 @@ class _RankingItemState extends State<RankingItem> {
                               '나',
                               style: AppTextStyles.tag_12.copyWith(
                                 color: Colors.white,
-                                fontWeight: FontWeight.w700,
                               ),
                             ),
                           ),
@@ -252,7 +247,6 @@ class _RankingItemState extends State<RankingItem> {
                       color: widget.rank <= 3
                           ? _rankColor
                           : AppColors.textSecondary,
-                      fontWeight: FontWeight.w600,
                     ),
                   ),
                   Text(

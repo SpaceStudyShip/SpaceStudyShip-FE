@@ -73,7 +73,6 @@ class HomeStatChip extends StatelessWidget {
                   value,
                   style: AppTextStyles.label_16.copyWith(
                     color: color,
-                    fontWeight: FontWeight.w700,
                   ),
                 ),
               ],

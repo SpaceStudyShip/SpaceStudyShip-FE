@@ -265,7 +265,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   '오늘의 할 일',
                   style: AppTextStyles.subHeading_18.copyWith(
                     color: Colors.white,
-                    fontWeight: FontWeight.w700,
                   ),
                 ),
                 SizedBox(width: AppSpacing.s8),
@@ -366,7 +365,6 @@ class _HomeScreenState extends State<HomeScreen> {
       title,
       style: AppTextStyles.subHeading_18.copyWith(
         color: Colors.white,
-        fontWeight: FontWeight.w700,
       ),
     );
   }

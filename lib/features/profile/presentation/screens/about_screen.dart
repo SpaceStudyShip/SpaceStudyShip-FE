@@ -133,7 +133,6 @@ class _AboutScreenState extends State<AboutScreen> {
       title,
       style: AppTextStyles.subHeading_18.copyWith(
         color: Colors.white,
-        fontWeight: FontWeight.w700,
       ),
     );
   }

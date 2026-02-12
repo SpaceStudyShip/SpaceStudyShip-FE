@@ -137,7 +137,6 @@ class SpaceshipSelector extends StatelessWidget {
               '우주선 선택',
               style: AppTextStyles.subHeading_18.copyWith(
                 color: Colors.white,
-                fontWeight: FontWeight.w700,
               ),
             ),
           ),

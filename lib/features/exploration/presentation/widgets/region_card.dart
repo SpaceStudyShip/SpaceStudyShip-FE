@@ -183,7 +183,6 @@ class _RegionCardState extends State<RegionCard> {
           '${widget.node.requiredFuel.toStringAsFixed(1)}통',
           style: AppTextStyles.tag_12.copyWith(
             color: fuelColor,
-            fontWeight: _canUnlock ? FontWeight.w600 : FontWeight.w400,
           ),
         ),
         if (!_canUnlock) ...[
@@ -213,7 +212,6 @@ class _RegionCardState extends State<RegionCard> {
         '해금',
         style: AppTextStyles.tag_12.copyWith(
           color: _canUnlock ? Colors.white : AppColors.textTertiary,
-          fontWeight: FontWeight.w600,
         ),
       ),
     );

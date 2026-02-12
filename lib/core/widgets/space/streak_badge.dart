@@ -88,7 +88,6 @@ class StreakBadge extends StatelessWidget {
             '연속 $days일째',
             style: _textStyle.copyWith(
               color: _color,
-              fontWeight: FontWeight.w600,
             ),
           )
         else
@@ -96,7 +95,6 @@ class StreakBadge extends StatelessWidget {
             '$days일',
             style: _textStyle.copyWith(
               color: _color,
-              fontWeight: FontWeight.w600,
             ),
           ),
       ],

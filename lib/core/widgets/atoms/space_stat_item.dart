@@ -58,7 +58,6 @@ class SpaceStatItem extends StatelessWidget {
             value,
             style: AppTextStyles.paragraph_14.copyWith(
               color: Colors.white,
-              fontWeight: FontWeight.w600,
             ),
           ),
         ],

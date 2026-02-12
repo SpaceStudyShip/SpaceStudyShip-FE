@@ -96,7 +96,6 @@ class _PlanetNodeState extends State<PlanetNode>
                 widget.node.name,
                 style: AppTextStyles.tag_12.copyWith(
                   color: isLocked ? AppColors.textTertiary : Colors.white,
-                  fontWeight: FontWeight.w600,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -125,7 +124,6 @@ class _PlanetNodeState extends State<PlanetNode>
                   '${widget.progress!.clearedChildren}/${widget.progress!.totalChildren}',
                   style: AppTextStyles.tag_10.copyWith(
                     color: AppColors.primary,
-                    fontWeight: FontWeight.w600,
                   ),
                   textAlign: TextAlign.center,
                 )
@@ -143,7 +141,6 @@ class _PlanetNodeState extends State<PlanetNode>
                       '클리어',
                       style: AppTextStyles.tag_10.copyWith(
                         color: AppColors.success,
-                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ],

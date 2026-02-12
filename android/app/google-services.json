@@ -12,7 +12,20 @@
           "package_name": "com.elipair.spacestudyship"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "754883540966-k4b4sorsefof1p40dn2jp6hdjrqao5cu.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.elipair.spacestudyship",
+            "certificate_hash": "ec4a347a5b2237246e6a2c88d8fc0a5e20344989"
+          }
+        },
+        {
+          "client_id": "754883540966-cqucnefh21qhm46l9kna6q843u58ocqp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyDqKY5t8-aDEXup_0DrjMk_M8LwWiniM-E"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "754883540966-cqucnefh21qhm46l9kna6q843u58ocqp.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "754883540966-l6khriugcsciege7k254q0ulg4rgih1o.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.elipair.spacestudyship"
+              }
+            }
+          ]
         }
       }
     }

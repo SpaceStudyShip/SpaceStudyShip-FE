@@ -18,9 +18,11 @@ dependencies:
   intl: ^0.20.2 # 국제화 및 날짜/숫자 포맷팅
   # 네트워크 & 인증
   dio: ^5.9.0 # HTTP 클라이언트
-  retrofit: ^4.7.2 # REST API 클라이언트 생성
+  retrofit: 4.7.3 # REST API 클라이언트 생성 (4.9.x logError 호환성 이슈로 고정)
   flutter_secure_storage: ^9.2.4 # 민감 데이터 안전 저장
-  google_sign_in: ^7.2.0 # 구글 소셜 로그인 (Firebase 없이)
+  firebase_auth: ^6.1.3 # Firebase 인증 (Google/Apple 소셜 로그인)
+  google_sign_in: ^6.2.3 # 구글 소셜 로그인
+  sign_in_with_apple: ^6.1.3 # Apple 소셜 로그인
   flutter_dotenv: ^6.0.0 # 환경 변수 관리 (.env 파일)
   uuid: ^4.5.2 # 앱 내 고유 식별자 생성
   # UI/UX 레이아웃
@@ -63,6 +65,7 @@ flutter:
   assets:
     - assets/fonts/
     - assets/lotties/
+    - assets/icons/
     - .env
   fonts:
     - family: Pretendard-Thin

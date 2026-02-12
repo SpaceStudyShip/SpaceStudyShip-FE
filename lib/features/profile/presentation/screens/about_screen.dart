@@ -131,9 +131,7 @@ class _AboutScreenState extends State<AboutScreen> {
   Widget _buildSectionTitle(String title) {
     return Text(
       title,
-      style: AppTextStyles.subHeading_18.copyWith(
-        color: Colors.white,
-      ),
+      style: AppTextStyles.subHeading_18.copyWith(color: Colors.white),
     );
   }
 

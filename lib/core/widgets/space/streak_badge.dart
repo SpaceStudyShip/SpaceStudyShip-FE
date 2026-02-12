@@ -84,19 +84,9 @@ class StreakBadge extends StatelessWidget {
         ),
         SizedBox(width: AppSpacing.s4),
         if (showLabel)
-          Text(
-            '연속 $days일째',
-            style: _textStyle.copyWith(
-              color: _color,
-            ),
-          )
+          Text('연속 $days일째', style: _textStyle.copyWith(color: _color))
         else
-          Text(
-            '$days일',
-            style: _textStyle.copyWith(
-              color: _color,
-            ),
-          ),
+          Text('$days일', style: _textStyle.copyWith(color: _color)),
       ],
     );
   }

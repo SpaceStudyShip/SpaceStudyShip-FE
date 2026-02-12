@@ -181,9 +181,7 @@ class _RegionCardState extends State<RegionCard> {
         SizedBox(width: 2.w),
         Text(
           '${widget.node.requiredFuel.toStringAsFixed(1)}통',
-          style: AppTextStyles.tag_12.copyWith(
-            color: fuelColor,
-          ),
+          style: AppTextStyles.tag_12.copyWith(color: fuelColor),
         ),
         if (!_canUnlock) ...[
           SizedBox(width: AppSpacing.s4),

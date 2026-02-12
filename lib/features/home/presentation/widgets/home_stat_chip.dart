@@ -71,9 +71,7 @@ class HomeStatChip extends StatelessWidget {
                 SizedBox(width: AppSpacing.s4),
                 Text(
                   value,
-                  style: AppTextStyles.label_16.copyWith(
-                    color: color,
-                  ),
+                  style: AppTextStyles.label_16.copyWith(color: color),
                 ),
               ],
             ),

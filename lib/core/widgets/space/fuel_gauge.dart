@@ -100,12 +100,7 @@ class FuelGauge extends StatelessWidget {
             style: _textStyle.copyWith(color: AppColors.textSecondary),
           ),
         ],
-        Text(
-          fuelText,
-          style: _textStyle.copyWith(
-            color: _fuelColor,
-          ),
-        ),
+        Text(fuelText, style: _textStyle.copyWith(color: _fuelColor)),
       ],
     );
   }

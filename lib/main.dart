@@ -205,9 +205,15 @@ class HomePage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('우주공부선', style: AppTextStyles.heading_20.copyWith(color: Colors.white)),
+            Text(
+              '우주공부선',
+              style: AppTextStyles.heading_20.copyWith(color: Colors.white),
+            ),
             const SizedBox(height: 16),
-            Text('디자인을 시작해보세요!', style: AppTextStyles.paragraph_14.copyWith(color: Colors.white)),
+            Text(
+              '디자인을 시작해보세요!',
+              style: AppTextStyles.paragraph_14.copyWith(color: Colors.white),
+            ),
           ],
         ),
       ),

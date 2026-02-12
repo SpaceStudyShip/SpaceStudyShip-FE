@@ -56,9 +56,7 @@ class SpaceStatItem extends StatelessWidget {
           SizedBox(height: AppSpacing.s4),
           Text(
             value,
-            style: AppTextStyles.paragraph_14.copyWith(
-              color: Colors.white,
-            ),
+            style: AppTextStyles.paragraph_14.copyWith(color: Colors.white),
           ),
         ],
       ],

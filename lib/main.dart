@@ -11,6 +11,7 @@ import 'firebase_options.dart';
 import 'core/config/env_config.dart';
 import 'core/services/fcm/firebase_messaging_service.dart';
 import 'core/services/fcm/local_notifications_service.dart';
+import 'core/constants/text_styles.dart';
 import 'core/theme/app_theme.dart';
 import 'routes/app_router.dart';
 
@@ -204,9 +205,9 @@ class HomePage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('우주공부선', style: Theme.of(context).textTheme.headlineMedium),
+            Text('우주공부선', style: AppTextStyles.heading_20.copyWith(color: Colors.white)),
             const SizedBox(height: 16),
-            Text('디자인을 시작해보세요!', style: Theme.of(context).textTheme.bodyLarge),
+            Text('디자인을 시작해보세요!', style: AppTextStyles.paragraph_14.copyWith(color: Colors.white)),
           ],
         ),
       ),

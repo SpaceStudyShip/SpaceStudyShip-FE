@@ -4,6 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'route_paths.dart';
 import 'main_shell.dart';
+import '../core/constants/app_colors.dart';
+import '../core/constants/spacing_and_radius.dart';
+import '../core/constants/text_styles.dart';
 import '../core/widgets/backgrounds/space_background.dart';
 import '../features/auth/domain/entities/auth_result_entity.dart';
 import '../features/auth/presentation/providers/auth_provider.dart';
@@ -305,7 +308,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
 
     // 에러 페이지
     errorBuilder: (context, state) => Scaffold(
-      backgroundColor: const Color(0xFF0A0E27),
+      backgroundColor: AppColors.spaceBackground,
       body: Stack(
         children: [
           const Positioned.fill(child: SpaceBackground()),
@@ -318,21 +321,21 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                   size: 64,
                   color: Colors.white.withValues(alpha: 0.5),
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: AppSpacing.s16),
                 Text(
                   '페이지를 찾을 수 없습니다',
-                  style: Theme.of(
-                    context,
-                  ).textTheme.titleLarge?.copyWith(color: Colors.white),
+                  style: AppTextStyles.label_16.copyWith(
+                    color: Colors.white,
+                  ),
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: AppSpacing.s8),
                 Text(
                   state.uri.toString(),
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  style: AppTextStyles.tag_12.copyWith(
                     color: Colors.white.withValues(alpha: 0.5),
                   ),
                 ),
-                const SizedBox(height: 24),
+                SizedBox(height: AppSpacing.s24),
                 ElevatedButton(
                   onPressed: () => context.go(RoutePaths.home),
                   child: const Text('홈으로 돌아가기'),
@@ -355,7 +358,7 @@ class PlaceholderScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0A0E27),
+      backgroundColor: AppColors.spaceBackground,
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -374,17 +377,17 @@ class PlaceholderScreen extends StatelessWidget {
                   size: 64,
                   color: Colors.white.withValues(alpha: 0.5),
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: AppSpacing.s16),
                 Text(
                   title,
-                  style: Theme.of(
-                    context,
-                  ).textTheme.headlineSmall?.copyWith(color: Colors.white),
+                  style: AppTextStyles.subHeading_18.copyWith(
+                    color: Colors.white,
+                  ),
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: AppSpacing.s8),
                 Text(
                   '개발 중...',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  style: AppTextStyles.paragraph_14.copyWith(
                     color: Colors.white.withValues(alpha: 0.5),
                   ),
                 ),

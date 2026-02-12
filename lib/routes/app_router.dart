@@ -22,13 +22,22 @@ import '../features/profile/presentation/screens/profile_screen.dart';
 import '../features/profile/presentation/screens/about_screen.dart';
 import '../features/profile/presentation/screens/spaceship_collection_screen.dart';
 
+/// 스플래시 최소 표시 시간 (2초)
+final splashDelayProvider = FutureProvider<void>((ref) async {
+  await Future.delayed(const Duration(seconds: 2));
+});
+
 /// GoRouter의 refreshListenable로 사용되는 ChangeNotifier
 ///
-/// authNotifierProvider 상태 변경 시 GoRouter redirect를 재평가합니다.
+/// authNotifierProvider 및 splashDelayProvider 상태 변경 시 GoRouter redirect를 재평가합니다.
 class RouterNotifier extends ChangeNotifier {
   RouterNotifier(this._ref) {
     _ref.listen<AsyncValue<AuthResultEntity?>>(
       authNotifierProvider,
+      (prev, next) => notifyListeners(),
+    );
+    _ref.listen<AsyncValue<void>>(
+      splashDelayProvider,
       (prev, next) => notifyListeners(),
     );
   }
@@ -53,8 +62,13 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           location == RoutePaths.login ||
           location == RoutePaths.onboarding;
 
-      // 초기 로딩 중에는 리디렉트하지 않음 (스플래시 유지)
-      if (authState.isLoading) return null;
+      final splashDone = ref.read(splashDelayProvider).hasValue;
+
+      // 인증 로딩 중이거나 스플래시 최소 시간 미경과 → 스플래시 유지
+      if (authState.isLoading ||
+          (location == RoutePaths.splash && !splashDone)) {
+        return null;
+      }
 
       final user = authState.valueOrNull;
 
@@ -77,12 +91,28 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: RoutePaths.splash,
         name: 'splash',
-        builder: (context, state) => const SplashScreen(),
+        pageBuilder: (context, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const SplashScreen(),
+          transitionDuration: const Duration(milliseconds: 500),
+          reverseTransitionDuration: const Duration(milliseconds: 500),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return FadeTransition(opacity: animation, child: child);
+          },
+        ),
       ),
       GoRoute(
         path: RoutePaths.login,
         name: 'login',
-        builder: (context, state) => const LoginScreen(),
+        pageBuilder: (context, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const LoginScreen(),
+          transitionDuration: const Duration(milliseconds: 400),
+          reverseTransitionDuration: const Duration(milliseconds: 300),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return FadeTransition(opacity: animation, child: child);
+          },
+        ),
       ),
       GoRoute(
         path: RoutePaths.onboarding,
@@ -94,8 +124,17 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       // 메인 탭 (ShellRoute - 바텀 네비게이션)
       // ═══════════════════════════════════════════════════
       StatefulShellRoute.indexedStack(
-        builder: (context, state, navigationShell) {
-          return MainShell(navigationShell: navigationShell);
+        pageBuilder: (context, state, navigationShell) {
+          return CustomTransitionPage(
+            key: state.pageKey,
+            child: MainShell(navigationShell: navigationShell),
+            transitionDuration: const Duration(milliseconds: 400),
+            reverseTransitionDuration: const Duration(milliseconds: 300),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+                  return FadeTransition(opacity: animation, child: child);
+                },
+          );
         },
         branches: [
           // 홈 탭
@@ -324,9 +363,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                 SizedBox(height: AppSpacing.s16),
                 Text(
                   '페이지를 찾을 수 없습니다',
-                  style: AppTextStyles.label_16.copyWith(
-                    color: Colors.white,
-                  ),
+                  style: AppTextStyles.label_16.copyWith(color: Colors.white),
                 ),
                 SizedBox(height: AppSpacing.s8),
                 Text(

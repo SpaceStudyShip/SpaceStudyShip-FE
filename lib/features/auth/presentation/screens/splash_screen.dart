@@ -28,12 +28,31 @@ class SplashScreen extends StatelessWidget {
               children: [
                 // 로고 - 그라데이션 원형 아이콘
                 FadeSlideIn(
-                  child: GradientCircleIcon(
-                    icon: Icons.rocket_launch_rounded,
-                    color: AppColors.primary,
-                    size: 96,
-                    iconSize: 44,
-                    gradientColors: [AppColors.primaryLight, AppColors.primary],
+                  child: Hero(
+                    tag: 'rocket-icon',
+                    flightShuttleBuilder:
+                        (
+                          flightContext,
+                          animation,
+                          direction,
+                          fromContext,
+                          toContext,
+                        ) {
+                          return Material(
+                            color: Colors.transparent,
+                            child: toContext.widget,
+                          );
+                        },
+                    child: GradientCircleIcon(
+                      icon: Icons.rocket_launch_rounded,
+                      color: AppColors.primary,
+                      size: 96,
+                      iconSize: 44,
+                      gradientColors: [
+                        AppColors.primaryLight,
+                        AppColors.primary,
+                      ],
+                    ),
                   ),
                 ),
                 SizedBox(height: AppSpacing.s24),

@@ -76,8 +76,22 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 children: [
                   const Spacer(flex: 2),
 
-                  // 로고 및 타이틀
-                  FadeSlideIn(
+                  // 로고 — Hero로 스플래시에서 자연스럽게 이어짐
+                  Hero(
+                    tag: 'rocket-icon',
+                    flightShuttleBuilder:
+                        (
+                          flightContext,
+                          animation,
+                          direction,
+                          fromContext,
+                          toContext,
+                        ) {
+                          return Material(
+                            color: Colors.transparent,
+                            child: toContext.widget,
+                          );
+                        },
                     child: GradientCircleIcon(
                       icon: Icons.rocket_launch_rounded,
                       color: AppColors.primary,

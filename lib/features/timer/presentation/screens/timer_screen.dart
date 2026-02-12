@@ -70,11 +70,8 @@ class TimerScreen extends StatelessWidget {
                           children: [
                             Text(
                               '00:00:00',
-                              style: AppTextStyles.heading_20.copyWith(
-                                fontSize: 48.sp,
+                              style: AppTextStyles.timer_48.copyWith(
                                 color: Colors.white,
-                                letterSpacing: 4,
-                                fontWeight: FontWeight.w700,
                               ),
                             ),
                             SizedBox(height: AppSpacing.s4),

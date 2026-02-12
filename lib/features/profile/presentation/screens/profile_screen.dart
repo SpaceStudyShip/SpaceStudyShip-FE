@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -6,16 +7,17 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../../../core/widgets/atoms/space_stat_item.dart';
+import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../../../routes/route_paths.dart';
 
 /// 프로필 스크린
 ///
 /// 사용자 정보, 컬렉션, 통계, 설정 등을 제공합니다.
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       backgroundColor: Colors.transparent,
       extendBodyBehindAppBar: true,
@@ -55,7 +57,7 @@ class ProfileScreen extends StatelessWidget {
               SizedBox(height: AppSpacing.s24),
 
               // 메뉴 리스트
-              _buildMenuList(context),
+              _buildMenuList(context, ref),
             ],
           ),
         ),
@@ -128,7 +130,7 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildMenuList(BuildContext context) {
+  Widget _buildMenuList(BuildContext context, WidgetRef ref) {
     return Column(
       children: [
         _buildMenuItem(
@@ -151,10 +153,14 @@ class ProfileScreen extends StatelessWidget {
           title: '앱 정보',
           onTap: () => context.push(RoutePaths.about),
         ),
+        SizedBox(height: AppSpacing.s16),
         _buildMenuItem(
-          icon: Icons.login_outlined,
-          title: '[테스트] 로그인 화면',
-          onTap: () => context.push(RoutePaths.login),
+          icon: Icons.logout_rounded,
+          title: '로그아웃',
+          iconColor: AppColors.error,
+          textColor: AppColors.error,
+          showChevron: false,
+          onTap: () => ref.read(authNotifierProvider.notifier).signOut(),
         ),
       ],
     );
@@ -164,6 +170,9 @@ class ProfileScreen extends StatelessWidget {
     required IconData icon,
     required String title,
     required VoidCallback onTap,
+    Color? iconColor,
+    Color? textColor,
+    bool showChevron = true,
   }) {
     return InkWell(
       onTap: onTap,
@@ -177,21 +186,22 @@ class ProfileScreen extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Icon(icon, size: 24.w, color: AppColors.textSecondary),
+            Icon(icon, size: 24.w, color: iconColor ?? AppColors.textSecondary),
             SizedBox(width: AppSpacing.s16),
             Expanded(
               child: Text(
                 title,
                 style: AppTextStyles.label16Medium.copyWith(
-                  color: Colors.white,
+                  color: textColor ?? Colors.white,
                 ),
               ),
             ),
-            Icon(
-              Icons.chevron_right,
-              size: 24.w,
-              color: AppColors.textTertiary,
-            ),
+            if (showChevron)
+              Icon(
+                Icons.chevron_right,
+                size: 24.w,
+                color: AppColors.textTertiary,
+              ),
           ],
         ),
       ),

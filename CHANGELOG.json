@@ -1,11 +1,41 @@
 {
   "metadata": {
-    "lastUpdated": "2026-02-12T11:38:13Z",
-    "currentVersion": "1.0.33",
+    "lastUpdated": "2026-02-13T04:54:15Z",
+    "currentVersion": "1.0.34",
     "projectType": "flutter",
-    "totalReleases": 11
+    "totalReleases": 12
   },
   "releases": [
+    {
+      "version": "1.0.34",
+      "project_type": "flutter",
+      "date": "2026-02-13",
+      "pr_number": 15,
+      "raw_summary": "## Summary by CodeRabbit\n\n## 릴리스 노트 v1.0.34\n\n* **새로운 기능**\n  * 게스트 모드 추가 - 로그인 없이 앱 사용 가능\n  * 로그인 후 개선된 온보딩 경험 제공\n  * 소셜 기능 접근 시 확인 대화창 추가\n\n* **버그 수정**\n  * 대화창 이중 닫기 문제 해결\n\n* **기타**\n  * 버전 업데이트 (1.0.33 → 1.0.34)",
+      "parsed_changes": {
+        "새로운_기능": {
+          "title": "새로운 기능",
+          "items": [
+            "게스트 모드 추가 - 로그인 없이 앱 사용 가능",
+            "로그인 후 개선된 온보딩 경험 제공",
+            "소셜 기능 접근 시 확인 대화창 추가"
+          ]
+        },
+        "버그_수정": {
+          "title": "버그 수정",
+          "items": [
+            "대화창 이중 닫기 문제 해결"
+          ]
+        },
+        "기타": {
+          "title": "기타",
+          "items": [
+            "버전 업데이트 (1.0.33 → 1.0.34)"
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "1.0.33",
       "project_type": "flutter",

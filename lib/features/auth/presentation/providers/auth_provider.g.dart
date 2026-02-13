@@ -197,6 +197,25 @@ final authStateProvider = AutoDisposeStreamProvider<User?>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef AuthStateRef = AutoDisposeStreamProviderRef<User?>;
+String _$isGuestHash() => r'4788dbffb8ca3acb9a23da73c2ffaf1d6d76d3fc';
+
+/// 현재 사용자가 게스트인지 여부
+///
+/// Copied from [isGuest].
+@ProviderFor(isGuest)
+final isGuestProvider = AutoDisposeProvider<bool>.internal(
+  isGuest,
+  name: r'isGuestProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$isGuestHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef IsGuestRef = AutoDisposeProviderRef<bool>;
 String _$activeLoginNotifierHash() =>
     r'9c1933f79e775a81e480be7b026021622dd7405b';
 
@@ -223,7 +242,7 @@ final activeLoginNotifierProvider =
     );
 
 typedef _$ActiveLoginNotifier = AutoDisposeNotifier<SocialLoginProvider?>;
-String _$authNotifierHash() => r'67747a788456a29285b75510bad9f7b0b58c84c1';
+String _$authNotifierHash() => r'5002816bcb66571d37469ebb4b467e65e13597a3';
 
 /// 인증 상태를 관리하는 Notifier
 ///

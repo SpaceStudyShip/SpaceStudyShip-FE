@@ -28,6 +28,12 @@ mixin _$AuthResultEntity {
   /// true일 경우 닉네임 설정 페이지로 이동해야 합니다.
   bool get isNewUser => throw _privateConstructorUsedError;
 
+  /// 게스트 모드 여부
+  ///
+  /// true일 경우 데이터가 서버에 저장되지 않으며,
+  /// 소셜 탭 접근이 제한됩니다.
+  bool get isGuest => throw _privateConstructorUsedError;
+
   /// Create a copy of AuthResultEntity
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -42,7 +48,7 @@ abstract class $AuthResultEntityCopyWith<$Res> {
     $Res Function(AuthResultEntity) then,
   ) = _$AuthResultEntityCopyWithImpl<$Res, AuthResultEntity>;
   @useResult
-  $Res call({int userId, String nickname, bool isNewUser});
+  $Res call({int userId, String nickname, bool isNewUser, bool isGuest});
 }
 
 /// @nodoc
@@ -63,6 +69,7 @@ class _$AuthResultEntityCopyWithImpl<$Res, $Val extends AuthResultEntity>
     Object? userId = null,
     Object? nickname = null,
     Object? isNewUser = null,
+    Object? isGuest = null,
   }) {
     return _then(
       _value.copyWith(
@@ -77,6 +84,10 @@ class _$AuthResultEntityCopyWithImpl<$Res, $Val extends AuthResultEntity>
             isNewUser: null == isNewUser
                 ? _value.isNewUser
                 : isNewUser // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            isGuest: null == isGuest
+                ? _value.isGuest
+                : isGuest // ignore: cast_nullable_to_non_nullable
                       as bool,
           )
           as $Val,
@@ -93,7 +104,7 @@ abstract class _$$AuthResultEntityImplCopyWith<$Res>
   ) = __$$AuthResultEntityImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({int userId, String nickname, bool isNewUser});
+  $Res call({int userId, String nickname, bool isNewUser, bool isGuest});
 }
 
 /// @nodoc
@@ -113,6 +124,7 @@ class __$$AuthResultEntityImplCopyWithImpl<$Res>
     Object? userId = null,
     Object? nickname = null,
     Object? isNewUser = null,
+    Object? isGuest = null,
   }) {
     return _then(
       _$AuthResultEntityImpl(
@@ -128,6 +140,10 @@ class __$$AuthResultEntityImplCopyWithImpl<$Res>
             ? _value.isNewUser
             : isNewUser // ignore: cast_nullable_to_non_nullable
                   as bool,
+        isGuest: null == isGuest
+            ? _value.isGuest
+            : isGuest // ignore: cast_nullable_to_non_nullable
+                  as bool,
       ),
     );
   }
@@ -140,6 +156,7 @@ class _$AuthResultEntityImpl implements _AuthResultEntity {
     required this.userId,
     required this.nickname,
     required this.isNewUser,
+    this.isGuest = false,
   });
 
   /// 사용자 ID
@@ -156,9 +173,17 @@ class _$AuthResultEntityImpl implements _AuthResultEntity {
   @override
   final bool isNewUser;
 
+  /// 게스트 모드 여부
+  ///
+  /// true일 경우 데이터가 서버에 저장되지 않으며,
+  /// 소셜 탭 접근이 제한됩니다.
+  @override
+  @JsonKey()
+  final bool isGuest;
+
   @override
   String toString() {
-    return 'AuthResultEntity(userId: $userId, nickname: $nickname, isNewUser: $isNewUser)';
+    return 'AuthResultEntity(userId: $userId, nickname: $nickname, isNewUser: $isNewUser, isGuest: $isGuest)';
   }
 
   @override
@@ -170,11 +195,13 @@ class _$AuthResultEntityImpl implements _AuthResultEntity {
             (identical(other.nickname, nickname) ||
                 other.nickname == nickname) &&
             (identical(other.isNewUser, isNewUser) ||
-                other.isNewUser == isNewUser));
+                other.isNewUser == isNewUser) &&
+            (identical(other.isGuest, isGuest) || other.isGuest == isGuest));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, userId, nickname, isNewUser);
+  int get hashCode =>
+      Object.hash(runtimeType, userId, nickname, isNewUser, isGuest);
 
   /// Create a copy of AuthResultEntity
   /// with the given fields replaced by the non-null parameter values.
@@ -193,6 +220,7 @@ abstract class _AuthResultEntity implements AuthResultEntity {
     required final int userId,
     required final String nickname,
     required final bool isNewUser,
+    final bool isGuest,
   }) = _$AuthResultEntityImpl;
 
   /// 사용자 ID
@@ -208,6 +236,13 @@ abstract class _AuthResultEntity implements AuthResultEntity {
   /// true일 경우 닉네임 설정 페이지로 이동해야 합니다.
   @override
   bool get isNewUser;
+
+  /// 게스트 모드 여부
+  ///
+  /// true일 경우 데이터가 서버에 저장되지 않으며,
+  /// 소셜 탭 접근이 제한됩니다.
+  @override
+  bool get isGuest;
 
   /// Create a copy of AuthResultEntity
   /// with the given fields replaced by the non-null parameter values.

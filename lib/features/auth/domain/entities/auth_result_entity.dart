@@ -19,5 +19,11 @@ class AuthResultEntity with _$AuthResultEntity {
     ///
     /// true일 경우 닉네임 설정 페이지로 이동해야 합니다.
     required bool isNewUser,
+
+    /// 게스트 모드 여부
+    ///
+    /// true일 경우 데이터가 서버에 저장되지 않으며,
+    /// 소셜 탭 접근이 제한됩니다.
+    @Default(false) bool isGuest,
   }) = _AuthResultEntity;
 }

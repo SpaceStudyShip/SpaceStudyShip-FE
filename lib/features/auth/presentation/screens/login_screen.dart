@@ -2,7 +2,6 @@ import 'dart:io' show Platform;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
@@ -43,6 +42,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       if (!mounted) return;
       _showLoginError();
     }
+  }
+
+  Future<void> _handleGuestSignIn() async {
+    AppSnackBar.warning(context, '게스트 모드에서는 정보가 저장되지 않습니다');
+    await ref.read(authNotifierProvider.notifier).signInAsGuest();
+    // GoRouter redirect가 /login → /onboarding으로 자동 이동
   }
 
   void _showLoginError() {
@@ -151,9 +156,27 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
                   SizedBox(height: AppSpacing.s16),
 
-                  // 약관 안내
+                  // 게스트로 시작하기
                   FadeSlideIn(
                     delay: const Duration(milliseconds: 500),
+                    child: TextButton(
+                      onPressed: isLoading ? null : _handleGuestSignIn,
+                      child: Text(
+                        '게스트로 시작하기',
+                        style: AppTextStyles.paragraph_14.copyWith(
+                          color: AppColors.textSecondary,
+                          decoration: TextDecoration.underline,
+                          decorationColor: AppColors.textSecondary,
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  SizedBox(height: AppSpacing.s8),
+
+                  // 약관 안내
+                  FadeSlideIn(
+                    delay: const Duration(milliseconds: 600),
                     child: Text(
                       '로그인 시 서비스 이용약관 및 개인정보 처리방침에\n동의하는 것으로 간주됩니다.',
                       textAlign: TextAlign.center,

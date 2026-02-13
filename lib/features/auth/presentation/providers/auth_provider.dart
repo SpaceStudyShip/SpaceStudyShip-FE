@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../core/errors/app_exception.dart';
 import '../../../../core/network/dio_client.dart';
@@ -18,6 +19,13 @@ import '../../domain/usecases/sign_out_usecase.dart';
 import '../../domain/utils/firebase_auth_error_handler.dart';
 
 part 'auth_provider.g.dart';
+
+// ============================================================================
+// SharedPreferences Keys
+// ============================================================================
+
+/// 게스트 모드 여부 키
+const kIsGuestKey = 'is_guest';
 
 // ============================================================================
 // Core Infrastructure Providers
@@ -159,6 +167,17 @@ class AuthNotifier extends _$AuthNotifier {
       );
     }
 
+    // Firebase 유저 없을 때 → 게스트 모드 확인
+    final prefs = await SharedPreferences.getInstance();
+    if (prefs.getBool(kIsGuestKey) == true) {
+      return const AuthResultEntity(
+        userId: -1,
+        nickname: '게스트',
+        isNewUser: false,
+        isGuest: true,
+      );
+    }
+
     return null;
 
     // TODO: 백엔드 API 연동 시 위 블록 삭제 후 아래 주석 해제
@@ -250,10 +269,38 @@ class AuthNotifier extends _$AuthNotifier {
     }
   }
 
+  /// 게스트로 로그인
+  ///
+  /// SharedPreferences에 게스트 상태를 저장하고
+  /// 게스트 AuthResultEntity를 state에 설정합니다.
+  Future<void> signInAsGuest() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(kIsGuestKey, true);
+    state = const AsyncValue.data(
+      AuthResultEntity(
+        userId: -1,
+        nickname: '게스트',
+        isNewUser: false,
+        isGuest: true,
+      ),
+    );
+  }
+
   /// 로그아웃
   ///
   /// 백엔드 + Firebase + 토큰 삭제를 모두 수행합니다.
+  /// 게스트 모드인 경우 SharedPreferences만 정리합니다.
   Future<void> signOut() async {
+    // 게스트 모드 → SharedPreferences 정리만
+    final currentUser = state.valueOrNull;
+    if (currentUser?.isGuest == true) {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove(kIsGuestKey);
+      debugPrint('🧹 게스트 캐시 삭제 완료 ($kIsGuestKey)');
+      state = const AsyncValue.data(null);
+      return;
+    }
+
     state = const AsyncValue.loading();
 
     try {
@@ -285,11 +332,7 @@ class AuthNotifier extends _$AuthNotifier {
     final current = state.value;
     if (current != null) {
       state = AsyncValue.data(
-        AuthResultEntity(
-          userId: current.userId,
-          nickname: nickname,
-          isNewUser: false,
-        ),
+        current.copyWith(nickname: nickname, isNewUser: false),
       );
     }
   }
@@ -301,4 +344,10 @@ class AuthNotifier extends _$AuthNotifier {
   void forceLogout() {
     state = const AsyncValue.data(null);
   }
+}
+
+/// 현재 사용자가 게스트인지 여부
+@riverpod
+bool isGuest(Ref ref) {
+  return ref.watch(authNotifierProvider).valueOrNull?.isGuest ?? false;
 }

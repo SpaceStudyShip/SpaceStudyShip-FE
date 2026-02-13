@@ -7,6 +7,8 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../../../core/widgets/atoms/space_stat_item.dart';
+import '../../../../core/widgets/dialogs/app_dialog.dart';
+import '../../../auth/domain/entities/auth_result_entity.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../../../routes/route_paths.dart';
 
@@ -49,7 +51,7 @@ class ProfileScreen extends ConsumerWidget {
           child: Column(
             children: [
               // 프로필 정보
-              _buildProfileHeader(),
+              _buildProfileHeader(ref.watch(authNotifierProvider).valueOrNull),
               SizedBox(height: AppSpacing.s24),
 
               // 통계 요약
@@ -65,7 +67,10 @@ class ProfileScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildProfileHeader() {
+  Widget _buildProfileHeader(AuthResultEntity? user) {
+    final isGuest = user?.isGuest ?? false;
+    final nickname = isGuest ? '게스트' : (user?.nickname ?? '우주 탐험가');
+
     return Column(
       children: [
         // 아바타
@@ -75,7 +80,9 @@ class ProfileScreen extends ConsumerWidget {
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             gradient: LinearGradient(
-              colors: [AppColors.primary, AppColors.secondary],
+              colors: isGuest
+                  ? [AppColors.textTertiary, AppColors.spaceDivider]
+                  : [AppColors.primary, AppColors.secondary],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
@@ -88,7 +95,7 @@ class ProfileScreen extends ConsumerWidget {
 
         // 이름
         Text(
-          '우주 탐험가',
+          nickname,
           style: AppTextStyles.heading_20.copyWith(color: Colors.white),
         ),
         SizedBox(height: AppSpacing.s4),
@@ -97,12 +104,15 @@ class ProfileScreen extends ConsumerWidget {
         Container(
           padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 4.h),
           decoration: BoxDecoration(
-            color: AppColors.primary.withValues(alpha: 0.2),
+            color: (isGuest ? AppColors.textTertiary : AppColors.primary)
+                .withValues(alpha: 0.2),
             borderRadius: AppRadius.large,
           ),
           child: Text(
-            'Lv.1 신입 탐험가',
-            style: AppTextStyles.tag_12.copyWith(color: AppColors.primary),
+            isGuest ? '체험 모드' : 'Lv.1 신입 탐험가',
+            style: AppTextStyles.tag_12.copyWith(
+              color: isGuest ? AppColors.textSecondary : AppColors.primary,
+            ),
           ),
         ),
       ],
@@ -160,7 +170,18 @@ class ProfileScreen extends ConsumerWidget {
           iconColor: AppColors.error,
           textColor: AppColors.error,
           showChevron: false,
-          onTap: () => ref.read(authNotifierProvider.notifier).signOut(),
+          onTap: () async {
+            final confirmed = await AppDialog.confirm(
+              context: context,
+              title: '로그아웃하시겠어요?',
+              emotion: AppDialogEmotion.warning,
+              confirmText: '로그아웃',
+              cancelText: '취소',
+            );
+            if (confirmed == true) {
+              await ref.read(authNotifierProvider.notifier).signOut();
+            }
+          },
         ),
       ],
     );

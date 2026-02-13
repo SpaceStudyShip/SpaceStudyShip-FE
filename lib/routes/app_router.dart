@@ -77,9 +77,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         return (location == RoutePaths.login) ? null : RoutePaths.login;
       }
 
-      // 로그인됨 + 인증 화면에 있으면 → 홈으로
+      // 로그인됨 + 인증 화면에 있으면
       if (isAuthRoute) {
-        return RoutePaths.home;
+        if (location == RoutePaths.login) return RoutePaths.onboarding;
+        if (location == RoutePaths.onboarding) return null;
+        return RoutePaths.home; // splash 등
       }
 
       return null;
@@ -117,7 +119,15 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: RoutePaths.onboarding,
         name: 'onboarding',
-        builder: (context, state) => const OnboardingScreen(),
+        pageBuilder: (context, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const OnboardingScreen(),
+          transitionDuration: const Duration(milliseconds: 400),
+          reverseTransitionDuration: const Duration(milliseconds: 300),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return FadeTransition(opacity: animation, child: child);
+          },
+        ),
       ),
 
       // ═══════════════════════════════════════════════════

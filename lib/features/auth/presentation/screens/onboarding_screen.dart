@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
@@ -27,22 +26,22 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   final List<_OnboardingData> _pages = [
     _OnboardingData(
-      icon: Icons.checklist_rounded,
+      icon: Icons.rocket_launch_rounded,
       color: AppColors.primary,
-      title: '할 일을 정리하고',
-      description: '오늘의 공부 계획을 세워보세요.\n작은 목표부터 하나씩 달성해 나가요.',
+      title: '당신의 우주선이 준비됐어요',
+      description: '공부를 연료 삼아, 우주를 항해해볼까요?',
     ),
     _OnboardingData(
-      icon: Icons.timer_rounded,
+      icon: Icons.local_gas_station_rounded,
       color: AppColors.accentGold,
-      title: '시간을 측정하고',
-      description: '집중 시간을 기록하면 연료가 충전돼요.\n꾸준히 공부하면 더 멀리 탐험할 수 있어요.',
+      title: '할 일을 끝내면 연료가 채워져요',
+      description: '매일 조금씩, 더 멀리 갈 수 있어요',
     ),
     _OnboardingData(
       icon: Icons.explore_rounded,
       color: AppColors.secondary,
-      title: '우주를 탐험해요',
-      description: '새로운 행성을 발견하고\n친구들과 함께 우주를 탐험해요!',
+      title: '어떤 행성을 발견하게 될까요?',
+      description: '지금 바로 첫 항해를 시작하세요',
     ),
   ];
 
@@ -59,11 +58,15 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         curve: Curves.easeInOut,
       );
     } else {
-      context.go(RoutePaths.home);
+      _completeOnboarding();
     }
   }
 
   void _skip() {
+    _completeOnboarding();
+  }
+
+  void _completeOnboarding() {
     context.go(RoutePaths.home);
   }
 
@@ -170,7 +173,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 Padding(
                   padding: AppPadding.horizontal20,
                   child: AppButton(
-                    text: _currentPage == _pages.length - 1 ? '시작하기' : '다음',
+                    text: _currentPage == _pages.length - 1 ? '탐험 시작하기' : '다음',
                     onPressed: _nextPage,
                     width: double.infinity,
                     height: 56.h,

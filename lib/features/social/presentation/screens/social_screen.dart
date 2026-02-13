@@ -1,17 +1,84 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
+import '../../../../core/widgets/buttons/app_button.dart';
+import '../../../../core/widgets/dialogs/app_dialog.dart';
 import '../../../../core/widgets/states/space_empty_state.dart';
+import '../../../auth/presentation/providers/auth_provider.dart';
 
 /// 소셜 스크린
 ///
 /// 친구, 그룹, 랭킹 등 소셜 기능을 제공합니다.
-class SocialScreen extends StatelessWidget {
+/// 게스트 모드에서는 로그인 유도 화면을 표시합니다.
+class SocialScreen extends ConsumerWidget {
   const SocialScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isGuest = ref.watch(isGuestProvider);
+
+    if (isGuest) {
+      return _buildGuestView(context, ref);
+    }
+
+    return _buildAuthenticatedView();
+  }
+
+  Widget _buildGuestView(BuildContext context, WidgetRef ref) {
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      extendBodyBehindAppBar: true,
+      extendBody: true,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        scrolledUnderElevation: 0,
+        elevation: 0,
+        title: Text(
+          '소셜',
+          style: AppTextStyles.heading_20.copyWith(color: Colors.white),
+        ),
+      ),
+      body: Center(
+        child: Padding(
+          padding: AppPadding.all20,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SpaceEmptyState(
+                icon: Icons.people_rounded,
+                color: AppColors.primary,
+                title: '친구와 함께 공부하려면',
+                subtitle: '로그인이 필요해요',
+              ),
+              SizedBox(height: AppSpacing.s24),
+              AppButton(
+                text: '로그인하기',
+                onPressed: () async {
+                  final confirmed = await AppDialog.confirm(
+                    context: context,
+                    title: '로그인하시겠어요?',
+                    message: '게스트 모드의 데이터가\n모두 초기화돼요',
+                    emotion: AppDialogEmotion.warning,
+                    confirmText: '로그인',
+                    cancelText: '취소',
+                  );
+                  if (confirmed == true) {
+                    await ref.read(authNotifierProvider.notifier).signOut();
+                  }
+                },
+                width: 200,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAuthenticatedView() {
     return DefaultTabController(
       length: 3,
       child: Scaffold(

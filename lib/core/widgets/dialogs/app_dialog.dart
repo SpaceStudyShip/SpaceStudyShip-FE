@@ -126,17 +126,23 @@ class AppDialog extends StatelessWidget {
       barrierLabel: 'Dialog',
       barrierColor: Colors.black.withValues(alpha: 0.5),
       transitionDuration: TossDesignTokens.animationNormal,
-      pageBuilder: (context, animation, secondaryAnimation) {
+      pageBuilder: (dialogContext, animation, secondaryAnimation) {
         return AppDialog(
           title: title,
           message: message,
           emotion: emotion,
           confirmText: confirmText,
           cancelText: cancelText,
-          onConfirm: onConfirm,
-          onCancel: onCancel,
           isDestructive: isDestructive,
           customContent: customContent,
+          onConfirm: () {
+            Navigator.of(dialogContext).pop();
+            onConfirm?.call();
+          },
+          onCancel: () {
+            Navigator.of(dialogContext).pop();
+            onCancel?.call();
+          },
         );
       },
       transitionBuilder: (context, animation, secondaryAnimation, child) {
@@ -167,7 +173,7 @@ class AppDialog extends StatelessWidget {
       barrierLabel: 'Dialog',
       barrierColor: Colors.black.withValues(alpha: 0.5),
       transitionDuration: TossDesignTokens.animationNormal,
-      pageBuilder: (context, animation, secondaryAnimation) {
+      pageBuilder: (dialogContext, animation, secondaryAnimation) {
         return AppDialog(
           title: title,
           message: message,
@@ -175,8 +181,8 @@ class AppDialog extends StatelessWidget {
           confirmText: confirmText,
           cancelText: cancelText,
           isDestructive: isDestructive,
-          onConfirm: () => Navigator.of(context).pop(true),
-          onCancel: () => Navigator.of(context).pop(false),
+          onConfirm: () => Navigator.of(dialogContext).pop(true),
+          onCancel: () => Navigator.of(dialogContext).pop(false),
         );
       },
       transitionBuilder: (context, animation, secondaryAnimation, child) {
@@ -301,10 +307,7 @@ class AppDialog extends StatelessWidget {
               borderColor: AppColors.spaceDivider,
               foregroundColor: AppColors.textSecondary,
               height: 48.h,
-              onPressed: () {
-                Navigator.of(context).pop();
-                onCancel?.call();
-              },
+              onPressed: onCancel,
             ),
           ),
           SizedBox(width: AppSpacing.s12),
@@ -319,10 +322,7 @@ class AppDialog extends StatelessWidget {
                   ? AppColors.error
                   : AppColors.primaryDark,
               height: 48.h,
-              onPressed: () {
-                Navigator.of(context).pop();
-                onConfirm?.call();
-              },
+              onPressed: onConfirm,
             ),
           ),
         ],
@@ -336,10 +336,7 @@ class AppDialog extends StatelessWidget {
       borderColor: isDestructive ? AppColors.error : AppColors.primaryDark,
       width: double.infinity,
       height: 48.h,
-      onPressed: () {
-        Navigator.of(context).pop();
-        onConfirm?.call();
-      },
+      onPressed: onConfirm,
     );
   }
 }

@@ -34,25 +34,19 @@ class CategoryTodoScreen extends ConsumerWidget {
         backgroundColor: Colors.transparent,
         elevation: 0,
         scrolledUnderElevation: 0,
-        title: Hero(
-          tag: 'category_$categoryId',
-          child: Material(
-            color: Colors.transparent,
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (categoryEmoji != null)
-                  Text(categoryEmoji!, style: TextStyle(fontSize: 20.sp)),
-                if (categoryEmoji != null) SizedBox(width: AppSpacing.s8),
-                Text(
-                  categoryName,
-                  style: AppTextStyles.subHeading_18.copyWith(
-                    color: Colors.white,
-                  ),
-                ),
-              ],
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (categoryEmoji != null)
+              Text(categoryEmoji!, style: TextStyle(fontSize: 20.sp)),
+            if (categoryEmoji != null) SizedBox(width: AppSpacing.s8),
+            Text(
+              categoryName,
+              style: AppTextStyles.subHeading_18.copyWith(
+                color: Colors.white,
+              ),
             ),
-          ),
+          ],
         ),
         iconTheme: const IconThemeData(color: Colors.white),
         actions: [

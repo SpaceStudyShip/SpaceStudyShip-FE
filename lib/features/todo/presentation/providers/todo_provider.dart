@@ -105,9 +105,18 @@ class TodoListNotifier extends _$TodoListNotifier {
   }
 
   Future<void> deleteTodo(String id) async {
-    final useCase = ref.read(deleteTodoUseCaseProvider);
-    await useCase.execute(id);
-    ref.invalidateSelf();
+    final previousState = state;
+    // 낙관적 업데이트: Loading 없이 즉시 리스트에서 제거
+    state = AsyncData(
+      state.valueOrNull?.where((t) => t.id != id).toList() ?? [],
+    );
+    try {
+      final useCase = ref.read(deleteTodoUseCaseProvider);
+      await useCase.execute(id);
+    } catch (_) {
+      state = previousState;
+      rethrow;
+    }
   }
 }
 

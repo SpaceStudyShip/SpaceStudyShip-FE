@@ -302,7 +302,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   if (result != null && mounted) {
                     ref
                         .read(todoListNotifierProvider.notifier)
-                        .addTodo(title: result['title'] as String);
+                        .addTodo(
+                      title: result['title'] as String,
+                      categoryId: result['categoryId'] as String?,
+                    );
                   }
                 },
                 child: Icon(

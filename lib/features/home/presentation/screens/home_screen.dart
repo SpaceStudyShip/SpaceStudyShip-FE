@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
@@ -13,6 +14,8 @@ import '../../../../core/widgets/space/streak_badge.dart';
 import '../../../../core/widgets/space/todo_item.dart';
 import '../../../../core/widgets/states/space_empty_state.dart';
 import '../../../../routes/route_paths.dart';
+import '../../../todo/presentation/providers/todo_provider.dart';
+import '../../../todo/presentation/widgets/todo_add_bottom_sheet.dart';
 import '../widgets/spaceship_selector.dart';
 
 /// 홈 스크린
@@ -20,14 +23,14 @@ import '../widgets/spaceship_selector.dart';
 /// 우주선을 화면 중앙에 크게 배치하고,
 /// 상단 바에 연료 등 재화 칩을 표시합니다.
 /// 할 일/활동은 하단 시트로 제공합니다.
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends ConsumerState<HomeScreen> {
   // 임시 상태 (나중에 Riverpod Provider로 이동)
   String _selectedSpaceshipId = 'default';
   String _selectedSpaceshipIcon = '🚀';
@@ -38,14 +41,6 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _isSheetExpanded = false;
   final DraggableScrollableController _sheetController =
       DraggableScrollableController();
-
-  // 임시 할 일 데이터 (나중에 Riverpod Provider로 이동)
-  final List<Map<String, dynamic>> _todos = [
-    {'title': '알고리즘 2문제 풀기', 'subtitle': '30분', 'completed': false},
-    {'title': '영어 단어 50개 외우기', 'subtitle': '20분', 'completed': true},
-    {'title': '수학 과제 제출', 'subtitle': '1시간', 'completed': false},
-    {'title': '물리 노트 정리', 'subtitle': '40분', 'completed': false},
-  ];
 
   // 샘플 우주선 데이터 (SpaceshipData.sampleList 공유)
   final List<SpaceshipData> _spaceships = SpaceshipData.sampleList;
@@ -265,7 +260,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 SizedBox(width: AppSpacing.s8),
                 Text(
-                  '· ${_todos.where((t) => !(t['completed'] as bool)).length}개',
+                  '· ${ref.watch(todoListNotifierProvider).valueOrNull?.where((t) => !t.completed).length ?? 0}개',
                   style: AppTextStyles.label_16.copyWith(
                     color: AppColors.textTertiary,
                   ),
@@ -286,7 +281,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   /// 펼친 상태: 할 일 미리보기
   Widget _buildExpandedSheet(ScrollController scrollController) {
-    final previewTodos = _todos.take(3).toList();
+    final todos = ref.watch(todoListNotifierProvider).valueOrNull ?? [];
+    final previewTodos = todos.take(3).toList();
 
     return ListView(
       controller: scrollController,
@@ -296,7 +292,27 @@ class _HomeScreenState extends State<HomeScreen> {
 
         Padding(
           padding: EdgeInsets.fromLTRB(20.w, 8.h, 20.w, 0),
-          child: _buildSectionTitle('오늘의 할 일'),
+          child: Row(
+            children: [
+              _buildSectionTitle('오늘의 할 일'),
+              const Spacer(),
+              GestureDetector(
+                onTap: () async {
+                  final result =
+                      await showTodoAddBottomSheet(context: context);
+                  if (result != null && mounted) {
+                    ref.read(todoListNotifierProvider.notifier).addTodo(
+                          title: result['title'] as String,
+                          estimatedMinutes:
+                              result['estimatedMinutes'] as int?,
+                        );
+                  }
+                },
+                child: Icon(Icons.add_rounded,
+                    color: AppColors.primary, size: 24.w),
+              ),
+            ],
+          ),
         ),
         SizedBox(height: AppSpacing.s16),
 
@@ -307,25 +323,44 @@ class _HomeScreenState extends State<HomeScreen> {
           )
         else ...[
           ...previewTodos.map((todo) {
-            final index = _todos.indexOf(todo);
             return Padding(
               padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 8.h),
-              child: TodoItem(
-                title: todo['title'] as String,
-                subtitle: todo['subtitle'] as String?,
-                isCompleted: todo['completed'] as bool,
-                onToggle: () {
-                  setState(() {
-                    _todos[index]['completed'] =
-                        !(_todos[index]['completed'] as bool);
-                  });
+              child: Dismissible(
+                key: Key(todo.id),
+                direction: DismissDirection.endToStart,
+                background: Container(
+                  alignment: Alignment.centerRight,
+                  padding: AppPadding.horizontal20,
+                  decoration: BoxDecoration(
+                    color: AppColors.error.withValues(alpha: 0.2),
+                    borderRadius: AppRadius.large,
+                  ),
+                  child: Icon(Icons.delete_outline,
+                      color: AppColors.error, size: 24.w),
+                ),
+                onDismissed: (_) {
+                  ref
+                      .read(todoListNotifierProvider.notifier)
+                      .deleteTodo(todo.id);
                 },
+                child: TodoItem(
+                  title: todo.title,
+                  subtitle: todo.estimatedMinutes != null
+                      ? '${todo.estimatedMinutes}분'
+                      : null,
+                  isCompleted: todo.completed,
+                  onToggle: () {
+                    ref
+                        .read(todoListNotifierProvider.notifier)
+                        .toggleTodo(todo);
+                  },
+                ),
               ),
             );
           }),
 
           // "더보기" 버튼
-          if (_todos.length > 3)
+          if (todos.length > 3)
             Padding(
               padding: AppPadding.horizontal20,
               child: TextButton(

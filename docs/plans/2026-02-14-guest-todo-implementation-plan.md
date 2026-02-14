@@ -3,7 +3,7 @@
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
 
 **Goal:** 게스트 모드에서 SharedPreferences 기반 로컬 할일(Todo) CRUD + 카테고리(폴더) 기능을 구현하고, HomeScreen의 하드코딩된 할일을 실제 데이터로 교체한다.
-
+ㅇ
 **Architecture:** Clean Architecture 3-Layer (Domain → Data → Presentation). TodoRepository 인터페이스에 LocalTodoRepositoryImpl(SharedPreferences)을 주입. isGuest 플래그로 향후 Remote 구현체와 분기 가능하도록 설계.
 
 **Tech Stack:** Flutter, Riverpod 2.6.1 (@riverpod), Freezed 2.5.7, SharedPreferences 2.3.4, UUID 4.5.2
@@ -15,6 +15,7 @@
 ### Task 1: TodoEntity 생성
 
 **Files:**
+
 - Create: `lib/features/todo/domain/entities/todo_entity.dart`
 
 **Step 1: Entity 파일 생성**
@@ -51,6 +52,7 @@ git commit -m "feat: TodoEntity 도메인 엔티티 추가"
 ### Task 2: TodoCategoryEntity 생성
 
 **Files:**
+
 - Create: `lib/features/todo/domain/entities/todo_category_entity.dart`
 
 **Step 1: Entity 파일 생성**
@@ -83,6 +85,7 @@ git commit -m "feat: TodoCategoryEntity 도메인 엔티티 추가"
 ### Task 3: TodoRepository 인터페이스 생성
 
 **Files:**
+
 - Create: `lib/features/todo/domain/repositories/todo_repository.dart`
 
 **Step 1: 인터페이스 파일 생성**
@@ -127,6 +130,7 @@ git commit -m "feat: TodoRepository 인터페이스 추가"
 ### Task 4: Todo UseCases 생성
 
 **Files:**
+
 - Create: `lib/features/todo/domain/usecases/get_todo_list_usecase.dart`
 - Create: `lib/features/todo/domain/usecases/create_todo_usecase.dart`
 - Create: `lib/features/todo/domain/usecases/update_todo_usecase.dart`
@@ -219,6 +223,7 @@ git commit -m "feat: Todo CRUD UseCase 추가"
 ### Task 5: Category UseCases 생성
 
 **Files:**
+
 - Create: `lib/features/todo/domain/usecases/get_categories_usecase.dart`
 - Create: `lib/features/todo/domain/usecases/create_category_usecase.dart`
 - Create: `lib/features/todo/domain/usecases/delete_category_usecase.dart`
@@ -290,6 +295,7 @@ git commit -m "feat: Category CRUD UseCase 추가"
 ### Task 6: TodoModel 생성 (DTO + 변환 확장)
 
 **Files:**
+
 - Create: `lib/features/todo/data/models/todo_model.dart`
 
 **Step 1: Model 파일 생성**
@@ -358,6 +364,7 @@ git commit -m "feat: TodoModel DTO 및 변환 확장 추가"
 ### Task 7: TodoCategoryModel 생성 (DTO + 변환 확장)
 
 **Files:**
+
 - Create: `lib/features/todo/data/models/todo_category_model.dart`
 
 **Step 1: Model 파일 생성**
@@ -420,6 +427,7 @@ flutter pub run build_runner build --delete-conflicting-outputs
 ```
 
 Expected: `.freezed.dart` 및 `.g.dart` 파일이 생성됨
+
 - `todo_entity.freezed.dart`
 - `todo_category_entity.freezed.dart`
 - `todo_model.freezed.dart`, `todo_model.g.dart`
@@ -437,6 +445,7 @@ git commit -m "chore: Todo 도메인/데이터 모델 코드 생성"
 ### Task 9: LocalTodoDataSource 생성
 
 **Files:**
+
 - Create: `lib/features/todo/data/datasources/local_todo_datasource.dart`
 
 **Step 1: DataSource 구현**
@@ -515,6 +524,7 @@ git commit -m "feat: LocalTodoDataSource SharedPreferences 구현"
 ### Task 10: LocalTodoRepositoryImpl 생성
 
 **Files:**
+
 - Create: `lib/features/todo/data/repositories/local_todo_repository_impl.dart`
 
 **Step 1: Repository 구현**
@@ -656,6 +666,7 @@ git commit -m "feat: LocalTodoRepositoryImpl 구현"
 ### Task 11: Todo Providers 생성
 
 **Files:**
+
 - Create: `lib/features/todo/presentation/providers/todo_provider.dart`
 
 **Step 1: Provider 파일 생성**
@@ -855,6 +866,7 @@ git commit -m "feat: Todo Provider 코드 생성 및 SharedPreferences override 
 ### Task 13: TodoAddBottomSheet 위젯 생성
 
 **Files:**
+
 - Create: `lib/features/todo/presentation/widgets/todo_add_bottom_sheet.dart`
 
 **Step 1: 바텀시트 위젯 구현**
@@ -1013,6 +1025,7 @@ git commit -m "feat: TodoAddBottomSheet 바텀시트 위젯 추가"
 ### Task 14: HomeScreen 통합 - 하드코딩 → Provider 교체
 
 **Files:**
+
 - Modify: `lib/features/home/presentation/screens/home_screen.dart`
 
 **핵심 변경사항:**
@@ -1027,6 +1040,7 @@ git commit -m "feat: TodoAddBottomSheet 바텀시트 위젯 추가"
 **Step 1: import 추가 및 클래스 변경**
 
 파일 상단에 추가:
+
 ```dart
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../todo/presentation/providers/todo_provider.dart';
@@ -1034,6 +1048,7 @@ import '../../../todo/presentation/widgets/todo_add_bottom_sheet.dart';
 ```
 
 `StatefulWidget` → `ConsumerStatefulWidget`:
+
 ```dart
 class HomeScreen extends ConsumerStatefulWidget {
   // ...
@@ -1047,6 +1062,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 **Step 2: `_todos` 하드코딩 제거**
 
 `_todos` 필드(lines 42-48)를 삭제. 대신 build 내에서 Provider 데이터 사용:
+
 ```dart
 final todosAsync = ref.watch(todoListNotifierProvider);
 ```
@@ -1054,6 +1070,7 @@ final todosAsync = ref.watch(todoListNotifierProvider);
 **Step 3: 접힌 상태 업데이트**
 
 `_buildCollapsedSheet`의 미완료 개수를 Provider에서 계산:
+
 ```dart
 final todosAsync = ref.watch(todoListNotifierProvider);
 final pendingCount = todosAsync.valueOrNull
@@ -1064,12 +1081,14 @@ final pendingCount = todosAsync.valueOrNull
 **Step 4: 펼친 상태 업데이트**
 
 `_buildExpandedSheet`에서 TodoItem을 Provider 데이터로 교체:
+
 ```dart
 final todos = ref.watch(todoListNotifierProvider).valueOrNull ?? [];
 final previewTodos = todos.take(3).toList();
 ```
 
 TodoItem 사용:
+
 ```dart
 Dismissible(
   key: Key(todo.id),
@@ -1102,6 +1121,7 @@ Dismissible(
 **Step 5: 할일 추가 버튼**
 
 섹션 타이틀 옆에 추가 버튼:
+
 ```dart
 Row(
   children: [
@@ -1135,6 +1155,7 @@ git commit -m "feat: HomeScreen 할일 데이터를 Provider로 교체"
 ### Task 15: 로그아웃 시 Todo 데이터 삭제 연동
 
 **Files:**
+
 - Modify: `lib/features/auth/presentation/providers/auth_provider.dart` (lines 293-301)
 
 **Step 1: signOut 메서드에 Todo clearAll 추가**
@@ -1167,6 +1188,7 @@ if (currentUser?.isGuest == true) {
 ```
 
 import 추가:
+
 ```dart
 import '../../../todo/presentation/providers/todo_provider.dart';
 ```
@@ -1205,6 +1227,7 @@ Expected: 빌드 성공
 ### Task 17: CategoryFolderCard 위젯 생성
 
 **Files:**
+
 - Create: `lib/features/todo/presentation/widgets/category_folder_card.dart`
 
 **Step 1: 카테고리 폴더 카드 위젯**
@@ -1332,6 +1355,7 @@ git commit -m "feat: CategoryFolderCard 위젯 추가"
 ### Task 18: TodoListScreen 생성
 
 **Files:**
+
 - Create: `lib/features/todo/presentation/screens/todo_list_screen.dart`
 - Modify: `lib/routes/app_router.dart` (lines 159-163 — PlaceholderScreen 교체)
 
@@ -1480,6 +1504,7 @@ builder: (context, state) => const TodoListScreen(),
 ```
 
 import 추가:
+
 ```dart
 import '../features/todo/presentation/screens/todo_list_screen.dart';
 ```
@@ -1517,9 +1542,10 @@ flutter run
 ```
 
 수동 테스트 체크리스트:
+
 - [ ] 게스트 로그인 → 홈 화면 진입
 - [ ] 오늘의 할 일 섹션에 빈 상태 표시
-- [ ] + 버튼 → 바텀시트 → 할일 추가 → 리스트에 표시
+- [ ] - 버튼 → 바텀시트 → 할일 추가 → 리스트에 표시
 - [ ] 할일 체크박스 토글 → 완료/미완료 전환
 - [ ] 할일 스와이프 → 삭제
 - [ ] 더보기 → TodoListScreen 이동
@@ -1538,27 +1564,27 @@ git commit -m "chore: 게스트 Todo 기능 최종 검증 완료"
 
 ## 파일 생성 요약
 
-| Phase | 파일 | 작업 |
-|-------|------|------|
-| Domain | `lib/features/todo/domain/entities/todo_entity.dart` | Create |
-| Domain | `lib/features/todo/domain/entities/todo_category_entity.dart` | Create |
-| Domain | `lib/features/todo/domain/repositories/todo_repository.dart` | Create |
-| Domain | `lib/features/todo/domain/usecases/get_todo_list_usecase.dart` | Create |
-| Domain | `lib/features/todo/domain/usecases/create_todo_usecase.dart` | Create |
-| Domain | `lib/features/todo/domain/usecases/update_todo_usecase.dart` | Create |
-| Domain | `lib/features/todo/domain/usecases/delete_todo_usecase.dart` | Create |
-| Domain | `lib/features/todo/domain/usecases/get_categories_usecase.dart` | Create |
-| Domain | `lib/features/todo/domain/usecases/create_category_usecase.dart` | Create |
-| Domain | `lib/features/todo/domain/usecases/delete_category_usecase.dart` | Create |
-| Data | `lib/features/todo/data/models/todo_model.dart` | Create |
-| Data | `lib/features/todo/data/models/todo_category_model.dart` | Create |
-| Data | `lib/features/todo/data/datasources/local_todo_datasource.dart` | Create |
-| Data | `lib/features/todo/data/repositories/local_todo_repository_impl.dart` | Create |
-| Presentation | `lib/features/todo/presentation/providers/todo_provider.dart` | Create |
-| Presentation | `lib/features/todo/presentation/widgets/todo_add_bottom_sheet.dart` | Create |
-| Presentation | `lib/features/todo/presentation/widgets/category_folder_card.dart` | Create |
-| Presentation | `lib/features/todo/presentation/screens/todo_list_screen.dart` | Create |
-| Integration | `lib/features/home/presentation/screens/home_screen.dart` | Modify |
-| Integration | `lib/features/auth/presentation/providers/auth_provider.dart` | Modify |
-| Integration | `lib/routes/app_router.dart` | Modify |
-| Integration | `lib/main.dart` | Modify |
+| Phase        | 파일                                                                  | 작업   |
+| ------------ | --------------------------------------------------------------------- | ------ |
+| Domain       | `lib/features/todo/domain/entities/todo_entity.dart`                  | Create |
+| Domain       | `lib/features/todo/domain/entities/todo_category_entity.dart`         | Create |
+| Domain       | `lib/features/todo/domain/repositories/todo_repository.dart`          | Create |
+| Domain       | `lib/features/todo/domain/usecases/get_todo_list_usecase.dart`        | Create |
+| Domain       | `lib/features/todo/domain/usecases/create_todo_usecase.dart`          | Create |
+| Domain       | `lib/features/todo/domain/usecases/update_todo_usecase.dart`          | Create |
+| Domain       | `lib/features/todo/domain/usecases/delete_todo_usecase.dart`          | Create |
+| Domain       | `lib/features/todo/domain/usecases/get_categories_usecase.dart`       | Create |
+| Domain       | `lib/features/todo/domain/usecases/create_category_usecase.dart`      | Create |
+| Domain       | `lib/features/todo/domain/usecases/delete_category_usecase.dart`      | Create |
+| Data         | `lib/features/todo/data/models/todo_model.dart`                       | Create |
+| Data         | `lib/features/todo/data/models/todo_category_model.dart`              | Create |
+| Data         | `lib/features/todo/data/datasources/local_todo_datasource.dart`       | Create |
+| Data         | `lib/features/todo/data/repositories/local_todo_repository_impl.dart` | Create |
+| Presentation | `lib/features/todo/presentation/providers/todo_provider.dart`         | Create |
+| Presentation | `lib/features/todo/presentation/widgets/todo_add_bottom_sheet.dart`   | Create |
+| Presentation | `lib/features/todo/presentation/widgets/category_folder_card.dart`    | Create |
+| Presentation | `lib/features/todo/presentation/screens/todo_list_screen.dart`        | Create |
+| Integration  | `lib/features/home/presentation/screens/home_screen.dart`             | Modify |
+| Integration  | `lib/features/auth/presentation/providers/auth_provider.dart`         | Modify |
+| Integration  | `lib/routes/app_router.dart`                                          | Modify |
+| Integration  | `lib/main.dart`                                                       | Modify |

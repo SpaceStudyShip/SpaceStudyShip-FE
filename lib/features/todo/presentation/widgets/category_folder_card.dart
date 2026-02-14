@@ -53,10 +53,7 @@ class _CategoryFolderCardState extends State<CategoryFolderCard> {
           ),
           child: Row(
             children: [
-              Text(
-                widget.emoji ?? '📁',
-                style: TextStyle(fontSize: 24.sp),
-              ),
+              Text(widget.emoji ?? '📁', style: TextStyle(fontSize: 24.sp)),
               SizedBox(width: AppSpacing.s12),
               Expanded(
                 child: Column(
@@ -64,14 +61,16 @@ class _CategoryFolderCardState extends State<CategoryFolderCard> {
                   children: [
                     Text(
                       widget.name,
-                      style: AppTextStyles.label_16
-                          .copyWith(color: Colors.white),
+                      style: AppTextStyles.label_16.copyWith(
+                        color: Colors.white,
+                      ),
                     ),
                     SizedBox(height: AppSpacing.s4),
                     Text(
                       '${widget.completedCount}/${widget.todoCount} 완료',
-                      style: AppTextStyles.tag_12
-                          .copyWith(color: AppColors.textTertiary),
+                      style: AppTextStyles.tag_12.copyWith(
+                        color: AppColors.textTertiary,
+                      ),
                     ),
                   ],
                 ),

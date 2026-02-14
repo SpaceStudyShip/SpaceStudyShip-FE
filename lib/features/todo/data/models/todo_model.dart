@@ -25,26 +25,26 @@ class TodoModel with _$TodoModel {
 
 extension TodoModelX on TodoModel {
   TodoEntity toEntity() => TodoEntity(
-        id: id,
-        title: title,
-        completed: completed,
-        categoryId: categoryId,
-        estimatedMinutes: estimatedMinutes,
-        actualMinutes: actualMinutes,
-        createdAt: createdAt,
-        updatedAt: updatedAt,
-      );
+    id: id,
+    title: title,
+    completed: completed,
+    categoryId: categoryId,
+    estimatedMinutes: estimatedMinutes,
+    actualMinutes: actualMinutes,
+    createdAt: createdAt,
+    updatedAt: updatedAt,
+  );
 }
 
 extension TodoEntityToModelX on TodoEntity {
   TodoModel toModel() => TodoModel(
-        id: id,
-        title: title,
-        completed: completed,
-        categoryId: categoryId,
-        estimatedMinutes: estimatedMinutes,
-        actualMinutes: actualMinutes,
-        createdAt: createdAt,
-        updatedAt: updatedAt,
-      );
+    id: id,
+    title: title,
+    completed: completed,
+    categoryId: categoryId,
+    estimatedMinutes: estimatedMinutes,
+    actualMinutes: actualMinutes,
+    createdAt: createdAt,
+    updatedAt: updatedAt,
+  );
 }

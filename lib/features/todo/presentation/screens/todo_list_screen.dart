@@ -34,10 +34,9 @@ class TodoListScreen extends ConsumerWidget {
             onPressed: () async {
               final result = await showTodoAddBottomSheet(context: context);
               if (result != null) {
-                ref.read(todoListNotifierProvider.notifier).addTodo(
-                      title: result['title'] as String,
-                      estimatedMinutes: result['estimatedMinutes'] as int?,
-                    );
+                ref
+                    .read(todoListNotifierProvider.notifier)
+                    .addTodo(title: result['title'] as String);
               }
             },
             icon: Icon(Icons.add_rounded, size: 24.w),
@@ -89,8 +88,10 @@ class TodoListScreen extends ConsumerWidget {
                       },
                       child: TodoItem(
                         title: todo.title,
-                        subtitle: todo.estimatedMinutes != null
-                            ? '${todo.estimatedMinutes}분'
+                        subtitle:
+                            todo.actualMinutes != null &&
+                                todo.actualMinutes! > 0
+                            ? '${todo.actualMinutes}분 공부'
                             : null,
                         isCompleted: todo.completed,
                         onToggle: () {
@@ -104,14 +105,11 @@ class TodoListScreen extends ConsumerWidget {
                 },
               );
             },
-            loading: () => const Center(
-              child: CircularProgressIndicator(),
-            ),
+            loading: () => const Center(child: CircularProgressIndicator()),
             error: (error, _) => Center(
               child: Text(
                 '오류: $error',
-                style:
-                    AppTextStyles.label_16.copyWith(color: AppColors.error),
+                style: AppTextStyles.label_16.copyWith(color: AppColors.error),
               ),
             ),
           ),

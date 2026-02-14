@@ -298,18 +298,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               const Spacer(),
               GestureDetector(
                 onTap: () async {
-                  final result =
-                      await showTodoAddBottomSheet(context: context);
+                  final result = await showTodoAddBottomSheet(context: context);
                   if (result != null && mounted) {
-                    ref.read(todoListNotifierProvider.notifier).addTodo(
-                          title: result['title'] as String,
-                          estimatedMinutes:
-                              result['estimatedMinutes'] as int?,
-                        );
+                    ref
+                        .read(todoListNotifierProvider.notifier)
+                        .addTodo(title: result['title'] as String);
                   }
                 },
-                child: Icon(Icons.add_rounded,
-                    color: AppColors.primary, size: 24.w),
+                child: Icon(
+                  Icons.add_rounded,
+                  color: AppColors.primary,
+                  size: 24.w,
+                ),
               ),
             ],
           ),
@@ -335,8 +335,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     color: AppColors.error.withValues(alpha: 0.2),
                     borderRadius: AppRadius.large,
                   ),
-                  child: Icon(Icons.delete_outline,
-                      color: AppColors.error, size: 24.w),
+                  child: Icon(
+                    Icons.delete_outline,
+                    color: AppColors.error,
+                    size: 24.w,
+                  ),
                 ),
                 onDismissed: (_) {
                   ref
@@ -345,8 +348,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 },
                 child: TodoItem(
                   title: todo.title,
-                  subtitle: todo.estimatedMinutes != null
-                      ? '${todo.estimatedMinutes}분'
+                  subtitle:
+                      todo.actualMinutes != null && todo.actualMinutes! > 0
+                      ? '${todo.actualMinutes}분 공부'
                       : null,
                   isCompleted: todo.completed,
                   onToggle: () {

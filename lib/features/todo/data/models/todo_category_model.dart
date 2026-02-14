@@ -21,18 +21,14 @@ class TodoCategoryModel with _$TodoCategoryModel {
 
 extension TodoCategoryModelX on TodoCategoryModel {
   TodoCategoryEntity toEntity() => TodoCategoryEntity(
-        id: id,
-        name: name,
-        emoji: emoji,
-        createdAt: createdAt,
-      );
+    id: id,
+    name: name,
+    emoji: emoji,
+    createdAt: createdAt,
+  );
 }
 
 extension TodoCategoryEntityToModelX on TodoCategoryEntity {
-  TodoCategoryModel toModel() => TodoCategoryModel(
-        id: id,
-        name: name,
-        emoji: emoji,
-        createdAt: createdAt,
-      );
+  TodoCategoryModel toModel() =>
+      TodoCategoryModel(id: id, name: name, emoji: emoji, createdAt: createdAt);
 }

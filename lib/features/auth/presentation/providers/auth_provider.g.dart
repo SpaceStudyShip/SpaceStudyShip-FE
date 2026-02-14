@@ -242,7 +242,7 @@ final activeLoginNotifierProvider =
     );
 
 typedef _$ActiveLoginNotifier = AutoDisposeNotifier<SocialLoginProvider?>;
-String _$authNotifierHash() => r'51e68885c8fff687339e171b777cc8a11d85f1af';
+String _$authNotifierHash() => r'f472b329e8d0c0f6fffc0b3cabc01d82902b60d5';
 
 /// 인증 상태를 관리하는 Notifier
 ///

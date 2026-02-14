@@ -16,7 +16,6 @@ class TodoAddBottomSheet extends StatefulWidget {
 
 class _TodoAddBottomSheetState extends State<TodoAddBottomSheet> {
   final _titleController = TextEditingController();
-  final _minutesController = TextEditingController();
 
   @override
   void initState() {
@@ -27,20 +26,13 @@ class _TodoAddBottomSheetState extends State<TodoAddBottomSheet> {
   @override
   void dispose() {
     _titleController.dispose();
-    _minutesController.dispose();
     super.dispose();
   }
 
   void _submit() {
     final title = _titleController.text.trim();
     if (title.isEmpty) return;
-
-    final minutes = int.tryParse(_minutesController.text.trim());
-
-    Navigator.of(context).pop({
-      'title': title,
-      'estimatedMinutes': minutes,
-    });
+    Navigator.of(context).pop({'title': title});
   }
 
   @override
@@ -77,8 +69,9 @@ class _TodoAddBottomSheetState extends State<TodoAddBottomSheet> {
                 alignment: Alignment.centerLeft,
                 child: Text(
                   '할 일 추가',
-                  style:
-                      AppTextStyles.subHeading_18.copyWith(color: Colors.white),
+                  style: AppTextStyles.subHeading_18.copyWith(
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ),
@@ -93,18 +86,6 @@ class _TodoAddBottomSheetState extends State<TodoAddBottomSheet> {
                 autofocus: true,
               ),
             ),
-            SizedBox(height: AppSpacing.s12),
-
-            // 예상 시간 입력 필드
-            Padding(
-              padding: AppPadding.horizontal20,
-              child: AppTextField(
-                controller: _minutesController,
-                hintText: '예상 시간 (분, 선택)',
-                keyboardType: TextInputType.number,
-                onSubmitted: (_) => _submit(),
-              ),
-            ),
             SizedBox(height: AppSpacing.s20),
 
             // 추가 버튼
@@ -112,8 +93,9 @@ class _TodoAddBottomSheetState extends State<TodoAddBottomSheet> {
               padding: AppPadding.horizontal20,
               child: AppButton(
                 text: '추가하기',
-                onPressed:
-                    _titleController.text.trim().isEmpty ? null : _submit,
+                onPressed: _titleController.text.trim().isEmpty
+                    ? null
+                    : _submit,
                 width: double.infinity,
               ),
             ),

@@ -6,10 +6,7 @@ class CreateCategoryUseCase {
 
   CreateCategoryUseCase(this._repository);
 
-  Future<TodoCategoryEntity> execute({
-    required String name,
-    String? emoji,
-  }) {
+  Future<TodoCategoryEntity> execute({required String name, String? emoji}) {
     return _repository.createCategory(name: name, emoji: emoji);
   }
 }

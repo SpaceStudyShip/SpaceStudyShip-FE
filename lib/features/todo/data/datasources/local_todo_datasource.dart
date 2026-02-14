@@ -43,8 +43,7 @@ class LocalTodoDataSource {
   }
 
   Future<void> saveCategories(List<TodoCategoryModel> categories) async {
-    final jsonString =
-        json.encode(categories.map((e) => e.toJson()).toList());
+    final jsonString = json.encode(categories.map((e) => e.toJson()).toList());
     await _prefs.setString(_categoriesKey, jsonString);
   }
 

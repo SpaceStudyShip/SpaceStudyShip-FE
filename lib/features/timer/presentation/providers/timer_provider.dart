@@ -20,33 +20,37 @@ class TimerNotifier extends _$TimerNotifier {
 
     state = state.copyWith(
       status: TimerStatus.running,
+      startTime: DateTime.now(),
+      accumulatedBeforePause: Duration.zero,
       linkedTodoId: todoId,
       linkedTodoTitle: todoTitle,
     );
 
-    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
-      state = state.copyWith(
-        elapsed: state.elapsed + const Duration(seconds: 1),
-      );
-    });
+    _startPeriodicUiUpdate();
   }
 
   /// 타이머 일시정지
   void pause() {
     _timer?.cancel();
-    state = state.copyWith(status: TimerStatus.paused);
+
+    // 현재까지 경과 시간을 accumulated에 저장
+    state = state.copyWith(
+      status: TimerStatus.paused,
+      accumulatedBeforePause: state.elapsed,
+      startTime: null,
+    );
   }
 
   /// 타이머 재개
   void resume() {
     if (state.status != TimerStatus.paused) return;
 
-    state = state.copyWith(status: TimerStatus.running);
-    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
-      state = state.copyWith(
-        elapsed: state.elapsed + const Duration(seconds: 1),
-      );
-    });
+    state = state.copyWith(
+      status: TimerStatus.running,
+      startTime: DateTime.now(),
+    );
+
+    _startPeriodicUiUpdate();
   }
 
   /// 타이머 정지 + 할일 시간 업데이트
@@ -62,6 +66,15 @@ class TimerNotifier extends _$TimerNotifier {
     }
 
     state = const TimerState();
+  }
+
+  /// UI 갱신용 periodic timer (시간 계산에는 사용하지 않음)
+  void _startPeriodicUiUpdate() {
+    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
+      // state를 다시 설정하여 UI 리빌드 트리거
+      // elapsed getter가 DateTime.now() 기반으로 정확한 값 반환
+      state = state.copyWith();
+    });
   }
 
   Future<void> _updateTodoActualMinutes(

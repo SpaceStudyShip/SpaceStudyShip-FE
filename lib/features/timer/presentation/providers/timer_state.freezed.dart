@@ -18,7 +18,8 @@ final _privateConstructorUsedError = UnsupportedError(
 /// @nodoc
 mixin _$TimerState {
   TimerStatus get status => throw _privateConstructorUsedError;
-  Duration get elapsed => throw _privateConstructorUsedError;
+  Duration get accumulatedBeforePause => throw _privateConstructorUsedError;
+  DateTime? get startTime => throw _privateConstructorUsedError;
   String? get linkedTodoId => throw _privateConstructorUsedError;
   String? get linkedTodoTitle => throw _privateConstructorUsedError;
 
@@ -38,7 +39,8 @@ abstract class $TimerStateCopyWith<$Res> {
   @useResult
   $Res call({
     TimerStatus status,
-    Duration elapsed,
+    Duration accumulatedBeforePause,
+    DateTime? startTime,
     String? linkedTodoId,
     String? linkedTodoTitle,
   });
@@ -60,7 +62,8 @@ class _$TimerStateCopyWithImpl<$Res, $Val extends TimerState>
   @override
   $Res call({
     Object? status = null,
-    Object? elapsed = null,
+    Object? accumulatedBeforePause = null,
+    Object? startTime = freezed,
     Object? linkedTodoId = freezed,
     Object? linkedTodoTitle = freezed,
   }) {
@@ -70,10 +73,14 @@ class _$TimerStateCopyWithImpl<$Res, $Val extends TimerState>
                 ? _value.status
                 : status // ignore: cast_nullable_to_non_nullable
                       as TimerStatus,
-            elapsed: null == elapsed
-                ? _value.elapsed
-                : elapsed // ignore: cast_nullable_to_non_nullable
+            accumulatedBeforePause: null == accumulatedBeforePause
+                ? _value.accumulatedBeforePause
+                : accumulatedBeforePause // ignore: cast_nullable_to_non_nullable
                       as Duration,
+            startTime: freezed == startTime
+                ? _value.startTime
+                : startTime // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
             linkedTodoId: freezed == linkedTodoId
                 ? _value.linkedTodoId
                 : linkedTodoId // ignore: cast_nullable_to_non_nullable
@@ -99,7 +106,8 @@ abstract class _$$TimerStateImplCopyWith<$Res>
   @useResult
   $Res call({
     TimerStatus status,
-    Duration elapsed,
+    Duration accumulatedBeforePause,
+    DateTime? startTime,
     String? linkedTodoId,
     String? linkedTodoTitle,
   });
@@ -120,7 +128,8 @@ class __$$TimerStateImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? status = null,
-    Object? elapsed = null,
+    Object? accumulatedBeforePause = null,
+    Object? startTime = freezed,
     Object? linkedTodoId = freezed,
     Object? linkedTodoTitle = freezed,
   }) {
@@ -130,10 +139,14 @@ class __$$TimerStateImplCopyWithImpl<$Res>
             ? _value.status
             : status // ignore: cast_nullable_to_non_nullable
                   as TimerStatus,
-        elapsed: null == elapsed
-            ? _value.elapsed
-            : elapsed // ignore: cast_nullable_to_non_nullable
+        accumulatedBeforePause: null == accumulatedBeforePause
+            ? _value.accumulatedBeforePause
+            : accumulatedBeforePause // ignore: cast_nullable_to_non_nullable
                   as Duration,
+        startTime: freezed == startTime
+            ? _value.startTime
+            : startTime // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
         linkedTodoId: freezed == linkedTodoId
             ? _value.linkedTodoId
             : linkedTodoId // ignore: cast_nullable_to_non_nullable
@@ -149,20 +162,23 @@ class __$$TimerStateImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$TimerStateImpl implements _TimerState {
+class _$TimerStateImpl extends _TimerState {
   const _$TimerStateImpl({
     this.status = TimerStatus.idle,
-    this.elapsed = Duration.zero,
+    this.accumulatedBeforePause = Duration.zero,
+    this.startTime,
     this.linkedTodoId,
     this.linkedTodoTitle,
-  });
+  }) : super._();
 
   @override
   @JsonKey()
   final TimerStatus status;
   @override
   @JsonKey()
-  final Duration elapsed;
+  final Duration accumulatedBeforePause;
+  @override
+  final DateTime? startTime;
   @override
   final String? linkedTodoId;
   @override
@@ -170,7 +186,7 @@ class _$TimerStateImpl implements _TimerState {
 
   @override
   String toString() {
-    return 'TimerState(status: $status, elapsed: $elapsed, linkedTodoId: $linkedTodoId, linkedTodoTitle: $linkedTodoTitle)';
+    return 'TimerState(status: $status, accumulatedBeforePause: $accumulatedBeforePause, startTime: $startTime, linkedTodoId: $linkedTodoId, linkedTodoTitle: $linkedTodoTitle)';
   }
 
   @override
@@ -179,7 +195,10 @@ class _$TimerStateImpl implements _TimerState {
         (other.runtimeType == runtimeType &&
             other is _$TimerStateImpl &&
             (identical(other.status, status) || other.status == status) &&
-            (identical(other.elapsed, elapsed) || other.elapsed == elapsed) &&
+            (identical(other.accumulatedBeforePause, accumulatedBeforePause) ||
+                other.accumulatedBeforePause == accumulatedBeforePause) &&
+            (identical(other.startTime, startTime) ||
+                other.startTime == startTime) &&
             (identical(other.linkedTodoId, linkedTodoId) ||
                 other.linkedTodoId == linkedTodoId) &&
             (identical(other.linkedTodoTitle, linkedTodoTitle) ||
@@ -187,8 +206,14 @@ class _$TimerStateImpl implements _TimerState {
   }
 
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, status, elapsed, linkedTodoId, linkedTodoTitle);
+  int get hashCode => Object.hash(
+    runtimeType,
+    status,
+    accumulatedBeforePause,
+    startTime,
+    linkedTodoId,
+    linkedTodoTitle,
+  );
 
   /// Create a copy of TimerState
   /// with the given fields replaced by the non-null parameter values.
@@ -199,18 +224,22 @@ class _$TimerStateImpl implements _TimerState {
       __$$TimerStateImplCopyWithImpl<_$TimerStateImpl>(this, _$identity);
 }
 
-abstract class _TimerState implements TimerState {
+abstract class _TimerState extends TimerState {
   const factory _TimerState({
     final TimerStatus status,
-    final Duration elapsed,
+    final Duration accumulatedBeforePause,
+    final DateTime? startTime,
     final String? linkedTodoId,
     final String? linkedTodoTitle,
   }) = _$TimerStateImpl;
+  const _TimerState._() : super._();
 
   @override
   TimerStatus get status;
   @override
-  Duration get elapsed;
+  Duration get accumulatedBeforePause;
+  @override
+  DateTime? get startTime;
   @override
   String? get linkedTodoId;
   @override

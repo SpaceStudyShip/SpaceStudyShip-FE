@@ -201,34 +201,50 @@ class _TimerScreenState extends ConsumerState<TimerScreen> {
 
   Widget _buildControls(bool isIdle, bool isRunning, bool isPaused) {
     if (isIdle) {
-      return AppButton(text: '시작하기', onPressed: _onStart);
+      return Padding(
+        padding: AppPadding.horizontal20,
+        child: AppButton(text: '시작하기', onPressed: _onStart),
+      );
     }
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        if (isRunning)
-          AppButton(
-            text: '일시정지',
-            onPressed: () => ref.read(timerNotifierProvider.notifier).pause(),
-            backgroundColor: Colors.transparent,
-            foregroundColor: AppColors.textSecondary,
-            borderColor: AppColors.spaceDivider,
+    return Padding(
+      padding: AppPadding.horizontal20,
+      child: Row(
+        children: [
+          if (isRunning)
+            Expanded(
+              child: AppButton(
+                text: '일시정지',
+                onPressed: () =>
+                    ref.read(timerNotifierProvider.notifier).pause(),
+                backgroundColor: Colors.transparent,
+                foregroundColor: AppColors.textSecondary,
+                borderColor: AppColors.spaceDivider,
+                width: double.infinity,
+              ),
+            ),
+          if (isPaused)
+            Expanded(
+              child: AppButton(
+                text: '계속하기',
+                onPressed: () =>
+                    ref.read(timerNotifierProvider.notifier).resume(),
+                width: double.infinity,
+              ),
+            ),
+          SizedBox(width: AppSpacing.s16),
+          Expanded(
+            child: AppButton(
+              text: '종료',
+              onPressed: () => ref.read(timerNotifierProvider.notifier).stop(),
+              backgroundColor: Colors.transparent,
+              foregroundColor: AppColors.error,
+              borderColor: AppColors.error.withValues(alpha: 0.5),
+              width: double.infinity,
+            ),
           ),
-        if (isPaused)
-          AppButton(
-            text: '계속하기',
-            onPressed: () => ref.read(timerNotifierProvider.notifier).resume(),
-          ),
-        SizedBox(width: AppSpacing.s16),
-        AppButton(
-          text: '정지',
-          onPressed: () => ref.read(timerNotifierProvider.notifier).stop(),
-          backgroundColor: Colors.transparent,
-          foregroundColor: AppColors.error,
-          borderColor: AppColors.error.withValues(alpha: 0.5),
-        ),
-      ],
+        ],
+      ),
     );
   }
 

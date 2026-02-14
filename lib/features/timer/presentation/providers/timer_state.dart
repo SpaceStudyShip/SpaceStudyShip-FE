@@ -19,8 +19,7 @@ class TimerState with _$TimerState {
   /// 실시간 경과 시간 계산
   Duration get elapsed {
     if (status == TimerStatus.running && startTime != null) {
-      return accumulatedBeforePause +
-          DateTime.now().difference(startTime!);
+      return accumulatedBeforePause + DateTime.now().difference(startTime!);
     }
     return accumulatedBeforePause;
   }

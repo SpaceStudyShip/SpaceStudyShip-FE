@@ -71,9 +71,9 @@ class TimerNotifier extends _$TimerNotifier {
   /// UI 갱신용 periodic timer (시간 계산에는 사용하지 않음)
   void _startPeriodicUiUpdate() {
     _timer = Timer.periodic(const Duration(seconds: 1), (_) {
-      // state를 다시 설정하여 UI 리빌드 트리거
       // elapsed getter가 DateTime.now() 기반으로 정확한 값 반환
-      state = state.copyWith();
+      // Freezed copyWith()는 동일 객체를 반환하므로 notifyListeners로 강제 리빌드
+      ref.notifyListeners();
     });
   }
 

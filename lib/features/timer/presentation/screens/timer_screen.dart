@@ -9,6 +9,7 @@ import '../../../../core/widgets/animations/entrance_animations.dart';
 import '../../../../core/widgets/atoms/space_stat_item.dart';
 import '../../../../core/widgets/buttons/app_button.dart';
 import '../../../../core/widgets/cards/app_card.dart';
+import '../../../todo/domain/entities/todo_entity.dart';
 import '../providers/timer_provider.dart';
 import '../providers/timer_state.dart';
 import '../widgets/timer_ring_painter.dart';
@@ -249,13 +250,19 @@ class _TimerScreenState extends ConsumerState<TimerScreen> {
   }
 
   Future<void> _onStart() async {
-    final selectedTodo = await showTodoSelectBottomSheet(context: context);
+    final result = await showTodoSelectBottomSheet(context: context);
 
     if (!mounted) return;
 
+    // null = dismiss → 타이머 시작하지 않음
+    if (result == null) return;
+
+    // true = "연동 없이 시작" → 할일 연동 없이 타이머 시작
+    // TodoEntity = 할일 선택 → 해당 할일과 연동하여 타이머 시작
+    final todo = result is TodoEntity ? result : null;
     ref
         .read(timerNotifierProvider.notifier)
-        .start(todoId: selectedTodo?.id, todoTitle: selectedTodo?.title);
+        .start(todoId: todo?.id, todoTitle: todo?.title);
   }
 
   String _formatDuration(Duration d) {

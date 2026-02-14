@@ -22,7 +22,7 @@ class TodoSelectBottomSheet extends ConsumerWidget {
       minChildSize: 0.3,
       maxChildSize: 0.9,
       snap: true,
-      snapSizes: const [0.4, 0.9],
+      snapSizes: const [0.3, 0.5, 0.8],
       expand: false,
       builder: (context, scrollController) {
         return Container(
@@ -32,8 +32,7 @@ class TodoSelectBottomSheet extends ConsumerWidget {
           ),
           child: todosAsync.when(
             data: (todos) {
-              final incomplete =
-                  todos.where((t) => !t.completed).toList();
+              final incomplete = todos.where((t) => !t.completed).toList();
 
               return CustomScrollView(
                 controller: scrollController,
@@ -46,8 +45,7 @@ class TodoSelectBottomSheet extends ConsumerWidget {
                         width: 40.w,
                         height: 4.h,
                         decoration: BoxDecoration(
-                          color: AppColors.textTertiary
-                              .withValues(alpha: 0.4),
+                          color: AppColors.textTertiary.withValues(alpha: 0.4),
                           borderRadius: BorderRadius.circular(2.r),
                         ),
                       ),
@@ -58,7 +56,9 @@ class TodoSelectBottomSheet extends ConsumerWidget {
                   SliverToBoxAdapter(
                     child: Padding(
                       padding: EdgeInsets.symmetric(
-                          horizontal: 20.w, vertical: 12.h),
+                        horizontal: 20.w,
+                        vertical: 12.h,
+                      ),
                       child: Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
@@ -77,8 +77,7 @@ class TodoSelectBottomSheet extends ConsumerWidget {
                       padding: AppPadding.horizontal20,
                       child: AppButton(
                         text: '연동 없이 시작',
-                        onPressed: () =>
-                            Navigator.of(context).pop(true),
+                        onPressed: () => Navigator.of(context).pop(true),
                         width: double.infinity,
                         backgroundColor: Colors.transparent,
                         foregroundColor: AppColors.textSecondary,
@@ -86,9 +85,7 @@ class TodoSelectBottomSheet extends ConsumerWidget {
                       ),
                     ),
                   ),
-                  SliverToBoxAdapter(
-                    child: SizedBox(height: AppSpacing.s12),
-                  ),
+                  SliverToBoxAdapter(child: SizedBox(height: AppSpacing.s12)),
 
                   // 미완료 할일 목록
                   if (incomplete.isEmpty)
@@ -109,25 +106,19 @@ class TodoSelectBottomSheet extends ConsumerWidget {
                     SliverPadding(
                       padding: AppPadding.horizontal20,
                       sliver: SliverList(
-                        delegate: SliverChildBuilderDelegate(
-                          (context, index) {
-                            final todo = incomplete[index];
-                            return _TodoSelectTile(
-                              todo: todo,
-                              onTap: () =>
-                                  Navigator.of(context).pop(todo),
-                            );
-                          },
-                          childCount: incomplete.length,
-                        ),
+                        delegate: SliverChildBuilderDelegate((context, index) {
+                          final todo = incomplete[index];
+                          return _TodoSelectTile(
+                            todo: todo,
+                            onTap: () => Navigator.of(context).pop(todo),
+                          );
+                        }, childCount: incomplete.length),
                       ),
                     ),
                 ],
               );
             },
-            loading: () => const Center(
-              child: CircularProgressIndicator(),
-            ),
+            loading: () => const Center(child: CircularProgressIndicator()),
             error: (_, _) => const SizedBox.shrink(),
           ),
         );
@@ -170,8 +161,7 @@ class _TodoSelectTile extends StatelessWidget {
                 Expanded(
                   child: Text(
                     todo.title,
-                    style:
-                        AppTextStyles.label_16.copyWith(color: Colors.white),
+                    style: AppTextStyles.label_16.copyWith(color: Colors.white),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),

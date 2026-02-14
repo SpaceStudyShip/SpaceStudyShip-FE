@@ -174,7 +174,7 @@ final deleteCategoryUseCaseProvider =
 // ignore: unused_element
 typedef DeleteCategoryUseCaseRef =
     AutoDisposeProviderRef<DeleteCategoryUseCase>;
-String _$todoListNotifierHash() => r'38ae02b0303073242b3a3fb5bda41e042c39a225';
+String _$todoListNotifierHash() => r'c89c836fe264e12c53d974222fcd2ae53e057826';
 
 /// See also [TodoListNotifier].
 @ProviderFor(TodoListNotifier)

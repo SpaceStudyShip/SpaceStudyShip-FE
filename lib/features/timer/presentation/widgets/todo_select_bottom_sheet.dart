@@ -17,99 +17,121 @@ class TodoSelectBottomSheet extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final todosAsync = ref.watch(todoListNotifierProvider);
 
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.spaceSurface,
-        borderRadius: AppRadius.modal,
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // 드래그 핸들
-          Center(
-            child: Container(
-              margin: EdgeInsets.only(top: 12.h, bottom: 8.h),
-              width: 40.w,
-              height: 4.h,
-              decoration: BoxDecoration(
-                color: AppColors.textTertiary.withValues(alpha: 0.4),
-                borderRadius: BorderRadius.circular(2.r),
-              ),
-            ),
+    return DraggableScrollableSheet(
+      initialChildSize: 0.4,
+      minChildSize: 0.3,
+      maxChildSize: 0.9,
+      snap: true,
+      snapSizes: const [0.4, 0.9],
+      expand: false,
+      builder: (context, scrollController) {
+        return Container(
+          decoration: BoxDecoration(
+            color: AppColors.spaceSurface,
+            borderRadius: AppRadius.modal,
           ),
-
-          // 제목
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                '할 일 연동',
-                style: AppTextStyles.subHeading_18.copyWith(
-                  color: Colors.white,
-                ),
-              ),
-            ),
-          ),
-
-          // 연동 없이 시작 버튼
-          Padding(
-            padding: AppPadding.horizontal20,
-            child: AppButton(
-              text: '연동 없이 시작',
-              onPressed: () => Navigator.of(context).pop(null),
-              width: double.infinity,
-              backgroundColor: Colors.transparent,
-              foregroundColor: AppColors.textSecondary,
-              borderColor: AppColors.spaceDivider,
-            ),
-          ),
-          SizedBox(height: AppSpacing.s12),
-
-          // 미완료 할일 목록
-          todosAsync.when(
+          child: todosAsync.when(
             data: (todos) {
-              final incomplete = todos.where((t) => !t.completed).toList();
+              final incomplete =
+                  todos.where((t) => !t.completed).toList();
 
-              if (incomplete.isEmpty) {
-                return Padding(
-                  padding: AppPadding.all20,
-                  child: SpaceEmptyState(
-                    icon: Icons.check_circle_outline,
-                    title: '미완료 할 일이 없어요',
-                    subtitle: '할 일을 추가한 뒤 연동해보세요',
-                    iconSize: 32,
-                    animated: false,
+              return CustomScrollView(
+                controller: scrollController,
+                slivers: [
+                  // 드래그 핸들
+                  SliverToBoxAdapter(
+                    child: Center(
+                      child: Container(
+                        margin: EdgeInsets.only(top: 12.h, bottom: 8.h),
+                        width: 40.w,
+                        height: 4.h,
+                        decoration: BoxDecoration(
+                          color: AppColors.textTertiary
+                              .withValues(alpha: 0.4),
+                          borderRadius: BorderRadius.circular(2.r),
+                        ),
+                      ),
+                    ),
                   ),
-                );
-              }
 
-              return ConstrainedBox(
-                constraints: BoxConstraints(maxHeight: 300.h),
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  padding: AppPadding.horizontal20,
-                  itemCount: incomplete.length,
-                  itemBuilder: (context, index) {
-                    final todo = incomplete[index];
-                    return _TodoSelectTile(
-                      todo: todo,
-                      onTap: () => Navigator.of(context).pop(todo),
-                    );
-                  },
-                ),
+                  // 제목
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 20.w, vertical: 12.h),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          '할 일 연동',
+                          style: AppTextStyles.subHeading_18.copyWith(
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  // 연동 없이 시작 버튼
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: AppPadding.horizontal20,
+                      child: AppButton(
+                        text: '연동 없이 시작',
+                        onPressed: () =>
+                            Navigator.of(context).pop(true),
+                        width: double.infinity,
+                        backgroundColor: Colors.transparent,
+                        foregroundColor: AppColors.textSecondary,
+                        borderColor: AppColors.spaceDivider,
+                      ),
+                    ),
+                  ),
+                  SliverToBoxAdapter(
+                    child: SizedBox(height: AppSpacing.s12),
+                  ),
+
+                  // 미완료 할일 목록
+                  if (incomplete.isEmpty)
+                    SliverFillRemaining(
+                      hasScrollBody: false,
+                      child: Padding(
+                        padding: AppPadding.all20,
+                        child: SpaceEmptyState(
+                          icon: Icons.check_circle_outline,
+                          title: '미완료 할 일이 없어요',
+                          subtitle: '할 일을 추가한 뒤 연동해보세요',
+                          iconSize: 32,
+                          animated: false,
+                        ),
+                      ),
+                    )
+                  else
+                    SliverPadding(
+                      padding: AppPadding.horizontal20,
+                      sliver: SliverList(
+                        delegate: SliverChildBuilderDelegate(
+                          (context, index) {
+                            final todo = incomplete[index];
+                            return _TodoSelectTile(
+                              todo: todo,
+                              onTap: () =>
+                                  Navigator.of(context).pop(todo),
+                            );
+                          },
+                          childCount: incomplete.length,
+                        ),
+                      ),
+                    ),
+                ],
               );
             },
-            loading: () => Padding(
-              padding: AppPadding.all20,
-              child: const Center(child: CircularProgressIndicator()),
+            loading: () => const Center(
+              child: CircularProgressIndicator(),
             ),
             error: (_, _) => const SizedBox.shrink(),
           ),
-
-          SizedBox(height: MediaQuery.of(context).padding.bottom + 20.h),
-        ],
-      ),
+        );
+      },
     );
   }
 }
@@ -148,7 +170,8 @@ class _TodoSelectTile extends StatelessWidget {
                 Expanded(
                   child: Text(
                     todo.title,
-                    style: AppTextStyles.label_16.copyWith(color: Colors.white),
+                    style:
+                        AppTextStyles.label_16.copyWith(color: Colors.white),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -170,8 +193,9 @@ class _TodoSelectTile extends StatelessWidget {
 }
 
 /// 할일 선택 바텀시트 표시 헬퍼
-Future<TodoEntity?> showTodoSelectBottomSheet({required BuildContext context}) {
-  return showModalBottomSheet<TodoEntity?>(
+/// 반환: null(dismiss) / true(연동없이시작) / TodoEntity(할일선택)
+Future<Object?> showTodoSelectBottomSheet({required BuildContext context}) {
+  return showModalBottomSheet<Object>(
     context: context,
     backgroundColor: Colors.transparent,
     barrierColor: Colors.black54,

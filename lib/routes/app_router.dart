@@ -21,6 +21,7 @@ import '../features/social/presentation/screens/social_screen.dart';
 import '../features/profile/presentation/screens/profile_screen.dart';
 import '../features/profile/presentation/screens/about_screen.dart';
 import '../features/profile/presentation/screens/spaceship_collection_screen.dart';
+import '../features/todo/presentation/screens/todo_list_screen.dart';
 
 /// 스플래시 최소 표시 시간 (2초)
 final splashDelayProvider = FutureProvider<void>((ref) async {
@@ -159,8 +160,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                   GoRoute(
                     path: 'todo',
                     name: 'todoList',
-                    builder: (context, state) =>
-                        const PlaceholderScreen(title: '오늘의 할 일'),
+                    builder: (context, state) => const TodoListScreen(),
                   ),
                   // Todo 상세
                   GoRoute(

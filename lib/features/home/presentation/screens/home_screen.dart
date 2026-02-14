@@ -364,30 +364,29 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           }),
 
           // "더보기" 버튼
-          if (todos.length > 3)
-            Padding(
-              padding: AppPadding.horizontal20,
-              child: TextButton(
-                onPressed: () => context.push(RoutePaths.todoList),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      '더보기',
-                      style: AppTextStyles.label_16.copyWith(
-                        color: AppColors.primary,
-                      ),
-                    ),
-                    SizedBox(width: AppSpacing.s4),
-                    Icon(
-                      Icons.arrow_forward_rounded,
-                      size: 16.w,
+          Padding(
+            padding: AppPadding.horizontal20,
+            child: TextButton(
+              onPressed: () => context.push(RoutePaths.todoList),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    '더보기',
+                    style: AppTextStyles.label_16.copyWith(
                       color: AppColors.primary,
                     ),
-                  ],
-                ),
+                  ),
+                  SizedBox(width: AppSpacing.s4),
+                  Icon(
+                    Icons.arrow_forward_rounded,
+                    size: 16.w,
+                    color: AppColors.primary,
+                  ),
+                ],
               ),
             ),
+          ),
         ],
 
         SizedBox(height: AppSpacing.s40),

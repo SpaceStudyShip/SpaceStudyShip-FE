@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
+import '../../../../core/widgets/backgrounds/space_background.dart';
 import '../../../../core/widgets/dialogs/app_dialog.dart';
 import '../../../../core/widgets/space/todo_item.dart';
 import '../../../../core/widgets/states/space_empty_state.dart';
@@ -27,7 +28,7 @@ class TodoListScreen extends ConsumerWidget {
     final categoriesAsync = ref.watch(categoryListNotifierProvider);
 
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: AppColors.spaceBackground,
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -55,7 +56,12 @@ class TodoListScreen extends ConsumerWidget {
           ),
         ],
       ),
-      body: _buildBody(context, ref, todosAsync, categoriesAsync),
+      body: Stack(
+        children: [
+          const Positioned.fill(child: SpaceBackground()),
+          _buildBody(context, ref, todosAsync, categoriesAsync),
+        ],
+      ),
     );
   }
 
@@ -116,19 +122,17 @@ class TodoListScreen extends ConsumerWidget {
         // ── 카테고리 섹션 헤더 ──
         Text(
           '카테고리',
-          style: AppTextStyles.subHeading_18.copyWith(
-            color: Colors.white,
-          ),
+          style: AppTextStyles.subHeading_18.copyWith(color: Colors.white),
         ),
-        SizedBox(height: AppSpacing.s12),
+        SizedBox(height: AppSpacing.s8),
 
         // ── 카테고리 2열 그리드 ──
         GridView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            childAspectRatio: 1.0,
+            crossAxisCount: 3,
+            childAspectRatio: 1,
             crossAxisSpacing: AppSpacing.s12,
             mainAxisSpacing: AppSpacing.s12,
           ),
@@ -143,8 +147,7 @@ class TodoListScreen extends ConsumerWidget {
             final catTodos = todos
                 .where((t) => t.categoryId == cat.id)
                 .toList();
-            final completedCount =
-                catTodos.where((t) => t.completed).length;
+            final completedCount = catTodos.where((t) => t.completed).length;
 
             return CategoryFolderCard(
               name: cat.name,
@@ -157,8 +160,7 @@ class TodoListScreen extends ConsumerWidget {
                   extra: {'name': cat.name, 'emoji': cat.emoji},
                 );
               },
-              onDelete: () =>
-                  _deleteCategory(context, ref, cat.id, cat.name),
+              onDelete: () => _deleteCategory(context, ref, cat.id, cat.name),
             );
           },
         ),
@@ -168,9 +170,7 @@ class TodoListScreen extends ConsumerWidget {
         if (uncategorized.isNotEmpty) ...[
           Text(
             '미분류',
-            style: AppTextStyles.subHeading_18.copyWith(
-              color: Colors.white,
-            ),
+            style: AppTextStyles.subHeading_18.copyWith(color: Colors.white),
           ),
           SizedBox(height: AppSpacing.s8),
           ...uncategorized.map(
@@ -182,8 +182,7 @@ class TodoListScreen extends ConsumerWidget {
                 confirmDismiss: (direction) async {
                   if (direction == DismissDirection.startToEnd) {
                     // 카테고리 이동
-                    final newCategoryId =
-                        await showCategoryMoveBottomSheet(
+                    final newCategoryId = await showCategoryMoveBottomSheet(
                       context: context,
                       currentCategoryId: todo.categoryId,
                     );

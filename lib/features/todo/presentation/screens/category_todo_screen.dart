@@ -5,7 +5,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
-import '../../../../core/widgets/backgrounds/space_background.dart';
 import '../../../../core/widgets/space/todo_item.dart';
 import '../../../../core/widgets/states/space_empty_state.dart';
 import '../providers/todo_provider.dart';
@@ -29,7 +28,8 @@ class CategoryTodoScreen extends ConsumerWidget {
     final todosAsync = ref.watch(todoListNotifierProvider);
 
     return Scaffold(
-      backgroundColor: AppColors.spaceBackground,
+      backgroundColor: Colors.transparent,
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -67,101 +67,117 @@ class CategoryTodoScreen extends ConsumerWidget {
           ),
         ],
       ),
-      body: Stack(
-        children: [
-          const Positioned.fill(child: SpaceBackground()),
-          todosAsync.when(
-            data: (todos) {
-              final categoryTodos = todos
-                  .where((t) => t.categoryId == categoryId)
-                  .toList();
+      body: todosAsync.when(
+        data: (todos) {
+          final categoryTodos = todos
+              .where((t) => t.categoryId == categoryId)
+              .toList();
 
-              if (categoryTodos.isEmpty) {
-                return const Center(
-                  child: SpaceEmptyState(
-                    icon: Icons.folder_open_rounded,
-                    title: '할 일이 없어요',
-                    subtitle: '오른쪽 상단 + 버튼으로 추가해보세요',
-                  ),
-                );
-              }
+          if (categoryTodos.isEmpty) {
+            return const Center(
+              child: SpaceEmptyState(
+                icon: Icons.folder_open_rounded,
+                title: '할 일이 없어요',
+                subtitle: '오른쪽 상단 + 버튼으로 추가해보세요',
+              ),
+            );
+          }
 
-              return ListView.builder(
-                padding: AppPadding.screenPadding,
-                itemCount: categoryTodos.length,
-                itemBuilder: (context, index) {
-                  final todo = categoryTodos[index];
-                  return Padding(
-                    padding: EdgeInsets.only(bottom: 8.h),
-                    child: Dismissible(
-                      key: Key(todo.id),
-                      direction: DismissDirection.endToStart,
-                      background: Container(
-                        alignment: Alignment.centerRight,
-                        padding: AppPadding.horizontal20,
-                        decoration: BoxDecoration(
-                          color: AppColors.error.withValues(alpha: 0.2),
-                          borderRadius: AppRadius.large,
-                        ),
-                        child: Icon(
-                          Icons.delete_outline,
-                          color: AppColors.error,
-                          size: 24.w,
-                        ),
-                      ),
-                      onDismissed: (_) {
+          return ListView.builder(
+            padding: EdgeInsets.only(
+              top: MediaQuery.of(context).padding.top + kToolbarHeight + 16.h,
+              left: 20.w,
+              right: 20.w,
+              bottom: 16.h,
+            ),
+            itemCount: categoryTodos.length,
+            itemBuilder: (context, index) {
+              final todo = categoryTodos[index];
+              return Padding(
+                padding: EdgeInsets.only(bottom: 8.h),
+                child: Dismissible(
+                  key: Key(todo.id),
+                  direction: DismissDirection.horizontal,
+                  confirmDismiss: (direction) async {
+                    if (direction == DismissDirection.startToEnd) {
+                      // 카테고리 이동
+                      final newCategoryId =
+                          await showCategoryMoveBottomSheet(
+                        context: context,
+                        currentCategoryId: todo.categoryId,
+                      );
+                      if (newCategoryId != null && context.mounted) {
                         ref
                             .read(todoListNotifierProvider.notifier)
-                            .deleteTodo(todo.id);
-                      },
-                      child: GestureDetector(
-                        onLongPress: () async {
-                          final newCategoryId =
-                              await showCategoryMoveBottomSheet(
-                                context: context,
-                                currentCategoryId: todo.categoryId,
-                              );
-                          if (newCategoryId != null && context.mounted) {
-                            ref
-                                .read(todoListNotifierProvider.notifier)
-                                .updateTodo(
-                                  todo.copyWith(
-                                    categoryId: newCategoryId == ''
-                                        ? null
-                                        : newCategoryId,
-                                  ),
-                                );
-                          }
-                        },
-                        child: TodoItem(
-                          title: todo.title,
-                          subtitle:
-                              todo.actualMinutes != null &&
-                                  todo.actualMinutes! > 0
-                              ? '${todo.actualMinutes}분 공부'
-                              : null,
-                          isCompleted: todo.completed,
-                          onToggle: () {
-                            ref
-                                .read(todoListNotifierProvider.notifier)
-                                .toggleTodo(todo);
-                          },
-                        ),
-                      ),
+                            .updateTodo(
+                              todo.copyWith(
+                                categoryId: newCategoryId == ''
+                                    ? null
+                                    : newCategoryId,
+                              ),
+                            );
+                      }
+                      return false; // 아이템 유지
+                    }
+                    return true; // 삭제 진행
+                  },
+                  onDismissed: (_) {
+                    ref
+                        .read(todoListNotifierProvider.notifier)
+                        .deleteTodo(todo.id);
+                  },
+                  background: Container(
+                    alignment: Alignment.centerLeft,
+                    padding: AppPadding.horizontal20,
+                    decoration: BoxDecoration(
+                      color: AppColors.primary.withValues(alpha: 0.2),
+                      borderRadius: AppRadius.large,
                     ),
-                  );
-                },
+                    child: Icon(
+                      Icons.drive_file_move_outline,
+                      color: AppColors.primary,
+                      size: 24.w,
+                    ),
+                  ),
+                  secondaryBackground: Container(
+                    alignment: Alignment.centerRight,
+                    padding: AppPadding.horizontal20,
+                    decoration: BoxDecoration(
+                      color: AppColors.error.withValues(alpha: 0.2),
+                      borderRadius: AppRadius.large,
+                    ),
+                    child: Icon(
+                      Icons.delete_outline,
+                      color: AppColors.error,
+                      size: 24.w,
+                    ),
+                  ),
+                  child: TodoItem(
+                    title: todo.title,
+                    subtitle:
+                        todo.actualMinutes != null &&
+                            todo.actualMinutes! > 0
+                        ? '${todo.actualMinutes}분 공부'
+                        : null,
+                    isCompleted: todo.completed,
+                    onToggle: () {
+                      ref
+                          .read(todoListNotifierProvider.notifier)
+                          .toggleTodo(todo);
+                    },
+                  ),
+                ),
               );
             },
-            loading: () => const Center(child: CircularProgressIndicator()),
-            error: (error, _) => Center(
-              child: Text(
-                '오류: $error',
-                style: AppTextStyles.label_16.copyWith(color: AppColors.error),
-              ),
-            ),
+          );
+        },
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (error, _) => Center(
+          child: Text(
+            '오류: $error',
+            style: AppTextStyles.label_16.copyWith(color: AppColors.error),
           ),
-        ],
+        ),
       ),
     );
   }

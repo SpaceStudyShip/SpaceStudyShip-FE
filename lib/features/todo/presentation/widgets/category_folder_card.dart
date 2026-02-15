@@ -45,25 +45,48 @@ class _CategoryFolderCardState extends State<CategoryFolderCard> {
         duration: TossDesignTokens.animationFast,
         curve: TossDesignTokens.springCurve,
         child: Container(
-          padding: AppPadding.cardPadding,
           decoration: BoxDecoration(
             color: AppColors.spaceSurface,
             borderRadius: AppRadius.card,
             border: Border.all(color: AppColors.spaceDivider),
           ),
-          child: Row(
+          child: Stack(
             children: [
-              Text(widget.emoji ?? '📁', style: TextStyle(fontSize: 24.sp)),
-              SizedBox(width: AppSpacing.s12),
-              Expanded(
+              // 더보기 버튼 (우상단)
+              if (widget.onDelete != null)
+                Positioned(
+                  top: 4.h,
+                  right: 4.w,
+                  child: GestureDetector(
+                    onTap: widget.onDelete,
+                    child: Padding(
+                      padding: AppPadding.all8,
+                      child: Icon(
+                        Icons.more_vert_rounded,
+                        size: 16.w,
+                        color: AppColors.textTertiary,
+                      ),
+                    ),
+                  ),
+                ),
+              // 중앙 콘텐츠
+              Center(
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                    Text(
+                      widget.emoji ?? '📁',
+                      style: TextStyle(fontSize: 32.sp),
+                    ),
+                    SizedBox(height: AppSpacing.s8),
                     Text(
                       widget.name,
                       style: AppTextStyles.label_16.copyWith(
                         color: Colors.white,
                       ),
+                      textAlign: TextAlign.center,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                     SizedBox(height: AppSpacing.s4),
                     Text(
@@ -74,23 +97,6 @@ class _CategoryFolderCardState extends State<CategoryFolderCard> {
                     ),
                   ],
                 ),
-              ),
-              if (widget.onDelete != null)
-                GestureDetector(
-                  onTap: widget.onDelete,
-                  child: Padding(
-                    padding: AppPadding.all8,
-                    child: Icon(
-                      Icons.more_vert_rounded,
-                      size: 20.w,
-                      color: AppColors.textTertiary,
-                    ),
-                  ),
-                ),
-              Icon(
-                Icons.chevron_right_rounded,
-                size: 20.w,
-                color: AppColors.textTertiary,
               ),
             ],
           ),

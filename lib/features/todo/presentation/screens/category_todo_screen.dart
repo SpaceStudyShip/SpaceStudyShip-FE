@@ -42,9 +42,7 @@ class CategoryTodoScreen extends ConsumerWidget {
             if (categoryEmoji != null) SizedBox(width: AppSpacing.s8),
             Text(
               categoryName,
-              style: AppTextStyles.subHeading_18.copyWith(
-                color: Colors.white,
-              ),
+              style: AppTextStyles.subHeading_18.copyWith(color: Colors.white),
             ),
           ],
         ),
@@ -57,10 +55,12 @@ class CategoryTodoScreen extends ConsumerWidget {
                 initialCategoryId: categoryId,
               );
               if (result != null && context.mounted) {
-                ref.read(todoListNotifierProvider.notifier).addTodo(
-                  title: result['title'] as String,
-                  categoryId: result['categoryId'] as String?,
-                );
+                ref
+                    .read(todoListNotifierProvider.notifier)
+                    .addTodo(
+                      title: result['title'] as String,
+                      categoryId: result['categoryId'] as String?,
+                    );
               }
             },
             icon: Icon(Icons.add_rounded, size: 24.w),
@@ -72,8 +72,9 @@ class CategoryTodoScreen extends ConsumerWidget {
           const Positioned.fill(child: SpaceBackground()),
           todosAsync.when(
             data: (todos) {
-              final categoryTodos =
-                  todos.where((t) => t.categoryId == categoryId).toList();
+              final categoryTodos = todos
+                  .where((t) => t.categoryId == categoryId)
+                  .toList();
 
               if (categoryTodos.isEmpty) {
                 return const Center(
@@ -117,9 +118,9 @@ class CategoryTodoScreen extends ConsumerWidget {
                         onLongPress: () async {
                           final newCategoryId =
                               await showCategoryMoveBottomSheet(
-                            context: context,
-                            currentCategoryId: todo.categoryId,
-                          );
+                                context: context,
+                                currentCategoryId: todo.categoryId,
+                              );
                           if (newCategoryId != null && context.mounted) {
                             ref
                                 .read(todoListNotifierProvider.notifier)
@@ -134,7 +135,8 @@ class CategoryTodoScreen extends ConsumerWidget {
                         },
                         child: TodoItem(
                           title: todo.title,
-                          subtitle: todo.actualMinutes != null &&
+                          subtitle:
+                              todo.actualMinutes != null &&
                                   todo.actualMinutes! > 0
                               ? '${todo.actualMinutes}분 공부'
                               : null,
@@ -155,8 +157,7 @@ class CategoryTodoScreen extends ConsumerWidget {
             error: (error, _) => Center(
               child: Text(
                 '오류: $error',
-                style:
-                    AppTextStyles.label_16.copyWith(color: AppColors.error),
+                style: AppTextStyles.label_16.copyWith(color: AppColors.error),
               ),
             ),
           ),

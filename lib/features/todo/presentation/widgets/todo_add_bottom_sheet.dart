@@ -38,10 +38,9 @@ class _TodoAddBottomSheetState extends ConsumerState<TodoAddBottomSheet> {
   void _submit() {
     final title = _titleController.text.trim();
     if (title.isEmpty) return;
-    Navigator.of(context).pop({
-      'title': title,
-      'categoryId': _selectedCategoryId,
-    });
+    Navigator.of(
+      context,
+    ).pop({'title': title, 'categoryId': _selectedCategoryId});
   }
 
   @override
@@ -131,15 +130,18 @@ class _TodoAddBottomSheetState extends ConsumerState<TodoAddBottomSheet> {
                           ),
                           SizedBox(width: AppSpacing.s8),
                           // 카테고리 칩들
-                          ...categories.map((cat) => Padding(
-                                padding: EdgeInsets.only(right: 8.w),
-                                child: _CategoryChip(
-                                  label: '${cat.emoji ?? "📁"} ${cat.name}',
-                                  isSelected: _selectedCategoryId == cat.id,
-                                  onTap: () => setState(
-                                      () => _selectedCategoryId = cat.id),
+                          ...categories.map(
+                            (cat) => Padding(
+                              padding: EdgeInsets.only(right: 8.w),
+                              child: _CategoryChip(
+                                label: '${cat.emoji ?? "📁"} ${cat.name}',
+                                isSelected: _selectedCategoryId == cat.id,
+                                onTap: () => setState(
+                                  () => _selectedCategoryId = cat.id,
                                 ),
-                              )),
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -157,8 +159,9 @@ class _TodoAddBottomSheetState extends ConsumerState<TodoAddBottomSheet> {
               padding: AppPadding.horizontal20,
               child: AppButton(
                 text: '추가하기',
-                onPressed:
-                    _titleController.text.trim().isEmpty ? null : _submit,
+                onPressed: _titleController.text.trim().isEmpty
+                    ? null
+                    : _submit,
                 width: double.infinity,
               ),
             ),

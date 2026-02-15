@@ -170,14 +170,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                         builder: (context, state) {
                           final categoryId =
                               state.pathParameters['categoryId']!;
-                          final extra =
-                              state.extra as Map<String, dynamic>?;
+                          final extra = state.extra as Map<String, dynamic>?;
                           return CategoryTodoScreen(
                             categoryId: categoryId,
-                            categoryName:
-                                extra?['name'] as String? ?? '카테고리',
-                            categoryEmoji:
-                                extra?['emoji'] as String?,
+                            categoryName: extra?['name'] as String? ?? '카테고리',
+                            categoryEmoji: extra?['emoji'] as String?,
                           );
                         },
                       ),

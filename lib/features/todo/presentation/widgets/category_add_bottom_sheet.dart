@@ -9,8 +9,26 @@ import '../../../../core/widgets/inputs/app_text_field.dart';
 
 /// 이모지 프리셋 목록
 const _emojiPresets = [
-  '📁', '📚', '📐', '🔬', '🎨', '💻', '🎵', '🏃', '📝', '🌍',
-  '🧮', '📖', '✏️', '🔭', '🎯', '💡', '🧪', '📊', '🗂️', '⭐',
+  '📁',
+  '📚',
+  '📐',
+  '🔬',
+  '🎨',
+  '💻',
+  '🎵',
+  '🏃',
+  '📝',
+  '🌍',
+  '🧮',
+  '📖',
+  '✏️',
+  '🔭',
+  '🎯',
+  '💡',
+  '🧪',
+  '📊',
+  '🗂️',
+  '⭐',
 ];
 
 class CategoryAddBottomSheet extends StatefulWidget {
@@ -149,8 +167,7 @@ class _CategoryAddBottomSheetState extends State<CategoryAddBottomSheet> {
               padding: AppPadding.horizontal20,
               child: AppButton(
                 text: '추가하기',
-                onPressed:
-                    _nameController.text.trim().isEmpty ? null : _submit,
+                onPressed: _nameController.text.trim().isEmpty ? null : _submit,
                 width: double.infinity,
               ),
             ),

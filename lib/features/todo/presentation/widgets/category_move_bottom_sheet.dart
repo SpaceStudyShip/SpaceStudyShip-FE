@@ -8,10 +8,7 @@ import '../../../../core/constants/text_styles.dart';
 import '../providers/todo_provider.dart';
 
 class CategoryMoveBottomSheet extends ConsumerWidget {
-  const CategoryMoveBottomSheet({
-    super.key,
-    this.currentCategoryId,
-  });
+  const CategoryMoveBottomSheet({super.key, this.currentCategoryId});
 
   final String? currentCategoryId;
 
@@ -131,11 +128,7 @@ class _CategoryOption extends StatelessWidget {
               ),
             ),
             if (isSelected)
-              Icon(
-                Icons.check_rounded,
-                size: 20.w,
-                color: AppColors.primary,
-              ),
+              Icon(Icons.check_rounded, size: 20.w, color: AppColors.primary),
           ],
         ),
       ),
@@ -156,8 +149,7 @@ Future<String?> showCategoryMoveBottomSheet({
     isScrollControlled: true,
     isDismissible: true,
     enableDrag: true,
-    builder: (context) => CategoryMoveBottomSheet(
-      currentCategoryId: currentCategoryId,
-    ),
+    builder: (context) =>
+        CategoryMoveBottomSheet(currentCategoryId: currentCategoryId),
   );
 }

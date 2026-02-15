@@ -324,7 +324,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             padding: AppPadding.horizontal20,
             child: _buildEmptyTodoCard(),
           )
-        else ...[
+        else
           ...previewTodos.map((todo) {
             return Padding(
               padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 8.h),
@@ -366,31 +366,30 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             );
           }),
 
-          // "더보기" 버튼
-          Padding(
-            padding: AppPadding.horizontal20,
-            child: TextButton(
-              onPressed: () => context.push(RoutePaths.todoList),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    '더보기',
-                    style: AppTextStyles.label_16.copyWith(
-                      color: AppColors.primary,
-                    ),
-                  ),
-                  SizedBox(width: AppSpacing.s4),
-                  Icon(
-                    Icons.arrow_forward_rounded,
-                    size: 16.w,
+        // "더보기" 버튼 (할일 유무와 관계없이 항상 표시)
+        Padding(
+          padding: AppPadding.horizontal20,
+          child: TextButton(
+            onPressed: () => context.push(RoutePaths.todoList),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  '더보기',
+                  style: AppTextStyles.label_16.copyWith(
                     color: AppColors.primary,
                   ),
-                ],
-              ),
+                ),
+                SizedBox(width: AppSpacing.s4),
+                Icon(
+                  Icons.arrow_forward_rounded,
+                  size: 16.w,
+                  color: AppColors.primary,
+                ),
+              ],
             ),
           ),
-        ],
+        ),
 
         SizedBox(height: AppSpacing.s40),
       ],

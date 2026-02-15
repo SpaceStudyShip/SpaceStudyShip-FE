@@ -9,7 +9,6 @@ import '../../../../core/constants/text_styles.dart';
 import '../../../../core/widgets/backgrounds/space_background.dart';
 import '../../../../core/widgets/dialogs/app_dialog.dart';
 import '../../../../core/widgets/space/todo_item.dart';
-import '../../../../core/widgets/states/space_empty_state.dart';
 import '../../../../routes/route_paths.dart';
 import '../../domain/entities/todo_category_entity.dart';
 import '../../domain/entities/todo_entity.dart';
@@ -34,27 +33,6 @@ class TodoListScreen extends ConsumerWidget {
         backgroundColor: Colors.transparent,
         elevation: 0,
         scrolledUnderElevation: 0,
-        title: Text(
-          '오늘의 할 일',
-          style: AppTextStyles.subHeading_18.copyWith(color: Colors.white),
-        ),
-        iconTheme: const IconThemeData(color: Colors.white),
-        actions: [
-          IconButton(
-            onPressed: () async {
-              final result = await showTodoAddBottomSheet(context: context);
-              if (result != null && context.mounted) {
-                ref
-                    .read(todoListNotifierProvider.notifier)
-                    .addTodo(
-                      title: result['title'] as String,
-                      categoryId: result['categoryId'] as String?,
-                    );
-              }
-            },
-            icon: Icon(Icons.add_rounded, size: 24.w),
-          ),
-        ],
       ),
       body: Stack(
         children: [
@@ -99,80 +77,104 @@ class TodoListScreen extends ConsumerWidget {
     final todos = todosAsync.valueOrNull ?? [];
     final categories = categoriesAsync.valueOrNull ?? [];
     final uncategorized = todos.where((t) => t.categoryId == null).toList();
-    final hasContent = categories.isNotEmpty || uncategorized.isNotEmpty;
-
-    if (!hasContent) {
-      return const Center(
-        child: SpaceEmptyState(
-          icon: Icons.edit_note_rounded,
-          title: '할 일이 없어요',
-          subtitle: '오른쪽 상단 + 버튼으로 추가해보세요',
-        ),
-      );
-    }
 
     return ListView(
       padding: EdgeInsets.only(
-        top: MediaQuery.of(context).padding.top + kToolbarHeight + 16.h,
+        top: MediaQuery.of(context).padding.top + kToolbarHeight + 36.h,
         left: 20.w,
         right: 20.w,
         bottom: 16.h,
       ),
       children: [
         // ── 카테고리 섹션 헤더 ──
-        Text(
-          '카테고리',
-          style: AppTextStyles.subHeading_18.copyWith(color: Colors.white),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              '카테고리',
+              style: AppTextStyles.heading_20.copyWith(color: Colors.white),
+            ),
+            GestureDetector(
+              onTap: () => _addCategory(context, ref),
+              child: Text(
+                '+ 추가',
+                style: AppTextStyles.label_16.copyWith(
+                  color: AppColors.primary,
+                ),
+              ),
+            ),
+          ],
         ),
-        SizedBox(height: AppSpacing.s8),
+        SizedBox(height: AppSpacing.s20),
 
         // ── 카테고리 2열 그리드 ──
-        GridView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 3,
-            childAspectRatio: 1,
-            crossAxisSpacing: AppSpacing.s12,
-            mainAxisSpacing: AppSpacing.s12,
+        if (categories.isNotEmpty)
+          GridView.builder(
+            padding: EdgeInsets.zero,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              childAspectRatio: 1,
+              crossAxisSpacing: AppSpacing.s12,
+              mainAxisSpacing: AppSpacing.s12,
+            ),
+            itemCount: categories.length,
+            itemBuilder: (context, index) {
+              final cat = categories[index];
+              final catTodos = todos
+                  .where((t) => t.categoryId == cat.id)
+                  .toList();
+              final completedCount = catTodos.where((t) => t.completed).length;
+
+              return CategoryFolderCard(
+                name: cat.name,
+                emoji: cat.emoji,
+                todoCount: catTodos.length,
+                completedCount: completedCount,
+                onTap: () {
+                  context.push(
+                    RoutePaths.categoryTodoPath(cat.id),
+                    extra: {'name': cat.name, 'emoji': cat.emoji},
+                  );
+                },
+                onDelete: () => _deleteCategory(context, ref, cat.id, cat.name),
+              );
+            },
           ),
-          itemCount: categories.length + 1, // +1 for add card
-          itemBuilder: (context, index) {
-            // 마지막 아이템: 카테고리 추가 카드
-            if (index == categories.length) {
-              return _buildAddCategoryCard(context, ref);
-            }
-
-            final cat = categories[index];
-            final catTodos = todos
-                .where((t) => t.categoryId == cat.id)
-                .toList();
-            final completedCount = catTodos.where((t) => t.completed).length;
-
-            return CategoryFolderCard(
-              name: cat.name,
-              emoji: cat.emoji,
-              todoCount: catTodos.length,
-              completedCount: completedCount,
-              onTap: () {
-                context.push(
-                  RoutePaths.categoryTodoPath(cat.id),
-                  extra: {'name': cat.name, 'emoji': cat.emoji},
-                );
-              },
-              onDelete: () => _deleteCategory(context, ref, cat.id, cat.name),
-            );
-          },
-        ),
-        SizedBox(height: AppSpacing.s24),
+        SizedBox(height: AppSpacing.s56),
 
         // ── 미분류 할일 섹션 ──
-        if (uncategorized.isNotEmpty) ...[
-          Text(
-            '미분류',
-            style: AppTextStyles.subHeading_18.copyWith(color: Colors.white),
-          ),
-          SizedBox(height: AppSpacing.s8),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              '미분류',
+              style: AppTextStyles.heading_20.copyWith(color: Colors.white),
+            ),
+            GestureDetector(
+              onTap: () async {
+                final result = await showTodoAddBottomSheet(context: context);
+                if (result != null && context.mounted) {
+                  ref
+                      .read(todoListNotifierProvider.notifier)
+                      .addTodo(
+                        title: result['title'] as String,
+                        categoryId: result['categoryId'] as String?,
+                      );
+                }
+              },
+              child: Text(
+                '+ 추가',
+                style: AppTextStyles.label_16.copyWith(
+                  color: AppColors.primary,
+                ),
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: AppSpacing.s20),
+        if (uncategorized.isNotEmpty)
           ...uncategorized.map(
             (todo) => Padding(
               padding: EdgeInsets.only(bottom: 8.h),
@@ -248,43 +250,7 @@ class TodoListScreen extends ConsumerWidget {
               ),
             ),
           ),
-        ],
       ],
-    );
-  }
-
-  Widget _buildAddCategoryCard(BuildContext context, WidgetRef ref) {
-    return GestureDetector(
-      onTap: () => _addCategory(context, ref),
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.transparent,
-          borderRadius: AppRadius.card,
-          border: Border.all(
-            color: AppColors.spaceDivider,
-            style: BorderStyle.solid,
-          ),
-        ),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.create_new_folder_outlined,
-                size: 32.w,
-                color: AppColors.textTertiary,
-              ),
-              SizedBox(height: AppSpacing.s8),
-              Text(
-                '추가',
-                style: AppTextStyles.tag_12.copyWith(
-                  color: AppColors.textTertiary,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 

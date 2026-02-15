@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/widgets/backgrounds/space_background.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../../../core/widgets/space/todo_item.dart';
@@ -28,7 +29,7 @@ class CategoryTodoScreen extends ConsumerWidget {
     final todosAsync = ref.watch(todoListNotifierProvider);
 
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: AppColors.spaceBackground,
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -67,7 +68,10 @@ class CategoryTodoScreen extends ConsumerWidget {
           ),
         ],
       ),
-      body: todosAsync.when(
+      body: Stack(
+        children: [
+          const Positioned.fill(child: SpaceBackground()),
+          todosAsync.when(
         data: (todos) {
           final categoryTodos = todos
               .where((t) => t.categoryId == categoryId)
@@ -178,6 +182,8 @@ class CategoryTodoScreen extends ConsumerWidget {
             style: AppTextStyles.label_16.copyWith(color: AppColors.error),
           ),
         ),
+          ),
+        ],
       ),
     );
   }

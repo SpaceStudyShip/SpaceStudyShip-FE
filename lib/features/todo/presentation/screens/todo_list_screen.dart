@@ -114,7 +114,7 @@ class TodoListScreen extends ConsumerWidget {
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
+              crossAxisCount: 3,
               childAspectRatio: 1,
               crossAxisSpacing: AppSpacing.s12,
               mainAxisSpacing: AppSpacing.s12,

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
+import 'package:table_calendar/table_calendar.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
@@ -14,8 +16,10 @@ import '../../../../core/widgets/space/streak_badge.dart';
 import '../../../../core/widgets/space/todo_item.dart';
 import '../../../../core/widgets/states/space_empty_state.dart';
 import '../../../../routes/route_paths.dart';
+import '../../../todo/domain/entities/todo_entity.dart';
 import '../../../todo/presentation/providers/todo_provider.dart';
 import '../../../todo/presentation/widgets/todo_add_bottom_sheet.dart';
+import '../widgets/space_calendar.dart';
 import '../widgets/spaceship_selector.dart';
 
 /// 홈 스크린
@@ -39,6 +43,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   final bool _isStreakActive = true;
   bool _isSpaceshipPressed = false;
   bool _isSheetExpanded = false;
+
+  // 캘린더 상태
+  DateTime _focusedDay = DateTime.now();
+  DateTime _selectedDay = DateTime.now();
+  CalendarFormat _calendarFormat = CalendarFormat.month;
   final DraggableScrollableController _sheetController =
       DraggableScrollableController();
 
@@ -59,9 +68,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   void _onSheetChanged() {
-    final expanded = _sheetController.size > 0.3;
+    final expanded = _sheetController.size > 0.4;
     if (expanded != _isSheetExpanded) {
-      setState(() => _isSheetExpanded = expanded);
+      setState(() {
+        _isSheetExpanded = expanded;
+        // 시트 접힘 → 월간 포맷으로 리셋 (다음 펼침 시 월간부터 시작)
+        if (!expanded) {
+          _calendarFormat = CalendarFormat.month;
+        }
+      });
     }
   }
 
@@ -122,7 +137,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           GestureDetector(
             onTap: () {
               _sheetController.animateTo(
-                0.22,
+                0.25,
                 duration: const Duration(milliseconds: 300),
                 curve: Curves.easeOut,
               );
@@ -156,7 +171,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           setState(() => _isSpaceshipPressed = false);
           if (_isSheetExpanded) {
             _sheetController.animateTo(
-              0.22,
+              0.25,
               duration: const Duration(milliseconds: 300),
               curve: Curves.easeOut,
             );
@@ -192,11 +207,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget _buildBottomSheet() {
     return DraggableScrollableSheet(
       controller: _sheetController,
-      initialChildSize: 0.22,
-      minChildSize: 0.22,
-      maxChildSize: 0.6,
+      initialChildSize: 0.25,
+      minChildSize: 0.25,
+      maxChildSize: 0.85,
       snap: true,
-      snapSizes: const [0.22, 0.6],
+      snapSizes: const [0.25, 0.85],
       builder: (context, scrollController) {
         return Container(
           decoration: BoxDecoration(
@@ -232,36 +247,73 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  /// 접힌 상태: 컴팩트 미리보기
+  /// 접힌 상태: 주간 캘린더 스트립 + 할일 카운트
   Widget _buildCollapsedSheet(ScrollController scrollController) {
+    final todosByDate = ref.watch(todosByDateMapProvider);
+    final todayKey = DateTime(
+      DateTime.now().year,
+      DateTime.now().month,
+      DateTime.now().day,
+    );
+    final todayTodoCount =
+        todosByDate[todayKey]?.where((t) => !t.completed).length ?? 0;
+
     return ListView(
       controller: scrollController,
       padding: EdgeInsets.zero,
       children: [
         _buildDragHandle(),
+
+        // 주간 캘린더 스트립 (컴팩트 모드)
+        Padding(
+          padding: AppPadding.horizontal20,
+          child: SpaceCalendar(
+            focusedDay: _focusedDay,
+            selectedDay: _selectedDay,
+            isCompact: true,
+            onDaySelected: (selectedDay, focusedDay) {
+              setState(() {
+                _selectedDay = selectedDay;
+                _focusedDay = focusedDay;
+              });
+              _sheetController.animateTo(
+                0.85,
+                duration: const Duration(milliseconds: 400),
+                curve: Curves.easeOutCubic,
+              );
+            },
+            onPageChanged: (focusedDay) {
+              _focusedDay = focusedDay;
+            },
+            eventLoader: (day) {
+              final key = DateTime(day.year, day.month, day.day);
+              return todosByDate[key] ?? [];
+            },
+          ),
+        ),
+
+        // 오늘의 할일 카운트 + 펼치기 안내
         GestureDetector(
           onTap: () {
             _sheetController.animateTo(
-              0.6,
+              0.85,
               duration: const Duration(milliseconds: 400),
               curve: Curves.easeOutCubic,
             );
           },
           behavior: HitTestBehavior.opaque,
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
+            padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h),
             child: Row(
               children: [
                 Text(
                   '오늘의 할 일',
-                  style: AppTextStyles.subHeading_18.copyWith(
-                    color: Colors.white,
-                  ),
+                  style: AppTextStyles.label_16.copyWith(color: Colors.white),
                 ),
                 SizedBox(width: AppSpacing.s8),
                 Text(
-                  '· ${ref.watch(todoListNotifierProvider).valueOrNull?.where((t) => !t.completed).length ?? 0}개',
-                  style: AppTextStyles.label_16.copyWith(
+                  '$todayTodoCount개',
+                  style: AppTextStyles.tag_12.copyWith(
                     color: AppColors.textTertiary,
                   ),
                 ),
@@ -269,7 +321,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 Icon(
                   Icons.keyboard_arrow_up_rounded,
                   color: AppColors.textTertiary,
-                  size: 24.w,
+                  size: 20.w,
                 ),
               ],
             ),
@@ -279,10 +331,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  /// 펼친 상태: 할 일 미리보기
+  /// 펼친 상태: 월간 캘린더 + 날짜별 할일 목록
   Widget _buildExpandedSheet(ScrollController scrollController) {
-    final todos = ref.watch(todoListNotifierProvider).valueOrNull ?? [];
-    final previewTodos = todos.take(3).toList();
+    final selectedKey = DateTime(
+      _selectedDay.year,
+      _selectedDay.month,
+      _selectedDay.day,
+    );
+    final todosForSelected = ref.watch(todosForDateProvider(selectedKey));
+    final unscheduled = ref.watch(unscheduledTodosProvider);
+    final todosByDate = ref.watch(todosByDateMapProvider);
+    final dateLabel = DateFormat('M/d', 'ko_KR').format(_selectedDay);
 
     return ListView(
       controller: scrollController,
@@ -290,22 +349,52 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       children: [
         _buildDragHandle(),
 
+        // 월간/주간 토글 캘린더
         Padding(
-          padding: EdgeInsets.fromLTRB(20.w, 8.h, 20.w, 0),
+          padding: AppPadding.horizontal20,
+          child: SpaceCalendar(
+            focusedDay: _focusedDay,
+            selectedDay: _selectedDay,
+            isCompact: false,
+            calendarFormat: _calendarFormat,
+            onDaySelected: (selectedDay, focusedDay) {
+              setState(() {
+                _selectedDay = selectedDay;
+                _focusedDay = focusedDay;
+              });
+            },
+            onFormatChanged: (format) {
+              setState(() => _calendarFormat = format);
+            },
+            onPageChanged: (focusedDay) {
+              _focusedDay = focusedDay;
+            },
+            eventLoader: (day) {
+              final key = DateTime(day.year, day.month, day.day);
+              return todosByDate[key] ?? [];
+            },
+          ),
+        ),
+
+        SizedBox(height: AppSpacing.s16),
+
+        // ── 선택된 날짜의 할일 섹션 ──
+        Padding(
+          padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 0),
           child: Row(
             children: [
-              _buildSectionTitle('오늘의 할 일'),
+              _buildSectionTitle('$dateLabel 할일'),
               const Spacer(),
               GestureDetector(
                 onTap: () async {
-                  final result = await showTodoAddBottomSheet(context: context);
+                  final result = await showTodoAddBottomSheet(
+                    context: context,
+                  );
                   if (result != null && mounted) {
-                    ref
-                        .read(todoListNotifierProvider.notifier)
-                        .addTodo(
-                          title: result['title'] as String,
-                          categoryId: result['categoryId'] as String?,
-                        );
+                    ref.read(todoListNotifierProvider.notifier).addTodo(
+                      title: result['title'] as String,
+                      categoryId: result['categoryId'] as String?,
+                    );
                   }
                 },
                 child: Icon(
@@ -317,56 +406,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ],
           ),
         ),
-        SizedBox(height: AppSpacing.s16),
+        SizedBox(height: AppSpacing.s8),
 
-        if (previewTodos.isEmpty)
+        if (todosForSelected.isEmpty)
           Padding(
             padding: AppPadding.horizontal20,
             child: _buildEmptyTodoCard(),
           )
         else
-          ...previewTodos.map((todo) {
-            return Padding(
-              padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 8.h),
-              child: Dismissible(
-                key: Key(todo.id),
-                direction: DismissDirection.endToStart,
-                background: Container(
-                  alignment: Alignment.centerRight,
-                  padding: AppPadding.horizontal20,
-                  decoration: BoxDecoration(
-                    color: AppColors.error.withValues(alpha: 0.2),
-                    borderRadius: AppRadius.large,
-                  ),
-                  child: Icon(
-                    Icons.delete_outline,
-                    color: AppColors.error,
-                    size: 24.w,
-                  ),
-                ),
-                onDismissed: (_) {
-                  ref
-                      .read(todoListNotifierProvider.notifier)
-                      .deleteTodo(todo.id);
-                },
-                child: TodoItem(
-                  title: todo.title,
-                  subtitle:
-                      todo.actualMinutes != null && todo.actualMinutes! > 0
-                      ? '${todo.actualMinutes}분 공부'
-                      : null,
-                  isCompleted: todo.completed,
-                  onToggle: () {
-                    ref
-                        .read(todoListNotifierProvider.notifier)
-                        .toggleTodo(todo);
-                  },
-                ),
-              ),
-            );
-          }),
+          ...todosForSelected.map((todo) => _buildTodoRow(todo)),
 
-        // "더보기" 버튼 (할일 유무와 관계없이 항상 표시)
+        // ── 카테고리 관리 버튼 ──
         Padding(
           padding: AppPadding.horizontal20,
           child: TextButton(
@@ -375,7 +425,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  '더보기',
+                  '카테고리 관리',
                   style: AppTextStyles.label_16.copyWith(
                     color: AppColors.primary,
                   ),
@@ -391,6 +441,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ),
         ),
 
+        // ── 날짜 미지정 할일 섹션 ──
+        if (unscheduled.isNotEmpty) ...[
+          Padding(
+            padding: EdgeInsets.fromLTRB(20.w, 8.h, 20.w, 0),
+            child: _buildSectionTitle('날짜 미지정'),
+          ),
+          SizedBox(height: AppSpacing.s8),
+          ...unscheduled.map((todo) => _buildTodoRow(todo)),
+        ],
+
         SizedBox(height: AppSpacing.s40),
       ],
     );
@@ -403,14 +463,50 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
+  Widget _buildTodoRow(TodoEntity todo) {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 8.h),
+      child: Dismissible(
+        key: Key(todo.id),
+        direction: DismissDirection.endToStart,
+        background: Container(
+          alignment: Alignment.centerRight,
+          padding: AppPadding.horizontal20,
+          decoration: BoxDecoration(
+            color: AppColors.error.withValues(alpha: 0.2),
+            borderRadius: AppRadius.large,
+          ),
+          child: Icon(
+            Icons.delete_outline,
+            color: AppColors.error,
+            size: 24.w,
+          ),
+        ),
+        onDismissed: (_) {
+          ref.read(todoListNotifierProvider.notifier).deleteTodo(todo.id);
+        },
+        child: TodoItem(
+          title: todo.title,
+          subtitle: todo.actualMinutes != null && todo.actualMinutes! > 0
+              ? '${todo.actualMinutes}분 공부'
+              : null,
+          isCompleted: todo.completed,
+          onToggle: () {
+            ref.read(todoListNotifierProvider.notifier).toggleTodo(todo);
+          },
+        ),
+      ),
+    );
+  }
+
   Widget _buildEmptyTodoCard() {
     return AppCard(
       style: AppCardStyle.outlined,
       padding: AppPadding.all24,
       child: SpaceEmptyState(
         icon: Icons.edit_note_rounded,
-        title: '오늘의 할 일이 없어요',
-        subtitle: '할 일을 추가해보세요',
+        title: '할 일이 없어요',
+        subtitle: '+ 버튼을 눌러 추가해보세요',
         iconSize: 40,
         animated: false,
       ),

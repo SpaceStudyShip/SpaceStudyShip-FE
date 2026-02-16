@@ -22,7 +22,10 @@ part 'todo_provider.g.dart';
 
 @riverpod
 LocalTodoDataSource localTodoDataSource(Ref ref) {
-  throw UnimplementedError('SharedPreferences override 필요');
+  throw StateError(
+    'LocalTodoDataSource가 초기화되지 않았습니다. '
+    'SharedPreferences 초기화를 확인하세요.',
+  );
 }
 
 @riverpod

@@ -353,11 +353,13 @@ class _TodoListScreenState extends ConsumerState<TodoListScreen> {
             .read(todoListNotifierProvider.notifier)
             .deleteTodos(_selectedTodoIds.toList());
       }
+      if (!mounted) return;
       if (_selectedCategoryIds.isNotEmpty) {
         await ref
             .read(categoryListNotifierProvider.notifier)
             .deleteCategories(_selectedCategoryIds.toList());
       }
+      if (!mounted) return;
       _toggleEditMode();
     }
   }

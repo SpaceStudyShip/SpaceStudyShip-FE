@@ -19,10 +19,15 @@ class LocalTodoDataSource {
     final jsonString = _prefs.getString(_todosKey);
     if (jsonString == null) return [];
 
-    final List<dynamic> jsonList = json.decode(jsonString) as List<dynamic>;
-    return jsonList
-        .map((e) => TodoModel.fromJson(e as Map<String, dynamic>))
-        .toList();
+    try {
+      final List<dynamic> jsonList = json.decode(jsonString) as List<dynamic>;
+      return jsonList
+          .map((e) => TodoModel.fromJson(e as Map<String, dynamic>))
+          .toList();
+    } catch (_) {
+      _prefs.remove(_todosKey);
+      return [];
+    }
   }
 
   Future<void> saveTodos(List<TodoModel> todos) async {
@@ -36,10 +41,15 @@ class LocalTodoDataSource {
     final jsonString = _prefs.getString(_categoriesKey);
     if (jsonString == null) return [];
 
-    final List<dynamic> jsonList = json.decode(jsonString) as List<dynamic>;
-    return jsonList
-        .map((e) => TodoCategoryModel.fromJson(e as Map<String, dynamic>))
-        .toList();
+    try {
+      final List<dynamic> jsonList = json.decode(jsonString) as List<dynamic>;
+      return jsonList
+          .map((e) => TodoCategoryModel.fromJson(e as Map<String, dynamic>))
+          .toList();
+    } catch (_) {
+      _prefs.remove(_categoriesKey);
+      return [];
+    }
   }
 
   Future<void> saveCategories(List<TodoCategoryModel> categories) async {

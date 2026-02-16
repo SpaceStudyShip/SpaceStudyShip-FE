@@ -109,9 +109,9 @@ class CategoryTodoScreen extends ConsumerWidget {
               );
             },
             loading: () => const Center(child: CircularProgressIndicator()),
-            error: (error, _) => Center(
+            error: (_, _) => Center(
               child: Text(
-                '오류: $error',
+                '데이터를 불러오지 못했어요',
                 style: AppTextStyles.label_16.copyWith(color: AppColors.error),
               ),
             ),

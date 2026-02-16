@@ -172,7 +172,15 @@ void main() async {
   // ============================================================
   // 7. SharedPreferences 초기화 (Todo 로컬 저장용)
   // ============================================================
-  final prefs = await SharedPreferences.getInstance();
+  late final SharedPreferences prefs;
+  try {
+    prefs = await SharedPreferences.getInstance();
+  } catch (e) {
+    debugPrint('❌ [SharedPreferences] 초기화 실패: $e');
+    // SharedPreferences 실패해도 앱은 시작 — Todo 기능만 비활성
+    runApp(const ProviderScope(child: MyApp()));
+    return;
+  }
 
   runApp(
     ProviderScope(

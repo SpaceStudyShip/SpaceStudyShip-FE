@@ -141,24 +141,18 @@ class _TodoListScreenState extends ConsumerState<TodoListScreen> {
     AsyncValue<List<TodoEntity>> todosAsync,
     AsyncValue<List<TodoCategoryEntity>> categoriesAsync,
   ) {
-    if (todosAsync.isLoading || categoriesAsync.isLoading) {
-      return const Center(child: CircularProgressIndicator());
+    // 캐시된 데이터가 없을 때만 로딩 스피너 표시
+    // (invalidateSelf 후 새로고침 시 기존 데이터 유지)
+    if (!todosAsync.hasValue && !categoriesAsync.hasValue) {
+      if (todosAsync.isLoading || categoriesAsync.isLoading) {
+        return const Center(child: CircularProgressIndicator());
+      }
     }
 
-    final todosError = todosAsync.error;
-    final categoriesError = categoriesAsync.error;
-    if (todosError != null) {
+    if (todosAsync.hasError || categoriesAsync.hasError) {
       return Center(
         child: Text(
-          '오류: $todosError',
-          style: AppTextStyles.label_16.copyWith(color: AppColors.error),
-        ),
-      );
-    }
-    if (categoriesError != null) {
-      return Center(
-        child: Text(
-          '오류: $categoriesError',
+          '데이터를 불러오지 못했어요',
           style: AppTextStyles.label_16.copyWith(color: AppColors.error),
         ),
       );

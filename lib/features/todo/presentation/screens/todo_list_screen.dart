@@ -79,8 +79,9 @@ class _TodoListScreenState extends ConsumerState<TodoListScreen> {
         title: _isEditMode
             ? Text(
                 '$_selectedCount개 선택됨',
-                style:
-                    AppTextStyles.subHeading_18.copyWith(color: Colors.white),
+                style: AppTextStyles.subHeading_18.copyWith(
+                  color: Colors.white,
+                ),
               )
             : null,
         iconTheme: const IconThemeData(color: Colors.white),
@@ -107,14 +108,22 @@ class _TodoListScreenState extends ConsumerState<TodoListScreen> {
         ],
       ),
       floatingActionButton: _isEditMode && _selectedCount > 0
-          ? FloatingActionButton.extended(
-              onPressed: () => _confirmBatchDelete(context),
-              backgroundColor: AppColors.error,
-              icon:
-                  Icon(Icons.delete_outline, color: Colors.white, size: 20.w),
-              label: Text(
-                '$_selectedCount개 삭제',
-                style: AppTextStyles.label_16.copyWith(color: Colors.white),
+          ? Padding(
+              padding: EdgeInsets.only(
+                bottom: kBottomNavigationBarHeight + 50.h,
+              ),
+              child: FloatingActionButton.extended(
+                onPressed: () => _confirmBatchDelete(context),
+                backgroundColor: AppColors.error,
+                icon: Icon(
+                  Icons.delete_outline,
+                  color: Colors.white,
+                  size: 20.w,
+                ),
+                label: Text(
+                  '$_selectedCount개 삭제',
+                  style: AppTextStyles.label_16.copyWith(color: Colors.white),
+                ),
               ),
             )
           : null,
@@ -204,10 +213,10 @@ class _TodoListScreenState extends ConsumerState<TodoListScreen> {
             itemCount: categories.length,
             itemBuilder: (context, index) {
               final cat = categories[index];
-              final catTodos =
-                  todos.where((t) => t.categoryId == cat.id).toList();
-              final completedCount =
-                  catTodos.where((t) => t.completed).length;
+              final catTodos = todos
+                  .where((t) => t.categoryId == cat.id)
+                  .toList();
+              final completedCount = catTodos.where((t) => t.completed).length;
 
               return CategoryFolderCard(
                 name: cat.name,
@@ -242,10 +251,11 @@ class _TodoListScreenState extends ConsumerState<TodoListScreen> {
             if (!_isEditMode)
               GestureDetector(
                 onTap: () async {
-                  final result =
-                      await showTodoAddBottomSheet(context: context);
+                  final result = await showTodoAddBottomSheet(context: context);
                   if (result != null && mounted) {
-                    ref.read(todoListNotifierProvider.notifier).addTodo(
+                    ref
+                        .read(todoListNotifierProvider.notifier)
+                        .addTodo(
                           title: result['title'] as String,
                           categoryId: result['categoryId'] as String?,
                         );
@@ -266,19 +276,17 @@ class _TodoListScreenState extends ConsumerState<TodoListScreen> {
             (todo) => Padding(
               padding: EdgeInsets.only(bottom: 8.h),
               child: _isEditMode
-                  ? GestureDetector(
+                  ? TodoItem(
+                      title: todo.title,
+                      subtitle:
+                          todo.actualMinutes != null && todo.actualMinutes! > 0
+                          ? '${todo.actualMinutes}분 공부'
+                          : null,
+                      isCompleted: todo.completed,
+                      onToggle: () => _toggleTodoSelection(todo.id),
                       onTap: () => _toggleTodoSelection(todo.id),
-                      child: TodoItem(
-                        title: todo.title,
-                        subtitle: todo.actualMinutes != null &&
-                                todo.actualMinutes! > 0
-                            ? '${todo.actualMinutes}분 공부'
-                            : null,
-                        isCompleted: todo.completed,
-                        onToggle: () => _toggleTodoSelection(todo.id),
-                        leading: _buildSelectionCheckbox(
-                          _selectedTodoIds.contains(todo.id),
-                        ),
+                      leading: _buildSelectionCheckbox(
+                        _selectedTodoIds.contains(todo.id),
                       ),
                     )
                   : Dismissible(
@@ -288,9 +296,9 @@ class _TodoListScreenState extends ConsumerState<TodoListScreen> {
                         if (direction == DismissDirection.startToEnd) {
                           final newCategoryId =
                               await showCategoryMoveBottomSheet(
-                            context: context,
-                            currentCategoryId: todo.categoryId,
-                          );
+                                context: context,
+                                currentCategoryId: todo.categoryId,
+                              );
                           if (newCategoryId != null && mounted) {
                             ref
                                 .read(todoListNotifierProvider.notifier)
@@ -350,7 +358,8 @@ class _TodoListScreenState extends ConsumerState<TodoListScreen> {
                       ),
                       child: TodoItem(
                         title: todo.title,
-                        subtitle: todo.actualMinutes != null &&
+                        subtitle:
+                            todo.actualMinutes != null &&
                                 todo.actualMinutes! > 0
                             ? '${todo.actualMinutes}분 공부'
                             : null,
@@ -390,7 +399,9 @@ class _TodoListScreenState extends ConsumerState<TodoListScreen> {
   Future<void> _addCategory(BuildContext context) async {
     final result = await showCategoryAddBottomSheet(context: context);
     if (result != null && mounted) {
-      ref.read(categoryListNotifierProvider.notifier).addCategory(
+      ref
+          .read(categoryListNotifierProvider.notifier)
+          .addCategory(
             name: result['name'] as String,
             emoji: result['emoji'] as String?,
           );

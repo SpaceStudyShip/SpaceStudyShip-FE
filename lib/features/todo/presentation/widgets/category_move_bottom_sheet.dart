@@ -65,6 +65,12 @@ class CategoryMoveBottomSheet extends ConsumerWidget {
             },
           ),
 
+          // 구분선
+          Padding(
+            padding: AppPadding.horizontal20,
+            child: Divider(color: AppColors.spaceDivider, height: 1),
+          ),
+
           // 카테고리 목록
           categoriesAsync.when(
             data: (categories) => Column(

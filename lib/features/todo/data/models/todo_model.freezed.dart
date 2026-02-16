@@ -23,15 +23,16 @@ TodoModel _$TodoModelFromJson(Map<String, dynamic> json) {
 mixin _$TodoModel {
   String get id => throw _privateConstructorUsedError;
   String get title => throw _privateConstructorUsedError;
-  bool get completed => throw _privateConstructorUsedError;
+  @JsonKey(name: 'scheduled_dates')
+  List<DateTime> get scheduledDates => throw _privateConstructorUsedError;
+  @JsonKey(name: 'completed_dates')
+  List<DateTime> get completedDates => throw _privateConstructorUsedError;
   @JsonKey(name: 'category_id')
   String? get categoryId => throw _privateConstructorUsedError;
   @JsonKey(name: 'estimated_minutes')
   int? get estimatedMinutes => throw _privateConstructorUsedError;
   @JsonKey(name: 'actual_minutes')
   int? get actualMinutes => throw _privateConstructorUsedError;
-  @JsonKey(name: 'scheduled_date')
-  DateTime? get scheduledDate => throw _privateConstructorUsedError;
   @JsonKey(name: 'created_at')
   DateTime get createdAt => throw _privateConstructorUsedError;
   @JsonKey(name: 'updated_at')
@@ -55,11 +56,11 @@ abstract class $TodoModelCopyWith<$Res> {
   $Res call({
     String id,
     String title,
-    bool completed,
+    @JsonKey(name: 'scheduled_dates') List<DateTime> scheduledDates,
+    @JsonKey(name: 'completed_dates') List<DateTime> completedDates,
     @JsonKey(name: 'category_id') String? categoryId,
     @JsonKey(name: 'estimated_minutes') int? estimatedMinutes,
     @JsonKey(name: 'actual_minutes') int? actualMinutes,
-    @JsonKey(name: 'scheduled_date') DateTime? scheduledDate,
     @JsonKey(name: 'created_at') DateTime createdAt,
     @JsonKey(name: 'updated_at') DateTime updatedAt,
   });
@@ -82,11 +83,11 @@ class _$TodoModelCopyWithImpl<$Res, $Val extends TodoModel>
   $Res call({
     Object? id = null,
     Object? title = null,
-    Object? completed = null,
+    Object? scheduledDates = null,
+    Object? completedDates = null,
     Object? categoryId = freezed,
     Object? estimatedMinutes = freezed,
     Object? actualMinutes = freezed,
-    Object? scheduledDate = freezed,
     Object? createdAt = null,
     Object? updatedAt = null,
   }) {
@@ -100,10 +101,14 @@ class _$TodoModelCopyWithImpl<$Res, $Val extends TodoModel>
                 ? _value.title
                 : title // ignore: cast_nullable_to_non_nullable
                       as String,
-            completed: null == completed
-                ? _value.completed
-                : completed // ignore: cast_nullable_to_non_nullable
-                      as bool,
+            scheduledDates: null == scheduledDates
+                ? _value.scheduledDates
+                : scheduledDates // ignore: cast_nullable_to_non_nullable
+                      as List<DateTime>,
+            completedDates: null == completedDates
+                ? _value.completedDates
+                : completedDates // ignore: cast_nullable_to_non_nullable
+                      as List<DateTime>,
             categoryId: freezed == categoryId
                 ? _value.categoryId
                 : categoryId // ignore: cast_nullable_to_non_nullable
@@ -116,10 +121,6 @@ class _$TodoModelCopyWithImpl<$Res, $Val extends TodoModel>
                 ? _value.actualMinutes
                 : actualMinutes // ignore: cast_nullable_to_non_nullable
                       as int?,
-            scheduledDate: freezed == scheduledDate
-                ? _value.scheduledDate
-                : scheduledDate // ignore: cast_nullable_to_non_nullable
-                      as DateTime?,
             createdAt: null == createdAt
                 ? _value.createdAt
                 : createdAt // ignore: cast_nullable_to_non_nullable
@@ -146,11 +147,11 @@ abstract class _$$TodoModelImplCopyWith<$Res>
   $Res call({
     String id,
     String title,
-    bool completed,
+    @JsonKey(name: 'scheduled_dates') List<DateTime> scheduledDates,
+    @JsonKey(name: 'completed_dates') List<DateTime> completedDates,
     @JsonKey(name: 'category_id') String? categoryId,
     @JsonKey(name: 'estimated_minutes') int? estimatedMinutes,
     @JsonKey(name: 'actual_minutes') int? actualMinutes,
-    @JsonKey(name: 'scheduled_date') DateTime? scheduledDate,
     @JsonKey(name: 'created_at') DateTime createdAt,
     @JsonKey(name: 'updated_at') DateTime updatedAt,
   });
@@ -172,11 +173,11 @@ class __$$TodoModelImplCopyWithImpl<$Res>
   $Res call({
     Object? id = null,
     Object? title = null,
-    Object? completed = null,
+    Object? scheduledDates = null,
+    Object? completedDates = null,
     Object? categoryId = freezed,
     Object? estimatedMinutes = freezed,
     Object? actualMinutes = freezed,
-    Object? scheduledDate = freezed,
     Object? createdAt = null,
     Object? updatedAt = null,
   }) {
@@ -190,10 +191,14 @@ class __$$TodoModelImplCopyWithImpl<$Res>
             ? _value.title
             : title // ignore: cast_nullable_to_non_nullable
                   as String,
-        completed: null == completed
-            ? _value.completed
-            : completed // ignore: cast_nullable_to_non_nullable
-                  as bool,
+        scheduledDates: null == scheduledDates
+            ? _value._scheduledDates
+            : scheduledDates // ignore: cast_nullable_to_non_nullable
+                  as List<DateTime>,
+        completedDates: null == completedDates
+            ? _value._completedDates
+            : completedDates // ignore: cast_nullable_to_non_nullable
+                  as List<DateTime>,
         categoryId: freezed == categoryId
             ? _value.categoryId
             : categoryId // ignore: cast_nullable_to_non_nullable
@@ -206,10 +211,6 @@ class __$$TodoModelImplCopyWithImpl<$Res>
             ? _value.actualMinutes
             : actualMinutes // ignore: cast_nullable_to_non_nullable
                   as int?,
-        scheduledDate: freezed == scheduledDate
-            ? _value.scheduledDate
-            : scheduledDate // ignore: cast_nullable_to_non_nullable
-                  as DateTime?,
         createdAt: null == createdAt
             ? _value.createdAt
             : createdAt // ignore: cast_nullable_to_non_nullable
@@ -229,14 +230,17 @@ class _$TodoModelImpl implements _TodoModel {
   const _$TodoModelImpl({
     required this.id,
     required this.title,
-    this.completed = false,
+    @JsonKey(name: 'scheduled_dates')
+    final List<DateTime> scheduledDates = const [],
+    @JsonKey(name: 'completed_dates')
+    final List<DateTime> completedDates = const [],
     @JsonKey(name: 'category_id') this.categoryId,
     @JsonKey(name: 'estimated_minutes') this.estimatedMinutes,
     @JsonKey(name: 'actual_minutes') this.actualMinutes,
-    @JsonKey(name: 'scheduled_date') this.scheduledDate,
     @JsonKey(name: 'created_at') required this.createdAt,
     @JsonKey(name: 'updated_at') required this.updatedAt,
-  });
+  }) : _scheduledDates = scheduledDates,
+       _completedDates = completedDates;
 
   factory _$TodoModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$TodoModelImplFromJson(json);
@@ -245,9 +249,24 @@ class _$TodoModelImpl implements _TodoModel {
   final String id;
   @override
   final String title;
+  final List<DateTime> _scheduledDates;
   @override
-  @JsonKey()
-  final bool completed;
+  @JsonKey(name: 'scheduled_dates')
+  List<DateTime> get scheduledDates {
+    if (_scheduledDates is EqualUnmodifiableListView) return _scheduledDates;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_scheduledDates);
+  }
+
+  final List<DateTime> _completedDates;
+  @override
+  @JsonKey(name: 'completed_dates')
+  List<DateTime> get completedDates {
+    if (_completedDates is EqualUnmodifiableListView) return _completedDates;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_completedDates);
+  }
+
   @override
   @JsonKey(name: 'category_id')
   final String? categoryId;
@@ -258,9 +277,6 @@ class _$TodoModelImpl implements _TodoModel {
   @JsonKey(name: 'actual_minutes')
   final int? actualMinutes;
   @override
-  @JsonKey(name: 'scheduled_date')
-  final DateTime? scheduledDate;
-  @override
   @JsonKey(name: 'created_at')
   final DateTime createdAt;
   @override
@@ -269,7 +285,7 @@ class _$TodoModelImpl implements _TodoModel {
 
   @override
   String toString() {
-    return 'TodoModel(id: $id, title: $title, completed: $completed, categoryId: $categoryId, estimatedMinutes: $estimatedMinutes, actualMinutes: $actualMinutes, scheduledDate: $scheduledDate, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'TodoModel(id: $id, title: $title, scheduledDates: $scheduledDates, completedDates: $completedDates, categoryId: $categoryId, estimatedMinutes: $estimatedMinutes, actualMinutes: $actualMinutes, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 
   @override
@@ -279,16 +295,20 @@ class _$TodoModelImpl implements _TodoModel {
             other is _$TodoModelImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.title, title) || other.title == title) &&
-            (identical(other.completed, completed) ||
-                other.completed == completed) &&
+            const DeepCollectionEquality().equals(
+              other._scheduledDates,
+              _scheduledDates,
+            ) &&
+            const DeepCollectionEquality().equals(
+              other._completedDates,
+              _completedDates,
+            ) &&
             (identical(other.categoryId, categoryId) ||
                 other.categoryId == categoryId) &&
             (identical(other.estimatedMinutes, estimatedMinutes) ||
                 other.estimatedMinutes == estimatedMinutes) &&
             (identical(other.actualMinutes, actualMinutes) ||
                 other.actualMinutes == actualMinutes) &&
-            (identical(other.scheduledDate, scheduledDate) ||
-                other.scheduledDate == scheduledDate) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt) &&
             (identical(other.updatedAt, updatedAt) ||
@@ -301,11 +321,11 @@ class _$TodoModelImpl implements _TodoModel {
     runtimeType,
     id,
     title,
-    completed,
+    const DeepCollectionEquality().hash(_scheduledDates),
+    const DeepCollectionEquality().hash(_completedDates),
     categoryId,
     estimatedMinutes,
     actualMinutes,
-    scheduledDate,
     createdAt,
     updatedAt,
   );
@@ -328,11 +348,11 @@ abstract class _TodoModel implements TodoModel {
   const factory _TodoModel({
     required final String id,
     required final String title,
-    final bool completed,
+    @JsonKey(name: 'scheduled_dates') final List<DateTime> scheduledDates,
+    @JsonKey(name: 'completed_dates') final List<DateTime> completedDates,
     @JsonKey(name: 'category_id') final String? categoryId,
     @JsonKey(name: 'estimated_minutes') final int? estimatedMinutes,
     @JsonKey(name: 'actual_minutes') final int? actualMinutes,
-    @JsonKey(name: 'scheduled_date') final DateTime? scheduledDate,
     @JsonKey(name: 'created_at') required final DateTime createdAt,
     @JsonKey(name: 'updated_at') required final DateTime updatedAt,
   }) = _$TodoModelImpl;
@@ -345,7 +365,11 @@ abstract class _TodoModel implements TodoModel {
   @override
   String get title;
   @override
-  bool get completed;
+  @JsonKey(name: 'scheduled_dates')
+  List<DateTime> get scheduledDates;
+  @override
+  @JsonKey(name: 'completed_dates')
+  List<DateTime> get completedDates;
   @override
   @JsonKey(name: 'category_id')
   String? get categoryId;
@@ -355,9 +379,6 @@ abstract class _TodoModel implements TodoModel {
   @override
   @JsonKey(name: 'actual_minutes')
   int? get actualMinutes;
-  @override
-  @JsonKey(name: 'scheduled_date')
-  DateTime? get scheduledDate;
   @override
   @JsonKey(name: 'created_at')
   DateTime get createdAt;

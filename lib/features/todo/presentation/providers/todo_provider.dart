@@ -82,23 +82,34 @@ class TodoListNotifier extends _$TodoListNotifier {
     required String title,
     String? categoryId,
     int? estimatedMinutes,
-    DateTime? scheduledDate,
+    List<DateTime>? scheduledDates,
   }) async {
     final useCase = ref.read(createTodoUseCaseProvider);
     await useCase.execute(
       title: title,
       categoryId: categoryId,
       estimatedMinutes: estimatedMinutes,
-      scheduledDate: scheduledDate,
+      scheduledDates: scheduledDates,
     );
     ref.invalidateSelf();
   }
 
-  Future<void> toggleTodo(TodoEntity todo) async {
-    final toggled = todo.copyWith(completed: !todo.completed);
+  /// 특정 날짜의 완료 상태 토글
+  Future<void> toggleTodoForDate(TodoEntity todo, DateTime date) async {
+    final normalized = TodoEntity.normalizeDate(date);
+    final isCompleted = todo.isCompletedForDate(date);
+    final updatedCompletedDates = isCompleted
+        ? todo.completedDates
+            .where((d) => TodoEntity.normalizeDate(d) != normalized)
+            .toList()
+        : [...todo.completedDates, normalized];
+    final toggled = todo.copyWith(completedDates: updatedCompletedDates);
+
     final previousState = state;
     state = AsyncData(
-      state.valueOrNull?.map((t) => t.id == todo.id ? toggled : t).toList() ??
+      state.valueOrNull
+              ?.map((t) => t.id == todo.id ? toggled : t)
+              .toList() ??
           [],
     );
     try {
@@ -124,9 +135,55 @@ class TodoListNotifier extends _$TodoListNotifier {
     }
   }
 
+  /// 특정 날짜만 제거 (scheduledDates + completedDates 에서 해당 날짜 제거)
+  /// 날짜가 0개가 되면 할일 자체를 삭제한다.
+  Future<void> removeDateFromTodo(TodoEntity todo, DateTime date) async {
+    final normalized = TodoEntity.normalizeDate(date);
+    final newScheduled = todo.scheduledDates
+        .where((d) => TodoEntity.normalizeDate(d) != normalized)
+        .toList();
+    final newCompleted = todo.completedDates
+        .where((d) => TodoEntity.normalizeDate(d) != normalized)
+        .toList();
+
+    if (newScheduled.isEmpty) {
+      await deleteTodo(todo.id);
+    } else {
+      final updated = todo.copyWith(
+        scheduledDates: newScheduled,
+        completedDates: newCompleted,
+      );
+      await updateTodo(updated);
+    }
+  }
+
+  /// 해당 날짜 이후 모두 제거 (해당 날짜 포함)
+  /// 날짜가 0개가 되면 할일 자체를 삭제한다.
+  Future<void> removeDateAndAfterFromTodo(
+    TodoEntity todo,
+    DateTime date,
+  ) async {
+    final normalized = TodoEntity.normalizeDate(date);
+    final newScheduled = todo.scheduledDates
+        .where((d) => TodoEntity.normalizeDate(d).isBefore(normalized))
+        .toList();
+    final newCompleted = todo.completedDates
+        .where((d) => TodoEntity.normalizeDate(d).isBefore(normalized))
+        .toList();
+
+    if (newScheduled.isEmpty) {
+      await deleteTodo(todo.id);
+    } else {
+      final updated = todo.copyWith(
+        scheduledDates: newScheduled,
+        completedDates: newCompleted,
+      );
+      await updateTodo(updated);
+    }
+  }
+
   Future<void> deleteTodo(String id) async {
     final previousState = state;
-    // 낙관적 업데이트: Loading 없이 즉시 리스트에서 제거
     state = AsyncData(
       state.valueOrNull?.where((t) => t.id != id).toList() ?? [],
     );
@@ -212,13 +269,10 @@ List<TodoEntity> todosForDate(Ref ref, DateTime date) {
   final todos = ref.watch(todoListNotifierProvider).valueOrNull ?? [];
   final normalizedDate = DateTime(date.year, date.month, date.day);
   return todos.where((t) {
-    if (t.scheduledDate == null) return false;
-    final scheduled = DateTime(
-      t.scheduledDate!.year,
-      t.scheduledDate!.month,
-      t.scheduledDate!.day,
-    );
-    return scheduled == normalizedDate;
+    return t.scheduledDates.any((d) {
+      final scheduled = DateTime(d.year, d.month, d.day);
+      return scheduled == normalizedDate;
+    });
   }).toList();
 }
 
@@ -227,7 +281,7 @@ List<TodoEntity> todosForDate(Ref ref, DateTime date) {
 @riverpod
 List<TodoEntity> unscheduledTodos(Ref ref) {
   final todos = ref.watch(todoListNotifierProvider).valueOrNull ?? [];
-  return todos.where((t) => t.scheduledDate == null).toList();
+  return todos.where((t) => t.scheduledDates.isEmpty).toList();
 }
 
 // === 날짜별 할일 맵 (캘린더 마커용) ===
@@ -237,12 +291,8 @@ Map<DateTime, List<TodoEntity>> todosByDateMap(Ref ref) {
   final todos = ref.watch(todoListNotifierProvider).valueOrNull ?? [];
   final map = <DateTime, List<TodoEntity>>{};
   for (final todo in todos) {
-    if (todo.scheduledDate != null) {
-      final key = DateTime(
-        todo.scheduledDate!.year,
-        todo.scheduledDate!.month,
-        todo.scheduledDate!.day,
-      );
+    for (final date in todo.scheduledDates) {
+      final key = DateTime(date.year, date.month, date.day);
       map.putIfAbsent(key, () => []).add(todo);
     }
   }

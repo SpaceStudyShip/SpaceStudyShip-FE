@@ -32,7 +32,7 @@ class TodoSelectBottomSheet extends ConsumerWidget {
           ),
           child: todosAsync.when(
             data: (todos) {
-              final incomplete = todos.where((t) => !t.completed).toList();
+              final incomplete = todos.where((t) => !t.isFullyCompleted).toList();
 
               return CustomScrollView(
                 controller: scrollController,

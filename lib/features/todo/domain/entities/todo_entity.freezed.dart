@@ -19,11 +19,11 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$TodoEntity {
   String get id => throw _privateConstructorUsedError;
   String get title => throw _privateConstructorUsedError;
-  bool get completed => throw _privateConstructorUsedError;
+  List<DateTime> get scheduledDates => throw _privateConstructorUsedError;
+  List<DateTime> get completedDates => throw _privateConstructorUsedError;
   String? get categoryId => throw _privateConstructorUsedError;
   int? get estimatedMinutes => throw _privateConstructorUsedError;
   int? get actualMinutes => throw _privateConstructorUsedError;
-  DateTime? get scheduledDate => throw _privateConstructorUsedError;
   DateTime get createdAt => throw _privateConstructorUsedError;
   DateTime get updatedAt => throw _privateConstructorUsedError;
 
@@ -44,11 +44,11 @@ abstract class $TodoEntityCopyWith<$Res> {
   $Res call({
     String id,
     String title,
-    bool completed,
+    List<DateTime> scheduledDates,
+    List<DateTime> completedDates,
     String? categoryId,
     int? estimatedMinutes,
     int? actualMinutes,
-    DateTime? scheduledDate,
     DateTime createdAt,
     DateTime updatedAt,
   });
@@ -71,11 +71,11 @@ class _$TodoEntityCopyWithImpl<$Res, $Val extends TodoEntity>
   $Res call({
     Object? id = null,
     Object? title = null,
-    Object? completed = null,
+    Object? scheduledDates = null,
+    Object? completedDates = null,
     Object? categoryId = freezed,
     Object? estimatedMinutes = freezed,
     Object? actualMinutes = freezed,
-    Object? scheduledDate = freezed,
     Object? createdAt = null,
     Object? updatedAt = null,
   }) {
@@ -89,10 +89,14 @@ class _$TodoEntityCopyWithImpl<$Res, $Val extends TodoEntity>
                 ? _value.title
                 : title // ignore: cast_nullable_to_non_nullable
                       as String,
-            completed: null == completed
-                ? _value.completed
-                : completed // ignore: cast_nullable_to_non_nullable
-                      as bool,
+            scheduledDates: null == scheduledDates
+                ? _value.scheduledDates
+                : scheduledDates // ignore: cast_nullable_to_non_nullable
+                      as List<DateTime>,
+            completedDates: null == completedDates
+                ? _value.completedDates
+                : completedDates // ignore: cast_nullable_to_non_nullable
+                      as List<DateTime>,
             categoryId: freezed == categoryId
                 ? _value.categoryId
                 : categoryId // ignore: cast_nullable_to_non_nullable
@@ -105,10 +109,6 @@ class _$TodoEntityCopyWithImpl<$Res, $Val extends TodoEntity>
                 ? _value.actualMinutes
                 : actualMinutes // ignore: cast_nullable_to_non_nullable
                       as int?,
-            scheduledDate: freezed == scheduledDate
-                ? _value.scheduledDate
-                : scheduledDate // ignore: cast_nullable_to_non_nullable
-                      as DateTime?,
             createdAt: null == createdAt
                 ? _value.createdAt
                 : createdAt // ignore: cast_nullable_to_non_nullable
@@ -135,11 +135,11 @@ abstract class _$$TodoEntityImplCopyWith<$Res>
   $Res call({
     String id,
     String title,
-    bool completed,
+    List<DateTime> scheduledDates,
+    List<DateTime> completedDates,
     String? categoryId,
     int? estimatedMinutes,
     int? actualMinutes,
-    DateTime? scheduledDate,
     DateTime createdAt,
     DateTime updatedAt,
   });
@@ -161,11 +161,11 @@ class __$$TodoEntityImplCopyWithImpl<$Res>
   $Res call({
     Object? id = null,
     Object? title = null,
-    Object? completed = null,
+    Object? scheduledDates = null,
+    Object? completedDates = null,
     Object? categoryId = freezed,
     Object? estimatedMinutes = freezed,
     Object? actualMinutes = freezed,
-    Object? scheduledDate = freezed,
     Object? createdAt = null,
     Object? updatedAt = null,
   }) {
@@ -179,10 +179,14 @@ class __$$TodoEntityImplCopyWithImpl<$Res>
             ? _value.title
             : title // ignore: cast_nullable_to_non_nullable
                   as String,
-        completed: null == completed
-            ? _value.completed
-            : completed // ignore: cast_nullable_to_non_nullable
-                  as bool,
+        scheduledDates: null == scheduledDates
+            ? _value._scheduledDates
+            : scheduledDates // ignore: cast_nullable_to_non_nullable
+                  as List<DateTime>,
+        completedDates: null == completedDates
+            ? _value._completedDates
+            : completedDates // ignore: cast_nullable_to_non_nullable
+                  as List<DateTime>,
         categoryId: freezed == categoryId
             ? _value.categoryId
             : categoryId // ignore: cast_nullable_to_non_nullable
@@ -195,10 +199,6 @@ class __$$TodoEntityImplCopyWithImpl<$Res>
             ? _value.actualMinutes
             : actualMinutes // ignore: cast_nullable_to_non_nullable
                   as int?,
-        scheduledDate: freezed == scheduledDate
-            ? _value.scheduledDate
-            : scheduledDate // ignore: cast_nullable_to_non_nullable
-                  as DateTime?,
         createdAt: null == createdAt
             ? _value.createdAt
             : createdAt // ignore: cast_nullable_to_non_nullable
@@ -214,26 +214,43 @@ class __$$TodoEntityImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$TodoEntityImpl implements _TodoEntity {
+class _$TodoEntityImpl extends _TodoEntity {
   const _$TodoEntityImpl({
     required this.id,
     required this.title,
-    this.completed = false,
+    final List<DateTime> scheduledDates = const [],
+    final List<DateTime> completedDates = const [],
     this.categoryId,
     this.estimatedMinutes,
     this.actualMinutes,
-    this.scheduledDate,
     required this.createdAt,
     required this.updatedAt,
-  });
+  }) : _scheduledDates = scheduledDates,
+       _completedDates = completedDates,
+       super._();
 
   @override
   final String id;
   @override
   final String title;
+  final List<DateTime> _scheduledDates;
   @override
   @JsonKey()
-  final bool completed;
+  List<DateTime> get scheduledDates {
+    if (_scheduledDates is EqualUnmodifiableListView) return _scheduledDates;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_scheduledDates);
+  }
+
+  final List<DateTime> _completedDates;
+  @override
+  @JsonKey()
+  List<DateTime> get completedDates {
+    if (_completedDates is EqualUnmodifiableListView) return _completedDates;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_completedDates);
+  }
+
   @override
   final String? categoryId;
   @override
@@ -241,15 +258,13 @@ class _$TodoEntityImpl implements _TodoEntity {
   @override
   final int? actualMinutes;
   @override
-  final DateTime? scheduledDate;
-  @override
   final DateTime createdAt;
   @override
   final DateTime updatedAt;
 
   @override
   String toString() {
-    return 'TodoEntity(id: $id, title: $title, completed: $completed, categoryId: $categoryId, estimatedMinutes: $estimatedMinutes, actualMinutes: $actualMinutes, scheduledDate: $scheduledDate, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'TodoEntity(id: $id, title: $title, scheduledDates: $scheduledDates, completedDates: $completedDates, categoryId: $categoryId, estimatedMinutes: $estimatedMinutes, actualMinutes: $actualMinutes, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 
   @override
@@ -259,16 +274,20 @@ class _$TodoEntityImpl implements _TodoEntity {
             other is _$TodoEntityImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.title, title) || other.title == title) &&
-            (identical(other.completed, completed) ||
-                other.completed == completed) &&
+            const DeepCollectionEquality().equals(
+              other._scheduledDates,
+              _scheduledDates,
+            ) &&
+            const DeepCollectionEquality().equals(
+              other._completedDates,
+              _completedDates,
+            ) &&
             (identical(other.categoryId, categoryId) ||
                 other.categoryId == categoryId) &&
             (identical(other.estimatedMinutes, estimatedMinutes) ||
                 other.estimatedMinutes == estimatedMinutes) &&
             (identical(other.actualMinutes, actualMinutes) ||
                 other.actualMinutes == actualMinutes) &&
-            (identical(other.scheduledDate, scheduledDate) ||
-                other.scheduledDate == scheduledDate) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt) &&
             (identical(other.updatedAt, updatedAt) ||
@@ -280,11 +299,11 @@ class _$TodoEntityImpl implements _TodoEntity {
     runtimeType,
     id,
     title,
-    completed,
+    const DeepCollectionEquality().hash(_scheduledDates),
+    const DeepCollectionEquality().hash(_completedDates),
     categoryId,
     estimatedMinutes,
     actualMinutes,
-    scheduledDate,
     createdAt,
     updatedAt,
   );
@@ -298,33 +317,34 @@ class _$TodoEntityImpl implements _TodoEntity {
       __$$TodoEntityImplCopyWithImpl<_$TodoEntityImpl>(this, _$identity);
 }
 
-abstract class _TodoEntity implements TodoEntity {
+abstract class _TodoEntity extends TodoEntity {
   const factory _TodoEntity({
     required final String id,
     required final String title,
-    final bool completed,
+    final List<DateTime> scheduledDates,
+    final List<DateTime> completedDates,
     final String? categoryId,
     final int? estimatedMinutes,
     final int? actualMinutes,
-    final DateTime? scheduledDate,
     required final DateTime createdAt,
     required final DateTime updatedAt,
   }) = _$TodoEntityImpl;
+  const _TodoEntity._() : super._();
 
   @override
   String get id;
   @override
   String get title;
   @override
-  bool get completed;
+  List<DateTime> get scheduledDates;
+  @override
+  List<DateTime> get completedDates;
   @override
   String? get categoryId;
   @override
   int? get estimatedMinutes;
   @override
   int? get actualMinutes;
-  @override
-  DateTime? get scheduledDate;
   @override
   DateTime get createdAt;
   @override

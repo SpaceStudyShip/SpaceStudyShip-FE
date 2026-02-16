@@ -154,25 +154,18 @@ class SpaceCalendar extends StatelessWidget {
           );
         },
 
-        // 도트 마커 — 할일 있는 날짜에 작은 점
+        // 도트 마커 — 완료 상태에 따라 아이콘 변경
         markerBuilder: (context, day, events) {
           if (events.isEmpty) return const SizedBox.shrink();
+          final allCompleted = events.every((t) => t.isCompletedForDate(day));
+          final markerColor =
+              allCompleted ? AppColors.success : AppColors.primary;
           return Positioned(
             bottom: 2.h,
-            child: Container(
-              width: 5.w,
-              height: 5.w,
-              decoration: BoxDecoration(
-                color: AppColors.primary,
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.primary.withValues(alpha: 0.4),
-                    blurRadius: 4,
-                    spreadRadius: 1,
-                  ),
-                ],
-              ),
+            child: Icon(
+              allCompleted ? Icons.check_circle : Icons.circle,
+              size: 6.w,
+              color: markerColor,
             ),
           );
         },

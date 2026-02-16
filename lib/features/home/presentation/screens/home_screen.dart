@@ -256,7 +256,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       DateTime.now().day,
     );
     final todayTodoCount =
-        todosByDate[todayKey]?.where((t) => !t.completed).length ?? 0;
+        todosByDate[todayKey]?.where((t) => !t.isCompletedForDate(todayKey)).length ?? 0;
 
     return ListView(
       controller: scrollController,
@@ -389,13 +389,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 onTap: () async {
                   final result = await showTodoAddBottomSheet(
                     context: context,
-                    initialScheduledDate: _selectedDay,
+                    initialScheduledDates: [_selectedDay],
                   );
                   if (result != null && mounted) {
                     ref.read(todoListNotifierProvider.notifier).addTodo(
                       title: result['title'] as String,
                       categoryId: result['categoryId'] as String?,
-                      scheduledDate: result['scheduledDate'] as DateTime?,
+                      scheduledDates:
+                          result['scheduledDates'] as List<DateTime>?,
                     );
                   }
                 },
@@ -416,7 +417,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             child: _buildEmptyTodoCard(),
           )
         else
-          ...todosForSelected.map((todo) => _buildTodoRow(todo)),
+          ...todosForSelected.map((todo) => _buildTodoRow(todo, contextDate: _selectedDay)),
 
         // ── 카테고리 관리 버튼 ──
         Padding(
@@ -465,10 +466,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  Widget _buildTodoRow(TodoEntity todo) {
+  Widget _buildTodoRow(TodoEntity todo, {DateTime? contextDate}) {
     return Padding(
       padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 8.h),
-      child: DismissibleTodoItem(todo: todo),
+      child: DismissibleTodoItem(todo: todo, contextDate: contextDate),
     );
   }
 

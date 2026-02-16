@@ -216,7 +216,7 @@ class _TodoListScreenState extends ConsumerState<TodoListScreen> {
               final catTodos = todos
                   .where((t) => t.categoryId == cat.id)
                   .toList();
-              final completedCount = catTodos.where((t) => t.completed).length;
+              final completedCount = catTodos.where((t) => t.isFullyCompleted).length;
 
               return CategoryFolderCard(
                 name: cat.name,
@@ -258,8 +258,8 @@ class _TodoListScreenState extends ConsumerState<TodoListScreen> {
                         .addTodo(
                           title: result['title'] as String,
                           categoryId: result['categoryId'] as String?,
-                          scheduledDate:
-                              result['scheduledDate'] as DateTime?,
+                          scheduledDates:
+                              result['scheduledDates'] as List<DateTime>?,
                         );
                   }
                 },
@@ -284,7 +284,7 @@ class _TodoListScreenState extends ConsumerState<TodoListScreen> {
                           todo.actualMinutes != null && todo.actualMinutes! > 0
                           ? '${todo.actualMinutes}분 공부'
                           : null,
-                      isCompleted: todo.completed,
+                      isCompleted: todo.isFullyCompleted,
                       onToggle: () => _toggleTodoSelection(todo.id),
                       onTap: () => _toggleTodoSelection(todo.id),
                       leading: _buildSelectionCheckbox(

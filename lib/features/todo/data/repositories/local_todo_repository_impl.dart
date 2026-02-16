@@ -29,7 +29,7 @@ class LocalTodoRepositoryImpl implements TodoRepository {
     required String title,
     String? categoryId,
     int? estimatedMinutes,
-    DateTime? scheduledDate,
+    List<DateTime>? scheduledDates,
   }) async {
     final now = DateTime.now();
     final model = TodoModel(
@@ -37,7 +37,7 @@ class LocalTodoRepositoryImpl implements TodoRepository {
       title: title,
       categoryId: categoryId,
       estimatedMinutes: estimatedMinutes,
-      scheduledDate: scheduledDate,
+      scheduledDates: scheduledDates ?? [],
       createdAt: now,
       updatedAt: now,
     );

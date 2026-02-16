@@ -60,8 +60,8 @@ class CategoryTodoScreen extends ConsumerWidget {
                     .addTodo(
                       title: result['title'] as String,
                       categoryId: result['categoryId'] as String?,
-                      scheduledDate:
-                          result['scheduledDate'] as DateTime?,
+                      scheduledDates:
+                          result['scheduledDates'] as List<DateTime>?,
                     );
               }
             },

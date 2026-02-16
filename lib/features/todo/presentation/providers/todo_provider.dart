@@ -11,6 +11,7 @@ import '../../domain/repositories/todo_repository.dart';
 import '../../domain/usecases/create_category_usecase.dart';
 import '../../domain/usecases/create_todo_usecase.dart';
 import '../../domain/usecases/delete_category_usecase.dart';
+import '../../domain/usecases/update_category_usecase.dart';
 import '../../domain/usecases/delete_todo_usecase.dart';
 import '../../domain/usecases/get_categories_usecase.dart';
 import '../../domain/usecases/get_todo_list_usecase.dart';
@@ -64,6 +65,11 @@ GetCategoriesUseCase getCategoriesUseCase(Ref ref) {
 @riverpod
 CreateCategoryUseCase createCategoryUseCase(Ref ref) {
   return CreateCategoryUseCase(ref.watch(todoRepositoryProvider));
+}
+
+@riverpod
+UpdateCategoryUseCase updateCategoryUseCase(Ref ref) {
+  return UpdateCategoryUseCase(ref.watch(todoRepositoryProvider));
 }
 
 @riverpod
@@ -228,6 +234,23 @@ class CategoryListNotifier extends _$CategoryListNotifier {
     final useCase = ref.read(createCategoryUseCaseProvider);
     await useCase.execute(name: name, emoji: emoji);
     ref.invalidateSelf();
+  }
+
+  Future<void> updateCategory(TodoCategoryEntity category) async {
+    final previousState = state;
+    state = AsyncData(
+      state.valueOrNull
+              ?.map((c) => c.id == category.id ? category : c)
+              .toList() ??
+          [],
+    );
+    try {
+      final useCase = ref.read(updateCategoryUseCaseProvider);
+      await useCase.execute(category);
+    } catch (_) {
+      state = previousState;
+      rethrow;
+    }
   }
 
   Future<void> deleteCategory(String id) async {

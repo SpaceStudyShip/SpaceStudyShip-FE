@@ -154,6 +154,26 @@ final createCategoryUseCaseProvider =
 // ignore: unused_element
 typedef CreateCategoryUseCaseRef =
     AutoDisposeProviderRef<CreateCategoryUseCase>;
+String _$updateCategoryUseCaseHash() =>
+    r'75b96540c4b8c719b61eb6acbf36b5a1a9e74b42';
+
+/// See also [updateCategoryUseCase].
+@ProviderFor(updateCategoryUseCase)
+final updateCategoryUseCaseProvider =
+    AutoDisposeProvider<UpdateCategoryUseCase>.internal(
+      updateCategoryUseCase,
+      name: r'updateCategoryUseCaseProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$updateCategoryUseCaseHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef UpdateCategoryUseCaseRef =
+    AutoDisposeProviderRef<UpdateCategoryUseCase>;
 String _$deleteCategoryUseCaseHash() =>
     r'636a6852abf59f66d857fab2503814a997f7ed3f';
 
@@ -618,7 +638,7 @@ final todoListNotifierProvider =
 
 typedef _$TodoListNotifier = AutoDisposeAsyncNotifier<List<TodoEntity>>;
 String _$categoryListNotifierHash() =>
-    r'4f5d65696aa50d0b77bcff0e292a83d77e29a06e';
+    r'245f4131a6d5be10df9252f7cef077b7c68dda51';
 
 /// See also [CategoryListNotifier].
 @ProviderFor(CategoryListNotifier)

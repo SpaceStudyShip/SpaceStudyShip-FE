@@ -3,7 +3,7 @@
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
 
 **Goal:** 게스트 모드에서 SharedPreferences 기반 로컬 할일(Todo) CRUD + 카테고리(폴더) 기능을 구현하고, HomeScreen의 하드코딩된 할일을 실제 데이터로 교체한다.
-ㅇ
+
 **Architecture:** Clean Architecture 3-Layer (Domain → Data → Presentation). TodoRepository 인터페이스에 LocalTodoRepositoryImpl(SharedPreferences)을 주입. isGuest 플래그로 향후 Remote 구현체와 분기 가능하도록 설계.
 
 **Tech Stack:** Flutter, Riverpod 2.6.1 (@riverpod), Freezed 2.5.7, SharedPreferences 2.3.4, UUID 4.5.2

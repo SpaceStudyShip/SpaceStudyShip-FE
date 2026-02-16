@@ -4,11 +4,14 @@ publish_to: "none"
 version: 1.1.1+40
 environment:
   sdk: ^3.9.2
+
 dependencies:
   flutter:
     sdk: flutter
+
   cupertino_icons: ^1.0.8
   go_router: ^17.1.0
+
   # 상태 관리 및 데이터 모델
   flutter_riverpod: ^2.6.1
   riverpod_annotation: ^2.6.1
@@ -16,6 +19,7 @@ dependencies:
   json_annotation: ^4.9.0 # JSON 직렬화 어노테이션
   shared_preferences: ^2.3.4 # 로컬 설정 저장 (테마, 온보딩 등)
   intl: ^0.20.2 # 국제화 및 날짜/숫자 포맷팅
+
   # 네트워크 & 인증
   dio: ^5.9.0 # HTTP 클라이언트
   retrofit: 4.7.3 # REST API 클라이언트 생성 (4.9.x logError 호환성 이슈로 고정)
@@ -25,6 +29,7 @@ dependencies:
   sign_in_with_apple: ^6.1.3 # Apple 소셜 로그인
   flutter_dotenv: ^6.0.0 # 환경 변수 관리 (.env 파일)
   uuid: ^4.5.2 # 앱 내 고유 식별자 생성
+
   # UI/UX 레이아웃
   flutter_screenutil: ^5.9.3 # 화면, 해상도 대응 유틸리티
   cached_network_image: ^3.4.1 # 네트워크 이미지 캐싱
@@ -36,17 +41,21 @@ dependencies:
   flutter_expandable_fab: ^2.5.2 # 확장 가능한 FAB (Floating Action Button)
   showcaseview: ^5.0.1 # 튜토리얼
   table_calendar: ^3.2.0 # 캘린더 위젯 (월간/주간 뷰)
+
   # 리스트 & 데이터 표시
   infinite_scroll_pagination: ^5.1.1 # 무한 스크롤 페이징 처리
+
   # 알림 & 실시간 통신
   firebase_core: ^4.1.0
   firebase_messaging: ^16.0.1 # 푸시 알림(Firebase Cloud Messaging)
   flutter_local_notifications: ^19.4.2 # 로컬 알림 생성 및 관리
   firebase_crashlytics: ^5.0.6 # 에러 리포팅 및 크래시 수집
   firebase_analytics: ^12.1.0 # Firebase 분석 및 이벤트 추적
+
   # 기기 정보
   device_info_plus: ^10.1.2 # 기기 정보 수집 (FCM 기기 식별용)
   package_info_plus: ^9.0.0 # 앱 버전 및 패키지 정보
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -60,6 +69,18 @@ dev_dependencies:
   # 앱 통합 관리 도구
   flutter_launcher_icons: ^0.14.4 # 앱 런처 아이콘 자동 생성
   change_app_package_name: ^1.5.0 # 앱 패키지명 변경 자동화
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/app_logo.png"
+  min_sdk_android: 21
+  web:
+    generate: true
+    image_path: "assets/app_logo.png"
+  adaptive_icon_background: "#1A1B2E"
+  adaptive_icon_foreground: "assets/app_logo.png"
+
 flutter:
   generate: true
   uses-material-design: true

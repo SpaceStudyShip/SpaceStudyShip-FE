@@ -15,7 +15,7 @@ import 'todo_add_bottom_sheet.dart';
 
 /// 양방향 스와이프 Dismissible + TodoItem 통합 위젯
 ///
-/// - 좌→우: 카테고리 이동 바텀시트
+/// - 좌→우: 카테고리 선택 바텀시트
 /// - 우→좌: 삭제 확인 (다중 날짜면 3가지 선택)
 /// - 탭: 완료 토글 (onTap 미지정 시)
 ///

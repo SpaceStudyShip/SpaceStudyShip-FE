@@ -14,7 +14,8 @@ class CategoryFolderCard extends StatefulWidget {
     required this.todoCount,
     required this.completedCount,
     required this.onTap,
-    this.onDelete,
+    this.isEditMode = false,
+    this.isSelected = false,
   });
 
   final String name;
@@ -22,7 +23,8 @@ class CategoryFolderCard extends StatefulWidget {
   final int todoCount;
   final int completedCount;
   final VoidCallback onTap;
-  final VoidCallback? onDelete;
+  final bool isEditMode;
+  final bool isSelected;
 
   @override
   State<CategoryFolderCard> createState() => _CategoryFolderCardState();
@@ -48,25 +50,38 @@ class _CategoryFolderCardState extends State<CategoryFolderCard> {
           decoration: BoxDecoration(
             color: AppColors.spaceSurface,
             borderRadius: AppRadius.card,
-            border: Border.all(color: AppColors.spaceDivider),
+            border: Border.all(
+              color: widget.isEditMode && widget.isSelected
+                  ? AppColors.error.withValues(alpha: 0.6)
+                  : AppColors.spaceDivider,
+            ),
           ),
           child: Stack(
             children: [
-              // 더보기 버튼 (우상단)
-              if (widget.onDelete != null)
+              // 편집 모드: 선택 체크 표시 (좌상단)
+              if (widget.isEditMode)
                 Positioned(
-                  top: 4.h,
-                  right: 4.w,
-                  child: GestureDetector(
-                    onTap: widget.onDelete,
-                    child: Padding(
-                      padding: AppPadding.all8,
-                      child: Icon(
-                        Icons.more_vert_rounded,
-                        size: 16.w,
-                        color: AppColors.textTertiary,
+                  top: 8.h,
+                  left: 8.w,
+                  child: AnimatedContainer(
+                    duration: TossDesignTokens.animationFast,
+                    width: 22.w,
+                    height: 22.w,
+                    decoration: BoxDecoration(
+                      color: widget.isSelected
+                          ? AppColors.error
+                          : Colors.transparent,
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: widget.isSelected
+                            ? AppColors.error
+                            : AppColors.textTertiary,
+                        width: 2,
                       ),
                     ),
+                    child: widget.isSelected
+                        ? Icon(Icons.check, size: 14.w, color: Colors.white)
+                        : null,
                   ),
                 ),
               // 중앙 콘텐츠

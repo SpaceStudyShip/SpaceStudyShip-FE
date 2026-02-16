@@ -6,6 +6,7 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/widgets/backgrounds/space_background.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
+import '../../../../core/widgets/dialogs/app_dialog.dart';
 import '../../../../core/widgets/space/todo_item.dart';
 import '../../../../core/widgets/states/space_empty_state.dart';
 import '../providers/todo_provider.dart';
@@ -126,7 +127,18 @@ class CategoryTodoScreen extends ConsumerWidget {
                           }
                           return false; // 아이템 유지
                         }
-                        return true; // 삭제 진행
+                        // 삭제 확인
+                        final confirmed = await AppDialog.confirm(
+                          context: context,
+                          title: '할일 삭제',
+                          message:
+                              "'${todo.title}'을(를) 삭제하시겠습니까?\n삭제된 항목은 복구할 수 없습니다.",
+                          emotion: AppDialogEmotion.warning,
+                          confirmText: '삭제',
+                          cancelText: '취소',
+                          isDestructive: true,
+                        );
+                        return confirmed == true;
                       },
                       onDismissed: (_) {
                         ref

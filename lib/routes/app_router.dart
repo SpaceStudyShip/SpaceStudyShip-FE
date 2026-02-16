@@ -386,7 +386,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                 Icon(
                   Icons.explore_off_rounded,
                   size: 64,
-                  color: Colors.white.withValues(alpha: 0.5),
+                  color: AppColors.textTertiary,
                 ),
                 SizedBox(height: AppSpacing.s16),
                 Text(
@@ -397,7 +397,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                 Text(
                   state.uri.toString(),
                   style: AppTextStyles.tag_12.copyWith(
-                    color: Colors.white.withValues(alpha: 0.5),
+                    color: AppColors.textTertiary,
                   ),
                 ),
                 SizedBox(height: AppSpacing.s24),
@@ -440,7 +440,7 @@ class PlaceholderScreen extends StatelessWidget {
                 Icon(
                   Icons.construction_rounded,
                   size: 64,
-                  color: Colors.white.withValues(alpha: 0.5),
+                  color: AppColors.textTertiary,
                 ),
                 SizedBox(height: AppSpacing.s16),
                 Text(
@@ -453,7 +453,7 @@ class PlaceholderScreen extends StatelessWidget {
                 Text(
                   '개발 중...',
                   style: AppTextStyles.paragraph_14.copyWith(
-                    color: Colors.white.withValues(alpha: 0.5),
+                    color: AppColors.textTertiary,
                   ),
                 ),
               ],

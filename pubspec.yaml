@@ -35,7 +35,7 @@ dependencies:
   flutter_svg: ^2.2.1 # 앱 아이콘
   flutter_expandable_fab: ^2.5.2 # 확장 가능한 FAB (Floating Action Button)
   showcaseview: ^5.0.1 # 튜토리얼
-  table_calendar: ^3.1.3 # 캘린더 위젯 (월간/주간 뷰)
+  table_calendar: ^3.2.0 # 캘린더 위젯 (월간/주간 뷰)
   # 리스트 & 데이터 표시
   infinite_scroll_pagination: ^5.1.1 # 무한 스크롤 페이징 처리
   # 알림 & 실시간 통신

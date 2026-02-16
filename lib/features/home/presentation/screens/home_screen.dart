@@ -47,7 +47,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   // 캘린더 상태
   DateTime _focusedDay = DateTime.now();
   DateTime _selectedDay = DateTime.now();
-  CalendarFormat _calendarFormat = CalendarFormat.month;
+  CalendarFormat _calendarFormat = CalendarFormat.week;
   final DraggableScrollableController _sheetController =
       DraggableScrollableController();
 
@@ -72,9 +72,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     if (expanded != _isSheetExpanded) {
       setState(() {
         _isSheetExpanded = expanded;
-        // 시트 접힘 → 월간 포맷으로 리셋 (다음 펼침 시 월간부터 시작)
+        // 시트 접힘 → 주간 포맷으로 리셋 (시각적 연속성 유지)
         if (!expanded) {
-          _calendarFormat = CalendarFormat.month;
+          _calendarFormat = CalendarFormat.week;
         }
       });
     }
@@ -137,7 +137,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           GestureDetector(
             onTap: () {
               _sheetController.animateTo(
-                0.25,
+                0.30,
                 duration: const Duration(milliseconds: 300),
                 curve: Curves.easeOut,
               );
@@ -207,11 +207,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget _buildBottomSheet() {
     return DraggableScrollableSheet(
       controller: _sheetController,
-      initialChildSize: 0.25,
-      minChildSize: 0.25,
+      initialChildSize: 0.30,
+      minChildSize: 0.30,
       maxChildSize: 0.85,
       snap: true,
-      snapSizes: const [0.25, 0.85],
+      snapSizes: const [0.30, 0.85],
       builder: (context, scrollController) {
         return Container(
           decoration: BoxDecoration(
@@ -295,6 +295,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ),
         ),
 
+        SizedBox(height: AppSpacing.s12),
+
         // 오늘의 할일 카운트 + 펼치기 안내
         GestureDetector(
           onTap: () {
@@ -306,17 +308,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           },
           behavior: HitTestBehavior.opaque,
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h),
+            padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
             child: Row(
               children: [
                 Text(
                   '오늘의 할 일',
-                  style: AppTextStyles.label_16.copyWith(color: Colors.white),
+                  style: AppTextStyles.heading_20.copyWith(
+                    color: Colors.white,
+                  ),
                 ),
                 SizedBox(width: AppSpacing.s8),
                 Text(
                   '$todayTodoCount개',
-                  style: AppTextStyles.tag_12.copyWith(
+                  style: AppTextStyles.subHeading_18.copyWith(
                     color: AppColors.textTertiary,
                   ),
                 ),
@@ -324,7 +328,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 Icon(
                   Icons.keyboard_arrow_up_rounded,
                   color: AppColors.textTertiary,
-                  size: 20.w,
+                  size: 24.w,
                 ),
               ],
             ),

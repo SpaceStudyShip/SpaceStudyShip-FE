@@ -17,6 +17,7 @@ abstract class TodoRepository {
     required String name,
     String? emoji,
   });
+  Future<TodoCategoryEntity> updateCategory(TodoCategoryEntity category);
   Future<void> deleteCategory(String id);
 
   Future<void> clearAll();

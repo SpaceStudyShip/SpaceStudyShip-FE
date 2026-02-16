@@ -96,6 +96,19 @@ class LocalTodoRepositoryImpl implements TodoRepository {
   }
 
   @override
+  Future<TodoCategoryEntity> updateCategory(TodoCategoryEntity category) async {
+    final categories = _dataSource.getCategories();
+    final index = categories.indexWhere((c) => c.id == category.id);
+    if (index == -1) throw Exception('Category not found: ${category.id}');
+
+    final updated = category.copyWith(updatedAt: DateTime.now()).toModel();
+    categories[index] = updated;
+    await _dataSource.saveCategories(categories);
+
+    return updated.toEntity();
+  }
+
+  @override
   Future<void> deleteCategory(String id) async {
     // 1. 소속 할일의 categoryId를 null로 변경 (미분류로 이동)
     final todos = _dataSource.getTodos();

@@ -34,7 +34,6 @@ class _TodoAddBottomSheetState extends ConsumerState<TodoAddBottomSheet> {
     super.initState();
     _selectedCategoryId = widget.initialCategoryId;
     _selectedScheduledDate = widget.initialScheduledDate ?? DateTime.now();
-    _titleController.addListener(() => setState(() {}));
   }
 
   @override
@@ -273,12 +272,15 @@ class _TodoAddBottomSheetState extends ConsumerState<TodoAddBottomSheet> {
             // 추가 버튼
             Padding(
               padding: AppPadding.horizontal20,
-              child: AppButton(
-                text: '추가하기',
-                onPressed: _titleController.text.trim().isEmpty
-                    ? null
-                    : _submit,
-                width: double.infinity,
+              child: ListenableBuilder(
+                listenable: _titleController,
+                builder: (context, _) => AppButton(
+                  text: '추가하기',
+                  onPressed: _titleController.text.trim().isEmpty
+                      ? null
+                      : _submit,
+                  width: double.infinity,
+                ),
               ),
             ),
 

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/widgets.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../todo/presentation/providers/todo_provider.dart';
@@ -8,11 +9,32 @@ import 'timer_state.dart';
 part 'timer_provider.g.dart';
 
 @Riverpod(keepAlive: true)
-class TimerNotifier extends _$TimerNotifier {
+class TimerNotifier extends _$TimerNotifier with WidgetsBindingObserver {
   Timer? _timer;
 
   @override
-  TimerState build() => const TimerState();
+  TimerState build() {
+    final binding = WidgetsBinding.instance;
+    binding.addObserver(this);
+    ref.onDispose(() {
+      _timer?.cancel();
+      binding.removeObserver(this);
+    });
+    return const TimerState();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused) {
+      // 앱 백그라운드 진입 시 UI 갱신 타이머만 중지 (경과시간 계산에는 영향 없음)
+      _timer?.cancel();
+    } else if (state == AppLifecycleState.resumed) {
+      // 앱 복귀 시 타이머가 running 상태면 UI 갱신 재개
+      if (this.state.status == TimerStatus.running) {
+        _startPeriodicUiUpdate();
+      }
+    }
+  }
 
   /// 타이머 시작 (할일 연동 선택)
   void start({String? todoId, String? todoTitle}) {
@@ -70,6 +92,7 @@ class TimerNotifier extends _$TimerNotifier {
 
   /// UI 갱신용 periodic timer (시간 계산에는 사용하지 않음)
   void _startPeriodicUiUpdate() {
+    _timer?.cancel();
     _timer = Timer.periodic(const Duration(seconds: 1), (_) {
       // elapsed getter가 DateTime.now() 기반으로 정확한 값 반환
       // Freezed copyWith()는 동일 객체를 반환하므로 notifyListeners로 강제 리빌드

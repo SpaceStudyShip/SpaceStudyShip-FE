@@ -11,6 +11,7 @@ import '../../../../core/widgets/space/todo_item.dart';
 import '../../domain/entities/todo_entity.dart';
 import '../providers/todo_provider.dart';
 import 'category_move_bottom_sheet.dart';
+import 'todo_add_bottom_sheet.dart';
 
 /// 양방향 스와이프 Dismissible + TodoItem 통합 위젯
 ///
@@ -124,9 +125,26 @@ class DismissibleTodoItem extends ConsumerWidget {
               .read(todoListNotifierProvider.notifier)
               .toggleTodoForDate(todo, date);
         },
-        onTap: onTap,
+        onTap: onTap ?? () => _openEditSheet(context, ref),
       ),
     );
+  }
+
+  void _openEditSheet(BuildContext context, WidgetRef ref) async {
+    final result = await showTodoAddBottomSheet(
+      context: context,
+      initialTodo: todo,
+    );
+    if (result != null && context.mounted) {
+      ref.read(todoListNotifierProvider.notifier).updateTodo(
+            todo.copyWith(
+              title: result['title'] as String,
+              categoryId: result['categoryId'] as String?,
+              scheduledDates:
+                  (result['scheduledDates'] as List<DateTime>?) ?? [],
+            ),
+          );
+    }
   }
 
   Future<_DeleteAction?> _showMultiDateDeleteSheet(BuildContext context) {

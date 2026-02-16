@@ -80,9 +80,20 @@ class _TodoItemState extends State<TodoItem> {
           ),
           child: Row(
             children: [
-              // 체크박스 또는 커스텀 리딩
-              widget.leading ?? _buildCheckbox(),
-              SizedBox(width: AppSpacing.s12),
+              // 체크박스: onTap 존재 시 별도 탭 영역 (본문 탭 = 수정, 체크박스 탭 = 토글)
+              if (widget.onTap != null)
+                GestureDetector(
+                  onTap: widget.onToggle,
+                  behavior: HitTestBehavior.opaque,
+                  child: Padding(
+                    padding: EdgeInsets.only(right: AppSpacing.s12),
+                    child: widget.leading ?? _buildCheckbox(),
+                  ),
+                )
+              else ...[
+                widget.leading ?? _buildCheckbox(),
+                SizedBox(width: AppSpacing.s12),
+              ],
 
               // 제목 및 부제목
               Expanded(

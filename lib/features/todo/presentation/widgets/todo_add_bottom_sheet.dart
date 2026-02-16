@@ -9,6 +9,7 @@ import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../../../core/widgets/buttons/app_button.dart';
 import '../../../../core/widgets/inputs/app_text_field.dart';
+import '../../domain/entities/todo_entity.dart';
 import '../providers/todo_provider.dart';
 
 class TodoAddBottomSheet extends ConsumerStatefulWidget {
@@ -16,10 +17,12 @@ class TodoAddBottomSheet extends ConsumerStatefulWidget {
     super.key,
     this.initialCategoryId,
     this.initialScheduledDates,
+    this.initialTodo,
   });
 
   final String? initialCategoryId;
   final List<DateTime>? initialScheduledDates;
+  final TodoEntity? initialTodo;
 
   @override
   ConsumerState<TodoAddBottomSheet> createState() => _TodoAddBottomSheetState();
@@ -32,19 +35,34 @@ class _TodoAddBottomSheetState extends ConsumerState<TodoAddBottomSheet> {
   bool _showCalendar = false;
   DateTime _calendarFocusedDay = DateTime.now();
 
+  bool get _isEditMode => widget.initialTodo != null;
+
   @override
   void initState() {
     super.initState();
-    _selectedCategoryId = widget.initialCategoryId;
-    if (widget.initialScheduledDates != null &&
-        widget.initialScheduledDates!.isNotEmpty) {
-      _selectedScheduledDates = widget.initialScheduledDates!
+    final todo = widget.initialTodo;
+    if (todo != null) {
+      // 수정 모드: 기존 값으로 초기화
+      _titleController.text = todo.title;
+      _selectedCategoryId = todo.categoryId;
+      _selectedScheduledDates = todo.scheduledDates
           .map((d) => DateTime(d.year, d.month, d.day))
           .toList();
+      if (_selectedScheduledDates.isNotEmpty) {
+        _calendarFocusedDay = _selectedScheduledDates.first;
+      }
     } else {
-      // 기본: 오늘 선택
-      final now = DateTime.now();
-      _selectedScheduledDates = [DateTime(now.year, now.month, now.day)];
+      // 생성 모드: 기존 로직
+      _selectedCategoryId = widget.initialCategoryId;
+      if (widget.initialScheduledDates != null &&
+          widget.initialScheduledDates!.isNotEmpty) {
+        _selectedScheduledDates = widget.initialScheduledDates!
+            .map((d) => DateTime(d.year, d.month, d.day))
+            .toList();
+      } else {
+        final now = DateTime.now();
+        _selectedScheduledDates = [DateTime(now.year, now.month, now.day)];
+      }
     }
   }
 
@@ -61,6 +79,7 @@ class _TodoAddBottomSheetState extends ConsumerState<TodoAddBottomSheet> {
       'title': title,
       'categoryId': _selectedCategoryId,
       'scheduledDates': _selectedScheduledDates,
+      if (widget.initialTodo != null) 'id': widget.initialTodo!.id,
     });
   }
 
@@ -120,7 +139,7 @@ class _TodoAddBottomSheetState extends ConsumerState<TodoAddBottomSheet> {
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    '할 일 추가',
+                    _isEditMode ? '할 일 수정' : '할 일 추가',
                     style: AppTextStyles.subHeading_18.copyWith(
                       color: Colors.white,
                     ),
@@ -285,7 +304,7 @@ class _TodoAddBottomSheetState extends ConsumerState<TodoAddBottomSheet> {
                 child: ListenableBuilder(
                   listenable: _titleController,
                   builder: (context, _) => AppButton(
-                    text: '추가하기',
+                    text: _isEditMode ? '수정하기' : '추가하기',
                     onPressed: _titleController.text.trim().isEmpty
                         ? null
                         : _submit,
@@ -455,6 +474,7 @@ Future<Map<String, dynamic>?> showTodoAddBottomSheet({
   required BuildContext context,
   String? initialCategoryId,
   List<DateTime>? initialScheduledDates,
+  TodoEntity? initialTodo,
 }) {
   return showModalBottomSheet<Map<String, dynamic>>(
     context: context,
@@ -466,6 +486,7 @@ Future<Map<String, dynamic>?> showTodoAddBottomSheet({
     builder: (context) => TodoAddBottomSheet(
       initialCategoryId: initialCategoryId,
       initialScheduledDates: initialScheduledDates,
+      initialTodo: initialTodo,
     ),
   );
 }

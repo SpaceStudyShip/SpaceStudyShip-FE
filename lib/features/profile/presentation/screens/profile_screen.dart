@@ -12,7 +12,7 @@ import '../../../auth/domain/entities/auth_result_entity.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../../../routes/route_paths.dart';
 
-/// 프로필 스크린
+/// 프로필 스크린 추후 개선 가능
 ///
 /// 사용자 정보, 컬렉션, 통계, 설정 등을 제공합니다.
 class ProfileScreen extends ConsumerWidget {

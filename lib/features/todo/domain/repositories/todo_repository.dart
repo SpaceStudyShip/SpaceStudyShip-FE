@@ -5,7 +5,7 @@ abstract class TodoRepository {
   Future<List<TodoEntity>> getTodoList({String? categoryId});
   Future<TodoEntity> createTodo({
     required String title,
-    String? categoryId,
+    List<String> categoryIds = const [],
     int? estimatedMinutes,
     List<DateTime>? scheduledDates,
   });

@@ -89,14 +89,14 @@ class TodoListNotifier extends _$TodoListNotifier {
 
   Future<void> addTodo({
     required String title,
-    String? categoryId,
+    List<String> categoryIds = const [],
     int? estimatedMinutes,
     List<DateTime>? scheduledDates,
   }) async {
     final useCase = ref.read(createTodoUseCaseProvider);
     await useCase.execute(
       title: title,
-      categoryId: categoryId,
+      categoryIds: categoryIds,
       estimatedMinutes: estimatedMinutes,
       scheduledDates: scheduledDates,
     );
@@ -328,7 +328,10 @@ Map<DateTime, List<TodoEntity>> todosByDateMap(Ref ref) {
 @riverpod
 List<TodoEntity> todosForCategory(Ref ref, String? categoryId) {
   final todos = ref.watch(todoListNotifierProvider).valueOrNull ?? [];
-  return todos.where((t) => t.categoryId == categoryId).toList();
+  if (categoryId == null) {
+    return todos.where((t) => t.categoryIds.isEmpty).toList();
+  }
+  return todos.where((t) => t.categoryIds.contains(categoryId)).toList();
 }
 
 // === 카테고리별 할일 통계 (Record: 구조적 동등성으로 불필요한 리빌드 방지) ===
@@ -339,7 +342,9 @@ List<TodoEntity> todosForCategory(Ref ref, String? categoryId) {
   String? categoryId,
 ) {
   final todos = ref.watch(todoListNotifierProvider).valueOrNull ?? [];
-  final catTodos = todos.where((t) => t.categoryId == categoryId);
+  final catTodos = categoryId == null
+      ? todos.where((t) => t.categoryIds.isEmpty)
+      : todos.where((t) => t.categoryIds.contains(categoryId));
   return (
     todoCount: catTodos.length,
     completedCount: catTodos.where((t) => t.isFullyCompleted).length,

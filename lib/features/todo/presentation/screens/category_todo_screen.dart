@@ -66,7 +66,8 @@ class CategoryTodoScreen extends ConsumerWidget {
                     .read(todoListNotifierProvider.notifier)
                     .addTodo(
                       title: result['title'] as String,
-                      categoryId: result['categoryId'] as String?,
+                      categoryIds:
+                          (result['categoryIds'] as List<String>?) ?? [],
                       scheduledDates:
                           result['scheduledDates'] as List<DateTime>?,
                     );

@@ -21,7 +21,7 @@ mixin _$TodoEntity {
   String get title => throw _privateConstructorUsedError;
   List<DateTime> get scheduledDates => throw _privateConstructorUsedError;
   List<DateTime> get completedDates => throw _privateConstructorUsedError;
-  String? get categoryId => throw _privateConstructorUsedError;
+  List<String> get categoryIds => throw _privateConstructorUsedError;
   int? get estimatedMinutes => throw _privateConstructorUsedError;
   int? get actualMinutes => throw _privateConstructorUsedError;
   DateTime get createdAt => throw _privateConstructorUsedError;
@@ -46,7 +46,7 @@ abstract class $TodoEntityCopyWith<$Res> {
     String title,
     List<DateTime> scheduledDates,
     List<DateTime> completedDates,
-    String? categoryId,
+    List<String> categoryIds,
     int? estimatedMinutes,
     int? actualMinutes,
     DateTime createdAt,
@@ -73,7 +73,7 @@ class _$TodoEntityCopyWithImpl<$Res, $Val extends TodoEntity>
     Object? title = null,
     Object? scheduledDates = null,
     Object? completedDates = null,
-    Object? categoryId = freezed,
+    Object? categoryIds = null,
     Object? estimatedMinutes = freezed,
     Object? actualMinutes = freezed,
     Object? createdAt = null,
@@ -97,10 +97,10 @@ class _$TodoEntityCopyWithImpl<$Res, $Val extends TodoEntity>
                 ? _value.completedDates
                 : completedDates // ignore: cast_nullable_to_non_nullable
                       as List<DateTime>,
-            categoryId: freezed == categoryId
-                ? _value.categoryId
-                : categoryId // ignore: cast_nullable_to_non_nullable
-                      as String?,
+            categoryIds: null == categoryIds
+                ? _value.categoryIds
+                : categoryIds // ignore: cast_nullable_to_non_nullable
+                      as List<String>,
             estimatedMinutes: freezed == estimatedMinutes
                 ? _value.estimatedMinutes
                 : estimatedMinutes // ignore: cast_nullable_to_non_nullable
@@ -137,7 +137,7 @@ abstract class _$$TodoEntityImplCopyWith<$Res>
     String title,
     List<DateTime> scheduledDates,
     List<DateTime> completedDates,
-    String? categoryId,
+    List<String> categoryIds,
     int? estimatedMinutes,
     int? actualMinutes,
     DateTime createdAt,
@@ -163,7 +163,7 @@ class __$$TodoEntityImplCopyWithImpl<$Res>
     Object? title = null,
     Object? scheduledDates = null,
     Object? completedDates = null,
-    Object? categoryId = freezed,
+    Object? categoryIds = null,
     Object? estimatedMinutes = freezed,
     Object? actualMinutes = freezed,
     Object? createdAt = null,
@@ -187,10 +187,10 @@ class __$$TodoEntityImplCopyWithImpl<$Res>
             ? _value._completedDates
             : completedDates // ignore: cast_nullable_to_non_nullable
                   as List<DateTime>,
-        categoryId: freezed == categoryId
-            ? _value.categoryId
-            : categoryId // ignore: cast_nullable_to_non_nullable
-                  as String?,
+        categoryIds: null == categoryIds
+            ? _value._categoryIds
+            : categoryIds // ignore: cast_nullable_to_non_nullable
+                  as List<String>,
         estimatedMinutes: freezed == estimatedMinutes
             ? _value.estimatedMinutes
             : estimatedMinutes // ignore: cast_nullable_to_non_nullable
@@ -220,13 +220,14 @@ class _$TodoEntityImpl extends _TodoEntity {
     required this.title,
     final List<DateTime> scheduledDates = const [],
     final List<DateTime> completedDates = const [],
-    this.categoryId,
+    final List<String> categoryIds = const [],
     this.estimatedMinutes,
     this.actualMinutes,
     required this.createdAt,
     required this.updatedAt,
   }) : _scheduledDates = scheduledDates,
        _completedDates = completedDates,
+       _categoryIds = categoryIds,
        super._();
 
   @override
@@ -251,8 +252,15 @@ class _$TodoEntityImpl extends _TodoEntity {
     return EqualUnmodifiableListView(_completedDates);
   }
 
+  final List<String> _categoryIds;
   @override
-  final String? categoryId;
+  @JsonKey()
+  List<String> get categoryIds {
+    if (_categoryIds is EqualUnmodifiableListView) return _categoryIds;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_categoryIds);
+  }
+
   @override
   final int? estimatedMinutes;
   @override
@@ -264,7 +272,7 @@ class _$TodoEntityImpl extends _TodoEntity {
 
   @override
   String toString() {
-    return 'TodoEntity(id: $id, title: $title, scheduledDates: $scheduledDates, completedDates: $completedDates, categoryId: $categoryId, estimatedMinutes: $estimatedMinutes, actualMinutes: $actualMinutes, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'TodoEntity(id: $id, title: $title, scheduledDates: $scheduledDates, completedDates: $completedDates, categoryIds: $categoryIds, estimatedMinutes: $estimatedMinutes, actualMinutes: $actualMinutes, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 
   @override
@@ -282,8 +290,10 @@ class _$TodoEntityImpl extends _TodoEntity {
               other._completedDates,
               _completedDates,
             ) &&
-            (identical(other.categoryId, categoryId) ||
-                other.categoryId == categoryId) &&
+            const DeepCollectionEquality().equals(
+              other._categoryIds,
+              _categoryIds,
+            ) &&
             (identical(other.estimatedMinutes, estimatedMinutes) ||
                 other.estimatedMinutes == estimatedMinutes) &&
             (identical(other.actualMinutes, actualMinutes) ||
@@ -301,7 +311,7 @@ class _$TodoEntityImpl extends _TodoEntity {
     title,
     const DeepCollectionEquality().hash(_scheduledDates),
     const DeepCollectionEquality().hash(_completedDates),
-    categoryId,
+    const DeepCollectionEquality().hash(_categoryIds),
     estimatedMinutes,
     actualMinutes,
     createdAt,
@@ -323,7 +333,7 @@ abstract class _TodoEntity extends TodoEntity {
     required final String title,
     final List<DateTime> scheduledDates,
     final List<DateTime> completedDates,
-    final String? categoryId,
+    final List<String> categoryIds,
     final int? estimatedMinutes,
     final int? actualMinutes,
     required final DateTime createdAt,
@@ -340,7 +350,7 @@ abstract class _TodoEntity extends TodoEntity {
   @override
   List<DateTime> get completedDates;
   @override
-  String? get categoryId;
+  List<String> get categoryIds;
   @override
   int? get estimatedMinutes;
   @override

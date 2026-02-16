@@ -20,7 +20,11 @@ _$TodoModelImpl _$$TodoModelImplFromJson(Map<String, dynamic> json) =>
               ?.map((e) => DateTime.parse(e as String))
               .toList() ??
           const [],
-      categoryId: json['category_id'] as String?,
+      categoryIds:
+          (json['category_ids'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          const [],
       estimatedMinutes: (json['estimated_minutes'] as num?)?.toInt(),
       actualMinutes: (json['actual_minutes'] as num?)?.toInt(),
       createdAt: DateTime.parse(json['created_at'] as String),
@@ -37,7 +41,7 @@ Map<String, dynamic> _$$TodoModelImplToJson(_$TodoModelImpl instance) =>
       'completed_dates': instance.completedDates
           .map((e) => e.toIso8601String())
           .toList(),
-      'category_id': instance.categoryId,
+      'category_ids': instance.categoryIds,
       'estimated_minutes': instance.estimatedMinutes,
       'actual_minutes': instance.actualMinutes,
       'created_at': instance.createdAt.toIso8601String(),

@@ -371,7 +371,7 @@ final todosByDateMapProvider =
 // ignore: unused_element
 typedef TodosByDateMapRef =
     AutoDisposeProviderRef<Map<DateTime, List<TodoEntity>>>;
-String _$todosForCategoryHash() => r'd15e35df1791cae73fa6c05c62d75970985dbe6b';
+String _$todosForCategoryHash() => r'121289a494b6e66c4e62be82cbe320c902ada098';
 
 /// See also [todosForCategory].
 @ProviderFor(todosForCategory)
@@ -491,7 +491,7 @@ class _TodosForCategoryProviderElement
   String? get categoryId => (origin as TodosForCategoryProvider).categoryId;
 }
 
-String _$categoryTodoStatsHash() => r'51c371a780f5b6145e9d0013d2896bf27174dc87';
+String _$categoryTodoStatsHash() => r'd4edeb6e989f36d119f275e7fd2a7b033099ed5a';
 
 /// See also [categoryTodoStats].
 @ProviderFor(categoryTodoStats)
@@ -618,7 +618,7 @@ class _CategoryTodoStatsProviderElement
   String? get categoryId => (origin as CategoryTodoStatsProvider).categoryId;
 }
 
-String _$todoListNotifierHash() => r'1c89e65e8dd987d9f9035f371b7e24c4f1cbbf2c';
+String _$todoListNotifierHash() => r'7a2600651b82a5cf90efe6d25e37eefaadbed87e';
 
 /// See also [TodoListNotifier].
 @ProviderFor(TodoListNotifier)

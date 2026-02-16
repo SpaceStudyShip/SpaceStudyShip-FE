@@ -43,17 +43,15 @@ class DismissibleTodoItem extends ConsumerWidget {
       direction: DismissDirection.horizontal,
       confirmDismiss: (direction) async {
         if (direction == DismissDirection.startToEnd) {
-          final newCategoryId = await showCategorySelectBottomSheet(
+          final newCategoryIds = await showCategorySelectBottomSheet(
             context: context,
-            currentCategoryId: todo.categoryId,
+            currentCategoryIds: todo.categoryIds,
           );
-          if (newCategoryId != null && context.mounted) {
+          if (newCategoryIds != null && context.mounted) {
             ref
                 .read(todoListNotifierProvider.notifier)
                 .updateTodo(
-                  todo.copyWith(
-                    categoryId: newCategoryId == '' ? null : newCategoryId,
-                  ),
+                  todo.copyWith(categoryIds: newCategoryIds),
                 );
           }
           return false;
@@ -141,7 +139,7 @@ class DismissibleTodoItem extends ConsumerWidget {
           .updateTodo(
             todo.copyWith(
               title: result['title'] as String,
-              categoryId: result['categoryId'] as String?,
+              categoryIds: (result['categoryIds'] as List<String>?) ?? [],
               scheduledDates:
                   (result['scheduledDates'] as List<DateTime>?) ?? [],
             ),

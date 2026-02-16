@@ -17,7 +17,7 @@ class TodoModel with _$TodoModel {
     @JsonKey(name: 'completed_dates')
     @Default([])
     List<DateTime> completedDates,
-    @JsonKey(name: 'category_id') String? categoryId,
+    @JsonKey(name: 'category_ids') @Default([]) List<String> categoryIds,
     @JsonKey(name: 'estimated_minutes') int? estimatedMinutes,
     @JsonKey(name: 'actual_minutes') int? actualMinutes,
     @JsonKey(name: 'created_at') required DateTime createdAt,
@@ -58,6 +58,14 @@ class TodoModel with _$TodoModel {
       migrated.remove('completed');
     }
 
+    // category_id (String?) → category_ids (List<String>)
+    if (!migrated.containsKey('category_ids') &&
+        migrated.containsKey('category_id')) {
+      final oldId = migrated['category_id'] as String?;
+      migrated['category_ids'] = oldId != null ? [oldId] : <String>[];
+      migrated.remove('category_id');
+    }
+
     return migrated;
   }
 }
@@ -68,7 +76,7 @@ extension TodoModelX on TodoModel {
     title: title,
     scheduledDates: scheduledDates,
     completedDates: completedDates,
-    categoryId: categoryId,
+    categoryIds: categoryIds,
     estimatedMinutes: estimatedMinutes,
     actualMinutes: actualMinutes,
     createdAt: createdAt,
@@ -82,7 +90,7 @@ extension TodoEntityToModelX on TodoEntity {
     title: title,
     scheduledDates: scheduledDates,
     completedDates: completedDates,
-    categoryId: categoryId,
+    categoryIds: categoryIds,
     estimatedMinutes: estimatedMinutes,
     actualMinutes: actualMinutes,
     createdAt: createdAt,

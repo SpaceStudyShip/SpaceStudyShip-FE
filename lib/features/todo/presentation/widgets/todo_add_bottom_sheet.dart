@@ -30,7 +30,7 @@ class TodoAddBottomSheet extends ConsumerStatefulWidget {
 
 class _TodoAddBottomSheetState extends ConsumerState<TodoAddBottomSheet> {
   final _titleController = TextEditingController();
-  String? _selectedCategoryId;
+  List<String> _selectedCategoryIds = [];
   List<DateTime> _selectedScheduledDates = [];
   bool _showCalendar = false;
   DateTime _calendarFocusedDay = DateTime.now();
@@ -44,7 +44,7 @@ class _TodoAddBottomSheetState extends ConsumerState<TodoAddBottomSheet> {
     if (todo != null) {
       // 수정 모드: 기존 값으로 초기화
       _titleController.text = todo.title;
-      _selectedCategoryId = todo.categoryId;
+      _selectedCategoryIds = List<String>.from(todo.categoryIds);
       _selectedScheduledDates = todo.scheduledDates
           .map((d) => DateTime(d.year, d.month, d.day))
           .toList();
@@ -53,7 +53,9 @@ class _TodoAddBottomSheetState extends ConsumerState<TodoAddBottomSheet> {
       }
     } else {
       // 생성 모드: 기존 로직
-      _selectedCategoryId = widget.initialCategoryId;
+      _selectedCategoryIds = widget.initialCategoryId != null
+          ? [widget.initialCategoryId!]
+          : [];
       if (widget.initialScheduledDates != null &&
           widget.initialScheduledDates!.isNotEmpty) {
         _selectedScheduledDates = widget.initialScheduledDates!
@@ -77,7 +79,7 @@ class _TodoAddBottomSheetState extends ConsumerState<TodoAddBottomSheet> {
     if (title.isEmpty) return;
     Navigator.of(context).pop({
       'title': title,
-      'categoryId': _selectedCategoryId,
+      'categoryIds': List<String>.from(_selectedCategoryIds),
       'scheduledDates': _selectedScheduledDates,
       if (widget.initialTodo != null) 'id': widget.initialTodo!.id,
     });
@@ -187,9 +189,10 @@ class _TodoAddBottomSheetState extends ConsumerState<TodoAddBottomSheet> {
                             children: [
                               _CategoryChip(
                                 label: '미분류',
-                                isSelected: _selectedCategoryId == null,
-                                onTap: () =>
-                                    setState(() => _selectedCategoryId = null),
+                                isSelected: _selectedCategoryIds.isEmpty,
+                                onTap: () => setState(
+                                  () => _selectedCategoryIds.clear(),
+                                ),
                               ),
                               SizedBox(width: AppSpacing.s8),
                               ...categories.map(
@@ -197,10 +200,15 @@ class _TodoAddBottomSheetState extends ConsumerState<TodoAddBottomSheet> {
                                   padding: EdgeInsets.only(right: 8.w),
                                   child: _CategoryChip(
                                     label: '${cat.emoji ?? "📁"} ${cat.name}',
-                                    isSelected: _selectedCategoryId == cat.id,
-                                    onTap: () => setState(
-                                      () => _selectedCategoryId = cat.id,
-                                    ),
+                                    isSelected:
+                                        _selectedCategoryIds.contains(cat.id),
+                                    onTap: () => setState(() {
+                                      if (_selectedCategoryIds.contains(cat.id)) {
+                                        _selectedCategoryIds.remove(cat.id);
+                                      } else {
+                                        _selectedCategoryIds.add(cat.id);
+                                      }
+                                    }),
                                   ),
                                 ),
                               ),

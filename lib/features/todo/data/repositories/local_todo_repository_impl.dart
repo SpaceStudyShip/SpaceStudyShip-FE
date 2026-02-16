@@ -19,7 +19,7 @@ class LocalTodoRepositoryImpl implements TodoRepository {
   Future<List<TodoEntity>> getTodoList({String? categoryId}) async {
     final models = _dataSource.getTodos();
     final filtered = categoryId != null
-        ? models.where((m) => m.categoryId == categoryId).toList()
+        ? models.where((m) => m.categoryIds.contains(categoryId)).toList()
         : models;
     return filtered.map((m) => m.toEntity()).toList();
   }
@@ -27,7 +27,7 @@ class LocalTodoRepositoryImpl implements TodoRepository {
   @override
   Future<TodoEntity> createTodo({
     required String title,
-    String? categoryId,
+    List<String> categoryIds = const [],
     int? estimatedMinutes,
     List<DateTime>? scheduledDates,
   }) async {
@@ -35,7 +35,7 @@ class LocalTodoRepositoryImpl implements TodoRepository {
     final model = TodoModel(
       id: _uuid.v4(),
       title: title,
-      categoryId: categoryId,
+      categoryIds: categoryIds,
       estimatedMinutes: estimatedMinutes,
       scheduledDates: scheduledDates ?? [],
       createdAt: now,
@@ -110,11 +110,13 @@ class LocalTodoRepositoryImpl implements TodoRepository {
 
   @override
   Future<void> deleteCategory(String id) async {
-    // 1. 소속 할일의 categoryId를 null로 변경 (미분류로 이동)
+    // 1. 소속 할일의 categoryIds에서 해당 ID 제거
     final todos = _dataSource.getTodos();
     final updatedTodos = todos.map((t) {
-      if (t.categoryId == id) {
-        return t.copyWith(categoryId: null);
+      if (t.categoryIds.contains(id)) {
+        return t.copyWith(
+          categoryIds: t.categoryIds.where((cid) => cid != id).toList(),
+        );
       }
       return t;
     }).toList();

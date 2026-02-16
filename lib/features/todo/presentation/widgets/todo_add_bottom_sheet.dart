@@ -94,8 +94,11 @@ class _TodoAddBottomSheetState extends ConsumerState<TodoAddBottomSheet> {
         padding: EdgeInsets.only(
           bottom: MediaQuery.of(context).viewInsets.bottom,
         ),
-        child: SingleChildScrollView(
-          child: Column(
+        child: GestureDetector(
+          onTap: () => FocusScope.of(context).unfocus(),
+          behavior: HitTestBehavior.translucent,
+          child: SingleChildScrollView(
+            child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               // 드래그 핸들
@@ -294,6 +297,7 @@ class _TodoAddBottomSheetState extends ConsumerState<TodoAddBottomSheet> {
               SizedBox(height: MediaQuery.of(context).padding.bottom + 20.h),
             ],
           ),
+        ),
         ),
       ),
     );

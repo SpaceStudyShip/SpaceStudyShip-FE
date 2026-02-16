@@ -354,7 +354,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       children: [
         _buildDragHandle(),
 
-        // 월간/주간 토글 캘린더
+        // 월간/주간 토글 캘린더이다.
         Padding(
           padding: AppPadding.horizontal20,
           child: SpaceCalendar(

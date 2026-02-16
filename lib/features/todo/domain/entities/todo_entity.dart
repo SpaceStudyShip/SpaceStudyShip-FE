@@ -23,8 +23,7 @@ class TodoEntity with _$TodoEntity {
 
   bool isCompletedForDate(DateTime date) {
     final normalized = normalizeDate(date);
-    return completedDates
-        .any((d) => normalizeDate(d) == normalized);
+    return completedDates.any((d) => normalizeDate(d) == normalized);
   }
 
   bool get isFullyCompleted {

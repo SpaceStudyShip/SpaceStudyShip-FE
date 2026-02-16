@@ -67,9 +67,7 @@ class _TodoAddBottomSheetState extends ConsumerState<TodoAddBottomSheet> {
   void _toggleDate(DateTime day) {
     final normalized = DateTime(day.year, day.month, day.day);
     setState(() {
-      final index = _selectedScheduledDates.indexWhere(
-        (d) => d == normalized,
-      );
+      final index = _selectedScheduledDates.indexWhere((d) => d == normalized);
       if (index >= 0) {
         _selectedScheduledDates.removeAt(index);
       } else {
@@ -257,8 +255,7 @@ class _TodoAddBottomSheetState extends ConsumerState<TodoAddBottomSheet> {
                           ),
                           decoration: BoxDecoration(
                             borderRadius: AppRadius.chip,
-                            border:
-                                Border.all(color: AppColors.spaceDivider),
+                            border: Border.all(color: AppColors.spaceDivider),
                           ),
                           child: Text(
                             '날짜 미지정',
@@ -313,9 +310,7 @@ class _TodoAddBottomSheetState extends ConsumerState<TodoAddBottomSheet> {
       headerVisible: true,
       daysOfWeekHeight: 20.h,
       rowHeight: 40.h,
-      availableCalendarFormats: const {
-        CalendarFormat.month: '월간',
-      },
+      availableCalendarFormats: const {CalendarFormat.month: '월간'},
       selectedDayPredicate: (day) => _isDateSelected(day),
       onDaySelected: (selectedDay, focusedDay) {
         _toggleDate(selectedDay);
@@ -394,9 +389,7 @@ class _DateChip extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.primary.withValues(alpha: 0.15),
         borderRadius: AppRadius.chip,
-        border: Border.all(
-          color: AppColors.primary.withValues(alpha: 0.6),
-        ),
+        border: Border.all(color: AppColors.primary.withValues(alpha: 0.6)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -408,11 +401,7 @@ class _DateChip extends StatelessWidget {
           SizedBox(width: 4.w),
           GestureDetector(
             onTap: onRemove,
-            child: Icon(
-              Icons.close,
-              size: 14.w,
-              color: AppColors.primary,
-            ),
+            child: Icon(Icons.close, size: 14.w, color: AppColors.primary),
           ),
         ],
       ),

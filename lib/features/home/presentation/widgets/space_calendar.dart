@@ -82,11 +82,7 @@ class SpaceCalendar extends StatelessWidget {
             color: AppColors.primary.withValues(alpha: 0.1),
             shape: BoxShape.circle,
           ),
-          child: Icon(
-            Icons.chevron_left,
-            color: AppColors.primary,
-            size: 20.w,
-          ),
+          child: Icon(Icons.chevron_left, color: AppColors.primary, size: 20.w),
         ),
         rightChevronIcon: Container(
           padding: EdgeInsets.all(4.w),
@@ -158,8 +154,9 @@ class SpaceCalendar extends StatelessWidget {
         markerBuilder: (context, day, events) {
           if (events.isEmpty) return const SizedBox.shrink();
           final allCompleted = events.every((t) => t.isCompletedForDate(day));
-          final markerColor =
-              allCompleted ? AppColors.success : AppColors.primary;
+          final markerColor = allCompleted
+              ? AppColors.success
+              : AppColors.primary;
           return Positioned(
             bottom: 2.h,
             child: Icon(

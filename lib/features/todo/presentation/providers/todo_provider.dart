@@ -100,16 +100,14 @@ class TodoListNotifier extends _$TodoListNotifier {
     final isCompleted = todo.isCompletedForDate(date);
     final updatedCompletedDates = isCompleted
         ? todo.completedDates
-            .where((d) => TodoEntity.normalizeDate(d) != normalized)
-            .toList()
+              .where((d) => TodoEntity.normalizeDate(d) != normalized)
+              .toList()
         : [...todo.completedDates, normalized];
     final toggled = todo.copyWith(completedDates: updatedCompletedDates);
 
     final previousState = state;
     state = AsyncData(
-      state.valueOrNull
-              ?.map((t) => t.id == todo.id ? toggled : t)
-              .toList() ??
+      state.valueOrNull?.map((t) => t.id == todo.id ? toggled : t).toList() ??
           [],
     );
     try {

@@ -256,7 +256,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       DateTime.now().day,
     );
     final todayTodoCount =
-        todosByDate[todayKey]?.where((t) => !t.isCompletedForDate(todayKey)).length ?? 0;
+        todosByDate[todayKey]
+            ?.where((t) => !t.isCompletedForDate(todayKey))
+            .length ??
+        0;
 
     return ListView(
       controller: scrollController,
@@ -392,12 +395,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     initialScheduledDates: [_selectedDay],
                   );
                   if (result != null && mounted) {
-                    ref.read(todoListNotifierProvider.notifier).addTodo(
-                      title: result['title'] as String,
-                      categoryId: result['categoryId'] as String?,
-                      scheduledDates:
-                          result['scheduledDates'] as List<DateTime>?,
-                    );
+                    ref
+                        .read(todoListNotifierProvider.notifier)
+                        .addTodo(
+                          title: result['title'] as String,
+                          categoryId: result['categoryId'] as String?,
+                          scheduledDates:
+                              result['scheduledDates'] as List<DateTime>?,
+                        );
                   }
                 },
                 child: Icon(
@@ -417,7 +422,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             child: _buildEmptyTodoCard(),
           )
         else
-          ...todosForSelected.map((todo) => _buildTodoRow(todo, contextDate: _selectedDay)),
+          ...todosForSelected.map(
+            (todo) => _buildTodoRow(todo, contextDate: _selectedDay),
+          ),
 
         // ── 카테고리 관리 버튼 ──
         Padding(

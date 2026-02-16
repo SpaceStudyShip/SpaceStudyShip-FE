@@ -11,8 +11,12 @@ class TodoModel with _$TodoModel {
   const factory TodoModel({
     required String id,
     required String title,
-    @JsonKey(name: 'scheduled_dates') @Default([]) List<DateTime> scheduledDates,
-    @JsonKey(name: 'completed_dates') @Default([]) List<DateTime> completedDates,
+    @JsonKey(name: 'scheduled_dates')
+    @Default([])
+    List<DateTime> scheduledDates,
+    @JsonKey(name: 'completed_dates')
+    @Default([])
+    List<DateTime> completedDates,
     @JsonKey(name: 'category_id') String? categoryId,
     @JsonKey(name: 'estimated_minutes') int? estimatedMinutes,
     @JsonKey(name: 'actual_minutes') int? actualMinutes,
@@ -40,8 +44,7 @@ class TodoModel with _$TodoModel {
         migrated.containsKey('completed')) {
       final wasCompleted = migrated['completed'] as bool? ?? false;
       if (wasCompleted) {
-        final scheduledDates =
-            migrated['scheduled_dates'] as List<dynamic>?;
+        final scheduledDates = migrated['scheduled_dates'] as List<dynamic>?;
         if (scheduledDates != null && scheduledDates.isNotEmpty) {
           migrated['completed_dates'] = List<dynamic>.from(scheduledDates);
         } else {

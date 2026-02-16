@@ -210,7 +210,9 @@ class _TodoListScreenState extends ConsumerState<TodoListScreen> {
               final catTodos = todos
                   .where((t) => t.categoryId == cat.id)
                   .toList();
-              final completedCount = catTodos.where((t) => t.isFullyCompleted).length;
+              final completedCount = catTodos
+                  .where((t) => t.isFullyCompleted)
+                  .length;
 
               return CategoryFolderCard(
                 name: cat.name,

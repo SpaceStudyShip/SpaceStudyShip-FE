@@ -47,11 +47,13 @@ class DismissibleTodoItem extends ConsumerWidget {
             currentCategoryId: todo.categoryId,
           );
           if (newCategoryId != null && context.mounted) {
-            ref.read(todoListNotifierProvider.notifier).updateTodo(
-              todo.copyWith(
-                categoryId: newCategoryId == '' ? null : newCategoryId,
-              ),
-            );
+            ref
+                .read(todoListNotifierProvider.notifier)
+                .updateTodo(
+                  todo.copyWith(
+                    categoryId: newCategoryId == '' ? null : newCategoryId,
+                  ),
+                );
           }
           return false;
         }
@@ -77,8 +79,7 @@ class DismissibleTodoItem extends ConsumerWidget {
         final confirmed = await AppDialog.confirm(
           context: context,
           title: '할일 삭제',
-          message:
-              "'${todo.title}'을(를) 삭제하시겠습니까?\n삭제된 항목은 복구할 수 없습니다.",
+          message: "'${todo.title}'을(를) 삭제하시겠습니까?\n삭제된 항목은 복구할 수 없습니다.",
           emotion: AppDialogEmotion.warning,
           confirmText: '삭제',
           cancelText: '취소',
@@ -109,11 +110,7 @@ class DismissibleTodoItem extends ConsumerWidget {
           color: AppColors.error.withValues(alpha: 0.2),
           borderRadius: AppRadius.large,
         ),
-        child: Icon(
-          Icons.delete_outline,
-          color: AppColors.error,
-          size: 24.w,
-        ),
+        child: Icon(Icons.delete_outline, color: AppColors.error, size: 24.w),
       ),
       child: TodoItem(
         title: todo.title,
@@ -136,9 +133,7 @@ class DismissibleTodoItem extends ConsumerWidget {
     return showModalBottomSheet<_DeleteAction>(
       context: context,
       backgroundColor: Colors.transparent,
-      builder: (context) => _MultiDateDeleteSheet(
-        contextDate: contextDate!,
-      ),
+      builder: (context) => _MultiDateDeleteSheet(contextDate: contextDate!),
     );
   }
 }
@@ -146,9 +141,7 @@ class DismissibleTodoItem extends ConsumerWidget {
 enum _DeleteAction { thisDateOnly, thisAndAfter, all }
 
 class _MultiDateDeleteSheet extends StatelessWidget {
-  const _MultiDateDeleteSheet({
-    required this.contextDate,
-  });
+  const _MultiDateDeleteSheet({required this.contextDate});
 
   final DateTime contextDate;
 
@@ -242,7 +235,9 @@ class _MultiDateDeleteSheet extends StatelessWidget {
             children: [
               Icon(
                 icon,
-                color: isDestructive ? AppColors.error : AppColors.textSecondary,
+                color: isDestructive
+                    ? AppColors.error
+                    : AppColors.textSecondary,
                 size: 20.w,
               ),
               SizedBox(width: AppSpacing.s12),

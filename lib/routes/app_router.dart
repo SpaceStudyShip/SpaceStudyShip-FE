@@ -21,6 +21,8 @@ import '../features/social/presentation/screens/social_screen.dart';
 import '../features/profile/presentation/screens/profile_screen.dart';
 import '../features/profile/presentation/screens/about_screen.dart';
 import '../features/profile/presentation/screens/spaceship_collection_screen.dart';
+import '../features/todo/presentation/screens/category_todo_screen.dart';
+import '../features/todo/presentation/screens/todo_list_screen.dart';
 
 /// 스플래시 최소 표시 시간 (2초)
 final splashDelayProvider = FutureProvider<void>((ref) async {
@@ -159,8 +161,24 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                   GoRoute(
                     path: 'todo',
                     name: 'todoList',
-                    builder: (context, state) =>
-                        const PlaceholderScreen(title: '오늘의 할 일'),
+                    builder: (context, state) => const TodoListScreen(),
+                    routes: [
+                      // 카테고리별 할일 목록
+                      GoRoute(
+                        path: 'category/:categoryId',
+                        name: 'categoryTodo',
+                        builder: (context, state) {
+                          final categoryId =
+                              state.pathParameters['categoryId']!;
+                          final extra = state.extra as Map<String, dynamic>?;
+                          return CategoryTodoScreen(
+                            categoryId: categoryId,
+                            categoryName: extra?['name'] as String? ?? '카테고리',
+                            categoryEmoji: extra?['emoji'] as String?,
+                          );
+                        },
+                      ),
+                    ],
                   ),
                   // Todo 상세
                   GoRoute(
@@ -368,7 +386,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                 Icon(
                   Icons.explore_off_rounded,
                   size: 64,
-                  color: Colors.white.withValues(alpha: 0.5),
+                  color: AppColors.textTertiary,
                 ),
                 SizedBox(height: AppSpacing.s16),
                 Text(
@@ -379,7 +397,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                 Text(
                   state.uri.toString(),
                   style: AppTextStyles.tag_12.copyWith(
-                    color: Colors.white.withValues(alpha: 0.5),
+                    color: AppColors.textTertiary,
                   ),
                 ),
                 SizedBox(height: AppSpacing.s24),
@@ -422,7 +440,7 @@ class PlaceholderScreen extends StatelessWidget {
                 Icon(
                   Icons.construction_rounded,
                   size: 64,
-                  color: Colors.white.withValues(alpha: 0.5),
+                  color: AppColors.textTertiary,
                 ),
                 SizedBox(height: AppSpacing.s16),
                 Text(
@@ -435,7 +453,7 @@ class PlaceholderScreen extends StatelessWidget {
                 Text(
                   '개발 중...',
                   style: AppTextStyles.paragraph_14.copyWith(
-                    color: Colors.white.withValues(alpha: 0.5),
+                    color: AppColors.textTertiary,
                   ),
                 ),
               ],

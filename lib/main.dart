@@ -7,17 +7,26 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'firebase_options.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import 'core/config/env_config.dart';
 import 'core/services/fcm/firebase_messaging_service.dart';
 import 'core/services/fcm/local_notifications_service.dart';
+import 'core/constants/spacing_and_radius.dart';
 import 'core/constants/text_styles.dart';
 import 'core/theme/app_theme.dart';
+import 'features/todo/data/datasources/local_todo_datasource.dart';
+import 'features/todo/presentation/providers/todo_provider.dart';
 import 'routes/app_router.dart';
 
 void main() async {
   // Flutter 엔진 초기화 보장
   WidgetsFlutterBinding.ensureInitialized();
+
+  // 한국어 날짜 포맷 초기화
+  await initializeDateFormatting('ko_KR', null);
 
   // ============================================================
   // 1. 환경 변수 초기화 (API URL 등)
@@ -160,7 +169,27 @@ void main() async {
     }
   }
 
-  runApp(const ProviderScope(child: MyApp()));
+  // ============================================================
+  // 7. SharedPreferences 초기화 (Todo 로컬 저장용)
+  // ============================================================
+  SharedPreferences? prefs;
+  try {
+    prefs = await SharedPreferences.getInstance();
+  } catch (e) {
+    debugPrint('❌ [SharedPreferences] 초기화 실패: $e');
+  }
+
+  runApp(
+    ProviderScope(
+      overrides: [
+        if (prefs != null)
+          localTodoDataSourceProvider.overrideWithValue(
+            LocalTodoDataSource(prefs),
+          ),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends ConsumerWidget {
@@ -196,7 +225,7 @@ class HomePage extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(Icons.rocket_launch_rounded, size: 20),
-            const SizedBox(width: 8),
+            SizedBox(width: AppSpacing.s8),
             const Text('우주공부선'),
           ],
         ),
@@ -209,7 +238,7 @@ class HomePage extends StatelessWidget {
               '우주공부선',
               style: AppTextStyles.heading_20.copyWith(color: Colors.white),
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: AppSpacing.s16),
             Text(
               '디자인을 시작해보세요!',
               style: AppTextStyles.paragraph_14.copyWith(color: Colors.white),

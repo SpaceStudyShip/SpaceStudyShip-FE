@@ -1,0 +1,467 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
+import 'package:table_calendar/table_calendar.dart';
+
+import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/spacing_and_radius.dart';
+import '../../../../core/constants/text_styles.dart';
+import '../../../../core/widgets/buttons/app_button.dart';
+import '../../../../core/widgets/inputs/app_text_field.dart';
+import '../providers/todo_provider.dart';
+
+class TodoAddBottomSheet extends ConsumerStatefulWidget {
+  const TodoAddBottomSheet({
+    super.key,
+    this.initialCategoryId,
+    this.initialScheduledDates,
+  });
+
+  final String? initialCategoryId;
+  final List<DateTime>? initialScheduledDates;
+
+  @override
+  ConsumerState<TodoAddBottomSheet> createState() => _TodoAddBottomSheetState();
+}
+
+class _TodoAddBottomSheetState extends ConsumerState<TodoAddBottomSheet> {
+  final _titleController = TextEditingController();
+  String? _selectedCategoryId;
+  List<DateTime> _selectedScheduledDates = [];
+  bool _showCalendar = false;
+  DateTime _calendarFocusedDay = DateTime.now();
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedCategoryId = widget.initialCategoryId;
+    if (widget.initialScheduledDates != null &&
+        widget.initialScheduledDates!.isNotEmpty) {
+      _selectedScheduledDates = widget.initialScheduledDates!
+          .map((d) => DateTime(d.year, d.month, d.day))
+          .toList();
+    } else {
+      // 기본: 오늘 선택
+      final now = DateTime.now();
+      _selectedScheduledDates = [DateTime(now.year, now.month, now.day)];
+    }
+  }
+
+  @override
+  void dispose() {
+    _titleController.dispose();
+    super.dispose();
+  }
+
+  void _submit() {
+    final title = _titleController.text.trim();
+    if (title.isEmpty) return;
+    Navigator.of(context).pop({
+      'title': title,
+      'categoryId': _selectedCategoryId,
+      'scheduledDates': _selectedScheduledDates,
+    });
+  }
+
+  void _toggleDate(DateTime day) {
+    final normalized = DateTime(day.year, day.month, day.day);
+    setState(() {
+      final index = _selectedScheduledDates.indexWhere((d) => d == normalized);
+      if (index >= 0) {
+        _selectedScheduledDates.removeAt(index);
+      } else {
+        _selectedScheduledDates.add(normalized);
+      }
+    });
+  }
+
+  bool _isDateSelected(DateTime day) {
+    final normalized = DateTime(day.year, day.month, day.day);
+    return _selectedScheduledDates.any((d) => d == normalized);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final categoriesAsync = ref.watch(categoryListNotifierProvider);
+
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.spaceSurface,
+        borderRadius: AppRadius.modal,
+      ),
+      child: Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // 드래그 핸들
+              Center(
+                child: Container(
+                  margin: EdgeInsets.only(top: 12.h, bottom: 8.h),
+                  width: 40.w,
+                  height: 4.h,
+                  decoration: BoxDecoration(
+                    color: AppColors.textTertiary.withValues(alpha: 0.4),
+                    borderRadius: BorderRadius.circular(2.r),
+                  ),
+                ),
+              ),
+
+              // 제목
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    '할 일 추가',
+                    style: AppTextStyles.subHeading_18.copyWith(
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+
+              // 제목 입력 필드
+              Padding(
+                padding: AppPadding.horizontal20,
+                child: AppTextField(
+                  controller: _titleController,
+                  hintText: '할 일을 입력하세요',
+                  onSubmitted: (_) => _submit(),
+                  autofocus: true,
+                ),
+              ),
+              SizedBox(height: AppSpacing.s16),
+
+              // 카테고리 칩 선택
+              categoriesAsync.when(
+                data: (categories) {
+                  if (categories.isEmpty) return const SizedBox.shrink();
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: AppPadding.horizontal20,
+                        child: Text(
+                          '카테고리',
+                          style: AppTextStyles.tag_12.copyWith(
+                            color: AppColors.textSecondary,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: AppSpacing.s8),
+                      SizedBox(
+                        height: 36.h,
+                        child: ListView(
+                          scrollDirection: Axis.horizontal,
+                          padding: AppPadding.horizontal20,
+                          children: [
+                            _CategoryChip(
+                              label: '미분류',
+                              isSelected: _selectedCategoryId == null,
+                              onTap: () =>
+                                  setState(() => _selectedCategoryId = null),
+                            ),
+                            SizedBox(width: AppSpacing.s8),
+                            ...categories.map(
+                              (cat) => Padding(
+                                padding: EdgeInsets.only(right: 8.w),
+                                child: _CategoryChip(
+                                  label: '${cat.emoji ?? "📁"} ${cat.name}',
+                                  isSelected: _selectedCategoryId == cat.id,
+                                  onTap: () => setState(
+                                    () => _selectedCategoryId = cat.id,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: AppSpacing.s4),
+                    ],
+                  );
+                },
+                loading: () => const SizedBox.shrink(),
+                error: (e, st) => const SizedBox.shrink(),
+              ),
+              SizedBox(height: AppSpacing.s16),
+
+              // 날짜 선택 섹션
+              Padding(
+                padding: AppPadding.horizontal20,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          '예정일',
+                          style: AppTextStyles.tag_12.copyWith(
+                            color: AppColors.textSecondary,
+                          ),
+                        ),
+                        const Spacer(),
+                        GestureDetector(
+                          onTap: () =>
+                              setState(() => _showCalendar = !_showCalendar),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                _showCalendar
+                                    ? Icons.keyboard_arrow_up
+                                    : Icons.calendar_today,
+                                size: 16.w,
+                                color: AppColors.primary,
+                              ),
+                              SizedBox(width: 4.w),
+                              Text(
+                                _showCalendar ? '접기' : '캘린더',
+                                style: AppTextStyles.tag_12.copyWith(
+                                  color: AppColors.primary,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: AppSpacing.s8),
+
+                    // 선택된 날짜 칩들
+                    if (_selectedScheduledDates.isNotEmpty)
+                      Wrap(
+                        spacing: 6.w,
+                        runSpacing: 6.h,
+                        children: _selectedScheduledDates.map((date) {
+                          return _DateChip(
+                            date: date,
+                            onRemove: () => _toggleDate(date),
+                          );
+                        }).toList(),
+                      )
+                    else
+                      GestureDetector(
+                        onTap: () => setState(() => _showCalendar = true),
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 12.w,
+                            vertical: 8.h,
+                          ),
+                          decoration: BoxDecoration(
+                            borderRadius: AppRadius.chip,
+                            border: Border.all(color: AppColors.spaceDivider),
+                          ),
+                          child: Text(
+                            '날짜 미지정',
+                            style: AppTextStyles.tag_12.copyWith(
+                              color: AppColors.textSecondary,
+                            ),
+                          ),
+                        ),
+                      ),
+
+                    // 인라인 캘린더
+                    if (_showCalendar) ...[
+                      SizedBox(height: AppSpacing.s12),
+                      _buildInlineCalendar(),
+                    ],
+                  ],
+                ),
+              ),
+              SizedBox(height: AppSpacing.s16),
+
+              // 추가 버튼
+              Padding(
+                padding: AppPadding.horizontal20,
+                child: ListenableBuilder(
+                  listenable: _titleController,
+                  builder: (context, _) => AppButton(
+                    text: '추가하기',
+                    onPressed: _titleController.text.trim().isEmpty
+                        ? null
+                        : _submit,
+                    width: double.infinity,
+                  ),
+                ),
+              ),
+
+              SizedBox(height: MediaQuery.of(context).padding.bottom + 20.h),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInlineCalendar() {
+    return TableCalendar(
+      firstDay: DateTime.utc(2024, 1, 1),
+      lastDay: DateTime.utc(2030, 12, 31),
+      focusedDay: _calendarFocusedDay,
+      calendarFormat: CalendarFormat.month,
+      startingDayOfWeek: StartingDayOfWeek.monday,
+      locale: 'ko_KR',
+      headerVisible: true,
+      daysOfWeekHeight: 20.h,
+      rowHeight: 40.h,
+      availableCalendarFormats: const {CalendarFormat.month: '월간'},
+      selectedDayPredicate: (day) => _isDateSelected(day),
+      onDaySelected: (selectedDay, focusedDay) {
+        _toggleDate(selectedDay);
+        _calendarFocusedDay = focusedDay;
+      },
+      onPageChanged: (focusedDay) {
+        setState(() => _calendarFocusedDay = focusedDay);
+      },
+      headerStyle: HeaderStyle(
+        formatButtonVisible: false,
+        titleCentered: true,
+        headerPadding: EdgeInsets.symmetric(vertical: 4.h),
+        titleTextFormatter: (date, locale) =>
+            DateFormat('yyyy년 M월', locale).format(date),
+        titleTextStyle: AppTextStyles.label_16.copyWith(color: Colors.white),
+        leftChevronIcon: Icon(
+          Icons.chevron_left,
+          color: AppColors.primary,
+          size: 20.w,
+        ),
+        rightChevronIcon: Icon(
+          Icons.chevron_right,
+          color: AppColors.primary,
+          size: 20.w,
+        ),
+      ),
+      daysOfWeekStyle: DaysOfWeekStyle(
+        weekdayStyle: AppTextStyles.tag_12.copyWith(
+          color: AppColors.textTertiary,
+        ),
+        weekendStyle: AppTextStyles.tag_12.copyWith(
+          color: AppColors.textTertiary.withValues(alpha: 0.6),
+        ),
+      ),
+      calendarStyle: CalendarStyle(
+        outsideDaysVisible: false,
+        cellMargin: EdgeInsets.all(2.w),
+        // 선택된 날짜 스타일
+        selectedDecoration: BoxDecoration(
+          color: AppColors.primary,
+          shape: BoxShape.circle,
+        ),
+        selectedTextStyle: AppTextStyles.tag_12.copyWith(
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+        ),
+        // 오늘 날짜 스타일
+        todayDecoration: BoxDecoration(
+          shape: BoxShape.circle,
+          border: Border.all(color: AppColors.primary, width: 1.5),
+        ),
+        todayTextStyle: AppTextStyles.tag_12.copyWith(
+          color: AppColors.primary,
+          fontWeight: FontWeight.bold,
+        ),
+        // 기본 날짜 스타일
+        defaultTextStyle: AppTextStyles.tag_12.copyWith(color: Colors.white),
+        weekendTextStyle: AppTextStyles.tag_12.copyWith(
+          color: Colors.white.withValues(alpha: 0.6),
+        ),
+      ),
+    );
+  }
+}
+
+class _DateChip extends StatelessWidget {
+  const _DateChip({required this.date, required this.onRemove});
+
+  final DateTime date;
+  final VoidCallback onRemove;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
+      decoration: BoxDecoration(
+        color: AppColors.primary.withValues(alpha: 0.15),
+        borderRadius: AppRadius.chip,
+        border: Border.all(color: AppColors.primary.withValues(alpha: 0.6)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            DateFormat('M/d (E)', 'ko_KR').format(date),
+            style: AppTextStyles.tag_12.copyWith(color: AppColors.primary),
+          ),
+          SizedBox(width: 4.w),
+          GestureDetector(
+            onTap: onRemove,
+            child: Icon(Icons.close, size: 14.w, color: AppColors.primary),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _CategoryChip extends StatelessWidget {
+  const _CategoryChip({
+    required this.label,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  final String label;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? AppColors.primary.withValues(alpha: 0.2)
+              : Colors.transparent,
+          borderRadius: AppRadius.chip,
+          border: Border.all(
+            color: isSelected ? AppColors.primary : AppColors.spaceDivider,
+          ),
+        ),
+        child: Text(
+          label,
+          style: AppTextStyles.tag_12.copyWith(
+            color: isSelected ? AppColors.primary : AppColors.textSecondary,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// 할일 추가 바텀시트를 표시하는 헬퍼 함수
+Future<Map<String, dynamic>?> showTodoAddBottomSheet({
+  required BuildContext context,
+  String? initialCategoryId,
+  List<DateTime>? initialScheduledDates,
+}) {
+  return showModalBottomSheet<Map<String, dynamic>>(
+    context: context,
+    backgroundColor: Colors.transparent,
+    barrierColor: Colors.black54,
+    isScrollControlled: true,
+    isDismissible: true,
+    enableDrag: true,
+    builder: (context) => TodoAddBottomSheet(
+      initialCategoryId: initialCategoryId,
+      initialScheduledDates: initialScheduledDates,
+    ),
+  );
+}

@@ -26,11 +26,11 @@ class _SpaceMapBackgroundState extends State<SpaceMapBackground>
 
   /// 별 색상 틴트 팔레트
   static const _starTintColors = [
-    Color(0xFF64B5F6), // blue
-    Color(0xFFBA68C8), // purple
-    Color(0xFFFFD740), // gold
-    Color(0xFFF06292), // pink
-    Color(0xFF4DD0E1), // cyan
+    AppColors.primaryLight, // blue
+    AppColors.secondaryLight, // purple
+    AppColors.accentGoldLight, // gold
+    AppColors.accentPinkLight, // pink
+    Color(0xFF4DD0E1), // cyan - no AppColors match
   ];
 
   @override

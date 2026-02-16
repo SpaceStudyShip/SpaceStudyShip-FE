@@ -17,6 +17,7 @@ import '../../domain/usecases/sign_in_with_apple_usecase.dart';
 import '../../domain/usecases/sign_in_with_google_usecase.dart';
 import '../../domain/usecases/sign_out_usecase.dart';
 import '../../domain/utils/firebase_auth_error_handler.dart';
+import '../../../todo/presentation/providers/todo_provider.dart';
 
 part 'auth_provider.g.dart';
 
@@ -296,7 +297,11 @@ class AuthNotifier extends _$AuthNotifier {
     if (currentUser?.isGuest == true) {
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove(kIsGuestKey);
-      debugPrint('🧹 게스트 캐시 삭제 완료 ($kIsGuestKey)');
+
+      // 게스트 할일 데이터 삭제
+      final todoRepo = ref.read(todoRepositoryProvider);
+      await todoRepo.clearAll();
+      debugPrint('🧹 게스트 캐시 삭제 완료 ($kIsGuestKey, todos, categories)');
       state = const AsyncValue.data(null);
       return;
     }

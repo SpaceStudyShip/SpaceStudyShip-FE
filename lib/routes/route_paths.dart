@@ -25,6 +25,11 @@ abstract class RoutePaths {
   static const todoDetail = '/home/todo/:id';
   static String todoDetailPath(String id) => '/home/todo/$id';
 
+  // 카테고리별 할일 목록
+  static const categoryTodo = '/home/todo/category/:categoryId';
+  static String categoryTodoPath(String categoryId) =>
+      '/home/todo/category/$categoryId';
+
   // ═══════════════════════════════════════════════════
   // Timer 하위 화면
   // ═══════════════════════════════════════════════════

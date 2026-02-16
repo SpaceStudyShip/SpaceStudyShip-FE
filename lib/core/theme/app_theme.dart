@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../constants/app_colors.dart';
+import '../constants/spacing_and_radius.dart';
 import '../constants/text_styles.dart';
 
 /// 앱 전역 테마 설정
@@ -46,7 +47,7 @@ class AppTheme {
       color: AppColors.spaceSurface,
       elevation: 0,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: AppRadius.card,
         side: BorderSide(color: AppColors.spaceDivider, width: 1),
       ),
     ),
@@ -54,7 +55,7 @@ class AppTheme {
     // 다이얼로그 테마
     dialogTheme: DialogThemeData(
       backgroundColor: AppColors.spaceSurface,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      shape: RoundedRectangleBorder(borderRadius: AppRadius.xlarge),
       titleTextStyle: AppTextStyles.heading_20.copyWith(
         color: AppColors.textPrimary,
       ),
@@ -118,19 +119,19 @@ class AppTheme {
       filled: true,
       fillColor: AppColors.spaceSurface,
       border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: AppRadius.large,
         borderSide: BorderSide(color: AppColors.spaceDivider),
       ),
       enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: AppRadius.large,
         borderSide: BorderSide(color: AppColors.spaceDivider),
       ),
       focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: AppRadius.large,
         borderSide: BorderSide(color: AppColors.primary, width: 2),
       ),
       errorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: AppRadius.large,
         borderSide: BorderSide(color: AppColors.error),
       ),
       hintStyle: AppTextStyles.paragraph_14.copyWith(
@@ -158,7 +159,7 @@ class AppTheme {
       contentTextStyle: AppTextStyles.paragraph_14.copyWith(
         color: AppColors.textPrimary,
       ),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      shape: RoundedRectangleBorder(borderRadius: AppRadius.snackbar),
       behavior: SnackBarBehavior.floating,
     ),
   );

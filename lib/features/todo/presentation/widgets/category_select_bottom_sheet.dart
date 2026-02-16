@@ -5,15 +5,56 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
+import '../../../../core/widgets/buttons/app_button.dart';
 import '../providers/todo_provider.dart';
 
-class CategoryMoveBottomSheet extends ConsumerWidget {
-  const CategoryMoveBottomSheet({super.key, this.currentCategoryId});
+/// 다중 카테고리 선택 바텀시트
+///
+/// 체크박스 방식으로 여러 카테고리를 선택/해제할 수 있습니다.
+/// 아무것도 선택하지 않으면 '미분류' 상태가 됩니다.
+class CategorySelectBottomSheet extends ConsumerStatefulWidget {
+  const CategorySelectBottomSheet({
+    super.key,
+    this.currentCategoryIds = const [],
+  });
 
-  final String? currentCategoryId;
+  final List<String> currentCategoryIds;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<CategorySelectBottomSheet> createState() =>
+      _CategorySelectBottomSheetState();
+}
+
+class _CategorySelectBottomSheetState
+    extends ConsumerState<CategorySelectBottomSheet> {
+  late List<String> _selectedIds;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedIds = List<String>.from(widget.currentCategoryIds);
+  }
+
+  void _toggleCategory(String id) {
+    setState(() {
+      if (_selectedIds.contains(id)) {
+        _selectedIds.remove(id);
+      } else {
+        _selectedIds.add(id);
+      }
+    });
+  }
+
+  void _selectUncategorized() {
+    setState(() => _selectedIds.clear());
+  }
+
+  void _confirm() {
+    Navigator.of(context).pop(List<String>.from(_selectedIds));
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final categoriesAsync = ref.watch(categoryListNotifierProvider);
 
     return Container(
@@ -43,7 +84,7 @@ class CategoryMoveBottomSheet extends ConsumerWidget {
             child: Align(
               alignment: Alignment.centerLeft,
               child: Text(
-                '카테고리 이동',
+                '카테고리 선택',
                 style: AppTextStyles.subHeading_18.copyWith(
                   color: Colors.white,
                 ),
@@ -55,14 +96,8 @@ class CategoryMoveBottomSheet extends ConsumerWidget {
           _CategoryOption(
             emoji: '📋',
             name: '미분류',
-            isSelected: currentCategoryId == null,
-            onTap: () {
-              if (currentCategoryId == null) {
-                Navigator.of(context).pop(); // 이미 미분류 → 닫기만
-              } else {
-                Navigator.of(context).pop(''); // 미분류로 이동
-              }
-            },
+            isSelected: _selectedIds.isEmpty,
+            onTap: _selectUncategorized,
           ),
 
           // 구분선
@@ -75,18 +110,12 @@ class CategoryMoveBottomSheet extends ConsumerWidget {
           categoriesAsync.when(
             data: (categories) => Column(
               children: categories.map((cat) {
-                final isSelected = cat.id == currentCategoryId;
+                final isSelected = _selectedIds.contains(cat.id);
                 return _CategoryOption(
                   emoji: cat.emoji ?? '📁',
                   name: cat.name,
                   isSelected: isSelected,
-                  onTap: () {
-                    if (isSelected) {
-                      Navigator.of(context).pop(); // 이미 같은 카테고리 → 닫기만
-                    } else {
-                      Navigator.of(context).pop(cat.id); // 해당 카테고리로 이동
-                    }
-                  },
+                  onTap: () => _toggleCategory(cat.id),
                 );
               }).toList(),
             ),
@@ -94,7 +123,25 @@ class CategoryMoveBottomSheet extends ConsumerWidget {
               padding: AppPadding.all16,
               child: const Center(child: CircularProgressIndicator()),
             ),
-            error: (e, st) => const SizedBox.shrink(),
+            error: (e, st) => Padding(
+              padding: AppPadding.all16,
+              child: Text(
+                '카테고리 목록을 불러오지 못했어요',
+                style: AppTextStyles.tag_12.copyWith(color: AppColors.error),
+              ),
+            ),
+          ),
+
+          SizedBox(height: AppSpacing.s12),
+
+          // 확인 버튼
+          Padding(
+            padding: AppPadding.horizontal20,
+            child: AppButton(
+              text: '확인',
+              onPressed: _confirm,
+              width: double.infinity,
+            ),
           ),
 
           SizedBox(height: MediaQuery.of(context).padding.bottom + 12.h),
@@ -133,8 +180,24 @@ class _CategoryOption extends StatelessWidget {
                 style: AppTextStyles.label_16.copyWith(color: Colors.white),
               ),
             ),
-            if (isSelected)
-              Icon(Icons.check_rounded, size: 20.w, color: AppColors.primary),
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 150),
+              width: 22.w,
+              height: 22.w,
+              decoration: BoxDecoration(
+                color: isSelected ? AppColors.primary : Colors.transparent,
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: isSelected
+                      ? AppColors.primary
+                      : AppColors.textTertiary,
+                  width: 2,
+                ),
+              ),
+              child: isSelected
+                  ? Icon(Icons.check, size: 14.w, color: Colors.white)
+                  : null,
+            ),
           ],
         ),
       ),
@@ -142,13 +205,13 @@ class _CategoryOption extends StatelessWidget {
   }
 }
 
-/// 카테고리 이동 바텀시트를 표시하는 헬퍼 함수
-/// 반환값: 카테고리 ID (빈 문자열 = 미분류, null = 취소 또는 변경 없음)
-Future<String?> showCategoryMoveBottomSheet({
+/// 카테고리 선택 바텀시트를 표시하는 헬퍼 함수
+/// 반환값: 카테고리 ID 리스트 (빈 리스트 = 미분류, null = 취소)
+Future<List<String>?> showCategorySelectBottomSheet({
   required BuildContext context,
-  String? currentCategoryId,
+  List<String> currentCategoryIds = const [],
 }) {
-  return showModalBottomSheet<String>(
+  return showModalBottomSheet<List<String>>(
     context: context,
     backgroundColor: Colors.transparent,
     barrierColor: Colors.black54,
@@ -156,6 +219,6 @@ Future<String?> showCategoryMoveBottomSheet({
     isDismissible: true,
     enableDrag: true,
     builder: (context) =>
-        CategoryMoveBottomSheet(currentCategoryId: currentCategoryId),
+        CategorySelectBottomSheet(currentCategoryIds: currentCategoryIds),
   );
 }

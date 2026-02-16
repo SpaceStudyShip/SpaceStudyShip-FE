@@ -13,6 +13,7 @@ class TodoCategoryModel with _$TodoCategoryModel {
     required String name,
     String? emoji,
     @JsonKey(name: 'created_at') required DateTime createdAt,
+    @JsonKey(name: 'updated_at') DateTime? updatedAt,
   }) = _TodoCategoryModel;
 
   factory TodoCategoryModel.fromJson(Map<String, dynamic> json) =>
@@ -25,10 +26,16 @@ extension TodoCategoryModelX on TodoCategoryModel {
     name: name,
     emoji: emoji,
     createdAt: createdAt,
+    updatedAt: updatedAt,
   );
 }
 
 extension TodoCategoryEntityToModelX on TodoCategoryEntity {
-  TodoCategoryModel toModel() =>
-      TodoCategoryModel(id: id, name: name, emoji: emoji, createdAt: createdAt);
+  TodoCategoryModel toModel() => TodoCategoryModel(
+    id: id,
+    name: name,
+    emoji: emoji,
+    createdAt: createdAt,
+    updatedAt: updatedAt,
+  );
 }

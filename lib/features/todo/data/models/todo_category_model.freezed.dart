@@ -26,6 +26,8 @@ mixin _$TodoCategoryModel {
   String? get emoji => throw _privateConstructorUsedError;
   @JsonKey(name: 'created_at')
   DateTime get createdAt => throw _privateConstructorUsedError;
+  @JsonKey(name: 'updated_at')
+  DateTime? get updatedAt => throw _privateConstructorUsedError;
 
   /// Serializes this TodoCategoryModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -49,6 +51,7 @@ abstract class $TodoCategoryModelCopyWith<$Res> {
     String name,
     String? emoji,
     @JsonKey(name: 'created_at') DateTime createdAt,
+    @JsonKey(name: 'updated_at') DateTime? updatedAt,
   });
 }
 
@@ -71,6 +74,7 @@ class _$TodoCategoryModelCopyWithImpl<$Res, $Val extends TodoCategoryModel>
     Object? name = null,
     Object? emoji = freezed,
     Object? createdAt = null,
+    Object? updatedAt = freezed,
   }) {
     return _then(
       _value.copyWith(
@@ -90,6 +94,10 @@ class _$TodoCategoryModelCopyWithImpl<$Res, $Val extends TodoCategoryModel>
                 ? _value.createdAt
                 : createdAt // ignore: cast_nullable_to_non_nullable
                       as DateTime,
+            updatedAt: freezed == updatedAt
+                ? _value.updatedAt
+                : updatedAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
           )
           as $Val,
     );
@@ -110,6 +118,7 @@ abstract class _$$TodoCategoryModelImplCopyWith<$Res>
     String name,
     String? emoji,
     @JsonKey(name: 'created_at') DateTime createdAt,
+    @JsonKey(name: 'updated_at') DateTime? updatedAt,
   });
 }
 
@@ -131,6 +140,7 @@ class __$$TodoCategoryModelImplCopyWithImpl<$Res>
     Object? name = null,
     Object? emoji = freezed,
     Object? createdAt = null,
+    Object? updatedAt = freezed,
   }) {
     return _then(
       _$TodoCategoryModelImpl(
@@ -150,6 +160,10 @@ class __$$TodoCategoryModelImplCopyWithImpl<$Res>
             ? _value.createdAt
             : createdAt // ignore: cast_nullable_to_non_nullable
                   as DateTime,
+        updatedAt: freezed == updatedAt
+            ? _value.updatedAt
+            : updatedAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
       ),
     );
   }
@@ -163,6 +177,7 @@ class _$TodoCategoryModelImpl implements _TodoCategoryModel {
     required this.name,
     this.emoji,
     @JsonKey(name: 'created_at') required this.createdAt,
+    @JsonKey(name: 'updated_at') this.updatedAt,
   });
 
   factory _$TodoCategoryModelImpl.fromJson(Map<String, dynamic> json) =>
@@ -177,10 +192,13 @@ class _$TodoCategoryModelImpl implements _TodoCategoryModel {
   @override
   @JsonKey(name: 'created_at')
   final DateTime createdAt;
+  @override
+  @JsonKey(name: 'updated_at')
+  final DateTime? updatedAt;
 
   @override
   String toString() {
-    return 'TodoCategoryModel(id: $id, name: $name, emoji: $emoji, createdAt: $createdAt)';
+    return 'TodoCategoryModel(id: $id, name: $name, emoji: $emoji, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 
   @override
@@ -192,12 +210,15 @@ class _$TodoCategoryModelImpl implements _TodoCategoryModel {
             (identical(other.name, name) || other.name == name) &&
             (identical(other.emoji, emoji) || other.emoji == emoji) &&
             (identical(other.createdAt, createdAt) ||
-                other.createdAt == createdAt));
+                other.createdAt == createdAt) &&
+            (identical(other.updatedAt, updatedAt) ||
+                other.updatedAt == updatedAt));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, id, name, emoji, createdAt);
+  int get hashCode =>
+      Object.hash(runtimeType, id, name, emoji, createdAt, updatedAt);
 
   /// Create a copy of TodoCategoryModel
   /// with the given fields replaced by the non-null parameter values.
@@ -222,6 +243,7 @@ abstract class _TodoCategoryModel implements TodoCategoryModel {
     required final String name,
     final String? emoji,
     @JsonKey(name: 'created_at') required final DateTime createdAt,
+    @JsonKey(name: 'updated_at') final DateTime? updatedAt,
   }) = _$TodoCategoryModelImpl;
 
   factory _TodoCategoryModel.fromJson(Map<String, dynamic> json) =
@@ -236,6 +258,9 @@ abstract class _TodoCategoryModel implements TodoCategoryModel {
   @override
   @JsonKey(name: 'created_at')
   DateTime get createdAt;
+  @override
+  @JsonKey(name: 'updated_at')
+  DateTime? get updatedAt;
 
   /// Create a copy of TodoCategoryModel
   /// with the given fields replaced by the non-null parameter values.

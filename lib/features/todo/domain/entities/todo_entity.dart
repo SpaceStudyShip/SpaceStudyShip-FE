@@ -11,7 +11,7 @@ class TodoEntity with _$TodoEntity {
     required String title,
     @Default([]) List<DateTime> scheduledDates,
     @Default([]) List<DateTime> completedDates,
-    String? categoryId,
+    @Default([]) List<String> categoryIds,
     int? estimatedMinutes,
     int? actualMinutes,
     required DateTime createdAt,

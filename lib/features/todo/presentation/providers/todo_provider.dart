@@ -11,6 +11,7 @@ import '../../domain/repositories/todo_repository.dart';
 import '../../domain/usecases/create_category_usecase.dart';
 import '../../domain/usecases/create_todo_usecase.dart';
 import '../../domain/usecases/delete_category_usecase.dart';
+import '../../domain/usecases/update_category_usecase.dart';
 import '../../domain/usecases/delete_todo_usecase.dart';
 import '../../domain/usecases/get_categories_usecase.dart';
 import '../../domain/usecases/get_todo_list_usecase.dart';
@@ -67,6 +68,11 @@ CreateCategoryUseCase createCategoryUseCase(Ref ref) {
 }
 
 @riverpod
+UpdateCategoryUseCase updateCategoryUseCase(Ref ref) {
+  return UpdateCategoryUseCase(ref.watch(todoRepositoryProvider));
+}
+
+@riverpod
 DeleteCategoryUseCase deleteCategoryUseCase(Ref ref) {
   return DeleteCategoryUseCase(ref.watch(todoRepositoryProvider));
 }
@@ -83,14 +89,14 @@ class TodoListNotifier extends _$TodoListNotifier {
 
   Future<void> addTodo({
     required String title,
-    String? categoryId,
+    List<String> categoryIds = const [],
     int? estimatedMinutes,
     List<DateTime>? scheduledDates,
   }) async {
     final useCase = ref.read(createTodoUseCaseProvider);
     await useCase.execute(
       title: title,
-      categoryId: categoryId,
+      categoryIds: categoryIds,
       estimatedMinutes: estimatedMinutes,
       scheduledDates: scheduledDates,
     );
@@ -230,6 +236,23 @@ class CategoryListNotifier extends _$CategoryListNotifier {
     ref.invalidateSelf();
   }
 
+  Future<void> updateCategory(TodoCategoryEntity category) async {
+    final previousState = state;
+    state = AsyncData(
+      state.valueOrNull
+              ?.map((c) => c.id == category.id ? category : c)
+              .toList() ??
+          [],
+    );
+    try {
+      final useCase = ref.read(updateCategoryUseCaseProvider);
+      await useCase.execute(category);
+    } catch (_) {
+      state = previousState;
+      rethrow;
+    }
+  }
+
   Future<void> deleteCategory(String id) async {
     final previousState = state;
     state = AsyncData(
@@ -305,7 +328,10 @@ Map<DateTime, List<TodoEntity>> todosByDateMap(Ref ref) {
 @riverpod
 List<TodoEntity> todosForCategory(Ref ref, String? categoryId) {
   final todos = ref.watch(todoListNotifierProvider).valueOrNull ?? [];
-  return todos.where((t) => t.categoryId == categoryId).toList();
+  if (categoryId == null) {
+    return todos.where((t) => t.categoryIds.isEmpty).toList();
+  }
+  return todos.where((t) => t.categoryIds.contains(categoryId)).toList();
 }
 
 // === 카테고리별 할일 통계 (Record: 구조적 동등성으로 불필요한 리빌드 방지) ===
@@ -316,7 +342,9 @@ List<TodoEntity> todosForCategory(Ref ref, String? categoryId) {
   String? categoryId,
 ) {
   final todos = ref.watch(todoListNotifierProvider).valueOrNull ?? [];
-  final catTodos = todos.where((t) => t.categoryId == categoryId);
+  final catTodos = categoryId == null
+      ? todos.where((t) => t.categoryIds.isEmpty)
+      : todos.where((t) => t.categoryIds.contains(categoryId));
   return (
     todoCount: catTodos.length,
     completedCount: catTodos.where((t) => t.isFullyCompleted).length,

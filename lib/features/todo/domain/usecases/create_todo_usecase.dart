@@ -8,13 +8,13 @@ class CreateTodoUseCase {
 
   Future<TodoEntity> execute({
     required String title,
-    String? categoryId,
+    List<String> categoryIds = const [],
     int? estimatedMinutes,
     List<DateTime>? scheduledDates,
   }) {
     return _repository.createTodo(
       title: title,
-      categoryId: categoryId,
+      categoryIds: categoryIds,
       estimatedMinutes: estimatedMinutes,
       scheduledDates: scheduledDates,
     );

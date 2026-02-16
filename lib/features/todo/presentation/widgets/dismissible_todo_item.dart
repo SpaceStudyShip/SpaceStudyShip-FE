@@ -10,12 +10,12 @@ import '../../../../core/widgets/dialogs/app_dialog.dart';
 import '../../../../core/widgets/space/todo_item.dart';
 import '../../domain/entities/todo_entity.dart';
 import '../providers/todo_provider.dart';
-import 'category_move_bottom_sheet.dart';
+import 'category_select_bottom_sheet.dart';
 import 'todo_add_bottom_sheet.dart';
 
 /// 양방향 스와이프 Dismissible + TodoItem 통합 위젯
 ///
-/// - 좌→우: 카테고리 이동 바텀시트
+/// - 좌→우: 카테고리 선택 바텀시트
 /// - 우→좌: 삭제 확인 (다중 날짜면 3가지 선택)
 /// - 탭: 완료 토글 (onTap 미지정 시)
 ///
@@ -43,18 +43,14 @@ class DismissibleTodoItem extends ConsumerWidget {
       direction: DismissDirection.horizontal,
       confirmDismiss: (direction) async {
         if (direction == DismissDirection.startToEnd) {
-          final newCategoryId = await showCategoryMoveBottomSheet(
+          final newCategoryIds = await showCategorySelectBottomSheet(
             context: context,
-            currentCategoryId: todo.categoryId,
+            currentCategoryIds: todo.categoryIds,
           );
-          if (newCategoryId != null && context.mounted) {
+          if (newCategoryIds != null && context.mounted) {
             ref
                 .read(todoListNotifierProvider.notifier)
-                .updateTodo(
-                  todo.copyWith(
-                    categoryId: newCategoryId == '' ? null : newCategoryId,
-                  ),
-                );
+                .updateTodo(todo.copyWith(categoryIds: newCategoryIds));
           }
           return false;
         }
@@ -141,7 +137,7 @@ class DismissibleTodoItem extends ConsumerWidget {
           .updateTodo(
             todo.copyWith(
               title: result['title'] as String,
-              categoryId: result['categoryId'] as String?,
+              categoryIds: (result['categoryIds'] as List<String>?) ?? [],
               scheduledDates:
                   (result['scheduledDates'] as List<DateTime>?) ?? [],
             ),

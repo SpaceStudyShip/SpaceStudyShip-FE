@@ -6,14 +6,15 @@ import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../../../core/constants/toss_design_tokens.dart';
 
-class CategoryFolderCard extends StatefulWidget {
-  const CategoryFolderCard({
+class CategoryCard extends StatefulWidget {
+  const CategoryCard({
     super.key,
     required this.name,
     this.emoji,
     required this.todoCount,
     required this.completedCount,
     required this.onTap,
+    this.onLongPress,
     this.isEditMode = false,
     this.isSelected = false,
   });
@@ -23,14 +24,15 @@ class CategoryFolderCard extends StatefulWidget {
   final int todoCount;
   final int completedCount;
   final VoidCallback onTap;
+  final VoidCallback? onLongPress;
   final bool isEditMode;
   final bool isSelected;
 
   @override
-  State<CategoryFolderCard> createState() => _CategoryFolderCardState();
+  State<CategoryCard> createState() => _CategoryCardState();
 }
 
-class _CategoryFolderCardState extends State<CategoryFolderCard> {
+class _CategoryCardState extends State<CategoryCard> {
   bool _isPressed = false;
 
   @override
@@ -42,6 +44,7 @@ class _CategoryFolderCardState extends State<CategoryFolderCard> {
         widget.onTap();
       },
       onTapCancel: () => setState(() => _isPressed = false),
+      onLongPress: widget.onLongPress,
       child: AnimatedScale(
         scale: _isPressed ? TossDesignTokens.cardTapScale : 1.0,
         duration: TossDesignTokens.animationFast,

@@ -9,5 +9,6 @@ class TodoCategoryEntity with _$TodoCategoryEntity {
     required String name,
     String? emoji,
     required DateTime createdAt,
+    DateTime? updatedAt,
   }) = _TodoCategoryEntity;
 }

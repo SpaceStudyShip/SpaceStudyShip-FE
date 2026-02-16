@@ -154,6 +154,26 @@ final createCategoryUseCaseProvider =
 // ignore: unused_element
 typedef CreateCategoryUseCaseRef =
     AutoDisposeProviderRef<CreateCategoryUseCase>;
+String _$updateCategoryUseCaseHash() =>
+    r'75b96540c4b8c719b61eb6acbf36b5a1a9e74b42';
+
+/// See also [updateCategoryUseCase].
+@ProviderFor(updateCategoryUseCase)
+final updateCategoryUseCaseProvider =
+    AutoDisposeProvider<UpdateCategoryUseCase>.internal(
+      updateCategoryUseCase,
+      name: r'updateCategoryUseCaseProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$updateCategoryUseCaseHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef UpdateCategoryUseCaseRef =
+    AutoDisposeProviderRef<UpdateCategoryUseCase>;
 String _$deleteCategoryUseCaseHash() =>
     r'636a6852abf59f66d857fab2503814a997f7ed3f';
 
@@ -351,7 +371,7 @@ final todosByDateMapProvider =
 // ignore: unused_element
 typedef TodosByDateMapRef =
     AutoDisposeProviderRef<Map<DateTime, List<TodoEntity>>>;
-String _$todosForCategoryHash() => r'd15e35df1791cae73fa6c05c62d75970985dbe6b';
+String _$todosForCategoryHash() => r'121289a494b6e66c4e62be82cbe320c902ada098';
 
 /// See also [todosForCategory].
 @ProviderFor(todosForCategory)
@@ -471,7 +491,7 @@ class _TodosForCategoryProviderElement
   String? get categoryId => (origin as TodosForCategoryProvider).categoryId;
 }
 
-String _$categoryTodoStatsHash() => r'51c371a780f5b6145e9d0013d2896bf27174dc87';
+String _$categoryTodoStatsHash() => r'd4edeb6e989f36d119f275e7fd2a7b033099ed5a';
 
 /// See also [categoryTodoStats].
 @ProviderFor(categoryTodoStats)
@@ -598,7 +618,7 @@ class _CategoryTodoStatsProviderElement
   String? get categoryId => (origin as CategoryTodoStatsProvider).categoryId;
 }
 
-String _$todoListNotifierHash() => r'1c89e65e8dd987d9f9035f371b7e24c4f1cbbf2c';
+String _$todoListNotifierHash() => r'7a2600651b82a5cf90efe6d25e37eefaadbed87e';
 
 /// See also [TodoListNotifier].
 @ProviderFor(TodoListNotifier)
@@ -618,7 +638,7 @@ final todoListNotifierProvider =
 
 typedef _$TodoListNotifier = AutoDisposeAsyncNotifier<List<TodoEntity>>;
 String _$categoryListNotifierHash() =>
-    r'4f5d65696aa50d0b77bcff0e292a83d77e29a06e';
+    r'245f4131a6d5be10df9252f7cef077b7c68dda51';
 
 /// See also [CategoryListNotifier].
 @ProviderFor(CategoryListNotifier)

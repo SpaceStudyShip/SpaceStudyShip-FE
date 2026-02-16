@@ -299,3 +299,26 @@ Map<DateTime, List<TodoEntity>> todosByDateMap(Ref ref) {
   }
   return map;
 }
+
+// === 카테고리별 할일 필터 ===
+
+@riverpod
+List<TodoEntity> todosForCategory(Ref ref, String? categoryId) {
+  final todos = ref.watch(todoListNotifierProvider).valueOrNull ?? [];
+  return todos.where((t) => t.categoryId == categoryId).toList();
+}
+
+// === 카테고리별 할일 통계 (Record: 구조적 동등성으로 불필요한 리빌드 방지) ===
+
+@riverpod
+({int todoCount, int completedCount}) categoryTodoStats(
+  Ref ref,
+  String? categoryId,
+) {
+  final todos = ref.watch(todoListNotifierProvider).valueOrNull ?? [];
+  final catTodos = todos.where((t) => t.categoryId == categoryId);
+  return (
+    todoCount: catTodos.length,
+    completedCount: catTodos.where((t) => t.isFullyCompleted).length,
+  );
+}

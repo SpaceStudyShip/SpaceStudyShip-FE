@@ -25,7 +25,14 @@ class CategoryTodoScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final todosAsync = ref.watch(todoListNotifierProvider);
+    // 로딩/에러 상태만 감시 (초기 로드 후 stable — 리빌드 방지)
+    final isInitialLoading = ref.watch(
+      todoListNotifierProvider.select((s) => !s.hasValue),
+    );
+    final hasError = ref.watch(
+      todoListNotifierProvider.select((s) => s.hasError),
+    );
+    final categoryTodos = ref.watch(todosForCategoryProvider(categoryId));
 
     return Scaffold(
       backgroundColor: AppColors.spaceBackground,
@@ -72,50 +79,40 @@ class CategoryTodoScreen extends ConsumerWidget {
       body: Stack(
         children: [
           const Positioned.fill(child: SpaceBackground()),
-          todosAsync.when(
-            data: (todos) {
-              final categoryTodos = todos
-                  .where((t) => t.categoryId == categoryId)
-                  .toList();
-
-              if (categoryTodos.isEmpty) {
-                return const Center(
-                  child: SpaceEmptyState(
-                    icon: Icons.folder_open_rounded,
-                    title: '할 일이 없어요',
-                    subtitle: '오른쪽 상단 + 버튼으로 추가해보세요',
-                  ),
-                );
-              }
-
-              return ListView.builder(
-                padding: EdgeInsets.only(
-                  top:
-                      MediaQuery.of(context).padding.top +
-                      kToolbarHeight +
-                      16.h,
-                  left: 20.w,
-                  right: 20.w,
-                  bottom: 16.h,
-                ),
-                itemCount: categoryTodos.length,
-                itemBuilder: (context, index) {
-                  final todo = categoryTodos[index];
-                  return Padding(
-                    padding: EdgeInsets.only(bottom: 8.h),
-                    child: DismissibleTodoItem(todo: todo),
-                  );
-                },
-              );
-            },
-            loading: () => const Center(child: CircularProgressIndicator()),
-            error: (_, _) => Center(
+          if (isInitialLoading)
+            const Center(child: CircularProgressIndicator())
+          else if (hasError)
+            Center(
               child: Text(
                 '데이터를 불러오지 못했어요',
                 style: AppTextStyles.label_16.copyWith(color: AppColors.error),
               ),
+            )
+          else if (categoryTodos.isEmpty)
+            const Center(
+              child: SpaceEmptyState(
+                icon: Icons.folder_open_rounded,
+                title: '할 일이 없어요',
+                subtitle: '오른쪽 상단 + 버튼으로 추가해보세요',
+              ),
+            )
+          else
+            ListView.builder(
+              padding: EdgeInsets.only(
+                top: MediaQuery.of(context).padding.top + kToolbarHeight + 16.h,
+                left: 20.w,
+                right: 20.w,
+                bottom: 16.h,
+              ),
+              itemCount: categoryTodos.length,
+              itemBuilder: (context, index) {
+                final todo = categoryTodos[index];
+                return Padding(
+                  padding: EdgeInsets.only(bottom: 8.h),
+                  child: DismissibleTodoItem(todo: todo),
+                );
+              },
             ),
-          ),
         ],
       ),
     );

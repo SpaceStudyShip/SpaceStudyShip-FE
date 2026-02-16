@@ -136,7 +136,9 @@ class DismissibleTodoItem extends ConsumerWidget {
       initialTodo: todo,
     );
     if (result != null && context.mounted) {
-      ref.read(todoListNotifierProvider.notifier).updateTodo(
+      ref
+          .read(todoListNotifierProvider.notifier)
+          .updateTodo(
             todo.copyWith(
               title: result['title'] as String,
               categoryId: result['categoryId'] as String?,

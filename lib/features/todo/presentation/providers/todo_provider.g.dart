@@ -7,7 +7,7 @@ part of 'todo_provider.dart';
 // **************************************************************************
 
 String _$localTodoDataSourceHash() =>
-    r'adfffe87f84a41b20c39887f1c52930197964056';
+    r'685b5c879c9e85d709743b1ee0ff0549714ca96d';
 
 /// See also [localTodoDataSource].
 @ProviderFor(localTodoDataSource)
@@ -351,6 +351,253 @@ final todosByDateMapProvider =
 // ignore: unused_element
 typedef TodosByDateMapRef =
     AutoDisposeProviderRef<Map<DateTime, List<TodoEntity>>>;
+String _$todosForCategoryHash() => r'd15e35df1791cae73fa6c05c62d75970985dbe6b';
+
+/// See also [todosForCategory].
+@ProviderFor(todosForCategory)
+const todosForCategoryProvider = TodosForCategoryFamily();
+
+/// See also [todosForCategory].
+class TodosForCategoryFamily extends Family<List<TodoEntity>> {
+  /// See also [todosForCategory].
+  const TodosForCategoryFamily();
+
+  /// See also [todosForCategory].
+  TodosForCategoryProvider call(String? categoryId) {
+    return TodosForCategoryProvider(categoryId);
+  }
+
+  @override
+  TodosForCategoryProvider getProviderOverride(
+    covariant TodosForCategoryProvider provider,
+  ) {
+    return call(provider.categoryId);
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'todosForCategoryProvider';
+}
+
+/// See also [todosForCategory].
+class TodosForCategoryProvider extends AutoDisposeProvider<List<TodoEntity>> {
+  /// See also [todosForCategory].
+  TodosForCategoryProvider(String? categoryId)
+    : this._internal(
+        (ref) => todosForCategory(ref as TodosForCategoryRef, categoryId),
+        from: todosForCategoryProvider,
+        name: r'todosForCategoryProvider',
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$todosForCategoryHash,
+        dependencies: TodosForCategoryFamily._dependencies,
+        allTransitiveDependencies:
+            TodosForCategoryFamily._allTransitiveDependencies,
+        categoryId: categoryId,
+      );
+
+  TodosForCategoryProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.categoryId,
+  }) : super.internal();
+
+  final String? categoryId;
+
+  @override
+  Override overrideWith(
+    List<TodoEntity> Function(TodosForCategoryRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: TodosForCategoryProvider._internal(
+        (ref) => create(ref as TodosForCategoryRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        categoryId: categoryId,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeProviderElement<List<TodoEntity>> createElement() {
+    return _TodosForCategoryProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is TodosForCategoryProvider && other.categoryId == categoryId;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, categoryId.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin TodosForCategoryRef on AutoDisposeProviderRef<List<TodoEntity>> {
+  /// The parameter `categoryId` of this provider.
+  String? get categoryId;
+}
+
+class _TodosForCategoryProviderElement
+    extends AutoDisposeProviderElement<List<TodoEntity>>
+    with TodosForCategoryRef {
+  _TodosForCategoryProviderElement(super.provider);
+
+  @override
+  String? get categoryId => (origin as TodosForCategoryProvider).categoryId;
+}
+
+String _$categoryTodoStatsHash() => r'51c371a780f5b6145e9d0013d2896bf27174dc87';
+
+/// See also [categoryTodoStats].
+@ProviderFor(categoryTodoStats)
+const categoryTodoStatsProvider = CategoryTodoStatsFamily();
+
+/// See also [categoryTodoStats].
+class CategoryTodoStatsFamily
+    extends Family<({int todoCount, int completedCount})> {
+  /// See also [categoryTodoStats].
+  const CategoryTodoStatsFamily();
+
+  /// See also [categoryTodoStats].
+  CategoryTodoStatsProvider call(String? categoryId) {
+    return CategoryTodoStatsProvider(categoryId);
+  }
+
+  @override
+  CategoryTodoStatsProvider getProviderOverride(
+    covariant CategoryTodoStatsProvider provider,
+  ) {
+    return call(provider.categoryId);
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'categoryTodoStatsProvider';
+}
+
+/// See also [categoryTodoStats].
+class CategoryTodoStatsProvider
+    extends AutoDisposeProvider<({int todoCount, int completedCount})> {
+  /// See also [categoryTodoStats].
+  CategoryTodoStatsProvider(String? categoryId)
+    : this._internal(
+        (ref) => categoryTodoStats(ref as CategoryTodoStatsRef, categoryId),
+        from: categoryTodoStatsProvider,
+        name: r'categoryTodoStatsProvider',
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$categoryTodoStatsHash,
+        dependencies: CategoryTodoStatsFamily._dependencies,
+        allTransitiveDependencies:
+            CategoryTodoStatsFamily._allTransitiveDependencies,
+        categoryId: categoryId,
+      );
+
+  CategoryTodoStatsProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.categoryId,
+  }) : super.internal();
+
+  final String? categoryId;
+
+  @override
+  Override overrideWith(
+    ({int todoCount, int completedCount}) Function(
+      CategoryTodoStatsRef provider,
+    )
+    create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: CategoryTodoStatsProvider._internal(
+        (ref) => create(ref as CategoryTodoStatsRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        categoryId: categoryId,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeProviderElement<({int todoCount, int completedCount})>
+  createElement() {
+    return _CategoryTodoStatsProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is CategoryTodoStatsProvider && other.categoryId == categoryId;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, categoryId.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin CategoryTodoStatsRef
+    on AutoDisposeProviderRef<({int todoCount, int completedCount})> {
+  /// The parameter `categoryId` of this provider.
+  String? get categoryId;
+}
+
+class _CategoryTodoStatsProviderElement
+    extends AutoDisposeProviderElement<({int todoCount, int completedCount})>
+    with CategoryTodoStatsRef {
+  _CategoryTodoStatsProviderElement(super.provider);
+
+  @override
+  String? get categoryId => (origin as CategoryTodoStatsProvider).categoryId;
+}
+
 String _$todoListNotifierHash() => r'1c89e65e8dd987d9f9035f371b7e24c4f1cbbf2c';
 
 /// See also [TodoListNotifier].

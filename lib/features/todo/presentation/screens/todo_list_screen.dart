@@ -12,7 +12,6 @@ import '../../../../core/widgets/dialogs/app_dialog.dart';
 import '../../../../core/widgets/space/todo_item.dart';
 import '../../../../routes/route_paths.dart';
 import '../../domain/entities/todo_category_entity.dart';
-import '../../domain/entities/todo_entity.dart';
 import '../providers/todo_provider.dart';
 import '../widgets/category_add_bottom_sheet.dart';
 import '../widgets/category_folder_card.dart';
@@ -66,7 +65,13 @@ class _TodoListScreenState extends ConsumerState<TodoListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final todosAsync = ref.watch(todoListNotifierProvider);
+    // 할일 로딩/에러 상태만 감시 (초기 로드 후 stable — 리빌드 방지)
+    final todosHasValue = ref.watch(
+      todoListNotifierProvider.select((s) => s.hasValue),
+    );
+    final todosHasError = ref.watch(
+      todoListNotifierProvider.select((s) => s.hasError),
+    );
     final categoriesAsync = ref.watch(categoryListNotifierProvider);
 
     return Scaffold(
@@ -131,25 +136,22 @@ class _TodoListScreenState extends ConsumerState<TodoListScreen> {
       body: Stack(
         children: [
           const Positioned.fill(child: SpaceBackground()),
-          _buildBody(todosAsync, categoriesAsync),
+          _buildBody(todosHasValue, todosHasError, categoriesAsync),
         ],
       ),
     );
   }
 
   Widget _buildBody(
-    AsyncValue<List<TodoEntity>> todosAsync,
+    bool todosHasValue,
+    bool todosHasError,
     AsyncValue<List<TodoCategoryEntity>> categoriesAsync,
   ) {
-    // 캐시된 데이터가 없을 때만 로딩 스피너 표시
-    // (invalidateSelf 후 새로고침 시 기존 데이터 유지)
-    if (!todosAsync.hasValue && !categoriesAsync.hasValue) {
-      if (todosAsync.isLoading || categoriesAsync.isLoading) {
-        return const Center(child: CircularProgressIndicator());
-      }
+    if (!todosHasValue && !categoriesAsync.hasValue) {
+      return const Center(child: CircularProgressIndicator());
     }
 
-    if (todosAsync.hasError || categoriesAsync.hasError) {
+    if (todosHasError || categoriesAsync.hasError) {
       return Center(
         child: Text(
           '데이터를 불러오지 못했어요',
@@ -158,9 +160,7 @@ class _TodoListScreenState extends ConsumerState<TodoListScreen> {
       );
     }
 
-    final todos = todosAsync.valueOrNull ?? [];
     final categories = categoriesAsync.valueOrNull ?? [];
-    final uncategorized = todos.where((t) => t.categoryId == null).toList();
 
     return ListView(
       padding: EdgeInsets.only(
@@ -207,29 +207,28 @@ class _TodoListScreenState extends ConsumerState<TodoListScreen> {
             itemCount: categories.length,
             itemBuilder: (context, index) {
               final cat = categories[index];
-              final catTodos = todos
-                  .where((t) => t.categoryId == cat.id)
-                  .toList();
-              final completedCount = catTodos
-                  .where((t) => t.isFullyCompleted)
-                  .length;
-
-              return CategoryFolderCard(
-                name: cat.name,
-                emoji: cat.emoji,
-                todoCount: catTodos.length,
-                completedCount: completedCount,
-                isEditMode: _isEditMode,
-                isSelected: _selectedCategoryIds.contains(cat.id),
-                onTap: () {
-                  if (_isEditMode) {
-                    _toggleCategorySelection(cat.id);
-                  } else {
-                    context.push(
-                      RoutePaths.categoryTodoPath(cat.id),
-                      extra: {'name': cat.name, 'emoji': cat.emoji},
-                    );
-                  }
+              // Consumer로 격리: 해당 카테고리 통계 변경 시에만 이 카드 리빌드
+              return Consumer(
+                builder: (context, ref, _) {
+                  final stats = ref.watch(categoryTodoStatsProvider(cat.id));
+                  return CategoryFolderCard(
+                    name: cat.name,
+                    emoji: cat.emoji,
+                    todoCount: stats.todoCount,
+                    completedCount: stats.completedCount,
+                    isEditMode: _isEditMode,
+                    isSelected: _selectedCategoryIds.contains(cat.id),
+                    onTap: () {
+                      if (_isEditMode) {
+                        _toggleCategorySelection(cat.id);
+                      } else {
+                        context.push(
+                          RoutePaths.categoryTodoPath(cat.id),
+                          extra: {'name': cat.name, 'emoji': cat.emoji},
+                        );
+                      }
+                    },
+                  );
                 },
               );
             },
@@ -269,27 +268,38 @@ class _TodoListScreenState extends ConsumerState<TodoListScreen> {
           ],
         ),
         SizedBox(height: AppSpacing.s20),
-        if (uncategorized.isNotEmpty)
-          ...uncategorized.map(
-            (todo) => Padding(
-              padding: EdgeInsets.only(bottom: 8.h),
-              child: _isEditMode
-                  ? TodoItem(
-                      title: todo.title,
-                      subtitle:
-                          todo.actualMinutes != null && todo.actualMinutes! > 0
-                          ? '${todo.actualMinutes}분 공부'
-                          : null,
-                      isCompleted: todo.isFullyCompleted,
-                      onToggle: () => _toggleTodoSelection(todo.id),
-                      onTap: () => _toggleTodoSelection(todo.id),
-                      leading: _buildSelectionCheckbox(
-                        _selectedTodoIds.contains(todo.id),
-                      ),
-                    )
-                  : DismissibleTodoItem(todo: todo),
-            ),
-          ),
+        // Consumer로 격리: 미분류 할일 변경 시에만 이 섹션 리빌드
+        Consumer(
+          builder: (context, ref, _) {
+            final uncategorized = ref.watch(todosForCategoryProvider(null));
+            if (uncategorized.isEmpty) return const SizedBox.shrink();
+            return Column(
+              children: uncategorized
+                  .map(
+                    (todo) => Padding(
+                      padding: EdgeInsets.only(bottom: 8.h),
+                      child: _isEditMode
+                          ? TodoItem(
+                              title: todo.title,
+                              subtitle:
+                                  todo.actualMinutes != null &&
+                                      todo.actualMinutes! > 0
+                                  ? '${todo.actualMinutes}분 공부'
+                                  : null,
+                              isCompleted: todo.isFullyCompleted,
+                              onToggle: () => _toggleTodoSelection(todo.id),
+                              onTap: () => _toggleTodoSelection(todo.id),
+                              leading: _buildSelectionCheckbox(
+                                _selectedTodoIds.contains(todo.id),
+                              ),
+                            )
+                          : DismissibleTodoItem(todo: todo),
+                    ),
+                  )
+                  .toList(),
+            );
+          },
+        ),
       ],
     );
   }

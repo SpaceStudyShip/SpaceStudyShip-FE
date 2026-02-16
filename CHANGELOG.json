@@ -1,11 +1,42 @@
 {
   "metadata": {
-    "lastUpdated": "2026-02-16T09:22:32Z",
-    "currentVersion": "1.0.36",
+    "lastUpdated": "2026-02-16T13:49:08Z",
+    "currentVersion": "1.1.1",
     "projectType": "flutter",
-    "totalReleases": 13
+    "totalReleases": 14
   },
   "releases": [
+    {
+      "version": "1.1.1",
+      "project_type": "flutter",
+      "date": "2026-02-16",
+      "pr_number": 24,
+      "raw_summary": "## Summary by CodeRabbit\n\n## 릴리스 노트\n\n* **새로운 기능**\n  * 여러 카테고리를 할 일에 할당할 수 있는 다중 카테고리 지원 추가\n  * 기존 카테고리 편집 기능 추가\n  * 할 일 편집 기능 추가\n\n* **UI/UX 개선**\n  * 빈 공간 터치 시 키보드 자동 닫힘 개선\n  * 카테고리 선택 화면 다중 선택 지원으로 개선\n\n* **버전 업데이트**\n  * v1.1.1으로 업그레이드",
+      "parsed_changes": {
+        "새로운_기능": {
+          "title": "새로운 기능",
+          "items": [
+            "여러 카테고리를 할 일에 할당할 수 있는 다중 카테고리 지원 추가",
+            "기존 카테고리 편집 기능 추가",
+            "할 일 편집 기능 추가"
+          ]
+        },
+        "ui_ux_개선": {
+          "title": "UI/UX 개선",
+          "items": [
+            "빈 공간 터치 시 키보드 자동 닫힘 개선",
+            "카테고리 선택 화면 다중 선택 지원으로 개선"
+          ]
+        },
+        "버전_업데이트": {
+          "title": "버전 업데이트",
+          "items": [
+            "v1.1.1으로 업그레이드"
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "1.0.36",
       "project_type": "flutter",

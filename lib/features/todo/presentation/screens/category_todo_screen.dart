@@ -6,11 +6,9 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/widgets/backgrounds/space_background.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
-import '../../../../core/widgets/dialogs/app_dialog.dart';
-import '../../../../core/widgets/space/todo_item.dart';
 import '../../../../core/widgets/states/space_empty_state.dart';
 import '../providers/todo_provider.dart';
-import '../widgets/category_move_bottom_sheet.dart';
+import '../widgets/dismissible_todo_item.dart';
 import '../widgets/todo_add_bottom_sheet.dart';
 
 class CategoryTodoScreen extends ConsumerWidget {
@@ -62,6 +60,8 @@ class CategoryTodoScreen extends ConsumerWidget {
                     .addTodo(
                       title: result['title'] as String,
                       categoryId: result['categoryId'] as String?,
+                      scheduledDate:
+                          result['scheduledDate'] as DateTime?,
                     );
               }
             },
@@ -103,89 +103,7 @@ class CategoryTodoScreen extends ConsumerWidget {
                   final todo = categoryTodos[index];
                   return Padding(
                     padding: EdgeInsets.only(bottom: 8.h),
-                    child: Dismissible(
-                      key: Key(todo.id),
-                      direction: DismissDirection.horizontal,
-                      confirmDismiss: (direction) async {
-                        if (direction == DismissDirection.startToEnd) {
-                          // 카테고리 이동
-                          final newCategoryId =
-                              await showCategoryMoveBottomSheet(
-                                context: context,
-                                currentCategoryId: todo.categoryId,
-                              );
-                          if (newCategoryId != null && context.mounted) {
-                            ref
-                                .read(todoListNotifierProvider.notifier)
-                                .updateTodo(
-                                  todo.copyWith(
-                                    categoryId: newCategoryId == ''
-                                        ? null
-                                        : newCategoryId,
-                                  ),
-                                );
-                          }
-                          return false; // 아이템 유지
-                        }
-                        // 삭제 확인
-                        final confirmed = await AppDialog.confirm(
-                          context: context,
-                          title: '할일 삭제',
-                          message:
-                              "'${todo.title}'을(를) 삭제하시겠습니까?\n삭제된 항목은 복구할 수 없습니다.",
-                          emotion: AppDialogEmotion.warning,
-                          confirmText: '삭제',
-                          cancelText: '취소',
-                          isDestructive: true,
-                        );
-                        return confirmed == true;
-                      },
-                      onDismissed: (_) {
-                        ref
-                            .read(todoListNotifierProvider.notifier)
-                            .deleteTodo(todo.id);
-                      },
-                      background: Container(
-                        alignment: Alignment.centerLeft,
-                        padding: AppPadding.horizontal20,
-                        decoration: BoxDecoration(
-                          color: AppColors.primary.withValues(alpha: 0.2),
-                          borderRadius: AppRadius.large,
-                        ),
-                        child: Icon(
-                          Icons.drive_file_move_outline,
-                          color: AppColors.primary,
-                          size: 24.w,
-                        ),
-                      ),
-                      secondaryBackground: Container(
-                        alignment: Alignment.centerRight,
-                        padding: AppPadding.horizontal20,
-                        decoration: BoxDecoration(
-                          color: AppColors.error.withValues(alpha: 0.2),
-                          borderRadius: AppRadius.large,
-                        ),
-                        child: Icon(
-                          Icons.delete_outline,
-                          color: AppColors.error,
-                          size: 24.w,
-                        ),
-                      ),
-                      child: TodoItem(
-                        title: todo.title,
-                        subtitle:
-                            todo.actualMinutes != null &&
-                                todo.actualMinutes! > 0
-                            ? '${todo.actualMinutes}분 공부'
-                            : null,
-                        isCompleted: todo.completed,
-                        onToggle: () {
-                          ref
-                              .read(todoListNotifierProvider.notifier)
-                              .toggleTodo(todo);
-                        },
-                      ),
-                    ),
+                    child: DismissibleTodoItem(todo: todo),
                   );
                 },
               );

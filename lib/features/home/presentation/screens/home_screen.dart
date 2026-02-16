@@ -13,11 +13,11 @@ import '../../../../core/widgets/animations/entrance_animations.dart';
 import '../../../../core/widgets/cards/app_card.dart';
 import '../../../../core/widgets/space/spaceship_avatar.dart';
 import '../../../../core/widgets/space/streak_badge.dart';
-import '../../../../core/widgets/space/todo_item.dart';
 import '../../../../core/widgets/states/space_empty_state.dart';
 import '../../../../routes/route_paths.dart';
 import '../../../todo/domain/entities/todo_entity.dart';
 import '../../../todo/presentation/providers/todo_provider.dart';
+import '../../../todo/presentation/widgets/dismissible_todo_item.dart';
 import '../../../todo/presentation/widgets/todo_add_bottom_sheet.dart';
 import '../widgets/space_calendar.dart';
 import '../widgets/spaceship_selector.dart';
@@ -468,36 +468,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget _buildTodoRow(TodoEntity todo) {
     return Padding(
       padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 8.h),
-      child: Dismissible(
-        key: Key(todo.id),
-        direction: DismissDirection.endToStart,
-        background: Container(
-          alignment: Alignment.centerRight,
-          padding: AppPadding.horizontal20,
-          decoration: BoxDecoration(
-            color: AppColors.error.withValues(alpha: 0.2),
-            borderRadius: AppRadius.large,
-          ),
-          child: Icon(
-            Icons.delete_outline,
-            color: AppColors.error,
-            size: 24.w,
-          ),
-        ),
-        onDismissed: (_) {
-          ref.read(todoListNotifierProvider.notifier).deleteTodo(todo.id);
-        },
-        child: TodoItem(
-          title: todo.title,
-          subtitle: todo.actualMinutes != null && todo.actualMinutes! > 0
-              ? '${todo.actualMinutes}분 공부'
-              : null,
-          isCompleted: todo.completed,
-          onToggle: () {
-            ref.read(todoListNotifierProvider.notifier).toggleTodo(todo);
-          },
-        ),
-      ),
+      child: DismissibleTodoItem(todo: todo),
     );
   }
 

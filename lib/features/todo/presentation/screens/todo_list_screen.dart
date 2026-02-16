@@ -16,7 +16,7 @@ import '../../domain/entities/todo_entity.dart';
 import '../providers/todo_provider.dart';
 import '../widgets/category_add_bottom_sheet.dart';
 import '../widgets/category_folder_card.dart';
-import '../widgets/category_move_bottom_sheet.dart';
+import '../widgets/dismissible_todo_item.dart';
 import '../widgets/todo_add_bottom_sheet.dart';
 
 class TodoListScreen extends ConsumerStatefulWidget {
@@ -258,6 +258,8 @@ class _TodoListScreenState extends ConsumerState<TodoListScreen> {
                         .addTodo(
                           title: result['title'] as String,
                           categoryId: result['categoryId'] as String?,
+                          scheduledDate:
+                              result['scheduledDate'] as DateTime?,
                         );
                   }
                 },
@@ -289,88 +291,7 @@ class _TodoListScreenState extends ConsumerState<TodoListScreen> {
                         _selectedTodoIds.contains(todo.id),
                       ),
                     )
-                  : Dismissible(
-                      key: Key(todo.id),
-                      direction: DismissDirection.horizontal,
-                      confirmDismiss: (direction) async {
-                        if (direction == DismissDirection.startToEnd) {
-                          final newCategoryId =
-                              await showCategoryMoveBottomSheet(
-                                context: context,
-                                currentCategoryId: todo.categoryId,
-                              );
-                          if (newCategoryId != null && mounted) {
-                            ref
-                                .read(todoListNotifierProvider.notifier)
-                                .updateTodo(
-                                  todo.copyWith(
-                                    categoryId: newCategoryId == ''
-                                        ? null
-                                        : newCategoryId,
-                                  ),
-                                );
-                          }
-                          return false;
-                        }
-                        // 삭제 확인
-                        final confirmed = await AppDialog.confirm(
-                          context: context,
-                          title: '할일 삭제',
-                          message:
-                              "'${todo.title}'을(를) 삭제하시겠습니까?\n삭제된 항목은 복구할 수 없습니다.",
-                          emotion: AppDialogEmotion.warning,
-                          confirmText: '삭제',
-                          cancelText: '취소',
-                          isDestructive: true,
-                        );
-                        return confirmed == true;
-                      },
-                      onDismissed: (_) {
-                        ref
-                            .read(todoListNotifierProvider.notifier)
-                            .deleteTodo(todo.id);
-                      },
-                      background: Container(
-                        alignment: Alignment.centerLeft,
-                        padding: AppPadding.horizontal20,
-                        decoration: BoxDecoration(
-                          color: AppColors.primary.withValues(alpha: 0.2),
-                          borderRadius: AppRadius.large,
-                        ),
-                        child: Icon(
-                          Icons.drive_file_move_outline,
-                          color: AppColors.primary,
-                          size: 24.w,
-                        ),
-                      ),
-                      secondaryBackground: Container(
-                        alignment: Alignment.centerRight,
-                        padding: AppPadding.horizontal20,
-                        decoration: BoxDecoration(
-                          color: AppColors.error.withValues(alpha: 0.2),
-                          borderRadius: AppRadius.large,
-                        ),
-                        child: Icon(
-                          Icons.delete_outline,
-                          color: AppColors.error,
-                          size: 24.w,
-                        ),
-                      ),
-                      child: TodoItem(
-                        title: todo.title,
-                        subtitle:
-                            todo.actualMinutes != null &&
-                                todo.actualMinutes! > 0
-                            ? '${todo.actualMinutes}분 공부'
-                            : null,
-                        isCompleted: todo.completed,
-                        onToggle: () {
-                          ref
-                              .read(todoListNotifierProvider.notifier)
-                              .toggleTodo(todo);
-                        },
-                      ),
-                    ),
+                  : DismissibleTodoItem(todo: todo),
             ),
           ),
       ],

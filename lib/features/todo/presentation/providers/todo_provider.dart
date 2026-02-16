@@ -82,12 +82,14 @@ class TodoListNotifier extends _$TodoListNotifier {
     required String title,
     String? categoryId,
     int? estimatedMinutes,
+    DateTime? scheduledDate,
   }) async {
     final useCase = ref.read(createTodoUseCaseProvider);
     await useCase.execute(
       title: title,
       categoryId: categoryId,
       estimatedMinutes: estimatedMinutes,
+      scheduledDate: scheduledDate,
     );
     ref.invalidateSelf();
   }

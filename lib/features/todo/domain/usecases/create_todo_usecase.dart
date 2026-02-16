@@ -10,11 +10,13 @@ class CreateTodoUseCase {
     required String title,
     String? categoryId,
     int? estimatedMinutes,
+    DateTime? scheduledDate,
   }) {
     return _repository.createTodo(
       title: title,
       categoryId: categoryId,
       estimatedMinutes: estimatedMinutes,
+      scheduledDate: scheduledDate,
     );
   }
 }

@@ -7,6 +7,7 @@ abstract class TodoRepository {
     required String title,
     String? categoryId,
     int? estimatedMinutes,
+    DateTime? scheduledDate,
   });
   Future<TodoEntity> updateTodo(TodoEntity todo);
   Future<void> deleteTodo(String id);

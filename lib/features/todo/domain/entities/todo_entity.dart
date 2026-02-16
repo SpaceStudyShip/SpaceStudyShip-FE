@@ -11,6 +11,7 @@ class TodoEntity with _$TodoEntity {
     String? categoryId,
     int? estimatedMinutes,
     int? actualMinutes,
+    DateTime? scheduledDate,
     required DateTime createdAt,
     required DateTime updatedAt,
   }) = _TodoEntity;

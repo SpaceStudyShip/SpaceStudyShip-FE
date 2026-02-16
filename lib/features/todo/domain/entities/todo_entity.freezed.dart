@@ -23,6 +23,7 @@ mixin _$TodoEntity {
   String? get categoryId => throw _privateConstructorUsedError;
   int? get estimatedMinutes => throw _privateConstructorUsedError;
   int? get actualMinutes => throw _privateConstructorUsedError;
+  DateTime? get scheduledDate => throw _privateConstructorUsedError;
   DateTime get createdAt => throw _privateConstructorUsedError;
   DateTime get updatedAt => throw _privateConstructorUsedError;
 
@@ -47,6 +48,7 @@ abstract class $TodoEntityCopyWith<$Res> {
     String? categoryId,
     int? estimatedMinutes,
     int? actualMinutes,
+    DateTime? scheduledDate,
     DateTime createdAt,
     DateTime updatedAt,
   });
@@ -73,6 +75,7 @@ class _$TodoEntityCopyWithImpl<$Res, $Val extends TodoEntity>
     Object? categoryId = freezed,
     Object? estimatedMinutes = freezed,
     Object? actualMinutes = freezed,
+    Object? scheduledDate = freezed,
     Object? createdAt = null,
     Object? updatedAt = null,
   }) {
@@ -102,6 +105,10 @@ class _$TodoEntityCopyWithImpl<$Res, $Val extends TodoEntity>
                 ? _value.actualMinutes
                 : actualMinutes // ignore: cast_nullable_to_non_nullable
                       as int?,
+            scheduledDate: freezed == scheduledDate
+                ? _value.scheduledDate
+                : scheduledDate // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
             createdAt: null == createdAt
                 ? _value.createdAt
                 : createdAt // ignore: cast_nullable_to_non_nullable
@@ -132,6 +139,7 @@ abstract class _$$TodoEntityImplCopyWith<$Res>
     String? categoryId,
     int? estimatedMinutes,
     int? actualMinutes,
+    DateTime? scheduledDate,
     DateTime createdAt,
     DateTime updatedAt,
   });
@@ -157,6 +165,7 @@ class __$$TodoEntityImplCopyWithImpl<$Res>
     Object? categoryId = freezed,
     Object? estimatedMinutes = freezed,
     Object? actualMinutes = freezed,
+    Object? scheduledDate = freezed,
     Object? createdAt = null,
     Object? updatedAt = null,
   }) {
@@ -186,6 +195,10 @@ class __$$TodoEntityImplCopyWithImpl<$Res>
             ? _value.actualMinutes
             : actualMinutes // ignore: cast_nullable_to_non_nullable
                   as int?,
+        scheduledDate: freezed == scheduledDate
+            ? _value.scheduledDate
+            : scheduledDate // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
         createdAt: null == createdAt
             ? _value.createdAt
             : createdAt // ignore: cast_nullable_to_non_nullable
@@ -209,6 +222,7 @@ class _$TodoEntityImpl implements _TodoEntity {
     this.categoryId,
     this.estimatedMinutes,
     this.actualMinutes,
+    this.scheduledDate,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -227,13 +241,15 @@ class _$TodoEntityImpl implements _TodoEntity {
   @override
   final int? actualMinutes;
   @override
+  final DateTime? scheduledDate;
+  @override
   final DateTime createdAt;
   @override
   final DateTime updatedAt;
 
   @override
   String toString() {
-    return 'TodoEntity(id: $id, title: $title, completed: $completed, categoryId: $categoryId, estimatedMinutes: $estimatedMinutes, actualMinutes: $actualMinutes, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'TodoEntity(id: $id, title: $title, completed: $completed, categoryId: $categoryId, estimatedMinutes: $estimatedMinutes, actualMinutes: $actualMinutes, scheduledDate: $scheduledDate, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 
   @override
@@ -251,6 +267,8 @@ class _$TodoEntityImpl implements _TodoEntity {
                 other.estimatedMinutes == estimatedMinutes) &&
             (identical(other.actualMinutes, actualMinutes) ||
                 other.actualMinutes == actualMinutes) &&
+            (identical(other.scheduledDate, scheduledDate) ||
+                other.scheduledDate == scheduledDate) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt) &&
             (identical(other.updatedAt, updatedAt) ||
@@ -266,6 +284,7 @@ class _$TodoEntityImpl implements _TodoEntity {
     categoryId,
     estimatedMinutes,
     actualMinutes,
+    scheduledDate,
     createdAt,
     updatedAt,
   );
@@ -287,6 +306,7 @@ abstract class _TodoEntity implements TodoEntity {
     final String? categoryId,
     final int? estimatedMinutes,
     final int? actualMinutes,
+    final DateTime? scheduledDate,
     required final DateTime createdAt,
     required final DateTime updatedAt,
   }) = _$TodoEntityImpl;
@@ -303,6 +323,8 @@ abstract class _TodoEntity implements TodoEntity {
   int? get estimatedMinutes;
   @override
   int? get actualMinutes;
+  @override
+  DateTime? get scheduledDate;
   @override
   DateTime get createdAt;
   @override

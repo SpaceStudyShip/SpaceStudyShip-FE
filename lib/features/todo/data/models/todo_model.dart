@@ -15,6 +15,7 @@ class TodoModel with _$TodoModel {
     @JsonKey(name: 'category_id') String? categoryId,
     @JsonKey(name: 'estimated_minutes') int? estimatedMinutes,
     @JsonKey(name: 'actual_minutes') int? actualMinutes,
+    @JsonKey(name: 'scheduled_date') DateTime? scheduledDate,
     @JsonKey(name: 'created_at') required DateTime createdAt,
     @JsonKey(name: 'updated_at') required DateTime updatedAt,
   }) = _TodoModel;
@@ -31,6 +32,7 @@ extension TodoModelX on TodoModel {
     categoryId: categoryId,
     estimatedMinutes: estimatedMinutes,
     actualMinutes: actualMinutes,
+    scheduledDate: scheduledDate,
     createdAt: createdAt,
     updatedAt: updatedAt,
   );
@@ -44,6 +46,7 @@ extension TodoEntityToModelX on TodoEntity {
     categoryId: categoryId,
     estimatedMinutes: estimatedMinutes,
     actualMinutes: actualMinutes,
+    scheduledDate: scheduledDate,
     createdAt: createdAt,
     updatedAt: updatedAt,
   );

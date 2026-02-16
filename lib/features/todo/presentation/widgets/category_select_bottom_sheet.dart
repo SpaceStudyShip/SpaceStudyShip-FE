@@ -123,7 +123,13 @@ class _CategorySelectBottomSheetState
               padding: AppPadding.all16,
               child: const Center(child: CircularProgressIndicator()),
             ),
-            error: (e, st) => const SizedBox.shrink(),
+            error: (e, st) => Padding(
+              padding: AppPadding.all16,
+              child: Text(
+                '카테고리 목록을 불러오지 못했어요',
+                style: AppTextStyles.tag_12.copyWith(color: AppColors.error),
+              ),
+            ),
           ),
 
           SizedBox(height: AppSpacing.s12),

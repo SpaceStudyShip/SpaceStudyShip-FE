@@ -220,7 +220,7 @@ class _TodoListScreenState extends ConsumerState<TodoListScreen> {
                     isSelected: _selectedCategoryIds.contains(cat.id),
                     onLongPress: _isEditMode
                         ? null
-                        : () => _editCategory(context, ref, cat),
+                        : () => _editCategory(context, cat),
                     onTap: () {
                       if (_isEditMode) {
                         _toggleCategorySelection(cat.id);
@@ -329,7 +329,6 @@ class _TodoListScreenState extends ConsumerState<TodoListScreen> {
 
   Future<void> _editCategory(
     BuildContext context,
-    WidgetRef ref,
     TodoCategoryEntity cat,
   ) async {
     final result = await showCategoryAddBottomSheet(

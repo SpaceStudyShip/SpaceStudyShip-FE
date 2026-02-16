@@ -15,12 +15,12 @@ import '../providers/todo_provider.dart';
 class TodoAddBottomSheet extends ConsumerStatefulWidget {
   const TodoAddBottomSheet({
     super.key,
-    this.initialCategoryId,
+    this.initialCategoryIds,
     this.initialScheduledDates,
     this.initialTodo,
   });
 
-  final String? initialCategoryId;
+  final List<String>? initialCategoryIds;
   final List<DateTime>? initialScheduledDates;
   final TodoEntity? initialTodo;
 
@@ -53,8 +53,8 @@ class _TodoAddBottomSheetState extends ConsumerState<TodoAddBottomSheet> {
       }
     } else {
       // 생성 모드: 기존 로직
-      _selectedCategoryIds = widget.initialCategoryId != null
-          ? [widget.initialCategoryId!]
+      _selectedCategoryIds = widget.initialCategoryIds != null
+          ? List<String>.from(widget.initialCategoryIds!)
           : [];
       if (widget.initialScheduledDates != null &&
           widget.initialScheduledDates!.isNotEmpty) {
@@ -486,7 +486,7 @@ class _CategoryChip extends StatelessWidget {
 /// 할일 추가 바텀시트를 표시하는 헬퍼 함수
 Future<Map<String, dynamic>?> showTodoAddBottomSheet({
   required BuildContext context,
-  String? initialCategoryId,
+  List<String>? initialCategoryIds,
   List<DateTime>? initialScheduledDates,
   TodoEntity? initialTodo,
 }) {
@@ -498,7 +498,7 @@ Future<Map<String, dynamic>?> showTodoAddBottomSheet({
     isDismissible: true,
     enableDrag: true,
     builder: (context) => TodoAddBottomSheet(
-      initialCategoryId: initialCategoryId,
+      initialCategoryIds: initialCategoryIds,
       initialScheduledDates: initialScheduledDates,
       initialTodo: initialTodo,
     ),

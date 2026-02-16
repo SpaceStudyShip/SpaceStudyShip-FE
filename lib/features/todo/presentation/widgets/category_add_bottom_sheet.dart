@@ -65,7 +65,11 @@ class _CategoryAddBottomSheetState extends State<CategoryAddBottomSheet> {
   void _submit() {
     final name = _nameController.text.trim();
     if (name.isEmpty) return;
-    Navigator.of(context).pop({'name': name, 'emoji': _selectedEmoji});
+    Navigator.of(context).pop({
+      if (_isEditMode) 'id': widget.initialCategory!.id,
+      'name': name,
+      'emoji': _selectedEmoji,
+    });
   }
 
   @override

@@ -59,7 +59,7 @@ class CategoryTodoScreen extends ConsumerWidget {
             onPressed: () async {
               final result = await showTodoAddBottomSheet(
                 context: context,
-                initialCategoryId: categoryId,
+                initialCategoryIds: [categoryId],
               );
               if (result != null && context.mounted) {
                 ref

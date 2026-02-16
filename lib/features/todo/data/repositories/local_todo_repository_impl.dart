@@ -81,11 +81,13 @@ class LocalTodoRepositoryImpl implements TodoRepository {
     required String name,
     String? emoji,
   }) async {
+    final now = DateTime.now();
     final model = TodoCategoryModel(
       id: _uuid.v4(),
       name: name,
       emoji: emoji,
-      createdAt: DateTime.now(),
+      createdAt: now,
+      updatedAt: now,
     );
 
     final categories = _dataSource.getCategories();

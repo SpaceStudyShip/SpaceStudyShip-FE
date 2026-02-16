@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
@@ -10,9 +11,14 @@ import '../../../../core/widgets/inputs/app_text_field.dart';
 import '../providers/todo_provider.dart';
 
 class TodoAddBottomSheet extends ConsumerStatefulWidget {
-  const TodoAddBottomSheet({super.key, this.initialCategoryId});
+  const TodoAddBottomSheet({
+    super.key,
+    this.initialCategoryId,
+    this.initialScheduledDate,
+  });
 
   final String? initialCategoryId;
+  final DateTime? initialScheduledDate;
 
   @override
   ConsumerState<TodoAddBottomSheet> createState() => _TodoAddBottomSheetState();
@@ -21,11 +27,13 @@ class TodoAddBottomSheet extends ConsumerStatefulWidget {
 class _TodoAddBottomSheetState extends ConsumerState<TodoAddBottomSheet> {
   final _titleController = TextEditingController();
   String? _selectedCategoryId;
+  DateTime? _selectedScheduledDate;
 
   @override
   void initState() {
     super.initState();
     _selectedCategoryId = widget.initialCategoryId;
+    _selectedScheduledDate = widget.initialScheduledDate ?? DateTime.now();
     _titleController.addListener(() => setState(() {}));
   }
 
@@ -38,9 +46,36 @@ class _TodoAddBottomSheetState extends ConsumerState<TodoAddBottomSheet> {
   void _submit() {
     final title = _titleController.text.trim();
     if (title.isEmpty) return;
-    Navigator.of(
-      context,
-    ).pop({'title': title, 'categoryId': _selectedCategoryId});
+    Navigator.of(context).pop({
+      'title': title,
+      'categoryId': _selectedCategoryId,
+      'scheduledDate': _selectedScheduledDate,
+    });
+  }
+
+  Future<void> _showDatePicker() async {
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: _selectedScheduledDate ?? DateTime.now(),
+      firstDate: DateTime(2024),
+      lastDate: DateTime(2030),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: ColorScheme.dark(
+              primary: AppColors.primary,
+              onPrimary: Colors.white,
+              surface: AppColors.spaceSurface,
+              onSurface: Colors.white,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+    if (picked != null) {
+      setState(() => _selectedScheduledDate = picked);
+    }
   }
 
   @override
@@ -154,6 +189,87 @@ class _TodoAddBottomSheetState extends ConsumerState<TodoAddBottomSheet> {
             ),
             SizedBox(height: AppSpacing.s16),
 
+            // 날짜 선택 칩
+            Padding(
+              padding: AppPadding.horizontal20,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '예정일',
+                    style: AppTextStyles.tag_12.copyWith(
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                  SizedBox(height: AppSpacing.s8),
+                  Row(
+                    children: [
+                      GestureDetector(
+                        onTap: _showDatePicker,
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 12.w,
+                            vertical: 8.h,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.primary.withValues(alpha: 0.15),
+                            borderRadius: AppRadius.chip,
+                            border: Border.all(
+                              color: AppColors.primary.withValues(alpha: 0.6),
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.calendar_today,
+                                size: 14.w,
+                                color: AppColors.primary,
+                              ),
+                              SizedBox(width: AppSpacing.s4),
+                              Text(
+                                _selectedScheduledDate != null
+                                    ? DateFormat('M/d (E)', 'ko_KR')
+                                        .format(_selectedScheduledDate!)
+                                    : '날짜 미지정',
+                                style: AppTextStyles.tag_12.copyWith(
+                                  color: AppColors.primary,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: AppSpacing.s8),
+                      if (_selectedScheduledDate != null)
+                        GestureDetector(
+                          onTap: () =>
+                              setState(() => _selectedScheduledDate = null),
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 12.w,
+                              vertical: 8.h,
+                            ),
+                            decoration: BoxDecoration(
+                              borderRadius: AppRadius.chip,
+                              border:
+                                  Border.all(color: AppColors.spaceDivider),
+                            ),
+                            child: Text(
+                              '미지정',
+                              style: AppTextStyles.tag_12.copyWith(
+                                color: AppColors.textSecondary,
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: AppSpacing.s16),
+
             // 추가 버튼
             Padding(
               padding: AppPadding.horizontal20,
@@ -215,6 +331,7 @@ class _CategoryChip extends StatelessWidget {
 Future<Map<String, dynamic>?> showTodoAddBottomSheet({
   required BuildContext context,
   String? initialCategoryId,
+  DateTime? initialScheduledDate,
 }) {
   return showModalBottomSheet<Map<String, dynamic>>(
     context: context,
@@ -223,7 +340,9 @@ Future<Map<String, dynamic>?> showTodoAddBottomSheet({
     isScrollControlled: true,
     isDismissible: true,
     enableDrag: true,
-    builder: (context) =>
-        TodoAddBottomSheet(initialCategoryId: initialCategoryId),
+    builder: (context) => TodoAddBottomSheet(
+      initialCategoryId: initialCategoryId,
+      initialScheduledDate: initialScheduledDate,
+    ),
   );
 }

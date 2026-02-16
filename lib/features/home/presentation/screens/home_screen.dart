@@ -389,11 +389,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 onTap: () async {
                   final result = await showTodoAddBottomSheet(
                     context: context,
+                    initialScheduledDate: _selectedDay,
                   );
                   if (result != null && mounted) {
                     ref.read(todoListNotifierProvider.notifier).addTodo(
                       title: result['title'] as String,
                       categoryId: result['categoryId'] as String?,
+                      scheduledDate: result['scheduledDate'] as DateTime?,
                     );
                   }
                 },

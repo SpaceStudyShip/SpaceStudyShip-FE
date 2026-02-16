@@ -14,7 +14,7 @@ import '../../../../routes/route_paths.dart';
 import '../../domain/entities/todo_category_entity.dart';
 import '../providers/todo_provider.dart';
 import '../widgets/category_add_bottom_sheet.dart';
-import '../widgets/category_folder_card.dart';
+import '../widgets/category_card.dart';
 import '../widgets/dismissible_todo_item.dart';
 import '../widgets/todo_add_bottom_sheet.dart';
 
@@ -211,7 +211,7 @@ class _TodoListScreenState extends ConsumerState<TodoListScreen> {
               return Consumer(
                 builder: (context, ref, _) {
                   final stats = ref.watch(categoryTodoStatsProvider(cat.id));
-                  return CategoryFolderCard(
+                  return CategoryCard(
                     name: cat.name,
                     emoji: cat.emoji,
                     todoCount: stats.todoCount,

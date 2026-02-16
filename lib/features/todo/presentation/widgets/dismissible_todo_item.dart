@@ -10,7 +10,7 @@ import '../../../../core/widgets/dialogs/app_dialog.dart';
 import '../../../../core/widgets/space/todo_item.dart';
 import '../../domain/entities/todo_entity.dart';
 import '../providers/todo_provider.dart';
-import 'category_move_bottom_sheet.dart';
+import 'category_select_bottom_sheet.dart';
 import 'todo_add_bottom_sheet.dart';
 
 /// 양방향 스와이프 Dismissible + TodoItem 통합 위젯
@@ -43,7 +43,7 @@ class DismissibleTodoItem extends ConsumerWidget {
       direction: DismissDirection.horizontal,
       confirmDismiss: (direction) async {
         if (direction == DismissDirection.startToEnd) {
-          final newCategoryId = await showCategoryMoveBottomSheet(
+          final newCategoryId = await showCategorySelectBottomSheet(
             context: context,
             currentCategoryId: todo.categoryId,
           );

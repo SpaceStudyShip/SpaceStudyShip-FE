@@ -7,8 +7,8 @@ import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../providers/todo_provider.dart';
 
-class CategoryMoveBottomSheet extends ConsumerWidget {
-  const CategoryMoveBottomSheet({super.key, this.currentCategoryId});
+class CategorySelectBottomSheet extends ConsumerWidget {
+  const CategorySelectBottomSheet({super.key, this.currentCategoryId});
 
   final String? currentCategoryId;
 
@@ -43,7 +43,7 @@ class CategoryMoveBottomSheet extends ConsumerWidget {
             child: Align(
               alignment: Alignment.centerLeft,
               child: Text(
-                '카테고리 이동',
+                '카테고리 선택',
                 style: AppTextStyles.subHeading_18.copyWith(
                   color: Colors.white,
                 ),
@@ -142,9 +142,9 @@ class _CategoryOption extends StatelessWidget {
   }
 }
 
-/// 카테고리 이동 바텀시트를 표시하는 헬퍼 함수
+/// 카테고리 선택 바텀시트를 표시하는 헬퍼 함수
 /// 반환값: 카테고리 ID (빈 문자열 = 미분류, null = 취소 또는 변경 없음)
-Future<String?> showCategoryMoveBottomSheet({
+Future<String?> showCategorySelectBottomSheet({
   required BuildContext context,
   String? currentCategoryId,
 }) {
@@ -156,6 +156,6 @@ Future<String?> showCategoryMoveBottomSheet({
     isDismissible: true,
     enableDrag: true,
     builder: (context) =>
-        CategoryMoveBottomSheet(currentCategoryId: currentCategoryId),
+        CategorySelectBottomSheet(currentCategoryId: currentCategoryId),
   );
 }

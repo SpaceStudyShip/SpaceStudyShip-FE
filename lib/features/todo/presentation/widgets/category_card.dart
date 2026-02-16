@@ -6,8 +6,8 @@ import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../../../core/constants/toss_design_tokens.dart';
 
-class CategoryFolderCard extends StatefulWidget {
-  const CategoryFolderCard({
+class CategoryCard extends StatefulWidget {
+  const CategoryCard({
     super.key,
     required this.name,
     this.emoji,
@@ -29,10 +29,10 @@ class CategoryFolderCard extends StatefulWidget {
   final bool isSelected;
 
   @override
-  State<CategoryFolderCard> createState() => _CategoryFolderCardState();
+  State<CategoryCard> createState() => _CategoryCardState();
 }
 
-class _CategoryFolderCardState extends State<CategoryFolderCard> {
+class _CategoryCardState extends State<CategoryCard> {
   bool _isPressed = false;
 
   @override

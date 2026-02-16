@@ -204,3 +204,47 @@ class CategoryListNotifier extends _$CategoryListNotifier {
     }
   }
 }
+
+// === 날짜별 할일 필터 ===
+
+@riverpod
+List<TodoEntity> todosForDate(Ref ref, DateTime date) {
+  final todos = ref.watch(todoListNotifierProvider).valueOrNull ?? [];
+  final normalizedDate = DateTime(date.year, date.month, date.day);
+  return todos.where((t) {
+    if (t.scheduledDate == null) return false;
+    final scheduled = DateTime(
+      t.scheduledDate!.year,
+      t.scheduledDate!.month,
+      t.scheduledDate!.day,
+    );
+    return scheduled == normalizedDate;
+  }).toList();
+}
+
+// === 미지정 할일 필터 ===
+
+@riverpod
+List<TodoEntity> unscheduledTodos(Ref ref) {
+  final todos = ref.watch(todoListNotifierProvider).valueOrNull ?? [];
+  return todos.where((t) => t.scheduledDate == null).toList();
+}
+
+// === 날짜별 할일 맵 (캘린더 마커용) ===
+
+@riverpod
+Map<DateTime, List<TodoEntity>> todosByDateMap(Ref ref) {
+  final todos = ref.watch(todoListNotifierProvider).valueOrNull ?? [];
+  final map = <DateTime, List<TodoEntity>>{};
+  for (final todo in todos) {
+    if (todo.scheduledDate != null) {
+      final key = DateTime(
+        todo.scheduledDate!.year,
+        todo.scheduledDate!.month,
+        todo.scheduledDate!.day,
+      );
+      map.putIfAbsent(key, () => []).add(todo);
+    }
+  }
+  return map;
+}

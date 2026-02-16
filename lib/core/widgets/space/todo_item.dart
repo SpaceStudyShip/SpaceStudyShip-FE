@@ -15,7 +15,6 @@ import '../../constants/toss_design_tokens.dart';
 ///   isCompleted: false,
 ///   onToggle: () => toggleTodo(),
 ///   onTap: () => showDetail(),
-///   onDelete: () => deleteTodo(),
 /// )
 /// ```
 class TodoItem extends StatefulWidget {
@@ -25,7 +24,6 @@ class TodoItem extends StatefulWidget {
     this.isCompleted = false,
     required this.onToggle,
     this.onTap,
-    this.onDelete,
     this.subtitle,
     this.leading,
   });
@@ -41,9 +39,6 @@ class TodoItem extends StatefulWidget {
 
   /// 탭 콜백 (상세 보기)
   final VoidCallback? onTap;
-
-  /// 삭제 콜백
-  final VoidCallback? onDelete;
 
   /// 부제목 (예: 예상 시간)
   final String? subtitle;
@@ -64,7 +59,7 @@ class _TodoItemState extends State<TodoItem> {
       onTapDown: (_) => setState(() => _isPressed = true),
       onTapUp: (_) {
         setState(() => _isPressed = false);
-        widget.onTap?.call();
+        (widget.onTap ?? widget.onToggle).call();
       },
       onTapCancel: () => setState(() => _isPressed = false),
       child: AnimatedScale(
@@ -118,20 +113,6 @@ class _TodoItemState extends State<TodoItem> {
                   ],
                 ),
               ),
-
-              // 삭제 버튼
-              if (widget.onDelete != null)
-                GestureDetector(
-                  onTap: widget.onDelete,
-                  child: Padding(
-                    padding: AppPadding.all8,
-                    child: Icon(
-                      Icons.close,
-                      size: 18.w,
-                      color: AppColors.textTertiary,
-                    ),
-                  ),
-                ),
             ],
           ),
         ),
@@ -140,27 +121,24 @@ class _TodoItemState extends State<TodoItem> {
   }
 
   Widget _buildCheckbox() {
-    return GestureDetector(
-      onTap: widget.onToggle,
-      child: AnimatedContainer(
-        duration: TossDesignTokens.animationFast,
-        curve: TossDesignTokens.smoothCurve,
-        width: 24.w,
-        height: 24.w,
-        decoration: BoxDecoration(
-          color: widget.isCompleted ? AppColors.success : Colors.transparent,
-          borderRadius: AppRadius.small,
-          border: Border.all(
-            color: widget.isCompleted
-                ? AppColors.success
-                : AppColors.textTertiary,
-            width: 2,
-          ),
+    return AnimatedContainer(
+      duration: TossDesignTokens.animationFast,
+      curve: TossDesignTokens.smoothCurve,
+      width: 24.w,
+      height: 24.w,
+      decoration: BoxDecoration(
+        color: widget.isCompleted ? AppColors.success : Colors.transparent,
+        borderRadius: AppRadius.small,
+        border: Border.all(
+          color: widget.isCompleted
+              ? AppColors.success
+              : AppColors.textTertiary,
+          width: 2,
         ),
-        child: widget.isCompleted
-            ? Icon(Icons.check, size: 16.w, color: Colors.white)
-            : null,
       ),
+      child: widget.isCompleted
+          ? Icon(Icons.check, size: 16.w, color: Colors.white)
+          : null,
     );
   }
 }

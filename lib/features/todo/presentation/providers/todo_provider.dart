@@ -93,15 +93,33 @@ class TodoListNotifier extends _$TodoListNotifier {
   }
 
   Future<void> toggleTodo(TodoEntity todo) async {
-    final useCase = ref.read(updateTodoUseCaseProvider);
-    await useCase.execute(todo.copyWith(completed: !todo.completed));
-    ref.invalidateSelf();
+    final toggled = todo.copyWith(completed: !todo.completed);
+    final previousState = state;
+    state = AsyncData(
+      state.valueOrNull?.map((t) => t.id == todo.id ? toggled : t).toList() ??
+          [],
+    );
+    try {
+      final useCase = ref.read(updateTodoUseCaseProvider);
+      await useCase.execute(toggled);
+    } catch (_) {
+      state = previousState;
+      rethrow;
+    }
   }
 
   Future<void> updateTodo(TodoEntity todo) async {
-    final useCase = ref.read(updateTodoUseCaseProvider);
-    await useCase.execute(todo);
-    ref.invalidateSelf();
+    final previousState = state;
+    state = AsyncData(
+      state.valueOrNull?.map((t) => t.id == todo.id ? todo : t).toList() ?? [],
+    );
+    try {
+      final useCase = ref.read(updateTodoUseCaseProvider);
+      await useCase.execute(todo);
+    } catch (_) {
+      state = previousState;
+      rethrow;
+    }
   }
 
   Future<void> deleteTodo(String id) async {
@@ -153,18 +171,34 @@ class CategoryListNotifier extends _$CategoryListNotifier {
   }
 
   Future<void> deleteCategory(String id) async {
-    final useCase = ref.read(deleteCategoryUseCaseProvider);
-    await useCase.execute(id);
-    ref.invalidateSelf();
-    ref.invalidate(todoListNotifierProvider);
+    final previousState = state;
+    state = AsyncData(
+      state.valueOrNull?.where((c) => c.id != id).toList() ?? [],
+    );
+    try {
+      final useCase = ref.read(deleteCategoryUseCaseProvider);
+      await useCase.execute(id);
+      ref.invalidate(todoListNotifierProvider);
+    } catch (_) {
+      state = previousState;
+      rethrow;
+    }
   }
 
   Future<void> deleteCategories(List<String> ids) async {
-    final useCase = ref.read(deleteCategoryUseCaseProvider);
-    for (final id in ids) {
-      await useCase.execute(id);
+    final previousState = state;
+    state = AsyncData(
+      state.valueOrNull?.where((c) => !ids.contains(c.id)).toList() ?? [],
+    );
+    try {
+      final useCase = ref.read(deleteCategoryUseCaseProvider);
+      for (final id in ids) {
+        await useCase.execute(id);
+      }
+      ref.invalidate(todoListNotifierProvider);
+    } catch (_) {
+      state = previousState;
+      rethrow;
     }
-    ref.invalidateSelf();
-    ref.invalidate(todoListNotifierProvider);
   }
 }

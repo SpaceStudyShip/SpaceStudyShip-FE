@@ -429,15 +429,17 @@ class _TodoListScreenState extends ConsumerState<TodoListScreen> {
     );
 
     if (confirmed == true && mounted) {
-      if (_selectedCategoryIds.isNotEmpty) {
-        await ref
-            .read(categoryListNotifierProvider.notifier)
-            .deleteCategories(_selectedCategoryIds.toList());
-      }
+      // 할일 먼저 삭제 (낙관적 업데이트, invalidate 없음)
+      // 카테고리 나중 삭제 (invalidate로 최종 정합성 보장)
       if (_selectedTodoIds.isNotEmpty) {
         await ref
             .read(todoListNotifierProvider.notifier)
             .deleteTodos(_selectedTodoIds.toList());
+      }
+      if (_selectedCategoryIds.isNotEmpty) {
+        await ref
+            .read(categoryListNotifierProvider.notifier)
+            .deleteCategories(_selectedCategoryIds.toList());
       }
       _toggleEditMode();
     }

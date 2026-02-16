@@ -313,9 +313,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               children: [
                 Text(
                   '오늘의 할 일',
-                  style: AppTextStyles.heading_20.copyWith(
-                    color: Colors.white,
-                  ),
+                  style: AppTextStyles.heading_20.copyWith(color: Colors.white),
                 ),
                 SizedBox(width: AppSpacing.s8),
                 Text(

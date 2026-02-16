@@ -73,7 +73,7 @@ Expected: No issues
 
 **Step 4: 커밋**
 
-```
+```text
 fix: LocalTodoDataSource JSON 디코딩 방어 처리 추가 #17
 ```
 
@@ -167,7 +167,7 @@ Expected: No issues
 
 **Step 3: 커밋**
 
-```
+```text
 fix: SharedPreferences 실패 시 graceful degradation 적용 #17
 ```
 
@@ -205,7 +205,7 @@ Expected: No issues
 
 **Step 3: 커밋**
 
-```
+```text
 fix: 일괄 삭제 await 후 mounted 체크 추가 #17
 ```
 
@@ -217,6 +217,6 @@ Run: `flutter analyze`
 Expected: No issues found
 
 모든 Task 완료 후 단일 커밋으로 합쳐도 무방:
-```
+```text
 fix: CodeRabbit 방어적 코딩 개선 (JSON 방어, SP 실패 처리, mounted 체크) #17
 ```

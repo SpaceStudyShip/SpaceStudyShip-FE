@@ -50,9 +50,7 @@ class DismissibleTodoItem extends ConsumerWidget {
           if (newCategoryIds != null && context.mounted) {
             ref
                 .read(todoListNotifierProvider.notifier)
-                .updateTodo(
-                  todo.copyWith(categoryIds: newCategoryIds),
-                );
+                .updateTodo(todo.copyWith(categoryIds: newCategoryIds));
           }
           return false;
         }

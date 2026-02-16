@@ -210,8 +210,7 @@ Future<Map<String, dynamic>?> showCategoryAddBottomSheet({
     isScrollControlled: true,
     isDismissible: true,
     enableDrag: true,
-    builder: (context) => CategoryAddBottomSheet(
-      initialCategory: initialCategory,
-    ),
+    builder: (context) =>
+        CategoryAddBottomSheet(initialCategory: initialCategory),
   );
 }

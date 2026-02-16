@@ -337,12 +337,14 @@ class _TodoListScreenState extends ConsumerState<TodoListScreen> {
       initialCategory: (id: cat.id, name: cat.name, emoji: cat.emoji),
     );
     if (result != null && mounted) {
-      ref.read(categoryListNotifierProvider.notifier).updateCategory(
-        cat.copyWith(
-          name: result['name'] as String,
-          emoji: result['emoji'] as String?,
-        ),
-      );
+      ref
+          .read(categoryListNotifierProvider.notifier)
+          .updateCategory(
+            cat.copyWith(
+              name: result['name'] as String,
+              emoji: result['emoji'] as String?,
+            ),
+          );
     }
   }
 

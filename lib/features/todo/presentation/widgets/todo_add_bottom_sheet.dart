@@ -200,10 +200,13 @@ class _TodoAddBottomSheetState extends ConsumerState<TodoAddBottomSheet> {
                                   padding: EdgeInsets.only(right: 8.w),
                                   child: _CategoryChip(
                                     label: '${cat.emoji ?? "📁"} ${cat.name}',
-                                    isSelected:
-                                        _selectedCategoryIds.contains(cat.id),
+                                    isSelected: _selectedCategoryIds.contains(
+                                      cat.id,
+                                    ),
                                     onTap: () => setState(() {
-                                      if (_selectedCategoryIds.contains(cat.id)) {
+                                      if (_selectedCategoryIds.contains(
+                                        cat.id,
+                                      )) {
                                         _selectedCategoryIds.remove(cat.id);
                                       } else {
                                         _selectedCategoryIds.add(cat.id);

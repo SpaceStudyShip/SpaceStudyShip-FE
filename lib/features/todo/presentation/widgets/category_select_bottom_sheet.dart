@@ -179,9 +179,7 @@ class _CategoryOption extends StatelessWidget {
               width: 22.w,
               height: 22.w,
               decoration: BoxDecoration(
-                color: isSelected
-                    ? AppColors.primary
-                    : Colors.transparent,
+                color: isSelected ? AppColors.primary : Colors.transparent,
                 shape: BoxShape.circle,
                 border: Border.all(
                   color: isSelected

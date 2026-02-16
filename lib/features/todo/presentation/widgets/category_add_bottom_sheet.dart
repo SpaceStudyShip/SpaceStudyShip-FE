@@ -32,7 +32,9 @@ const _emojiPresets = [
 ];
 
 class CategoryAddBottomSheet extends StatefulWidget {
-  const CategoryAddBottomSheet({super.key});
+  const CategoryAddBottomSheet({super.key, this.initialCategory});
+
+  final ({String id, String name, String? emoji})? initialCategory;
 
   @override
   State<CategoryAddBottomSheet> createState() => _CategoryAddBottomSheetState();
@@ -42,9 +44,15 @@ class _CategoryAddBottomSheetState extends State<CategoryAddBottomSheet> {
   final _nameController = TextEditingController();
   String _selectedEmoji = '📁';
 
+  bool get _isEditMode => widget.initialCategory != null;
+
   @override
   void initState() {
     super.initState();
+    if (widget.initialCategory != null) {
+      _nameController.text = widget.initialCategory!.name;
+      _selectedEmoji = widget.initialCategory!.emoji ?? '📁';
+    }
     _nameController.addListener(() => setState(() {}));
   }
 
@@ -57,7 +65,11 @@ class _CategoryAddBottomSheetState extends State<CategoryAddBottomSheet> {
   void _submit() {
     final name = _nameController.text.trim();
     if (name.isEmpty) return;
-    Navigator.of(context).pop({'name': name, 'emoji': _selectedEmoji});
+    Navigator.of(context).pop({
+      if (_isEditMode) 'id': widget.initialCategory!.id,
+      'name': name,
+      'emoji': _selectedEmoji,
+    });
   }
 
   @override
@@ -96,7 +108,7 @@ class _CategoryAddBottomSheetState extends State<CategoryAddBottomSheet> {
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    '카테고리 추가',
+                    _isEditMode ? '카테고리 수정' : '카테고리 추가',
                     style: AppTextStyles.subHeading_18.copyWith(
                       color: Colors.white,
                     ),
@@ -169,7 +181,7 @@ class _CategoryAddBottomSheetState extends State<CategoryAddBottomSheet> {
               Padding(
                 padding: AppPadding.horizontal20,
                 child: AppButton(
-                  text: '추가하기',
+                  text: _isEditMode ? '수정하기' : '추가하기',
                   onPressed: _nameController.text.trim().isEmpty
                       ? null
                       : _submit,
@@ -189,6 +201,7 @@ class _CategoryAddBottomSheetState extends State<CategoryAddBottomSheet> {
 /// 카테고리 추가 바텀시트를 표시하는 헬퍼 함수
 Future<Map<String, dynamic>?> showCategoryAddBottomSheet({
   required BuildContext context,
+  ({String id, String name, String? emoji})? initialCategory,
 }) {
   return showModalBottomSheet<Map<String, dynamic>>(
     context: context,
@@ -197,6 +210,8 @@ Future<Map<String, dynamic>?> showCategoryAddBottomSheet({
     isScrollControlled: true,
     isDismissible: true,
     enableDrag: true,
-    builder: (context) => const CategoryAddBottomSheet(),
+    builder: (context) => CategoryAddBottomSheet(
+      initialCategory: initialCategory,
+    ),
   );
 }

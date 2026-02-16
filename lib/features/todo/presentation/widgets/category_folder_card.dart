@@ -14,6 +14,7 @@ class CategoryFolderCard extends StatefulWidget {
     required this.todoCount,
     required this.completedCount,
     required this.onTap,
+    this.onLongPress,
     this.isEditMode = false,
     this.isSelected = false,
   });
@@ -23,6 +24,7 @@ class CategoryFolderCard extends StatefulWidget {
   final int todoCount;
   final int completedCount;
   final VoidCallback onTap;
+  final VoidCallback? onLongPress;
   final bool isEditMode;
   final bool isSelected;
 
@@ -42,6 +44,7 @@ class _CategoryFolderCardState extends State<CategoryFolderCard> {
         widget.onTap();
       },
       onTapCancel: () => setState(() => _isPressed = false),
+      onLongPress: widget.onLongPress,
       child: AnimatedScale(
         scale: _isPressed ? TossDesignTokens.cardTapScale : 1.0,
         duration: TossDesignTokens.animationFast,

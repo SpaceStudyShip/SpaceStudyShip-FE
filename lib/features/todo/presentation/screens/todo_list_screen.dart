@@ -218,6 +218,9 @@ class _TodoListScreenState extends ConsumerState<TodoListScreen> {
                     completedCount: stats.completedCount,
                     isEditMode: _isEditMode,
                     isSelected: _selectedCategoryIds.contains(cat.id),
+                    onLongPress: _isEditMode
+                        ? null
+                        : () => _editCategory(context, ref, cat),
                     onTap: () {
                       if (_isEditMode) {
                         _toggleCategorySelection(cat.id);
@@ -321,6 +324,25 @@ class _TodoListScreenState extends ConsumerState<TodoListScreen> {
           ? Icon(Icons.check, size: 14.w, color: Colors.white)
           : null,
     );
+  }
+
+  Future<void> _editCategory(
+    BuildContext context,
+    WidgetRef ref,
+    TodoCategoryEntity cat,
+  ) async {
+    final result = await showCategoryAddBottomSheet(
+      context: context,
+      initialCategory: (id: cat.id, name: cat.name, emoji: cat.emoji),
+    );
+    if (result != null && mounted) {
+      ref.read(categoryListNotifierProvider.notifier).updateCategory(
+        cat.copyWith(
+          name: result['name'] as String,
+          emoji: result['emoji'] as String?,
+        ),
+      );
+    }
   }
 
   Future<void> _addCategory(BuildContext context) async {

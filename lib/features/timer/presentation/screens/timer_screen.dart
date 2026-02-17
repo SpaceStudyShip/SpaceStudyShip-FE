@@ -5,7 +5,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
-import '../../../../core/widgets/animations/entrance_animations.dart';
 import '../../../../core/widgets/atoms/space_stat_item.dart';
 import '../../../../core/widgets/buttons/app_button.dart';
 import '../../../../core/widgets/cards/app_card.dart';
@@ -62,93 +61,85 @@ class _TimerScreenState extends ConsumerState<TimerScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             // 타이머 링 + 시간 표시
-            FadeSlideIn(
-              child: SizedBox(
-                width: 260.w,
-                height: 260.w,
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    CustomPaint(
-                      size: Size(260.w, 260.w),
-                      painter: TimerRingPainter(
-                        progress: _calculateProgress(timerState.elapsed),
-                        isRunning: isRunning,
-                        strokeWidth: 6.w,
-                      ),
+            SizedBox(
+              width: 260.w,
+              height: 260.w,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  CustomPaint(
+                    size: Size(260.w, 260.w),
+                    painter: TimerRingPainter(
+                      progress: _calculateProgress(timerState.elapsed),
+                      isRunning: isRunning,
+                      strokeWidth: 6.w,
                     ),
-                    Padding(
-                      padding: AppPadding.horizontal16,
-                      child: FittedBox(
-                        fit: BoxFit.scaleDown,
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              _formatDuration(timerState.elapsed),
-                              style: AppTextStyles.timer_48.copyWith(
-                                color: isRunning
-                                    ? AppColors.primary
-                                    : Colors.white,
-                              ),
+                  ),
+                  Padding(
+                    padding: AppPadding.horizontal16,
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            _formatDuration(timerState.elapsed),
+                            style: AppTextStyles.timer_48.copyWith(
+                              color: isRunning
+                                  ? AppColors.primary
+                                  : Colors.white,
                             ),
-                            SizedBox(height: AppSpacing.s4),
-                            _buildStatusText(timerState, isIdle, isRunning),
-                          ],
-                        ),
+                          ),
+                          SizedBox(height: AppSpacing.s4),
+                          _buildStatusText(timerState, isIdle, isRunning),
+                        ],
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
             SizedBox(height: AppSpacing.s48),
 
             // 컨트롤 버튼
-            FadeSlideIn(
-              delay: const Duration(milliseconds: 100),
-              child: _buildControls(isIdle, isRunning, isPaused),
-            ),
+            _buildControls(isIdle, isRunning, isPaused),
             SizedBox(height: AppSpacing.s48),
 
             // 오늘의 통계
-            FadeSlideIn(
-              delay: const Duration(milliseconds: 200),
-              child: Padding(
-                padding: AppPadding.horizontal20,
-                child: AppCard(
-                  style: AppCardStyle.outlined,
-                  padding: AppPadding.all20,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      SpaceStatItem(
-                        icon: Icons.today_rounded,
-                        label: '오늘',
-                        value: _formatMinutes(todayMinutes),
-                      ),
-                      Container(
-                        width: 1,
-                        height: 40.h,
-                        color: AppColors.spaceDivider,
-                      ),
-                      SpaceStatItem(
-                        icon: Icons.date_range_rounded,
-                        label: '이번 주',
-                        value: _formatMinutes(weeklyMinutes),
-                      ),
-                      Container(
-                        width: 1,
-                        height: 40.h,
-                        color: AppColors.spaceDivider,
-                      ),
-                      SpaceStatItem(
-                        icon: Icons.local_fire_department_rounded,
-                        label: '연속',
-                        value: '$streak일',
-                      ),
-                    ],
-                  ),
+            Padding(
+              padding: AppPadding.horizontal20,
+              child: AppCard(
+                style: AppCardStyle.outlined,
+                padding: AppPadding.all20,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    SpaceStatItem(
+                      icon: Icons.today_rounded,
+                      label: '오늘',
+                      value: _formatMinutes(todayMinutes),
+                    ),
+                    Container(
+                      width: 1,
+                      height: 40.h,
+                      color: AppColors.spaceDivider,
+                    ),
+                    SpaceStatItem(
+                      icon: Icons.date_range_rounded,
+                      label: '이번 주',
+                      value: _formatMinutes(weeklyMinutes),
+                    ),
+                    Container(
+                      width: 1,
+                      height: 40.h,
+                      color: AppColors.spaceDivider,
+                    ),
+                    SpaceStatItem(
+                      icon: Icons.local_fire_department_rounded,
+                      label: '연속',
+                      value: '$streak일',
+                    ),
+                  ],
                 ),
               ),
             ),

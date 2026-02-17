@@ -34,6 +34,7 @@ class _TodoAddBottomSheetState extends ConsumerState<TodoAddBottomSheet> {
   List<DateTime> _selectedScheduledDates = [];
   bool _showCalendar = false;
   DateTime _calendarFocusedDay = DateTime.now();
+  CalendarFormat _calendarFormat = CalendarFormat.month;
 
   bool get _isEditMode => widget.initialTodo != null;
 
@@ -160,6 +161,7 @@ class _TodoAddBottomSheetState extends ConsumerState<TodoAddBottomSheet> {
                     hintText: '할 일을 입력하세요',
                     onSubmitted: (_) => _submit(),
                     autofocus: true,
+                    showBorder: false,
                   ),
                 ),
                 SizedBox(height: AppSpacing.s16),
@@ -337,78 +339,142 @@ class _TodoAddBottomSheetState extends ConsumerState<TodoAddBottomSheet> {
   }
 
   Widget _buildInlineCalendar() {
-    return TableCalendar(
-      firstDay: DateTime.utc(2024, 1, 1),
-      lastDay: DateTime.utc(2030, 12, 31),
-      focusedDay: _calendarFocusedDay,
-      calendarFormat: CalendarFormat.month,
-      startingDayOfWeek: StartingDayOfWeek.monday,
-      locale: 'ko_KR',
-      headerVisible: true,
-      daysOfWeekHeight: 20.h,
-      rowHeight: 40.h,
-      availableCalendarFormats: const {CalendarFormat.month: '월간'},
-      selectedDayPredicate: (day) => _isDateSelected(day),
-      onDaySelected: (selectedDay, focusedDay) {
-        _toggleDate(selectedDay);
-        _calendarFocusedDay = focusedDay;
-      },
-      onPageChanged: (focusedDay) {
-        setState(() => _calendarFocusedDay = focusedDay);
-      },
-      headerStyle: HeaderStyle(
-        formatButtonVisible: false,
-        titleCentered: true,
-        headerPadding: EdgeInsets.symmetric(vertical: 4.h),
-        titleTextFormatter: (date, locale) =>
-            DateFormat('yyyy년 M월', locale).format(date),
-        titleTextStyle: AppTextStyles.label_16.copyWith(color: Colors.white),
-        leftChevronIcon: Icon(
-          Icons.chevron_left,
-          color: AppColors.primary,
-          size: 20.w,
+    return Column(
+      children: [
+        // 커스텀 헤더 — 타이틀 탭으로 월간/주간 토글
+        Padding(
+          padding: EdgeInsets.symmetric(vertical: 4.h),
+          child: Row(
+            children: [
+              GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _calendarFocusedDay = DateTime(
+                      _calendarFocusedDay.year,
+                      _calendarFocusedDay.month - 1,
+                    );
+                  });
+                },
+                child: Padding(
+                  padding: AppPadding.all8,
+                  child: Icon(
+                    Icons.chevron_left,
+                    color: AppColors.primary,
+                    size: 20.w,
+                  ),
+                ),
+              ),
+              Expanded(
+                child: GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _calendarFormat = _calendarFormat == CalendarFormat.month
+                          ? CalendarFormat.week
+                          : CalendarFormat.month;
+                    });
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        DateFormat(
+                          'yyyy년 M월',
+                          'ko_KR',
+                        ).format(_calendarFocusedDay),
+                        style: AppTextStyles.label_16.copyWith(
+                          color: Colors.white,
+                        ),
+                      ),
+                      SizedBox(width: 4.w),
+                      Icon(
+                        _calendarFormat == CalendarFormat.month
+                            ? Icons.keyboard_arrow_down
+                            : Icons.keyboard_arrow_up,
+                        size: 16.w,
+                        color: AppColors.textTertiary,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _calendarFocusedDay = DateTime(
+                      _calendarFocusedDay.year,
+                      _calendarFocusedDay.month + 1,
+                    );
+                  });
+                },
+                child: Padding(
+                  padding: AppPadding.all8,
+                  child: Icon(
+                    Icons.chevron_right,
+                    color: AppColors.primary,
+                    size: 20.w,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
-        rightChevronIcon: Icon(
-          Icons.chevron_right,
-          color: AppColors.primary,
-          size: 20.w,
+        TableCalendar(
+          firstDay: DateTime.utc(2024, 1, 1),
+          lastDay: DateTime.utc(2030, 12, 31),
+          focusedDay: _calendarFocusedDay,
+          calendarFormat: _calendarFormat,
+          startingDayOfWeek: StartingDayOfWeek.monday,
+          locale: 'ko_KR',
+          headerVisible: false,
+          daysOfWeekHeight: 20.h,
+          rowHeight: 40.h,
+          selectedDayPredicate: (day) => _isDateSelected(day),
+          onDaySelected: (selectedDay, focusedDay) {
+            _toggleDate(selectedDay);
+            _calendarFocusedDay = focusedDay;
+          },
+          onFormatChanged: (format) {
+            setState(() => _calendarFormat = format);
+          },
+          onPageChanged: (focusedDay) {
+            setState(() => _calendarFocusedDay = focusedDay);
+          },
+          daysOfWeekStyle: DaysOfWeekStyle(
+            weekdayStyle: AppTextStyles.tag_12.copyWith(
+              color: AppColors.textTertiary,
+            ),
+            weekendStyle: AppTextStyles.tag_12.copyWith(
+              color: AppColors.textTertiary.withValues(alpha: 0.6),
+            ),
+          ),
+          calendarStyle: CalendarStyle(
+            outsideDaysVisible: false,
+            cellMargin: EdgeInsets.all(2.w),
+            selectedDecoration: BoxDecoration(
+              color: AppColors.primary,
+              shape: BoxShape.circle,
+            ),
+            selectedTextStyle: AppTextStyles.tag_12.copyWith(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
+            todayDecoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(color: AppColors.primary, width: 1.5),
+            ),
+            todayTextStyle: AppTextStyles.tag_12.copyWith(
+              color: AppColors.primary,
+              fontWeight: FontWeight.bold,
+            ),
+            defaultTextStyle: AppTextStyles.tag_12.copyWith(
+              color: Colors.white,
+            ),
+            weekendTextStyle: AppTextStyles.tag_12.copyWith(
+              color: Colors.white.withValues(alpha: 0.6),
+            ),
+          ),
         ),
-      ),
-      daysOfWeekStyle: DaysOfWeekStyle(
-        weekdayStyle: AppTextStyles.tag_12.copyWith(
-          color: AppColors.textTertiary,
-        ),
-        weekendStyle: AppTextStyles.tag_12.copyWith(
-          color: AppColors.textTertiary.withValues(alpha: 0.6),
-        ),
-      ),
-      calendarStyle: CalendarStyle(
-        outsideDaysVisible: false,
-        cellMargin: EdgeInsets.all(2.w),
-        // 선택된 날짜 스타일
-        selectedDecoration: BoxDecoration(
-          color: AppColors.primary,
-          shape: BoxShape.circle,
-        ),
-        selectedTextStyle: AppTextStyles.tag_12.copyWith(
-          color: Colors.white,
-          fontWeight: FontWeight.bold,
-        ),
-        // 오늘 날짜 스타일
-        todayDecoration: BoxDecoration(
-          shape: BoxShape.circle,
-          border: Border.all(color: AppColors.primary, width: 1.5),
-        ),
-        todayTextStyle: AppTextStyles.tag_12.copyWith(
-          color: AppColors.primary,
-          fontWeight: FontWeight.bold,
-        ),
-        // 기본 날짜 스타일
-        defaultTextStyle: AppTextStyles.tag_12.copyWith(color: Colors.white),
-        weekendTextStyle: AppTextStyles.tag_12.copyWith(
-          color: Colors.white.withValues(alpha: 0.6),
-        ),
-      ),
+      ],
     );
   }
 }

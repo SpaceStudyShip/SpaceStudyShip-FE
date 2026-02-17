@@ -89,6 +89,7 @@ class AppTextField extends StatefulWidget {
     this.focusNode,
     this.textAlign = TextAlign.start,
     this.validator,
+    this.showBorder = true,
   });
 
   /// 텍스트 컨트롤러
@@ -156,6 +157,9 @@ class AppTextField extends StatefulWidget {
 
   /// 유효성 검사 함수
   final String? Function(String?)? validator;
+
+  /// 테두리 표시 여부
+  final bool showBorder;
 
   @override
   State<AppTextField> createState() => _AppTextFieldState();
@@ -274,14 +278,14 @@ class _AppTextFieldState extends State<AppTextField> {
           duration: TossDesignTokens.animationFast,
           curve: TossDesignTokens.smoothCurve,
           decoration: BoxDecoration(
-            color: widget.enabled
-                ? AppColors.spaceSurface
-                : AppColors.spaceBackground,
+            color: AppColors.spaceBackground,
             borderRadius: AppRadius.large,
-            border: Border.all(
-              color: _getBorderColor(hasError),
-              width: _isFocused ? 2.0 : 1.0,
-            ),
+            border: widget.showBorder
+                ? Border.all(
+                    color: _getBorderColor(hasError),
+                    width: _isFocused ? 2.0 : 1.0,
+                  )
+                : null,
           ),
           child: TextField(
             controller: widget.controller,

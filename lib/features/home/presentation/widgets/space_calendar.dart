@@ -4,7 +4,6 @@ import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import '../../../../core/constants/app_colors.dart';
-import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../../todo/domain/entities/todo_entity.dart';
 
@@ -39,83 +38,122 @@ class SpaceCalendar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TableCalendar<TodoEntity>(
-      firstDay: DateTime.utc(2024, 1, 1),
-      lastDay: DateTime.utc(2030, 12, 31),
-      focusedDay: focusedDay,
-      calendarFormat: isCompact ? CalendarFormat.week : calendarFormat,
-      startingDayOfWeek: StartingDayOfWeek.monday,
-      locale: 'ko_KR',
-      headerVisible: !isCompact,
-      daysOfWeekHeight: 20.h,
-      rowHeight: isCompact ? 42.h : 48.h,
-      availableCalendarFormats: const {
-        CalendarFormat.month: '월간',
-        CalendarFormat.week: '주간',
-      },
-      selectedDayPredicate: (day) => isSameDay(selectedDay, day),
-      onDaySelected: onDaySelected,
-      onFormatChanged: onFormatChanged,
-      onPageChanged: onPageChanged,
-      eventLoader: eventLoader,
-
-      // === 커스텀 헤더 스타일 (펼친 상태에서만 표시) ===
-      headerStyle: HeaderStyle(
-        formatButtonVisible: !isCompact,
-        titleCentered: true,
-        headerPadding: EdgeInsets.symmetric(vertical: 8.h),
-        formatButtonDecoration: BoxDecoration(
-          border: Border.all(color: AppColors.primary.withValues(alpha: 0.6)),
-          borderRadius: AppRadius.chip,
-        ),
-        formatButtonTextStyle: AppTextStyles.tag_12.copyWith(
-          color: AppColors.primary,
-        ),
-        titleTextFormatter: (date, locale) =>
-            DateFormat('yyyy년 M월', locale).format(date),
-        titleTextStyle: AppTextStyles.subHeading_18.copyWith(
-          color: Colors.white,
-        ),
-        leftChevronIcon: Container(
-          padding: EdgeInsets.all(4.w),
-          decoration: BoxDecoration(
-            color: AppColors.primary.withValues(alpha: 0.1),
-            shape: BoxShape.circle,
+    return Column(
+      children: [
+        // 커스텀 헤더 — 타이틀 탭으로 월간/주간 토글 (compact 아닐 때만)
+        if (!isCompact)
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 8.h),
+            child: Row(
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    final prev = DateTime(
+                      focusedDay.year,
+                      focusedDay.month - 1,
+                    );
+                    onPageChanged?.call(prev);
+                  },
+                  child: Container(
+                    padding: EdgeInsets.all(4.w),
+                    decoration: BoxDecoration(
+                      color: AppColors.primary.withValues(alpha: 0.1),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.chevron_left,
+                      color: AppColors.primary,
+                      size: 20.w,
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () {
+                      final next = calendarFormat == CalendarFormat.month
+                          ? CalendarFormat.week
+                          : CalendarFormat.month;
+                      onFormatChanged?.call(next);
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          DateFormat('yyyy년 M월', 'ko_KR').format(focusedDay),
+                          style: AppTextStyles.subHeading_18.copyWith(
+                            color: Colors.white,
+                          ),
+                        ),
+                        SizedBox(width: 4.w),
+                        Icon(
+                          calendarFormat == CalendarFormat.month
+                              ? Icons.keyboard_arrow_down
+                              : Icons.keyboard_arrow_up,
+                          size: 16.w,
+                          color: AppColors.textTertiary,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    final next = DateTime(
+                      focusedDay.year,
+                      focusedDay.month + 1,
+                    );
+                    onPageChanged?.call(next);
+                  },
+                  child: Container(
+                    padding: EdgeInsets.all(4.w),
+                    decoration: BoxDecoration(
+                      color: AppColors.primary.withValues(alpha: 0.1),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.chevron_right,
+                      color: AppColors.primary,
+                      size: 20.w,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
-          child: Icon(Icons.chevron_left, color: AppColors.primary, size: 20.w),
-        ),
-        rightChevronIcon: Container(
-          padding: EdgeInsets.all(4.w),
-          decoration: BoxDecoration(
-            color: AppColors.primary.withValues(alpha: 0.1),
-            shape: BoxShape.circle,
+        TableCalendar<TodoEntity>(
+          firstDay: DateTime.utc(2024, 1, 1),
+          lastDay: DateTime.utc(2030, 12, 31),
+          focusedDay: focusedDay,
+          calendarFormat: isCompact ? CalendarFormat.week : calendarFormat,
+          startingDayOfWeek: StartingDayOfWeek.monday,
+          locale: 'ko_KR',
+          headerVisible: false,
+          daysOfWeekHeight: 20.h,
+          rowHeight: isCompact ? 42.h : 48.h,
+          selectedDayPredicate: (day) => isSameDay(selectedDay, day),
+          onDaySelected: onDaySelected,
+          onFormatChanged: onFormatChanged,
+          onPageChanged: onPageChanged,
+          eventLoader: eventLoader,
+
+          // === 요일 헤더 스타일 ===
+          daysOfWeekStyle: DaysOfWeekStyle(
+            weekdayStyle: AppTextStyles.tag_12.copyWith(
+              color: AppColors.textTertiary,
+            ),
+            weekendStyle: AppTextStyles.tag_12.copyWith(
+              color: AppColors.textTertiary.withValues(alpha: 0.6),
+            ),
           ),
-          child: Icon(
-            Icons.chevron_right,
-            color: AppColors.primary,
-            size: 20.w,
+
+          // === CalendarStyle 기본값 (CalendarBuilders 미적용 셀 대비) ===
+          calendarStyle: CalendarStyle(
+            outsideDaysVisible: false,
+            cellMargin: EdgeInsets.all(2.w),
           ),
-        ),
-      ),
 
-      // === 요일 헤더 스타일 ===
-      daysOfWeekStyle: DaysOfWeekStyle(
-        weekdayStyle: AppTextStyles.tag_12.copyWith(
-          color: AppColors.textTertiary,
-        ),
-        weekendStyle: AppTextStyles.tag_12.copyWith(
-          color: AppColors.textTertiary.withValues(alpha: 0.6),
-        ),
-      ),
-
-      // === CalendarStyle 기본값 (CalendarBuilders 미적용 셀 대비) ===
-      calendarStyle: CalendarStyle(
-        outsideDaysVisible: false,
-        cellMargin: EdgeInsets.all(2.w),
-      ),
-
-      // === CalendarBuilders: 우주 테마 커스텀 셀 렌더링 ===
-      calendarBuilders: CalendarBuilders(
+          // === CalendarBuilders: 우주 테마 커스텀 셀 렌더링 ===
+          calendarBuilders: CalendarBuilders(
         // 기본 날짜 셀 (주말은 투명도 낮춤)
         defaultBuilder: (context, day, focusedDay) {
           final isWeekend =
@@ -167,6 +205,8 @@ class SpaceCalendar extends StatelessWidget {
           );
         },
       ),
+    ),
+      ],
     );
   }
 

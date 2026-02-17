@@ -286,7 +286,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               );
             },
             onPageChanged: (focusedDay) {
-              _focusedDay = focusedDay;
+              setState(() => _focusedDay = focusedDay);
             },
             eventLoader: (day) {
               final key = DateTime(day.year, day.month, day.day);
@@ -372,7 +372,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               setState(() => _calendarFormat = format);
             },
             onPageChanged: (focusedDay) {
-              _focusedDay = focusedDay;
+              setState(() => _focusedDay = focusedDay);
             },
             eventLoader: (day) {
               final key = DateTime(day.year, day.month, day.day);

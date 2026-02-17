@@ -123,6 +123,7 @@ class _CategoryAddBottomSheetState extends State<CategoryAddBottomSheet> {
                   controller: _nameController,
                   hintText: '카테고리 이름 (예: 수학, 영어)',
                   onSubmitted: (_) => _submit(),
+                  showBorder: false,
                   autofocus: true,
                 ),
               ),

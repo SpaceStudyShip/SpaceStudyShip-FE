@@ -55,45 +55,6 @@ class _TimerScreenState extends ConsumerState<TimerScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // 연동된 할일 표시
-            if (timerState.linkedTodoTitle != null) ...[
-              FadeSlideIn(
-                child: Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 16.w,
-                    vertical: 8.h,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColors.primary.withValues(alpha: 0.15),
-                    borderRadius: AppRadius.chip,
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.link_rounded,
-                        color: AppColors.primary,
-                        size: 16.w,
-                      ),
-                      SizedBox(width: AppSpacing.s8),
-                      ConstrainedBox(
-                        constraints: BoxConstraints(maxWidth: 200.w),
-                        child: Text(
-                          timerState.linkedTodoTitle!,
-                          style: AppTextStyles.tag_12.copyWith(
-                            color: AppColors.primary,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              SizedBox(height: AppSpacing.s24),
-            ],
-
             // 타이머 링 + 시간 표시
             FadeSlideIn(
               child: SizedBox(
@@ -126,16 +87,7 @@ class _TimerScreenState extends ConsumerState<TimerScreen> {
                               ),
                             ),
                             SizedBox(height: AppSpacing.s4),
-                            Text(
-                              isIdle
-                                  ? '집중 시간을 측정해보세요'
-                                  : isRunning
-                                  ? '집중 중...'
-                                  : '일시정지',
-                              style: AppTextStyles.tag_12.copyWith(
-                                color: AppColors.textSecondary,
-                              ),
-                            ),
+                            _buildStatusText(timerState, isIdle, isRunning),
                           ],
                         ),
                       ),
@@ -263,6 +215,46 @@ class _TimerScreenState extends ConsumerState<TimerScreen> {
     ref
         .read(timerNotifierProvider.notifier)
         .start(todoId: todo?.id, todoTitle: todo?.title);
+  }
+
+  Widget _buildStatusText(TimerState timerState, bool isIdle, bool isRunning) {
+    // 연동된 할일이 있고 idle이 아닌 경우 → 할일 제목 표시
+    if (timerState.linkedTodoTitle != null && !isIdle) {
+      return Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            Icons.link_rounded,
+            color: isRunning ? AppColors.primary : AppColors.textSecondary,
+            size: 14.w,
+          ),
+          SizedBox(width: AppSpacing.s4),
+          ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: 160.w),
+            child: Text(
+              timerState.linkedTodoTitle!,
+              style: AppTextStyles.tag_12.copyWith(
+                color: isRunning ? AppColors.primary : AppColors.textSecondary,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
+      );
+    }
+
+    // 연동 없음 → 기존 상태 텍스트
+    return Text(
+      isIdle
+          ? '집중 시간을 측정해보세요'
+          : isRunning
+              ? '집중 중...'
+              : '일시정지',
+      style: AppTextStyles.tag_12.copyWith(
+        color: AppColors.textSecondary,
+      ),
+    );
   }
 
   String _formatDuration(Duration d) {

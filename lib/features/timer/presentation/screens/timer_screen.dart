@@ -12,6 +12,7 @@ import '../../../../core/widgets/cards/app_card.dart';
 import '../../../../core/widgets/dialogs/app_dialog.dart';
 import '../../../todo/domain/entities/todo_entity.dart';
 import '../providers/timer_provider.dart';
+import '../providers/timer_session_provider.dart';
 import '../providers/timer_state.dart';
 import '../widgets/timer_ring_painter.dart';
 import '../widgets/todo_select_bottom_sheet.dart';
@@ -30,6 +31,10 @@ class _TimerScreenState extends ConsumerState<TimerScreen> {
     final isRunning = timerState.status == TimerStatus.running;
     final isPaused = timerState.status == TimerStatus.paused;
     final isIdle = timerState.status == TimerStatus.idle;
+
+    final todayMinutes = ref.watch(todayStudyMinutesProvider);
+    final weeklyMinutes = ref.watch(weeklyStudyMinutesProvider);
+    final streak = ref.watch(currentStreakProvider);
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -106,7 +111,7 @@ class _TimerScreenState extends ConsumerState<TimerScreen> {
             ),
             SizedBox(height: AppSpacing.s48),
 
-            // 오늘의 통계 (하드코딩 유지 -- 향후 구현)
+            // 오늘의 통계
             FadeSlideIn(
               delay: const Duration(milliseconds: 200),
               child: Padding(
@@ -120,7 +125,7 @@ class _TimerScreenState extends ConsumerState<TimerScreen> {
                       SpaceStatItem(
                         icon: Icons.today_rounded,
                         label: '오늘',
-                        value: '0시간 0분',
+                        value: _formatMinutes(todayMinutes),
                       ),
                       Container(
                         width: 1,
@@ -130,7 +135,7 @@ class _TimerScreenState extends ConsumerState<TimerScreen> {
                       SpaceStatItem(
                         icon: Icons.date_range_rounded,
                         label: '이번 주',
-                        value: '0시간 0분',
+                        value: _formatMinutes(weeklyMinutes),
                       ),
                       Container(
                         width: 1,
@@ -140,7 +145,7 @@ class _TimerScreenState extends ConsumerState<TimerScreen> {
                       SpaceStatItem(
                         icon: Icons.local_fire_department_rounded,
                         label: '연속',
-                        value: '0일',
+                        value: '$streak일',
                       ),
                     ],
                   ),

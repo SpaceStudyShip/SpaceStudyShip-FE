@@ -3,7 +3,9 @@ import 'dart:async';
 import 'package:flutter/widgets.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../domain/entities/timer_session_entity.dart';
 import '../../../todo/presentation/providers/todo_provider.dart';
+import 'timer_session_provider.dart';
 import 'timer_state.dart';
 
 part 'timer_provider.g.dart';
@@ -90,6 +92,19 @@ class TimerNotifier extends _$TimerNotifier with WidgetsBindingObserver {
     // 연동된 할일이 있고 1분 이상 측정 시 actualMinutes 누적
     if (todoId != null && elapsedMinutes > 0) {
       totalMinutes = await _updateTodoActualMinutes(todoId, elapsedMinutes);
+    }
+
+    // 1분 이상 세션이면 기록 저장
+    if (sessionDuration.inMinutes >= 1) {
+      final session = TimerSessionEntity(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        todoId: todoId,
+        todoTitle: todoTitle,
+        startedAt: DateTime.now().subtract(sessionDuration),
+        endedAt: DateTime.now(),
+        durationMinutes: elapsedMinutes,
+      );
+      await ref.read(timerSessionListNotifierProvider.notifier).addSession(session);
     }
 
     // 1분 미만 세션은 null 반환 (다이얼로그 생략)

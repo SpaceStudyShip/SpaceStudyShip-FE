@@ -17,6 +17,8 @@ import 'core/services/fcm/local_notifications_service.dart';
 import 'core/constants/spacing_and_radius.dart';
 import 'core/constants/text_styles.dart';
 import 'core/theme/app_theme.dart';
+import 'features/timer/data/datasources/timer_session_local_datasource.dart';
+import 'features/timer/presentation/providers/timer_session_provider.dart';
 import 'features/todo/data/datasources/local_todo_datasource.dart';
 import 'features/todo/presentation/providers/todo_provider.dart';
 import 'routes/app_router.dart';
@@ -185,6 +187,10 @@ void main() async {
         if (prefs != null)
           localTodoDataSourceProvider.overrideWithValue(
             LocalTodoDataSource(prefs),
+          ),
+        if (prefs != null)
+          timerSessionLocalDataSourceProvider.overrideWithValue(
+            TimerSessionLocalDataSource(prefs),
           ),
       ],
       child: const MyApp(),

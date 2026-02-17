@@ -70,7 +70,7 @@ class SpaceCalendar extends StatelessWidget {
           locale: 'ko_KR',
           headerVisible: false,
           daysOfWeekHeight: 20.h,
-          rowHeight: isCompact ? 42.h : 48.h,
+          rowHeight: isCompact ? 48.h : 56.h,
           selectedDayPredicate: (day) => isSameDay(selectedDay, day),
           onDaySelected: onDaySelected,
           onFormatChanged: onFormatChanged,
@@ -108,42 +108,42 @@ class SpaceCalendar extends StatelessWidget {
               );
             },
 
-            // 선택된 날짜 — 글로우 원형
+            // 선택된 날짜 — 행성 스타일 (RadialGradient + glow)
             selectedBuilder: (context, day, focusedDay) {
               return _buildDayCell(
                 day: day,
                 textColor: Colors.white,
-                fontWeight: FontWeight.bold,
-                backgroundColor: AppColors.primary,
-                showGlow: true,
+                isBold: true,
+                isPlanet: true,
               );
             },
 
-            // 오늘 날짜 — 테두리 원형 (filled X)
+            // 오늘 날짜 — 궤도 링 스타일 (cosmic purple 테두리 + subtle gradient)
             todayBuilder: (context, day, focusedDay) {
               return _buildDayCell(
                 day: day,
-                textColor: AppColors.primary,
-                fontWeight: FontWeight.bold,
-                borderColor: AppColors.primary,
+                textColor: AppColors.secondaryLight,
+                isBold: true,
+                isOrbit: true,
               );
             },
 
-            // 도트 마커 — 완료 상태에 따라 아이콘 변경
+            // 별 마커 — 미완료: 빈 별, 완료: 금색 별
             markerBuilder: (context, day, events) {
               if (events.isEmpty) return const SizedBox.shrink();
               final allCompleted = events.every(
                 (t) => t.isCompletedForDate(day),
               );
-              final markerColor = allCompleted
-                  ? AppColors.success
-                  : AppColors.primary;
               return Positioned(
-                bottom: 2.h,
+                bottom: 1.h,
                 child: Icon(
-                  allCompleted ? Icons.check_circle : Icons.circle,
-                  size: 6.w,
-                  color: markerColor,
+                  allCompleted
+                      ? Icons.star_rounded
+                      : Icons.star_outline_rounded,
+                  size: 18.w,
+                  color: allCompleted
+                      ? AppColors.accentGold
+                      : AppColors.textTertiary,
                 ),
               );
             },
@@ -154,43 +154,69 @@ class SpaceCalendar extends StatelessWidget {
   }
 
   /// 커스텀 날짜 셀 빌더
+  ///
+  /// [isPlanet] true: 선택된 날짜 — 행성 스타일 (RadialGradient + glow)
+  /// [isOrbit] true: 오늘 날짜 — 궤도 링 스타일 (cosmic purple)
+  /// [isBold] true: SemiBold 14sp, false: Medium 14sp
   Widget _buildDayCell({
     required DateTime day,
     required Color textColor,
-    FontWeight fontWeight = FontWeight.normal,
-    Color? backgroundColor,
-    Color? borderColor,
-    bool showGlow = false,
+    bool isBold = false,
+    bool isPlanet = false,
+    bool isOrbit = false,
   }) {
+    final textStyle =
+        (isBold
+                ? AppTextStyles.paragraph14Semibold
+                : AppTextStyles.paragraph_14_100)
+            .copyWith(color: textColor);
+
+    // 스타일별 decoration 결정
+    final decoration = isPlanet
+        ? BoxDecoration(
+            shape: BoxShape.circle,
+            gradient: RadialGradient(
+              center: const Alignment(-0.3, -0.3),
+              radius: 0.9,
+              colors: [
+                AppColors.primary.withValues(alpha: 0.6),
+                AppColors.primaryDark.withValues(alpha: 0.3),
+              ],
+            ),
+            border: Border.all(
+              color: AppColors.primaryLight.withValues(alpha: 0.5),
+              width: 1.5,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.primary.withValues(alpha: 0.4),
+                blurRadius: 12,
+                spreadRadius: 3,
+              ),
+            ],
+          )
+        : isOrbit
+        ? BoxDecoration(
+            shape: BoxShape.circle,
+            gradient: RadialGradient(
+              center: Alignment.center,
+              radius: 0.8,
+              colors: [
+                AppColors.secondary.withValues(alpha: 0.15),
+                Colors.transparent,
+              ],
+            ),
+            border: Border.all(color: AppColors.secondaryLight, width: 1.5),
+          )
+        : const BoxDecoration(shape: BoxShape.circle);
+
     return Center(
       child: Container(
         width: 36.w,
         height: 36.w,
-        decoration: BoxDecoration(
-          color: backgroundColor ?? Colors.transparent,
-          shape: BoxShape.circle,
-          border: borderColor != null
-              ? Border.all(color: borderColor, width: 1.5)
-              : null,
-          boxShadow: showGlow
-              ? [
-                  BoxShadow(
-                    color: AppColors.primary.withValues(alpha: 0.3),
-                    blurRadius: 8,
-                    spreadRadius: 2,
-                  ),
-                ]
-              : null,
-        ),
+        decoration: decoration,
         alignment: Alignment.center,
-        child: Text(
-          '${day.day}',
-          style: AppTextStyles.label_16.copyWith(
-            color: textColor,
-            fontWeight: fontWeight,
-            fontSize: 14.sp,
-          ),
-        ),
+        child: Text('${day.day}', style: textStyle),
       ),
     );
   }

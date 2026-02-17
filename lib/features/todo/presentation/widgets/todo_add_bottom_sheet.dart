@@ -398,7 +398,6 @@ class _TodoAddBottomSheetState extends ConsumerState<TodoAddBottomSheet> {
             ),
             selectedTextStyle: AppTextStyles.tag_12.copyWith(
               color: Colors.white,
-              fontWeight: FontWeight.bold,
             ),
             todayDecoration: BoxDecoration(
               shape: BoxShape.circle,
@@ -406,7 +405,6 @@ class _TodoAddBottomSheetState extends ConsumerState<TodoAddBottomSheet> {
             ),
             todayTextStyle: AppTextStyles.tag_12.copyWith(
               color: AppColors.primary,
-              fontWeight: FontWeight.bold,
             ),
             defaultTextStyle: AppTextStyles.tag_12.copyWith(
               color: Colors.white,

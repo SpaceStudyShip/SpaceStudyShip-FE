@@ -9,6 +9,7 @@ import '../../../../core/widgets/animations/entrance_animations.dart';
 import '../../../../core/widgets/atoms/space_stat_item.dart';
 import '../../../../core/widgets/buttons/app_button.dart';
 import '../../../../core/widgets/cards/app_card.dart';
+import '../../../../core/widgets/dialogs/app_dialog.dart';
 import '../../../todo/domain/entities/todo_entity.dart';
 import '../providers/timer_provider.dart';
 import '../providers/timer_state.dart';
@@ -189,7 +190,7 @@ class _TimerScreenState extends ConsumerState<TimerScreen> {
           Expanded(
             child: AppButton(
               text: '종료',
-              onPressed: () => ref.read(timerNotifierProvider.notifier).stop(),
+              onPressed: _onStop,
               backgroundColor: Colors.transparent,
               foregroundColor: AppColors.error,
               borderColor: AppColors.error.withValues(alpha: 0.5),
@@ -215,6 +216,81 @@ class _TimerScreenState extends ConsumerState<TimerScreen> {
     ref
         .read(timerNotifierProvider.notifier)
         .start(todoId: todo?.id, todoTitle: todo?.title);
+  }
+
+  Future<void> _onStop() async {
+    final result = await ref.read(timerNotifierProvider.notifier).stop();
+    if (!mounted || result == null) return;
+    _showResultDialog(result);
+  }
+
+  void _showResultDialog(
+    ({Duration sessionDuration, String? todoTitle, int? totalMinutes}) result,
+  ) {
+    final sessionText = _formatDuration(result.sessionDuration);
+
+    AppDialog.show(
+      context: context,
+      title: '수고했어요!',
+      emotion: AppDialogEmotion.success,
+      customContent: Column(
+        children: [
+          _buildResultRow('이번 세션', sessionText),
+          if (result.todoTitle != null) ...[
+            Padding(
+              padding: AppPadding.vertical12,
+              child: Divider(
+                color: AppColors.spaceDivider,
+                height: 1,
+              ),
+            ),
+            _buildResultRow('연동 할 일', result.todoTitle!),
+            if (result.totalMinutes != null)
+              Padding(
+                padding: EdgeInsets.only(top: AppSpacing.s8),
+                child: _buildResultRow(
+                  '누적 시간',
+                  _formatMinutes(result.totalMinutes!),
+                ),
+              ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildResultRow(String label, String value) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          label,
+          style: AppTextStyles.tag_12.copyWith(
+            color: AppColors.textTertiary,
+          ),
+        ),
+        Flexible(
+          child: Text(
+            value,
+            style: AppTextStyles.label_16.copyWith(
+              color: Colors.white,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.end,
+          ),
+        ),
+      ],
+    );
+  }
+
+  String _formatMinutes(int totalMinutes) {
+    final hours = totalMinutes ~/ 60;
+    final minutes = totalMinutes % 60;
+    if (hours > 0) {
+      return '$hours시간 $minutes분';
+    }
+    return '$minutes분';
   }
 
   Widget _buildStatusText(TimerState timerState, bool isIdle, bool isRunning) {

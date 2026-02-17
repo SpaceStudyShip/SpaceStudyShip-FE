@@ -76,18 +76,29 @@ class TimerNotifier extends _$TimerNotifier with WidgetsBindingObserver {
   }
 
   /// 타이머 정지 + 할일 시간 업데이트
-  Future<void> stop() async {
+  /// 반환: ({Duration sessionDuration, String? todoTitle, int? totalMinutes})
+  Future<({Duration sessionDuration, String? todoTitle, int? totalMinutes})?> stop() async {
     _timer?.cancel();
 
     final todoId = state.linkedTodoId;
-    final elapsedMinutes = state.elapsed.inMinutes;
+    final todoTitle = state.linkedTodoTitle;
+    final sessionDuration = state.elapsed;
+    final elapsedMinutes = sessionDuration.inMinutes;
+
+    int? totalMinutes;
 
     // 연동된 할일이 있고 1분 이상 측정 시 actualMinutes 누적
     if (todoId != null && elapsedMinutes > 0) {
-      await _updateTodoActualMinutes(todoId, elapsedMinutes);
+      totalMinutes = await _updateTodoActualMinutes(todoId, elapsedMinutes);
     }
 
+    // 1분 미만 세션은 null 반환 (다이얼로그 생략)
+    final result = sessionDuration.inMinutes >= 1
+        ? (sessionDuration: sessionDuration, todoTitle: todoTitle, totalMinutes: totalMinutes)
+        : null;
+
     state = const TimerState();
+    return result;
   }
 
   /// UI 갱신용 periodic timer (시간 계산에는 사용하지 않음)
@@ -100,7 +111,7 @@ class TimerNotifier extends _$TimerNotifier with WidgetsBindingObserver {
     });
   }
 
-  Future<void> _updateTodoActualMinutes(
+  Future<int?> _updateTodoActualMinutes(
     String todoId,
     int additionalMinutes,
   ) async {
@@ -110,9 +121,12 @@ class TimerNotifier extends _$TimerNotifier with WidgetsBindingObserver {
 
     if (todo != null) {
       final currentMinutes = todo.actualMinutes ?? 0;
+      final newTotal = currentMinutes + additionalMinutes;
       await todoNotifier.updateTodo(
-        todo.copyWith(actualMinutes: currentMinutes + additionalMinutes),
+        todo.copyWith(actualMinutes: newTotal),
       );
+      return newTotal;
     }
+    return null;
   }
 }

@@ -10,6 +10,7 @@ import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../../../core/constants/toss_design_tokens.dart';
 import '../../../../core/widgets/animations/entrance_animations.dart';
+import '../../../../core/widgets/atoms/drag_handle.dart';
 import '../../../../core/widgets/cards/app_card.dart';
 import '../../../../core/widgets/space/spaceship_avatar.dart';
 import '../../../../core/widgets/space/streak_badge.dart';
@@ -233,20 +234,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  Widget _buildDragHandle() {
-    return Center(
-      child: Container(
-        margin: EdgeInsets.only(top: 12.h, bottom: 8.h),
-        width: 40.w,
-        height: 4.h,
-        decoration: BoxDecoration(
-          color: AppColors.textTertiary.withValues(alpha: 0.4),
-          borderRadius: BorderRadius.circular(2.r),
-        ),
-      ),
-    );
-  }
-
   /// 접힌 상태: 주간 캘린더 스트립 + 할일 카운트
   Widget _buildCollapsedSheet(ScrollController scrollController) {
     final todosByDate = ref.watch(todosByDateMapProvider);
@@ -265,7 +252,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       controller: scrollController,
       padding: EdgeInsets.zero,
       children: [
-        _buildDragHandle(),
+        const DragHandle(),
 
         // 주간 캘린더 스트립 (컴팩트 모드)
         Padding(
@@ -352,7 +339,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       controller: scrollController,
       padding: EdgeInsets.zero,
       children: [
-        _buildDragHandle(),
+        const DragHandle(),
 
         // 월간/주간 토글 캘린더이다.
         Padding(

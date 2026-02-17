@@ -158,6 +158,10 @@ class AppPadding {
   /// 버튼 내부 패딩 (좌우 24px, 상하 12px)
   static EdgeInsets get buttonPadding =>
       EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h);
+
+  /// 바텀시트 제목 패딩 (좌우 20px, 상하 12px)
+  static EdgeInsets get bottomSheetTitlePadding =>
+      EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h);
 }
 
 // ============================================

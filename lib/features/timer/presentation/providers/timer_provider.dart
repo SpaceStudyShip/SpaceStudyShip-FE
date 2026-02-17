@@ -79,7 +79,8 @@ class TimerNotifier extends _$TimerNotifier with WidgetsBindingObserver {
 
   /// 타이머 정지 + 할일 시간 업데이트
   /// 반환: ({Duration sessionDuration, String? todoTitle, int? totalMinutes})
-  Future<({Duration sessionDuration, String? todoTitle, int? totalMinutes})?> stop() async {
+  Future<({Duration sessionDuration, String? todoTitle, int? totalMinutes})?>
+  stop() async {
     _timer?.cancel();
 
     final todoId = state.linkedTodoId;
@@ -104,12 +105,18 @@ class TimerNotifier extends _$TimerNotifier with WidgetsBindingObserver {
         endedAt: DateTime.now(),
         durationMinutes: elapsedMinutes,
       );
-      await ref.read(timerSessionListNotifierProvider.notifier).addSession(session);
+      await ref
+          .read(timerSessionListNotifierProvider.notifier)
+          .addSession(session);
     }
 
     // 1분 미만 세션은 null 반환 (다이얼로그 생략)
     final result = sessionDuration.inMinutes >= 1
-        ? (sessionDuration: sessionDuration, todoTitle: todoTitle, totalMinutes: totalMinutes)
+        ? (
+            sessionDuration: sessionDuration,
+            todoTitle: todoTitle,
+            totalMinutes: totalMinutes,
+          )
         : null;
 
     state = const TimerState();
@@ -137,9 +144,7 @@ class TimerNotifier extends _$TimerNotifier with WidgetsBindingObserver {
     if (todo != null) {
       final currentMinutes = todo.actualMinutes ?? 0;
       final newTotal = currentMinutes + additionalMinutes;
-      await todoNotifier.updateTodo(
-        todo.copyWith(actualMinutes: newTotal),
-      );
+      await todoNotifier.updateTodo(todo.copyWith(actualMinutes: newTotal));
       return newTotal;
     }
     return null;

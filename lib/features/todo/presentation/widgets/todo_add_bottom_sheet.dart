@@ -7,6 +7,8 @@ import 'package:table_calendar/table_calendar.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
+import '../../../../core/widgets/atoms/calendar_header.dart';
+import '../../../../core/widgets/atoms/drag_handle.dart';
 import '../../../../core/widgets/buttons/app_button.dart';
 import '../../../../core/widgets/inputs/app_text_field.dart';
 import '../../domain/entities/todo_entity.dart';
@@ -124,24 +126,11 @@ class _TodoAddBottomSheetState extends ConsumerState<TodoAddBottomSheet> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 // 드래그 핸들
-                Center(
-                  child: Container(
-                    margin: EdgeInsets.only(top: 12.h, bottom: 8.h),
-                    width: 40.w,
-                    height: 4.h,
-                    decoration: BoxDecoration(
-                      color: AppColors.textTertiary.withValues(alpha: 0.4),
-                      borderRadius: BorderRadius.circular(2.r),
-                    ),
-                  ),
-                ),
+                const DragHandle(),
 
                 // 제목
                 Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 20.w,
-                    vertical: 12.h,
-                  ),
+                  padding: AppPadding.bottomSheetTitlePadding,
                   child: Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
@@ -342,81 +331,34 @@ class _TodoAddBottomSheetState extends ConsumerState<TodoAddBottomSheet> {
     return Column(
       children: [
         // 커스텀 헤더 — 타이틀 탭으로 월간/주간 토글
-        Padding(
-          padding: EdgeInsets.symmetric(vertical: 4.h),
-          child: Row(
-            children: [
-              GestureDetector(
-                onTap: () {
-                  setState(() {
-                    _calendarFocusedDay = DateTime(
-                      _calendarFocusedDay.year,
-                      _calendarFocusedDay.month - 1,
-                    );
-                  });
-                },
-                child: Padding(
-                  padding: AppPadding.all8,
-                  child: Icon(
-                    Icons.chevron_left,
-                    color: AppColors.primary,
-                    size: 20.w,
-                  ),
-                ),
-              ),
-              Expanded(
-                child: GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      _calendarFormat = _calendarFormat == CalendarFormat.month
-                          ? CalendarFormat.week
-                          : CalendarFormat.month;
-                    });
-                  },
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        DateFormat(
-                          'yyyy년 M월',
-                          'ko_KR',
-                        ).format(_calendarFocusedDay),
-                        style: AppTextStyles.label_16.copyWith(
-                          color: Colors.white,
-                        ),
-                      ),
-                      SizedBox(width: 4.w),
-                      Icon(
-                        _calendarFormat == CalendarFormat.month
-                            ? Icons.keyboard_arrow_down
-                            : Icons.keyboard_arrow_up,
-                        size: 16.w,
-                        color: AppColors.textTertiary,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              GestureDetector(
-                onTap: () {
-                  setState(() {
-                    _calendarFocusedDay = DateTime(
-                      _calendarFocusedDay.year,
-                      _calendarFocusedDay.month + 1,
-                    );
-                  });
-                },
-                child: Padding(
-                  padding: AppPadding.all8,
-                  child: Icon(
-                    Icons.chevron_right,
-                    color: AppColors.primary,
-                    size: 20.w,
-                  ),
-                ),
-              ),
-            ],
-          ),
+        CalendarHeader(
+          focusedDay: _calendarFocusedDay,
+          calendarFormat: _calendarFormat,
+          onPreviousMonth: () {
+            setState(() {
+              _calendarFocusedDay = DateTime(
+                _calendarFocusedDay.year,
+                _calendarFocusedDay.month - 1,
+              );
+            });
+          },
+          onNextMonth: () {
+            setState(() {
+              _calendarFocusedDay = DateTime(
+                _calendarFocusedDay.year,
+                _calendarFocusedDay.month + 1,
+              );
+            });
+          },
+          onToggleFormat: () {
+            setState(() {
+              _calendarFormat = _calendarFormat == CalendarFormat.month
+                  ? CalendarFormat.week
+                  : CalendarFormat.month;
+            });
+          },
+          titleStyle: AppTextStyles.label_16.copyWith(color: Colors.white),
+          verticalPadding: 4.h,
         ),
         TableCalendar(
           firstDay: DateTime.utc(2024, 1, 1),

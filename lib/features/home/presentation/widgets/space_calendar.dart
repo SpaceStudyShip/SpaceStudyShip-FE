@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/text_styles.dart';
+import '../../../../core/widgets/atoms/calendar_header.dart';
 import '../../../todo/domain/entities/todo_entity.dart';
 
 /// 우주 테마 캘린더 위젯
@@ -42,83 +42,24 @@ class SpaceCalendar extends StatelessWidget {
       children: [
         // 커스텀 헤더 — 타이틀 탭으로 월간/주간 토글 (compact 아닐 때만)
         if (!isCompact)
-          Padding(
-            padding: EdgeInsets.symmetric(vertical: 8.h),
-            child: Row(
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    final prev = DateTime(
-                      focusedDay.year,
-                      focusedDay.month - 1,
-                    );
-                    onPageChanged?.call(prev);
-                  },
-                  child: Container(
-                    padding: EdgeInsets.all(4.w),
-                    decoration: BoxDecoration(
-                      color: AppColors.primary.withValues(alpha: 0.1),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      Icons.chevron_left,
-                      color: AppColors.primary,
-                      size: 20.w,
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: GestureDetector(
-                    onTap: () {
-                      final next = calendarFormat == CalendarFormat.month
-                          ? CalendarFormat.week
-                          : CalendarFormat.month;
-                      onFormatChanged?.call(next);
-                    },
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          DateFormat('yyyy년 M월', 'ko_KR').format(focusedDay),
-                          style: AppTextStyles.subHeading_18.copyWith(
-                            color: Colors.white,
-                          ),
-                        ),
-                        SizedBox(width: 4.w),
-                        Icon(
-                          calendarFormat == CalendarFormat.month
-                              ? Icons.keyboard_arrow_down
-                              : Icons.keyboard_arrow_up,
-                          size: 16.w,
-                          color: AppColors.textTertiary,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    final next = DateTime(
-                      focusedDay.year,
-                      focusedDay.month + 1,
-                    );
-                    onPageChanged?.call(next);
-                  },
-                  child: Container(
-                    padding: EdgeInsets.all(4.w),
-                    decoration: BoxDecoration(
-                      color: AppColors.primary.withValues(alpha: 0.1),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      Icons.chevron_right,
-                      color: AppColors.primary,
-                      size: 20.w,
-                    ),
-                  ),
-                ),
-              ],
-            ),
+          CalendarHeader(
+            focusedDay: focusedDay,
+            calendarFormat: calendarFormat,
+            showArrowBackground: true,
+            onPreviousMonth: () {
+              final prev = DateTime(focusedDay.year, focusedDay.month - 1);
+              onPageChanged?.call(prev);
+            },
+            onNextMonth: () {
+              final next = DateTime(focusedDay.year, focusedDay.month + 1);
+              onPageChanged?.call(next);
+            },
+            onToggleFormat: () {
+              final next = calendarFormat == CalendarFormat.month
+                  ? CalendarFormat.week
+                  : CalendarFormat.month;
+              onFormatChanged?.call(next);
+            },
           ),
         TableCalendar<TodoEntity>(
           firstDay: DateTime.utc(2024, 1, 1),
@@ -154,58 +95,60 @@ class SpaceCalendar extends StatelessWidget {
 
           // === CalendarBuilders: 우주 테마 커스텀 셀 렌더링 ===
           calendarBuilders: CalendarBuilders(
-        // 기본 날짜 셀 (주말은 투명도 낮춤)
-        defaultBuilder: (context, day, focusedDay) {
-          final isWeekend =
-              day.weekday == DateTime.saturday ||
-              day.weekday == DateTime.sunday;
-          return _buildDayCell(
-            day: day,
-            textColor: isWeekend
-                ? Colors.white.withValues(alpha: 0.6)
-                : Colors.white,
-          );
-        },
+            // 기본 날짜 셀 (주말은 투명도 낮춤)
+            defaultBuilder: (context, day, focusedDay) {
+              final isWeekend =
+                  day.weekday == DateTime.saturday ||
+                  day.weekday == DateTime.sunday;
+              return _buildDayCell(
+                day: day,
+                textColor: isWeekend
+                    ? Colors.white.withValues(alpha: 0.6)
+                    : Colors.white,
+              );
+            },
 
-        // 선택된 날짜 — 글로우 원형
-        selectedBuilder: (context, day, focusedDay) {
-          return _buildDayCell(
-            day: day,
-            textColor: Colors.white,
-            fontWeight: FontWeight.bold,
-            backgroundColor: AppColors.primary,
-            showGlow: true,
-          );
-        },
+            // 선택된 날짜 — 글로우 원형
+            selectedBuilder: (context, day, focusedDay) {
+              return _buildDayCell(
+                day: day,
+                textColor: Colors.white,
+                fontWeight: FontWeight.bold,
+                backgroundColor: AppColors.primary,
+                showGlow: true,
+              );
+            },
 
-        // 오늘 날짜 — 테두리 원형 (filled X)
-        todayBuilder: (context, day, focusedDay) {
-          return _buildDayCell(
-            day: day,
-            textColor: AppColors.primary,
-            fontWeight: FontWeight.bold,
-            borderColor: AppColors.primary,
-          );
-        },
+            // 오늘 날짜 — 테두리 원형 (filled X)
+            todayBuilder: (context, day, focusedDay) {
+              return _buildDayCell(
+                day: day,
+                textColor: AppColors.primary,
+                fontWeight: FontWeight.bold,
+                borderColor: AppColors.primary,
+              );
+            },
 
-        // 도트 마커 — 완료 상태에 따라 아이콘 변경
-        markerBuilder: (context, day, events) {
-          if (events.isEmpty) return const SizedBox.shrink();
-          final allCompleted = events.every((t) => t.isCompletedForDate(day));
-          final markerColor = allCompleted
-              ? AppColors.success
-              : AppColors.primary;
-          return Positioned(
-            bottom: 2.h,
-            child: Icon(
-              allCompleted ? Icons.check_circle : Icons.circle,
-              size: 6.w,
-              color: markerColor,
-            ),
-          );
-        },
-      ),
-    ),
+            // 도트 마커 — 완료 상태에 따라 아이콘 변경
+            markerBuilder: (context, day, events) {
+              if (events.isEmpty) return const SizedBox.shrink();
+              final allCompleted = events.every(
+                (t) => t.isCompletedForDate(day),
+              );
+              final markerColor = allCompleted
+                  ? AppColors.success
+                  : AppColors.primary;
+              return Positioned(
+                bottom: 2.h,
+                child: Icon(
+                  allCompleted ? Icons.check_circle : Icons.circle,
+                  size: 6.w,
+                  color: markerColor,
+                ),
+              );
+            },
+          ),
+        ),
       ],
     );
   }

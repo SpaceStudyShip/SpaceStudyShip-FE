@@ -75,11 +75,9 @@ int currentStreak(Ref ref) {
   if (sessions.isEmpty) return 0;
 
   // 세션이 있는 날짜 집합
-  final studyDates = sessions
-      .map((s) => _normalizeDate(s.startedAt))
-      .toSet()
-      .toList()
-    ..sort((a, b) => b.compareTo(a)); // 최신순
+  final studyDates =
+      sessions.map((s) => _normalizeDate(s.startedAt)).toSet().toList()
+        ..sort((a, b) => b.compareTo(a)); // 최신순
 
   if (studyDates.isEmpty) return 0;
 

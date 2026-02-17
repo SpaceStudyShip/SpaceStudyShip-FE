@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
+import '../../../../core/widgets/atoms/drag_handle.dart';
 import '../../../../core/widgets/dialogs/app_dialog.dart';
 import '../../../../core/widgets/feedback/app_snackbar.dart';
 import '../../../../core/widgets/space/todo_item.dart';
@@ -184,19 +185,9 @@ class _MultiDateDeleteSheet extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           // 드래그 핸들
-          Center(
-            child: Container(
-              margin: EdgeInsets.only(top: 12.h, bottom: 8.h),
-              width: 40.w,
-              height: 4.h,
-              decoration: BoxDecoration(
-                color: AppColors.textTertiary.withValues(alpha: 0.4),
-                borderRadius: BorderRadius.circular(2.r),
-              ),
-            ),
-          ),
+          const DragHandle(),
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
+            padding: AppPadding.bottomSheetTitlePadding,
             child: Text(
               '반복 할일 삭제',
               style: AppTextStyles.subHeading_18.copyWith(color: Colors.white),

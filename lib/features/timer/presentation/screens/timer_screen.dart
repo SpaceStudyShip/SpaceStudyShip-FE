@@ -31,10 +31,6 @@ class _TimerScreenState extends ConsumerState<TimerScreen> {
     final isPaused = timerState.status == TimerStatus.paused;
     final isIdle = timerState.status == TimerStatus.idle;
 
-    final todayMinutes = ref.watch(todayStudyMinutesProvider);
-    final weeklyMinutes = ref.watch(weeklyStudyMinutesProvider);
-    final streak = ref.watch(currentStreakProvider);
-
     return Scaffold(
       backgroundColor: Colors.transparent,
       extendBodyBehindAppBar: true,
@@ -105,43 +101,50 @@ class _TimerScreenState extends ConsumerState<TimerScreen> {
             _buildControls(isIdle, isRunning, isPaused),
             SizedBox(height: AppSpacing.s48),
 
-            // 오늘의 통계
-            Padding(
-              padding: AppPadding.horizontal20,
-              child: AppCard(
-                style: AppCardStyle.outlined,
-                padding: AppPadding.all20,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    SpaceStatItem(
-                      icon: Icons.today_rounded,
-                      label: '오늘',
-                      value: _formatMinutes(todayMinutes),
+            // 오늘의 통계 (Consumer 격리: 매초 타이머 리빌드에 영향받지 않음)
+            Consumer(
+              builder: (context, ref, _) {
+                final todayMinutes = ref.watch(todayStudyMinutesProvider);
+                final weeklyMinutes = ref.watch(weeklyStudyMinutesProvider);
+                final streak = ref.watch(currentStreakProvider);
+                return Padding(
+                  padding: AppPadding.horizontal20,
+                  child: AppCard(
+                    style: AppCardStyle.outlined,
+                    padding: AppPadding.all20,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        SpaceStatItem(
+                          icon: Icons.today_rounded,
+                          label: '오늘',
+                          value: _formatMinutes(todayMinutes),
+                        ),
+                        Container(
+                          width: 1,
+                          height: 40.h,
+                          color: AppColors.spaceDivider,
+                        ),
+                        SpaceStatItem(
+                          icon: Icons.date_range_rounded,
+                          label: '이번 주',
+                          value: _formatMinutes(weeklyMinutes),
+                        ),
+                        Container(
+                          width: 1,
+                          height: 40.h,
+                          color: AppColors.spaceDivider,
+                        ),
+                        SpaceStatItem(
+                          icon: Icons.local_fire_department_rounded,
+                          label: '연속',
+                          value: '$streak일',
+                        ),
+                      ],
                     ),
-                    Container(
-                      width: 1,
-                      height: 40.h,
-                      color: AppColors.spaceDivider,
-                    ),
-                    SpaceStatItem(
-                      icon: Icons.date_range_rounded,
-                      label: '이번 주',
-                      value: _formatMinutes(weeklyMinutes),
-                    ),
-                    Container(
-                      width: 1,
-                      height: 40.h,
-                      color: AppColors.spaceDivider,
-                    ),
-                    SpaceStatItem(
-                      icon: Icons.local_fire_department_rounded,
-                      label: '연속',
-                      value: '$streak일',
-                    ),
-                  ],
-                ),
-              ),
+                  ),
+                );
+              },
             ),
           ],
         ),
@@ -235,10 +238,7 @@ class _TimerScreenState extends ConsumerState<TimerScreen> {
           if (result.todoTitle != null) ...[
             Padding(
               padding: AppPadding.vertical12,
-              child: Divider(
-                color: AppColors.spaceDivider,
-                height: 1,
-              ),
+              child: Divider(color: AppColors.spaceDivider, height: 1),
             ),
             _buildResultRow('연동 할 일', result.todoTitle!),
             if (result.totalMinutes != null)
@@ -261,16 +261,12 @@ class _TimerScreenState extends ConsumerState<TimerScreen> {
       children: [
         Text(
           label,
-          style: AppTextStyles.tag_12.copyWith(
-            color: AppColors.textTertiary,
-          ),
+          style: AppTextStyles.tag_12.copyWith(color: AppColors.textTertiary),
         ),
         Flexible(
           child: Text(
             value,
-            style: AppTextStyles.label_16.copyWith(
-              color: Colors.white,
-            ),
+            style: AppTextStyles.label_16.copyWith(color: Colors.white),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.end,
@@ -321,11 +317,9 @@ class _TimerScreenState extends ConsumerState<TimerScreen> {
       isIdle
           ? '집중 시간을 측정해보세요'
           : isRunning
-              ? '집중 중...'
-              : '일시정지',
-      style: AppTextStyles.tag_12.copyWith(
-        color: AppColors.textSecondary,
-      ),
+          ? '집중 중...'
+          : '일시정지',
+      style: AppTextStyles.tag_12.copyWith(color: AppColors.textSecondary),
     );
   }
 

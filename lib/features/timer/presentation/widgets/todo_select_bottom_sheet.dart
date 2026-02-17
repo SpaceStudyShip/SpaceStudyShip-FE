@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
+import '../../../../core/widgets/atoms/drag_handle.dart';
 import '../../../../core/widgets/buttons/app_button.dart';
 import '../../../../core/widgets/states/space_empty_state.dart';
 import '../../../todo/domain/entities/todo_category_entity.dart';
@@ -44,27 +45,12 @@ class TodoSelectBottomSheet extends ConsumerWidget {
                 controller: scrollController,
                 slivers: [
                   // 드래그 핸들
-                  SliverToBoxAdapter(
-                    child: Center(
-                      child: Container(
-                        margin: EdgeInsets.only(top: 12.h, bottom: 8.h),
-                        width: 40.w,
-                        height: 4.h,
-                        decoration: BoxDecoration(
-                          color: AppColors.textTertiary.withValues(alpha: 0.4),
-                          borderRadius: BorderRadius.circular(2.r),
-                        ),
-                      ),
-                    ),
-                  ),
+                  const SliverToBoxAdapter(child: DragHandle()),
 
                   // 제목
                   SliverToBoxAdapter(
                     child: Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 20.w,
-                        vertical: 12.h,
-                      ),
+                      padding: AppPadding.bottomSheetTitlePadding,
                       child: Align(
                         alignment: Alignment.centerLeft,
                         child: Text(

@@ -159,6 +159,7 @@ class AppSnackBar {
       ),
       duration: duration ?? _defaultDuration,
       behavior: SnackBarBehavior.floating,
+      elevation: 0,
       backgroundColor: AppColors.spaceElevated,
       shape: RoundedRectangleBorder(borderRadius: AppRadius.snackbar),
       margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),

@@ -23,22 +23,22 @@ class TimerSessionModel with _$TimerSessionModel {
 
 extension TimerSessionModelX on TimerSessionModel {
   TimerSessionEntity toEntity() => TimerSessionEntity(
-        id: id,
-        todoId: todoId,
-        todoTitle: todoTitle,
-        startedAt: startedAt,
-        endedAt: endedAt,
-        durationMinutes: durationMinutes,
-      );
+    id: id,
+    todoId: todoId,
+    todoTitle: todoTitle,
+    startedAt: startedAt,
+    endedAt: endedAt,
+    durationMinutes: durationMinutes,
+  );
 }
 
 extension TimerSessionEntityX on TimerSessionEntity {
   TimerSessionModel toModel() => TimerSessionModel(
-        id: id,
-        todoId: todoId,
-        todoTitle: todoTitle,
-        startedAt: startedAt,
-        endedAt: endedAt,
-        durationMinutes: durationMinutes,
-      );
+    id: id,
+    todoId: todoId,
+    todoTitle: todoTitle,
+    startedAt: startedAt,
+    endedAt: endedAt,
+    durationMinutes: durationMinutes,
+  );
 }

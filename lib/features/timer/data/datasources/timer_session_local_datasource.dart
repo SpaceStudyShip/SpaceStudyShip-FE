@@ -36,8 +36,4 @@ class TimerSessionLocalDataSource {
     sessions.add(session);
     await saveSessions(sessions);
   }
-
-  Future<void> clearSessions() async {
-    await _prefs.remove(_sessionsKey);
-  }
 }

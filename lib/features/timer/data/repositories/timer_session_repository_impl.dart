@@ -17,9 +17,4 @@ class TimerSessionRepositoryImpl implements TimerSessionRepository {
   Future<void> addSession(TimerSessionEntity session) async {
     await _localDataSource.addSession(session.toModel());
   }
-
-  @override
-  Future<void> clearSessions() async {
-    await _localDataSource.clearSessions();
-  }
 }

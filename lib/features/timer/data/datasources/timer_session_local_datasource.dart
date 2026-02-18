@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/timer_session_model.dart';
@@ -35,5 +36,11 @@ class TimerSessionLocalDataSource {
     final sessions = getSessions();
     sessions.add(session);
     await saveSessions(sessions);
+  }
+
+  Future<void> clearAll() async {
+    final count = getSessions().length;
+    await _prefs.remove(_sessionsKey);
+    debugPrint('🧹 TimerSession 캐시 삭제 완료 (삭제된 세션: $count개)');
   }
 }

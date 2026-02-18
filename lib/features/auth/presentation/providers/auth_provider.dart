@@ -17,6 +17,7 @@ import '../../domain/usecases/sign_in_with_apple_usecase.dart';
 import '../../domain/usecases/sign_in_with_google_usecase.dart';
 import '../../domain/usecases/sign_out_usecase.dart';
 import '../../domain/utils/firebase_auth_error_handler.dart';
+import '../../../timer/presentation/providers/timer_session_provider.dart';
 import '../../../todo/presentation/providers/todo_provider.dart';
 
 part 'auth_provider.g.dart';
@@ -301,7 +302,14 @@ class AuthNotifier extends _$AuthNotifier {
       // 게스트 할일 데이터 삭제
       final todoRepo = ref.read(todoRepositoryProvider);
       await todoRepo.clearAll();
-      debugPrint('🧹 게스트 캐시 삭제 완료 ($kIsGuestKey, todos, categories)');
+
+      // 게스트 타이머 세션 데이터 삭제
+      final timerRepo = ref.read(timerSessionRepositoryProvider);
+      await timerRepo.clearAll();
+
+      debugPrint(
+        '🧹 게스트 캐시 삭제 완료 ($kIsGuestKey, todos, categories, timer sessions)',
+      );
       state = const AsyncValue.data(null);
       return;
     }

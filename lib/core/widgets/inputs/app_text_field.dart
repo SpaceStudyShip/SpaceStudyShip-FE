@@ -181,6 +181,7 @@ class _AppTextFieldState extends State<AppTextField> {
 
   @override
   void dispose() {
+    _focusNode.removeListener(_onFocusChange);
     if (widget.focusNode == null) {
       _focusNode.dispose();
     }

@@ -46,64 +46,6 @@ final timerSessionRepositoryProvider =
 // ignore: unused_element
 typedef TimerSessionRepositoryRef =
     AutoDisposeProviderRef<TimerSessionRepository>;
-String _$todayStudyMinutesHash() => r'7535caee82fcfe3c691c5eb1a1177831658ead83';
-
-/// 오늘 공부 시간 (분)
-///
-/// Copied from [todayStudyMinutes].
-@ProviderFor(todayStudyMinutes)
-final todayStudyMinutesProvider = AutoDisposeProvider<int>.internal(
-  todayStudyMinutes,
-  name: r'todayStudyMinutesProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$todayStudyMinutesHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef TodayStudyMinutesRef = AutoDisposeProviderRef<int>;
-String _$weeklyStudyMinutesHash() =>
-    r'3550d67aa39757a3e08c414e1a4ca2a5e195eb46';
-
-/// 이번 주 공부 시간 (분) — 최근 7일
-///
-/// Copied from [weeklyStudyMinutes].
-@ProviderFor(weeklyStudyMinutes)
-final weeklyStudyMinutesProvider = AutoDisposeProvider<int>.internal(
-  weeklyStudyMinutes,
-  name: r'weeklyStudyMinutesProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$weeklyStudyMinutesHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef WeeklyStudyMinutesRef = AutoDisposeProviderRef<int>;
-String _$currentStreakHash() => r'7e7b8e1d04ef768c9e5e5250cfea9c40da4a5f59';
-
-/// 연속 공부 일수 (streak)
-///
-/// Copied from [currentStreak].
-@ProviderFor(currentStreak)
-final currentStreakProvider = AutoDisposeProvider<int>.internal(
-  currentStreak,
-  name: r'currentStreakProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$currentStreakHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef CurrentStreakRef = AutoDisposeProviderRef<int>;
 String _$sortedDateGroupsHash() => r'5eedfa42ea64c0ab6565cfdb85775086adf135f9';
 
 /// 전체 세션을 날짜별로 그룹화 (최신순 정렬)

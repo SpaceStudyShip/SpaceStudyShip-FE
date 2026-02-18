@@ -14,7 +14,7 @@ import '../../../../core/widgets/cards/app_card.dart';
 import '../../../../core/widgets/dialogs/app_dialog.dart';
 import '../../../todo/domain/entities/todo_entity.dart';
 import '../providers/timer_provider.dart';
-import '../providers/timer_session_provider.dart';
+import '../providers/study_stats_provider.dart';
 import '../providers/timer_state.dart';
 import '../utils/timer_format_utils.dart';
 import '../widgets/timer_ring_painter.dart';

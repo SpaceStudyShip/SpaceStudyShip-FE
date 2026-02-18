@@ -61,7 +61,7 @@ class SocialScreen extends ConsumerWidget {
                     context: context,
                     title: '로그인하시겠어요?',
                     message: '게스트 모드의 데이터가\n모두 초기화돼요',
-                    emotion: AppDialogEmotion.warning,
+                    isDestructive: true,
                     confirmText: '로그인',
                     cancelText: '취소',
                   );

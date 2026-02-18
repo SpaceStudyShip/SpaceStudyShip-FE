@@ -298,7 +298,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           },
           behavior: HitTestBehavior.opaque,
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
+            padding: AppPadding.bottomSheetTitlePadding,
             child: Row(
               children: [
                 Text(

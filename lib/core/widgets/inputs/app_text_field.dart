@@ -312,10 +312,7 @@ class _AppTextFieldState extends State<AppTextField> {
               hintStyle: AppTextStyles.paragraph_14.copyWith(
                 color: AppColors.textTertiary,
               ),
-              contentPadding: EdgeInsets.symmetric(
-                horizontal: 16.w,
-                vertical: 16.h,
-              ),
+              contentPadding: AppPadding.all16,
               border: InputBorder.none,
               counterText: '', // 글자 수 카운터 숨김
               prefixIcon: widget.prefixIcon != null

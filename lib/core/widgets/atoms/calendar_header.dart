@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import '../../constants/app_colors.dart';
+import '../../constants/spacing_and_radius.dart';
 import '../../constants/text_styles.dart';
 
 /// 캘린더 커스텀 헤더 위젯
@@ -34,7 +35,7 @@ class CalendarHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: verticalPadding ?? 8.h),
+      padding: EdgeInsets.symmetric(vertical: verticalPadding ?? AppSpacing.s8),
       child: Row(
         children: [
           _buildArrowButton(icon: Icons.chevron_left, onTap: onPreviousMonth),
@@ -52,7 +53,7 @@ class CalendarHeader extends StatelessWidget {
                           color: Colors.white,
                         ),
                   ),
-                  SizedBox(width: 4.w),
+                  SizedBox(width: AppSpacing.s4),
                   Icon(
                     calendarFormat == CalendarFormat.month
                         ? Icons.keyboard_arrow_down
@@ -78,7 +79,7 @@ class CalendarHeader extends StatelessWidget {
       return GestureDetector(
         onTap: onTap,
         child: Container(
-          padding: EdgeInsets.all(4.w),
+          padding: AppPadding.all4,
           decoration: BoxDecoration(
             color: AppColors.primary.withValues(alpha: 0.1),
             shape: BoxShape.circle,
@@ -90,7 +91,7 @@ class CalendarHeader extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Padding(
-        padding: EdgeInsets.all(8.w),
+        padding: AppPadding.all8,
         child: Icon(icon, color: AppColors.primary, size: 20.w),
       ),
     );

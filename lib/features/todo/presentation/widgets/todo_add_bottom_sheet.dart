@@ -246,7 +246,7 @@ class _TodoAddBottomSheetState extends ConsumerState<TodoAddBottomSheet> {
                                   size: 16.w,
                                   color: AppColors.primary,
                                 ),
-                                SizedBox(width: 4.w),
+                                SizedBox(width: AppSpacing.s4),
                                 Text(
                                   _showCalendar ? '접기' : '캘린더',
                                   style: AppTextStyles.tag_12.copyWith(
@@ -441,7 +441,7 @@ class _DateChip extends StatelessWidget {
             DateFormat('M/d (E)', 'ko_KR').format(date),
             style: AppTextStyles.tag_12.copyWith(color: AppColors.primary),
           ),
-          SizedBox(width: 4.w),
+          SizedBox(width: AppSpacing.s4),
           GestureDetector(
             onTap: onRemove,
             child: Icon(Icons.close, size: 14.w, color: AppColors.primary),

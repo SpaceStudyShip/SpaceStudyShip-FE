@@ -76,84 +76,88 @@ class _TimerHistoryScreenState extends ConsumerState<TimerHistoryScreen> {
       body: Stack(
         children: [
           const Positioned.fill(child: SpaceBackground()),
-          Padding(
-            padding: EdgeInsets.only(top: topPadding),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // 고정 타이틀
-                Padding(
-                  padding: EdgeInsets.only(top: 36.h, left: 20.w, right: 20.w),
-                  child: Text(
-                    '기록',
-                    style: AppTextStyles.heading_20.copyWith(
-                      color: Colors.white,
+          if (isEmpty)
+            const Center(
+              child: SpaceEmptyState(
+                icon: Icons.history_rounded,
+                title: '기록이 없어요',
+                subtitle: '타이머를 사용하면 여기에 기록됩니다',
+              ),
+            )
+          else
+            Padding(
+              padding: EdgeInsets.only(top: topPadding),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // 고정 타이틀
+                  Padding(
+                    padding: EdgeInsets.only(
+                      top: 36.h,
+                      left: 20.w,
+                      right: 20.w,
+                    ),
+                    child: Text(
+                      '기록',
+                      style: AppTextStyles.heading_20.copyWith(
+                        color: Colors.white,
+                      ),
                     ),
                   ),
-                ),
-                SizedBox(height: AppSpacing.s20),
-                // 요약 통계
-                Consumer(
-                  builder: (context, ref, _) {
-                    final totalMinutes = ref.watch(totalStudyMinutesProvider);
-                    final monthlyMinutes =
-                        ref.watch(monthlyStudyMinutesProvider);
-                    final sessionCount = ref.watch(totalSessionCountProvider);
-                    return Padding(
-                      padding: AppPadding.horizontal20,
-                      child: AppCard(
-                        style: AppCardStyle.outlined,
-                        padding: AppPadding.all16,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            SpaceStatItem(
-                              icon: Icons.school_rounded,
-                              label: '전체',
-                              value: formatMinutes(totalMinutes),
-                            ),
-                            Container(
-                              width: 1,
-                              height: 32.h,
-                              color: AppColors.spaceDivider,
-                            ),
-                            SpaceStatItem(
-                              icon: Icons.calendar_month_rounded,
-                              label: '이번 달',
-                              value: formatMinutes(monthlyMinutes),
-                            ),
-                            Container(
-                              width: 1,
-                              height: 32.h,
-                              color: AppColors.spaceDivider,
-                            ),
-                            SpaceStatItem(
-                              icon: Icons.timer_outlined,
-                              label: '세션',
-                              value: '$sessionCount회',
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                ),
-                SizedBox(height: AppSpacing.s16),
-                // 스크롤 영역
-                Expanded(
-                  child: isEmpty
-                      ? const Center(
-                          child: SpaceEmptyState(
-                            icon: Icons.history_rounded,
-                            title: '기록이 없어요',
-                            subtitle: '타이머를 사용하면 여기에 기록됩니다',
+                  SizedBox(height: AppSpacing.s20),
+                  // 요약 통계
+                  Consumer(
+                    builder: (context, ref, _) {
+                      final totalMinutes = ref.watch(totalStudyMinutesProvider);
+                      final monthlyMinutes = ref.watch(
+                        monthlyStudyMinutesProvider,
+                      );
+                      final sessionCount = ref.watch(totalSessionCountProvider);
+                      return Padding(
+                        padding: AppPadding.horizontal20,
+                        child: AppCard(
+                          style: AppCardStyle.outlined,
+                          padding: AppPadding.all16,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              SpaceStatItem(
+                                icon: Icons.school_rounded,
+                                label: '전체',
+                                value: formatMinutes(totalMinutes),
+                              ),
+                              Container(
+                                width: 1,
+                                height: 32.h,
+                                color: AppColors.spaceDivider,
+                              ),
+                              SpaceStatItem(
+                                icon: Icons.calendar_month_rounded,
+                                label: '이번 달',
+                                value: formatMinutes(monthlyMinutes),
+                              ),
+                              Container(
+                                width: 1,
+                                height: 32.h,
+                                color: AppColors.spaceDivider,
+                              ),
+                              SpaceStatItem(
+                                icon: Icons.timer_outlined,
+                                label: '세션',
+                                value: '$sessionCount회',
+                              ),
+                            ],
                           ),
-                        )
-                      : _buildPagedList(),
-                ),
-              ],
+                        ),
+                      );
+                    },
+                  ),
+                  SizedBox(height: AppSpacing.s16),
+                  // 스크롤 영역
+                  Expanded(child: _buildPagedList()),
+                ],
+              ),
             ),
-          ),
         ],
       ),
     );

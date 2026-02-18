@@ -81,10 +81,9 @@ class TodoSelectBottomSheet extends ConsumerWidget {
 
                   // 미완료 할일 목록
                   if (incomplete.isEmpty)
-                    SliverFillRemaining(
-                      hasScrollBody: false,
+                    SliverToBoxAdapter(
                       child: Padding(
-                        padding: AppPadding.all20,
+                        padding: EdgeInsets.only(top: AppSpacing.s40),
                         child: SpaceEmptyState(
                           icon: Icons.check_circle_outline,
                           title: '미완료 할 일이 없어요',

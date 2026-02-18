@@ -280,6 +280,18 @@ class AuthNotifier extends _$AuthNotifier {
   Future<void> signInAsGuest() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(kIsGuestKey, true);
+
+    // 이전 게스트 세션 잔여 데이터 방어적 정리 (앱 강종 대비)
+    final todoRepo = ref.read(todoRepositoryProvider);
+    await todoRepo.clearAll();
+    final timerRepo = ref.read(timerSessionRepositoryProvider);
+    await timerRepo.clearAll();
+
+    // Riverpod Provider 메모리 캐시 강제 초기화
+    ref.invalidate(timerSessionListNotifierProvider);
+    ref.invalidate(todoListNotifierProvider);
+    ref.invalidate(categoryListNotifierProvider);
+
     state = const AsyncValue.data(
       AuthResultEntity(
         userId: -1,
@@ -308,6 +320,11 @@ class AuthNotifier extends _$AuthNotifier {
       // 게스트 타이머 세션 데이터 삭제
       final timerRepo = ref.read(timerSessionRepositoryProvider);
       await timerRepo.clearAll();
+
+      // Riverpod Provider 메모리 캐시 강제 초기화
+      ref.invalidate(timerSessionListNotifierProvider);
+      ref.invalidate(todoListNotifierProvider);
+      ref.invalidate(categoryListNotifierProvider);
 
       debugPrint(
         '🧹 게스트 캐시 삭제 완료 ($kIsGuestKey, todos, categories, timer sessions)',

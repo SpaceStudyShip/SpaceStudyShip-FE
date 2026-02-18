@@ -2,12 +2,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import 'timer_session_provider.dart';
+import '../utils/timer_format_utils.dart';
 
 part 'study_stats_provider.g.dart';
-
-// === 공통 유틸 ===
-
-DateTime _normalizeDate(DateTime dt) => DateTime(dt.year, dt.month, dt.day);
 
 // === 일별/주별 통계 ===
 
@@ -15,10 +12,10 @@ DateTime _normalizeDate(DateTime dt) => DateTime(dt.year, dt.month, dt.day);
 @riverpod
 int todayStudyMinutes(Ref ref) {
   final sessions = ref.watch(timerSessionListNotifierProvider);
-  final today = _normalizeDate(DateTime.now());
+  final today = normalizeDate(DateTime.now());
 
   return sessions
-      .where((s) => _normalizeDate(s.startedAt) == today)
+      .where((s) => normalizeDate(s.startedAt) == today)
       .fold<int>(0, (sum, s) => sum + s.durationMinutes);
 }
 
@@ -27,10 +24,10 @@ int todayStudyMinutes(Ref ref) {
 int weeklyStudyMinutes(Ref ref) {
   final sessions = ref.watch(timerSessionListNotifierProvider);
   final now = DateTime.now();
-  final weekStart = _normalizeDate(now.subtract(const Duration(days: 6)));
+  final weekStart = normalizeDate(now.subtract(const Duration(days: 6)));
 
   return sessions
-      .where((s) => !_normalizeDate(s.startedAt).isBefore(weekStart))
+      .where((s) => !normalizeDate(s.startedAt).isBefore(weekStart))
       .fold<int>(0, (sum, s) => sum + s.durationMinutes);
 }
 
@@ -72,10 +69,10 @@ int currentStreak(Ref ref) {
 
   // 세션이 있는 날짜 집합
   final studyDates =
-      sessions.map((s) => _normalizeDate(s.startedAt)).toSet().toList()
+      sessions.map((s) => normalizeDate(s.startedAt)).toSet().toList()
         ..sort((a, b) => b.compareTo(a)); // 최신순
 
-  final today = _normalizeDate(DateTime.now());
+  final today = normalizeDate(DateTime.now());
   final yesterday = today.subtract(const Duration(days: 1));
 
   // 오늘 또는 어제 공부하지 않았으면 streak 0

@@ -5,6 +5,7 @@ import '../../data/datasources/timer_session_local_datasource.dart';
 import '../../data/repositories/timer_session_repository_impl.dart';
 import '../../domain/entities/timer_session_entity.dart';
 import '../../domain/repositories/timer_session_repository.dart';
+import '../utils/timer_format_utils.dart';
 
 part 'timer_session_provider.g.dart';
 
@@ -43,8 +44,6 @@ class TimerSessionListNotifier extends _$TimerSessionListNotifier {
 
 // === 날짜별 그룹화 (페이지네이션용) ===
 
-DateTime _normalizeDate(DateTime dt) => DateTime(dt.year, dt.month, dt.day);
-
 /// 날짜별 세션 그룹 (페이지네이션 아이템 단위)
 class DateGroup {
   final DateTime date;
@@ -62,7 +61,7 @@ List<DateGroup> sortedDateGroups(Ref ref) {
   final grouped = <DateTime, List<TimerSessionEntity>>{};
 
   for (final session in sessions) {
-    final date = _normalizeDate(session.startedAt);
+    final date = normalizeDate(session.startedAt);
     grouped.putIfAbsent(date, () => []).add(session);
   }
 

@@ -1,3 +1,6 @@
+/// DateTime을 날짜만(시·분·초 제거)으로 정규화
+DateTime normalizeDate(DateTime dt) => DateTime(dt.year, dt.month, dt.day);
+
 /// 분 단위 시간을 '시간 분' 포맷으로 변환
 ///
 /// 예: 90 → '1시간 30분', 25 → '25분'

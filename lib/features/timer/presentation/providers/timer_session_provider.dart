@@ -79,8 +79,6 @@ int currentStreak(Ref ref) {
       sessions.map((s) => _normalizeDate(s.startedAt)).toSet().toList()
         ..sort((a, b) => b.compareTo(a)); // 최신순
 
-  if (studyDates.isEmpty) return 0;
-
   final today = _normalizeDate(DateTime.now());
   final yesterday = today.subtract(const Duration(days: 1));
 
@@ -97,4 +95,40 @@ int currentStreak(Ref ref) {
     }
   }
   return streak;
+}
+
+// === 날짜별 그룹화 (페이지네이션용) ===
+
+/// 날짜별 세션 그룹 (페이지네이션 아이템 단위)
+class DateGroup {
+  final DateTime date;
+  final List<TimerSessionEntity> sessions;
+  final int totalMinutes;
+
+  DateGroup({required this.date, required this.sessions})
+    : totalMinutes = sessions.fold<int>(0, (sum, s) => sum + s.durationMinutes);
+}
+
+/// 전체 세션을 날짜별로 그룹화 (최신순 정렬)
+@riverpod
+List<DateGroup> sortedDateGroups(Ref ref) {
+  final sessions = ref.watch(timerSessionListNotifierProvider);
+  final grouped = <DateTime, List<TimerSessionEntity>>{};
+
+  for (final session in sessions) {
+    final date = _normalizeDate(session.startedAt);
+    grouped.putIfAbsent(date, () => []).add(session);
+  }
+
+  // 각 그룹 내부: 최신 시작 시간 순
+  for (final list in grouped.values) {
+    list.sort((a, b) => b.startedAt.compareTo(a.startedAt));
+  }
+
+  // 날짜 최신순 정렬
+  final sortedKeys = grouped.keys.toList()..sort((a, b) => b.compareTo(a));
+
+  return sortedKeys
+      .map((date) => DateGroup(date: date, sessions: grouped[date]!))
+      .toList();
 }

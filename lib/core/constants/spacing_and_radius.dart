@@ -46,25 +46,6 @@ class AppSpacing {
 
   /// 64px 간격
   static double get s64 => 64.w;
-
-  // ============================================
-  // Legacy 호환 (기존 코드에서 사용 중)
-  // ============================================
-
-  /// horizontal 4px 간격
-  static double get horizontal4 => 4.w;
-
-  /// horizontal 8px 간격
-  static double get horizontal8 => 8.w;
-
-  /// horizontal 20px 간격
-  static double get horizontal20 => 20.w;
-
-  /// vertical 4px 간격
-  static double get vertical4 => 4.h;
-
-  /// vertical 20px 간격
-  static double get vertical20 => 20.h;
 }
 
 // ============================================

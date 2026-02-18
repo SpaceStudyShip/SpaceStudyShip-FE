@@ -254,8 +254,8 @@ class _AppButtonState extends State<AppButton> {
   /// 로딩 인디케이터 위젯
   Widget _buildLoadingIndicator() {
     return SizedBox(
-      width: AppSpacing.horizontal20,
-      height: AppSpacing.vertical20,
+      width: 20.w,
+      height: 20.h,
       child: CircularProgressIndicator(
         strokeWidth: 2.0,
         valueColor: AlwaysStoppedAnimation<Color>(_effectiveForegroundColor),
@@ -287,7 +287,7 @@ class _AppButtonState extends State<AppButton> {
               color: _effectiveForegroundColor,
             ),
           ),
-          SizedBox(height: AppSpacing.vertical4), // 간격
+          SizedBox(height: AppSpacing.s4),
           Text(
             widget.subtitle!,
             style: AppTextStyles.tag_12.copyWith(
@@ -313,12 +313,12 @@ class _AppButtonState extends State<AppButton> {
       children: widget.iconPosition == IconPosition.trailing
           ? [
               textWidget,
-              if (!isSpaceBetween) SizedBox(width: AppSpacing.horizontal8),
+              if (!isSpaceBetween) SizedBox(width: AppSpacing.s8),
               iconWidget,
             ]
           : [
               iconWidget,
-              if (!isSpaceBetween) SizedBox(width: AppSpacing.horizontal8),
+              if (!isSpaceBetween) SizedBox(width: AppSpacing.s8),
               textWidget,
             ],
     );

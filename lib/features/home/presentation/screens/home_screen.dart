@@ -372,10 +372,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
         // ── 선택된 날짜의 할일 섹션 ──
         Padding(
-          padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 0),
+          padding: AppPadding.horizontal20,
           child: Row(
             children: [
-              _buildSectionTitle('$dateLabel 할일'),
+              _buildSectionTitle('$dateLabel 할 일'),
               const Spacer(),
               GestureDetector(
                 onTap: () async {

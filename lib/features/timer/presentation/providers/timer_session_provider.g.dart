@@ -104,6 +104,25 @@ final currentStreakProvider = AutoDisposeProvider<int>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef CurrentStreakRef = AutoDisposeProviderRef<int>;
+String _$sortedDateGroupsHash() => r'5eedfa42ea64c0ab6565cfdb85775086adf135f9';
+
+/// 전체 세션을 날짜별로 그룹화 (최신순 정렬)
+///
+/// Copied from [sortedDateGroups].
+@ProviderFor(sortedDateGroups)
+final sortedDateGroupsProvider = AutoDisposeProvider<List<DateGroup>>.internal(
+  sortedDateGroups,
+  name: r'sortedDateGroupsProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$sortedDateGroupsHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef SortedDateGroupsRef = AutoDisposeProviderRef<List<DateGroup>>;
 String _$timerSessionListNotifierHash() =>
     r'1a10d67f86e388c1979cedaff92fed6d55ecc7b7';
 

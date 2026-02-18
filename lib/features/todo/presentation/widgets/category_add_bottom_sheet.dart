@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
+import '../../../../core/widgets/atoms/drag_handle.dart';
 import '../../../../core/widgets/buttons/app_button.dart';
 import '../../../../core/widgets/inputs/app_text_field.dart';
 
@@ -90,21 +91,11 @@ class _CategoryAddBottomSheetState extends State<CategoryAddBottomSheet> {
             mainAxisSize: MainAxisSize.min,
             children: [
               // 드래그 핸들
-              Center(
-                child: Container(
-                  margin: EdgeInsets.only(top: 12.h, bottom: 8.h),
-                  width: 40.w,
-                  height: 4.h,
-                  decoration: BoxDecoration(
-                    color: AppColors.textTertiary.withValues(alpha: 0.4),
-                    borderRadius: BorderRadius.circular(2.r),
-                  ),
-                ),
-              ),
+              const DragHandle(),
 
               // 제목
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
+                padding: AppPadding.bottomSheetTitlePadding,
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: Text(

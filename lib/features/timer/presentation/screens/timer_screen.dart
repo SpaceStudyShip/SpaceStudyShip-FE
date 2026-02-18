@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../../../routes/route_paths.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
@@ -13,6 +16,7 @@ import '../../../todo/domain/entities/todo_entity.dart';
 import '../providers/timer_provider.dart';
 import '../providers/timer_session_provider.dart';
 import '../providers/timer_state.dart';
+import '../utils/timer_format_utils.dart';
 import '../widgets/timer_ring_painter.dart';
 import '../widgets/todo_select_bottom_sheet.dart';
 
@@ -46,9 +50,7 @@ class _TimerScreenState extends ConsumerState<TimerScreen> {
         actions: [
           IconButton(
             icon: Icon(Icons.history_rounded, color: Colors.white, size: 24.w),
-            onPressed: () {
-              // TODO: 타이머 기록 화면 (향후 구현)
-            },
+            onPressed: () => context.push(RoutePaths.timerHistory),
           ),
         ],
       ),
@@ -118,7 +120,7 @@ class _TimerScreenState extends ConsumerState<TimerScreen> {
                         SpaceStatItem(
                           icon: Icons.today_rounded,
                           label: '오늘',
-                          value: _formatMinutes(todayMinutes),
+                          value: formatMinutes(todayMinutes),
                         ),
                         Container(
                           width: 1,
@@ -128,7 +130,7 @@ class _TimerScreenState extends ConsumerState<TimerScreen> {
                         SpaceStatItem(
                           icon: Icons.date_range_rounded,
                           label: '이번 주',
-                          value: _formatMinutes(weeklyMinutes),
+                          value: formatMinutes(weeklyMinutes),
                         ),
                         Container(
                           width: 1,
@@ -246,7 +248,7 @@ class _TimerScreenState extends ConsumerState<TimerScreen> {
                 padding: EdgeInsets.only(top: AppSpacing.s8),
                 child: _buildResultRow(
                   '누적 시간',
-                  _formatMinutes(result.totalMinutes!),
+                  formatMinutes(result.totalMinutes!),
                 ),
               ),
           ],
@@ -274,15 +276,6 @@ class _TimerScreenState extends ConsumerState<TimerScreen> {
         ),
       ],
     );
-  }
-
-  String _formatMinutes(int totalMinutes) {
-    final hours = totalMinutes ~/ 60;
-    final minutes = totalMinutes % 60;
-    if (hours > 0) {
-      return '$hours시간 $minutes분';
-    }
-    return '$minutes분';
   }
 
   Widget _buildStatusText(TimerState timerState, bool isIdle, bool isRunning) {

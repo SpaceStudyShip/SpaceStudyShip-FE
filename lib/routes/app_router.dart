@@ -13,6 +13,7 @@ import '../features/auth/presentation/providers/auth_provider.dart';
 import '../features/auth/presentation/screens/splash_screen.dart';
 import '../features/auth/presentation/screens/login_screen.dart';
 import '../features/auth/presentation/screens/onboarding_screen.dart';
+import '../features/timer/presentation/screens/timer_history_screen.dart';
 import '../features/home/presentation/screens/home_screen.dart';
 import '../features/timer/presentation/screens/timer_screen.dart';
 import '../features/explore/presentation/screens/explore_screen.dart';
@@ -211,8 +212,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                   GoRoute(
                     path: 'history',
                     name: 'timerHistory',
-                    builder: (context, state) =>
-                        const PlaceholderScreen(title: '타이머 기록'),
+                    builder: (context, state) => const TimerHistoryScreen(),
                   ),
                 ],
               ),

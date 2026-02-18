@@ -7,9 +7,12 @@ import 'package:intl/intl.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
+import '../../../../core/widgets/atoms/space_stat_item.dart';
 import '../../../../core/widgets/backgrounds/space_background.dart';
+import '../../../../core/widgets/cards/app_card.dart';
 import '../../../../core/widgets/states/space_empty_state.dart';
 import '../../domain/entities/timer_session_entity.dart';
+import '../providers/study_stats_provider.dart';
 import '../providers/timer_session_provider.dart';
 import '../utils/timer_format_utils.dart';
 
@@ -89,6 +92,53 @@ class _TimerHistoryScreenState extends ConsumerState<TimerHistoryScreen> {
                   ),
                 ),
                 SizedBox(height: AppSpacing.s20),
+                // 요약 통계
+                Consumer(
+                  builder: (context, ref, _) {
+                    final totalMinutes = ref.watch(totalStudyMinutesProvider);
+                    final monthlyMinutes =
+                        ref.watch(monthlyStudyMinutesProvider);
+                    final sessionCount = ref.watch(totalSessionCountProvider);
+                    return Padding(
+                      padding: AppPadding.horizontal20,
+                      child: AppCard(
+                        style: AppCardStyle.outlined,
+                        padding: AppPadding.all16,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            SpaceStatItem(
+                              icon: Icons.school_rounded,
+                              label: '전체',
+                              value: formatMinutes(totalMinutes),
+                            ),
+                            Container(
+                              width: 1,
+                              height: 32.h,
+                              color: AppColors.spaceDivider,
+                            ),
+                            SpaceStatItem(
+                              icon: Icons.calendar_month_rounded,
+                              label: '이번 달',
+                              value: formatMinutes(monthlyMinutes),
+                            ),
+                            Container(
+                              width: 1,
+                              height: 32.h,
+                              color: AppColors.spaceDivider,
+                            ),
+                            SpaceStatItem(
+                              icon: Icons.timer_outlined,
+                              label: '세션',
+                              value: '$sessionCount회',
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+                SizedBox(height: AppSpacing.s16),
                 // 스크롤 영역
                 Expanded(
                   child: isEmpty

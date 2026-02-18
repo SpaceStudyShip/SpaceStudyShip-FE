@@ -16,6 +16,7 @@ import '../../../../core/widgets/space/spaceship_avatar.dart';
 import '../../../../core/widgets/space/streak_badge.dart';
 import '../../../../core/widgets/states/space_empty_state.dart';
 import '../../../../routes/route_paths.dart';
+import '../../../timer/presentation/providers/study_stats_provider.dart';
 import '../../../todo/domain/entities/todo_entity.dart';
 import '../../../todo/presentation/providers/todo_provider.dart';
 import '../../../todo/presentation/widgets/dismissible_todo_item.dart';
@@ -40,8 +41,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   String _selectedSpaceshipId = 'default';
   String _selectedSpaceshipIcon = '🚀';
   String? _selectedLottieAsset = 'assets/lotties/default_rocket.json';
-  final int _streakDays = 5;
-  final bool _isStreakActive = true;
   bool _isSpaceshipPressed = false;
   bool _isSheetExpanded = false;
 
@@ -107,16 +106,20 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         scrolledUnderElevation: 0,
-        title: _streakDays > 0
-            ? FadeSlideIn(
-                child: StreakBadge(
-                  days: _streakDays,
-                  isActive: _isStreakActive,
-                  showLabel: true,
-                  size: StreakBadgeSize.large,
-                ),
-              )
-            : null,
+        title: Consumer(
+          builder: (context, ref, _) {
+            final streakDays = ref.watch(currentStreakProvider);
+            if (streakDays <= 0) return const SizedBox.shrink();
+            return FadeSlideIn(
+              child: StreakBadge(
+                days: streakDays,
+                isActive: true,
+                showLabel: true,
+                size: StreakBadgeSize.large,
+              ),
+            );
+          },
+        ),
         centerTitle: false,
         actions: [
           IconButton(

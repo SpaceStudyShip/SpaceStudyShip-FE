@@ -138,8 +138,10 @@ class ActiveLoginNotifier extends _$ActiveLoginNotifier {
 
 /// Firebase Auth State를 실시간으로 제공하는 StreamProvider
 ///
-/// GoRouter의 refreshListenable로 사용되어
-/// 인증 상태 변경 시 자동으로 라우팅을 재평가합니다.
+/// 현재는 미사용. 소셜 로그인 도입 시 Firebase 외부 로그아웃
+/// (토큰 만료, 계정 삭제 등)을 감지하기 위해 RouterNotifier에
+/// listen 추가 예정. AuthInterceptor의 401 → forceLogout() 경로만으로는
+/// Firebase 레벨 상태 변경을 감지할 수 없으므로 보존.
 @riverpod
 Stream<User?> authState(Ref ref) {
   final dataSource = ref.watch(firebaseAuthDataSourceProvider);
@@ -314,6 +316,7 @@ class AuthNotifier extends _$AuthNotifier {
       return;
     }
 
+    final previous = state;
     state = const AsyncValue.loading();
 
     try {
@@ -321,19 +324,11 @@ class AuthNotifier extends _$AuthNotifier {
       await useCase.execute();
       state = const AsyncValue.data(null);
     } on FirebaseAuthException catch (e) {
-      state = AsyncValue.error(
-        FirebaseAuthErrorHandler.createAuthException(e, provider: 'Logout'),
-        StackTrace.current,
-      );
+      state = previous;
+      debugPrint('❌ 로그아웃 실패 (Firebase): $e');
     } catch (e, stack) {
-      if (e is AppException) {
-        state = AsyncValue.error(e, stack);
-      } else {
-        state = AsyncValue.error(
-          AuthException(message: '로그아웃에 실패했습니다.', originalException: e),
-          stack,
-        );
-      }
+      state = previous;
+      debugPrint('❌ 로그아웃 실패: $e\n$stack');
     }
   }
 

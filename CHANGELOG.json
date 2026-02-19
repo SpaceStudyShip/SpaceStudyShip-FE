@@ -1,11 +1,33 @@
 {
   "metadata": {
-    "lastUpdated": "2026-02-19T08:37:20Z",
-    "currentVersion": "1.1.11",
+    "lastUpdated": "2026-02-19T09:34:49Z",
+    "currentVersion": "1.1.14",
     "projectType": "flutter",
-    "totalReleases": 18
+    "totalReleases": 19
   },
   "releases": [
+    {
+      "version": "1.1.14",
+      "project_type": "flutter",
+      "date": "2026-02-19",
+      "pr_number": 33,
+      "raw_summary": "## Summary by CodeRabbit\n\n## 릴리스 노트\n\n* **버전 업데이트**\n  * 앱 버전을 1.1.14로 업데이트했습니다.\n\n* **개선 사항**\n  * 배포 및 빌드 프로세스 최적화를 진행했습니다.",
+      "parsed_changes": {
+        "버전_업데이트": {
+          "title": "버전 업데이트",
+          "items": [
+            "앱 버전을 1.1.14로 업데이트했습니다."
+          ]
+        },
+        "개선_사항": {
+          "title": "개선 사항",
+          "items": [
+            "배포 및 빌드 프로세스 최적화를 진행했습니다."
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "1.1.11",
       "project_type": "flutter",

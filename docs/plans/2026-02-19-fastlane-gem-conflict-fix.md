@@ -1,209 +1,186 @@
-# Fastlane Gem 의존성 충돌 해결 Implementation Plan
+# Fastlane Gem 의존성 충돌 해결 보고서
 
-> **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
-
-**Goal:** GitHub Actions에서 Ruby 3.4.1 환경의 gem 충돌로 인한 Fastlane 설치/실행 실패 해결
-
-**Architecture:** `gem install fastlane --force`만으로는 설치는 성공하지만 런타임 `CFPropertyList` 의존성 충돌이 남음. 충돌하는 사전 설치 gem을 제거한 후 fastlane을 클린 설치하는 방식으로 해결.
-
-**Tech Stack:** GitHub Actions, Ruby 3.4.1, Fastlane, RubyGems
+**이슈:** #197 - Android 테스트 APK 빌드 시 Fastlane 설치 실패 (gem 충돌)
+**커밋:** `39b11d2`
+**날짜:** 2026-02-19
+**환경:** GitHub Actions `ubuntu-latest`, Ruby 3.4.1
 
 ---
 
-## 문제 분석
+## 1. 문제 설명
 
-### 에러 1 (해결됨): 실행파일 충돌
+GitHub Actions 워크플로우에서 Fastlane 설치 시 두 가지 gem 충돌이 발생하여 빌드 파이프라인 전체가 실패.
+
+---
+
+## 2. 에러 분석
+
+### 에러 1: 실행파일 충돌 (설치 단계)
+
 ```
 ERROR: Error installing fastlane:
   "console" from fastlane conflicts with installed executable from retriable
 ```
-- `--force`로 해결됨
 
-### 에러 2 (미해결): 런타임 의존성 충돌
+- **원인:** Ruby 3.4.1에 사전 설치된 `retriable` gem의 `console` 실행파일과 fastlane의 `console` 실행파일 이름 충돌
+- **시점:** `gem install fastlane` 실행 시
+- **결과:** fastlane 설치 자체가 실패 (exit code 1)
+
+### 에러 2: 런타임 의존성 충돌 (실행 단계)
+
 ```
 Gem::Molinillo::VersionConflict:
   Unable to satisfy: `CFPropertyList (= 3.0.9)` required by `user-specified dependency`
 ```
-- `fastlane --version` 실행 시 발생
-- Ruby 3.4.1 사전 설치 gem과 fastlane이 설치한 CFPropertyList 3.0.9 간 충돌
-- **모든 fastlane 명령이 실패함** (version뿐 아니라 build, deploy 등 전부)
+
+- **원인:** `--force`로 설치 성공 후에도 사전 설치된 `CFPropertyList` 버전과 fastlane이 요구하는 3.0.9 버전 간 resolver 충돌
+- **시점:** `fastlane --version` 등 모든 fastlane 명령 실행 시
+- **결과:** fastlane이 설치되었지만 실행 불가 → `fastlane build`, `fastlane deploy_internal`, `fastlane upload_testflight` 전부 실패
 
 ### 근본 원인
-GitHub Actions `ubuntu-latest` + Ruby 3.4.1 환경에 `retriable` gem이 사전 설치되어 있고, 이 gem이 가져오는 `CFPropertyList` 버전이 fastlane이 요구하는 버전과 충돌.
+
+GitHub Actions `ubuntu-latest` + Ruby 3.4.1 환경에 `retriable` gem이 기본 포함되어 있고, 이 gem의 의존성 체인에 포함된 `CFPropertyList`가 fastlane이 요구하는 버전과 충돌.
+
+```
+Ruby 3.4.1 기본 환경
+  └─ retriable gem (사전 설치)
+       ├─ console 실행파일  ← 에러 1: fastlane console과 이름 충돌
+       └─ CFPropertyList    ← 에러 2: fastlane 요구 버전과 resolver 충돌
+```
 
 ---
 
-## 해결 전략
+## 3. 해결 방법
 
-**선택: 충돌 gem 사전 제거 + 클린 설치**
+### 채택: 충돌 gem 사전 제거 + 클린 설치
 
 ```bash
-# 1. 충돌하는 사전 설치 gem 제거
+# 1. 충돌하는 사전 설치 gem 완전 제거
 gem uninstall retriable CFPropertyList --all --ignore-dependencies --executables --force 2>/dev/null || true
-# 2. fastlane 클린 설치
+
+# 2. fastlane 클린 설치 (충돌 없는 깨끗한 환경)
 gem install fastlane --no-document
+
 # 3. 설치 검증
 fastlane --version
 ```
 
-장점:
-- 최소 변경 (Install Fastlane 스텝만 수정)
-- 후속 `fastlane` 호출 변경 불필요 (Bundler 방식과 달리)
-- 근본 원인(충돌 gem) 직접 해결
+**플래그 설명:**
+| 플래그 | 역할 |
+|--------|------|
+| `--all` | 해당 gem의 모든 버전 제거 |
+| `--ignore-dependencies` | 의존성 체크 무시하고 강제 제거 |
+| `--executables` | 실행파일도 함께 제거 |
+| `--force` | 확인 프롬프트 없이 즉시 제거 |
+| `2>/dev/null \|\| true` | gem이 없어도 에러 무시 (멱등성 보장) |
+| `--no-document` | 문서 생성 건너뛰기 (CI 설치 속도 향상) |
 
-대안 (향후 고려):
-- Bundler 기반 (`Gemfile` + `bundle exec fastlane`) - 가장 견고하지만 모든 fastlane 호출 변경 필요
+### 검토한 대안
 
----
-
-## 영향 범위 (4개 워크플로우)
-
-| 파일 | fastlane 설치 라인 | fastlane 실행 라인 |
-|------|-------------------|-------------------|
-| `PROJECT-FLUTTER-ANDROID-TEST-APK.yaml` | 305 | 326 (`fastlane build`) |
-| `PROJECT-FLUTTER-ANDROID-PLAYSTORE-CICD.yaml` | 513 | 634 (`fastlane deploy_internal`) |
-| `PROJECT-FLUTTER-IOS-TESTFLIGHT.yaml` | 457 | 497 (`fastlane upload_testflight`) |
-| `PROJECT-FLUTTER-IOS-TEST-TESTFLIGHT.yaml` | 500 | 538 (`fastlane upload_testflight`) |
-
----
-
-### Task 1: ANDROID-TEST-APK 워크플로우 수정
-
-**Files:**
-- Modify: `.github/workflows/PROJECT-FLUTTER-ANDROID-TEST-APK.yaml:303-307`
-
-**Step 1: Install Fastlane 스텝 교체**
-
-기존:
-```yaml
-      - name: Install Fastlane
-        run: |
-          gem install fastlane --force
-          echo "✅ Fastlane installed"
-          fastlane --version
-```
-
-변경:
-```yaml
-      - name: Install Fastlane
-        run: |
-          gem uninstall retriable CFPropertyList --all --ignore-dependencies --executables --force 2>/dev/null || true
-          gem install fastlane --no-document
-          echo "✅ Fastlane installed"
-          fastlane --version
-```
-
-**Step 2: 변경 확인**
-
-Run: `grep -A4 "Install Fastlane" .github/workflows/PROJECT-FLUTTER-ANDROID-TEST-APK.yaml`
-Expected: `gem uninstall` 라인 + `gem install fastlane --no-document` 확인
+| 방법 | 장점 | 단점 | 채택 여부 |
+|------|------|------|-----------|
+| `--force`만 추가 | 최소 변경 | 에러 2 해결 불가 | X |
+| 충돌 gem 사전 제거 | 최소 변경 + 근본 해결 | 향후 다른 gem 충돌 가능 | **O** |
+| Bundler (`Gemfile` + `bundle exec`) | 가장 견고 | 모든 fastlane 호출 변경 필요 | 향후 고려 |
+| Ruby 버전 다운그레이드 (3.1.x) | 간단 | 근본 해결 아님, 보안 패치 누락 | X |
+| GEM_HOME 격리 | 완전 격리 | GITHUB_ENV/PATH 설정 필요, 복잡 | X |
 
 ---
 
-### Task 2: ANDROID-PLAYSTORE-CICD 워크플로우 수정
+## 4. 변경 파일 (4개)
 
-**Files:**
-- Modify: `.github/workflows/PROJECT-FLUTTER-ANDROID-PLAYSTORE-CICD.yaml:511-515`
+### 4-1. PROJECT-FLUTTER-ANDROID-TEST-APK.yaml (line 303-308)
 
-**Step 1: Install Fastlane 스텝 교체**
-
-기존:
 ```yaml
-      - name: Install Fastlane
-        run: |
-          gem install fastlane --force
-          echo "✅ Fastlane 설치 완료"
-          fastlane --version
+# 변경 전
+- name: Install Fastlane
+  run: |
+    gem install fastlane
+    echo "✅ Fastlane installed"
+    fastlane --version
+
+# 변경 후
+- name: Install Fastlane
+  run: |
+    gem uninstall retriable CFPropertyList --all --ignore-dependencies --executables --force 2>/dev/null || true
+    gem install fastlane --no-document
+    echo "✅ Fastlane installed"
+    fastlane --version
 ```
 
-변경:
+- fastlane 사용처: `fastlane build --verbose` (line 326)
+
+### 4-2. PROJECT-FLUTTER-ANDROID-PLAYSTORE-CICD.yaml (line 511-516)
+
 ```yaml
-      - name: Install Fastlane
-        run: |
-          gem uninstall retriable CFPropertyList --all --ignore-dependencies --executables --force 2>/dev/null || true
-          gem install fastlane --no-document
-          echo "✅ Fastlane 설치 완료"
-          fastlane --version
+# 변경 전
+- name: Install Fastlane
+  run: |
+    gem install fastlane
+    echo "✅ Fastlane 설치 완료"
+    fastlane --version
+
+# 변경 후
+- name: Install Fastlane
+  run: |
+    gem uninstall retriable CFPropertyList --all --ignore-dependencies --executables --force 2>/dev/null || true
+    gem install fastlane --no-document
+    echo "✅ Fastlane 설치 완료"
+    fastlane --version
 ```
+
+- fastlane 사용처: `fastlane deploy_internal` (line 634)
+
+### 4-3. PROJECT-FLUTTER-IOS-TESTFLIGHT.yaml (line 456-457)
+
+```yaml
+# 변경 전
+- name: Install Fastlane
+  run: gem install fastlane
+
+# 변경 후
+- name: Install Fastlane
+  run: |
+    gem uninstall retriable CFPropertyList --all --ignore-dependencies --executables --force 2>/dev/null || true
+    gem install fastlane --no-document
+    fastlane --version
+```
+
+- fastlane 사용처: `fastlane upload_testflight` (line 497)
+
+### 4-4. PROJECT-FLUTTER-IOS-TEST-TESTFLIGHT.yaml (line 499-500)
+
+```yaml
+# 변경 전
+- name: Install Fastlane
+  run: gem install fastlane
+
+# 변경 후
+- name: Install Fastlane
+  run: |
+    gem uninstall retriable CFPropertyList --all --ignore-dependencies --executables --force 2>/dev/null || true
+    gem install fastlane --no-document
+    fastlane --version
+```
+
+- fastlane 사용처: `fastlane upload_testflight` (line 538)
 
 ---
 
-### Task 3: IOS-TESTFLIGHT 워크플로우 수정
+## 5. 검증 방법
 
-**Files:**
-- Modify: `.github/workflows/PROJECT-FLUTTER-IOS-TESTFLIGHT.yaml:456-457`
-
-**Step 1: Install Fastlane 스텝 교체**
-
-기존:
-```yaml
-      - name: Install Fastlane
-        run: gem install fastlane --force
-```
-
-변경:
-```yaml
-      - name: Install Fastlane
-        run: |
-          gem uninstall retriable CFPropertyList --all --ignore-dependencies --executables --force 2>/dev/null || true
-          gem install fastlane --no-document
-          fastlane --version
-```
+1. push 후 ANDROID-TEST-APK 워크플로우 수동 트리거
+2. "Install Fastlane" 스텝에서 아래 출력 확인:
+   ```
+   Successfully installed fastlane-2.232.x
+   ✅ Fastlane installed
+   fastlane 2.232.x
+   ```
+3. 후속 `fastlane build` / `fastlane deploy_internal` / `fastlane upload_testflight` 스텝 정상 통과 확인
 
 ---
 
-### Task 4: IOS-TEST-TESTFLIGHT 워크플로우 수정
+## 6. 향후 개선 사항
 
-**Files:**
-- Modify: `.github/workflows/PROJECT-FLUTTER-IOS-TEST-TESTFLIGHT.yaml:499-500`
-
-**Step 1: Install Fastlane 스텝 교체**
-
-기존:
-```yaml
-      - name: Install Fastlane
-        run: gem install fastlane --force
-```
-
-변경:
-```yaml
-      - name: Install Fastlane
-        run: |
-          gem uninstall retriable CFPropertyList --all --ignore-dependencies --executables --force 2>/dev/null || true
-          gem install fastlane --no-document
-          fastlane --version
-```
-
----
-
-### Task 5: 커밋
-
-**Step 1: 변경사항 확인**
-
-Run: `grep -r "gem uninstall retriable" .github/workflows/`
-Expected: 4개 파일 모두에서 매칭
-
-**Step 2: 커밋**
-
-```bash
-git add .github/workflows/PROJECT-FLUTTER-ANDROID-TEST-APK.yaml \
-       .github/workflows/PROJECT-FLUTTER-ANDROID-PLAYSTORE-CICD.yaml \
-       .github/workflows/PROJECT-FLUTTER-IOS-TESTFLIGHT.yaml \
-       .github/workflows/PROJECT-FLUTTER-IOS-TEST-TESTFLIGHT.yaml
-git commit -m "fix: Fastlane gem 의존성 충돌 해결 (retriable/CFPropertyList 사전 제거)"
-```
-
----
-
-### Task 6: CI 워크플로우 트리거하여 검증
-
-**Step 1: push 후 워크플로우 수동 실행**
-
-ROMROM-ANDROID-TEST-APK 워크플로우를 수동 트리거하여 Install Fastlane 스텝 통과 확인.
-
-Expected:
-```
-Successfully installed fastlane-2.232.x
-✅ Fastlane installed
-fastlane 2.232.x
-```
+- **Bundler 마이그레이션**: `Gemfile`에 fastlane 버전을 고정하고 `bundle exec fastlane`으로 호출하면 gem 충돌을 근본적으로 방지. GitHub Actions Runner의 Ruby/gem 환경 변경에 영향받지 않음.
+- **모니터링**: Ruby 버전 업데이트 시 (`ruby/setup-ruby@v1`이 새 버전 제공) 유사 충돌 재발 가능성 있으므로 CI 실패 시 gem 충돌 우선 확인.

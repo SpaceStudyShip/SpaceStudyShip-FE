@@ -498,8 +498,11 @@ jobs:
 
       - name: Install Fastlane
         run: |
-          gem uninstall retriable CFPropertyList --all --ignore-dependencies --executables --force 2>/dev/null || true
-          gem install fastlane --force --no-document
+          export GEM_HOME="$HOME/.gem"
+          export PATH="$GEM_HOME/bin:$PATH"
+          echo "GEM_HOME=$GEM_HOME" >> $GITHUB_ENV
+          echo "$GEM_HOME/bin" >> $GITHUB_PATH
+          gem install fastlane --no-document
           fastlane --version
 
       - name: Upload to TestFlight

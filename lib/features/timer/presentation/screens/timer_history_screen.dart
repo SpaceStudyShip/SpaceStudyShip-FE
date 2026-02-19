@@ -16,7 +16,7 @@ import '../providers/study_stats_provider.dart';
 import '../providers/timer_session_provider.dart';
 import '../utils/timer_format_utils.dart';
 
-const _pageSize = 7; // 한 페이지 = 7일치 날짜 그룹으로
+const _pageSize = 7; // 한 페이지 = 7일치 날짜 그룹
 
 class TimerHistoryScreen extends ConsumerStatefulWidget {
   const TimerHistoryScreen({super.key});

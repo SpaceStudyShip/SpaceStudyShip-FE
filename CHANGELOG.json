@@ -1,11 +1,29 @@
 {
   "metadata": {
-    "lastUpdated": "2026-02-19T09:34:49Z",
-    "currentVersion": "1.1.14",
+    "lastUpdated": "2026-02-19T11:01:04Z",
+    "currentVersion": "1.1.16",
     "projectType": "flutter",
-    "totalReleases": 19
+    "totalReleases": 20
   },
   "releases": [
+    {
+      "version": "1.1.16",
+      "project_type": "flutter",
+      "date": "2026-02-19",
+      "pr_number": 35,
+      "raw_summary": "## Summary by CodeRabbit\n\n* **Chores**\n  * 앱 버전을 1.1.16(빌드 59)으로 업데이트했습니다.\n  * CI/CD 파이프라인의 의존성 관리 프로세스를 개선하여 더욱 안정적인 빌드 및 배포 환경을 구축했습니다.\n  * 문서를 최신 상태로 유지했습니다.",
+      "parsed_changes": {
+        "chores": {
+          "title": "Chores",
+          "items": [
+            "앱 버전을 1.1.16(빌드 59)으로 업데이트했습니다.",
+            "CI/CD 파이프라인의 의존성 관리 프로세스를 개선하여 더욱 안정적인 빌드 및 배포 환경을 구축했습니다.",
+            "문서를 최신 상태로 유지했습니다."
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "1.1.14",
       "project_type": "flutter",

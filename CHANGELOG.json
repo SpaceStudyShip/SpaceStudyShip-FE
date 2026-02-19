@@ -1,11 +1,33 @@
 {
   "metadata": {
-    "lastUpdated": "2026-02-19T06:39:10Z",
-    "currentVersion": "1.1.5",
+    "lastUpdated": "2026-02-19T07:23:40Z",
+    "currentVersion": "1.1.6",
     "projectType": "flutter",
-    "totalReleases": 16
+    "totalReleases": 17
   },
   "releases": [
+    {
+      "version": "1.1.6",
+      "project_type": "flutter",
+      "date": "2026-02-19",
+      "pr_number": 30,
+      "raw_summary": "## Summary by CodeRabbit\n\n## 릴리스 노트\n\n* **새로운 기능**\n  * 할 일 편집 시 입력 필드의 자동 포커스 동작을 개선했습니다. 새 항목 생성 시에는 자동 포커스가 활성화되고, 기존 항목 편집 시에는 사용자가 직접 탭하여 포커스할 수 있도록 변경되었습니다.\n\n* **Chores**\n  * 버전 1.1.6으로 업그레이드했습니다.",
+      "parsed_changes": {
+        "새로운_기능": {
+          "title": "새로운 기능",
+          "items": [
+            "할 일 편집 시 입력 필드의 자동 포커스 동작을 개선했습니다. 새 항목 생성 시에는 자동 포커스가 활성화되고, 기존 항목 편집 시에는 사용자가 직접 탭하여 포커스할 수 있도록 변경되었습니다."
+          ]
+        },
+        "chores": {
+          "title": "Chores",
+          "items": [
+            "버전 1.1.6으로 업그레이드했습니다."
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "1.1.5",
       "project_type": "flutter",

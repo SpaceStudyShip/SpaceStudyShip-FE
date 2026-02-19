@@ -498,13 +498,8 @@ jobs:
 
       - name: Install Fastlane
         run: |
-          export GEM_HOME="$HOME/.gem"
-          export GEM_PATH="$GEM_HOME"
-          export PATH="$GEM_HOME/bin:$PATH"
-          echo "GEM_HOME=$GEM_HOME" >> $GITHUB_ENV
-          echo "GEM_PATH=$GEM_HOME" >> $GITHUB_ENV
-          echo "$GEM_HOME/bin" >> $GITHUB_PATH
-          gem install fastlane --no-document
+          gem install fastlane --force
+          echo "✅ Fastlane 설치 완료"
           fastlane --version
 
       - name: Upload to TestFlight

@@ -292,21 +292,20 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: "3.3"
-          bundler-cache: true
+          bundler-cache: false
 
       - name: Verify Ruby version
         run: |
           echo "✅ Ruby setup completed"
           ruby -v
 
-      # Fastlane 설치
+      # Fastlane 설치 (Bundler 방식으로 CFPropertyList 의존성 충돌 방지)
       - name: Install Fastlane
         run: |
-          gem update --system
-          gem uninstall CFPropertyList -a -x 2>/dev/null || true
-          gem install fastlane --force
+          printf 'source "https://rubygems.org"\ngem "fastlane"\n' > Gemfile
+          bundle install
           echo "✅ Fastlane 설치 완료"
-          fastlane --version
+          bundle exec fastlane --version
 
       # APK 파일명 생성
       - name: Generate APK filename
@@ -325,7 +324,7 @@ jobs:
           if [ -f "android/fastlane/Fastfile" ]; then
             echo "📦 Fastlane을 사용하여 빌드..."
             cd android
-            fastlane build --verbose || flutter build apk --release
+            bundle exec fastlane build --verbose || flutter build apk --release
           else
             echo "📦 Flutter 직접 빌드..."
             flutter build apk --release

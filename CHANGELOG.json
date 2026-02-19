@@ -1,11 +1,45 @@
 {
   "metadata": {
-    "lastUpdated": "2026-02-19T07:23:40Z",
-    "currentVersion": "1.1.6",
+    "lastUpdated": "2026-02-19T08:37:20Z",
+    "currentVersion": "1.1.11",
     "projectType": "flutter",
-    "totalReleases": 17
+    "totalReleases": 18
   },
   "releases": [
+    {
+      "version": "1.1.11",
+      "project_type": "flutter",
+      "date": "2026-02-19",
+      "pr_number": 32,
+      "raw_summary": "## Summary by CodeRabbit\n\n## 릴리스 노트\n\n* **버전 업데이트**\n  * 앱 버전이 1.1.11로 업데이트되었습니다.\n\n* **설명 업데이트**\n  * 앱 설명이 \"Space Study Ship - 우주 테마 게이미피케이션 학습 관리 앱\"으로 변경되었습니다.\n\n* **Chores**\n  * 빌드 워크플로우 안정성이 개선되었습니다.\n\n* **Documentation**\n  * CI/CD 프로세스 개선 사항에 대한 문서가 추가되었습니다.",
+      "parsed_changes": {
+        "버전_업데이트": {
+          "title": "버전 업데이트",
+          "items": [
+            "앱 버전이 1.1.11로 업데이트되었습니다."
+          ]
+        },
+        "설명_업데이트": {
+          "title": "설명 업데이트",
+          "items": [
+            "앱 설명이 \"Space Study Ship - 우주 테마 게이미피케이션 학습 관리 앱\"으로 변경되었습니다."
+          ]
+        },
+        "chores": {
+          "title": "Chores",
+          "items": [
+            "빌드 워크플로우 안정성이 개선되었습니다."
+          ]
+        },
+        "documentation": {
+          "title": "Documentation",
+          "items": [
+            "CI/CD 프로세스 개선 사항에 대한 문서가 추가되었습니다."
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "1.1.6",
       "project_type": "flutter",

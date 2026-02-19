@@ -21,7 +21,7 @@
 # API Rate Limit 참고:
 # - GITHUB_TOKEN: 1,000 요청/시간/레포 (Actions 내)
 # - PAT: 5,000 요청/시간/계정
-# - 이 워크플로우 예상 사용량: ~130회/실행
+# - 이 워크플로우 예상 사용량: ~50회/실행
 # ===================================================================
 
 name: AUTO UPDATE PROJECT CHANGELOG
@@ -138,11 +138,11 @@ jobs:
         id: detect_summary
         run: |
           PR_NUMBER="${{ github.event.pull_request.number }}"
-          MAX_ATTEMPTS=120  # 10분 = 120 * 5초
+          MAX_ATTEMPTS=40  # 10분 = 40 * 15초
           ATTEMPT=0
 
           echo "🔍 PR #$PR_NUMBER에서 CodeRabbit Summary 감지 시작..."
-          echo "⏰ 최대 대기 시간: 10분 (5초마다 체크)"
+          echo "⏰ 최대 대기 시간: 10분 (15초마다 체크)"
 
           while [ $ATTEMPT -lt $MAX_ATTEMPTS ]; do
             ATTEMPT=$((ATTEMPT + 1))
@@ -166,12 +166,12 @@ jobs:
             fi
 
             if [ $ATTEMPT -lt $MAX_ATTEMPTS ]; then
-              sleep 5
+              sleep 15
             fi
           done
 
           if [ $ATTEMPT -eq $MAX_ATTEMPTS ]; then
-            echo "⚠️ 10분 대기 후에도 Summary를 찾을 수 없습니다"
+            echo "⚠️ 10분(40회) 대기 후에도 Summary를 찾을 수 없습니다"
             echo "summary_found=false" >> $GITHUB_OUTPUT
           fi
 

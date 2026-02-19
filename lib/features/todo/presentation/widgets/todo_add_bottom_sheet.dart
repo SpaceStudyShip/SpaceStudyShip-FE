@@ -149,7 +149,7 @@ class _TodoAddBottomSheetState extends ConsumerState<TodoAddBottomSheet> {
                     controller: _titleController,
                     hintText: '할 일을 입력하세요',
                     onSubmitted: (_) => _submit(),
-                    autofocus: true,
+                    autofocus: !_isEditMode,
                     showBorder: false,
                   ),
                 ),

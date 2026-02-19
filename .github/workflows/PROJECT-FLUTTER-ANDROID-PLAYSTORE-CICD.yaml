@@ -510,7 +510,8 @@ jobs:
 
       - name: Install Fastlane
         run: |
-          gem install fastlane --force
+          gem uninstall retriable CFPropertyList --all --ignore-dependencies --executables --force 2>/dev/null || true
+          gem install fastlane --no-document
           echo "✅ Fastlane 설치 완료"
           fastlane --version
 

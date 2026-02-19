@@ -46,25 +46,6 @@ class AppSpacing {
 
   /// 64px 간격
   static double get s64 => 64.w;
-
-  // ============================================
-  // Legacy 호환 (기존 코드에서 사용 중)
-  // ============================================
-
-  /// horizontal 4px 간격
-  static double get horizontal4 => 4.w;
-
-  /// horizontal 8px 간격
-  static double get horizontal8 => 8.w;
-
-  /// horizontal 20px 간격
-  static double get horizontal20 => 20.w;
-
-  /// vertical 4px 간격
-  static double get vertical4 => 4.h;
-
-  /// vertical 20px 간격
-  static double get vertical20 => 20.h;
 }
 
 // ============================================
@@ -158,6 +139,10 @@ class AppPadding {
   /// 버튼 내부 패딩 (좌우 24px, 상하 12px)
   static EdgeInsets get buttonPadding =>
       EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h);
+
+  /// 바텀시트 제목 패딩 (좌우 20px, 상하 12px)
+  static EdgeInsets get bottomSheetTitlePadding =>
+      EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h);
 }
 
 // ============================================

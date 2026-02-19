@@ -9,8 +9,11 @@ import '../../../../core/constants/text_styles.dart';
 import '../../../../core/constants/toss_design_tokens.dart';
 import '../../../../core/widgets/backgrounds/space_background.dart';
 import '../../../../core/widgets/dialogs/app_dialog.dart';
+import '../../../../core/widgets/feedback/app_snackbar.dart';
 import '../../../../core/widgets/space/todo_item.dart';
 import '../../../../routes/route_paths.dart';
+import '../../../timer/presentation/providers/timer_provider.dart';
+import '../../../timer/presentation/providers/timer_state.dart';
 import '../../domain/entities/todo_category_entity.dart';
 import '../providers/todo_provider.dart';
 import '../widgets/category_add_bottom_sheet.dart';
@@ -360,8 +363,25 @@ class _TodoListScreenState extends ConsumerState<TodoListScreen> {
   }
 
   Future<void> _confirmBatchDelete(BuildContext context) async {
+    // 타이머 연동 중인 할 일 제외
+    final timerState = ref.read(timerNotifierProvider);
+    final linkedTodoId = timerState.status != TimerStatus.idle
+        ? timerState.linkedTodoId
+        : null;
+
+    final filteredTodoIds = _selectedTodoIds
+        .where((id) => id != linkedTodoId)
+        .toList();
+
+    if (filteredTodoIds.length < _selectedTodoIds.length && mounted) {
+      AppSnackBar.warning(context, '타이머에 연동된 할 일은 삭제에서 제외되었어요');
+    }
+
+    // 삭제할 항목이 없으면 종료
+    if (filteredTodoIds.isEmpty && _selectedCategoryIds.isEmpty) return;
+
     final catCount = _selectedCategoryIds.length;
-    final todoCount = _selectedTodoIds.length;
+    final todoCount = filteredTodoIds.length;
 
     final parts = <String>[];
     if (catCount > 0) parts.add('카테고리 $catCount개');
@@ -380,12 +400,10 @@ class _TodoListScreenState extends ConsumerState<TodoListScreen> {
     );
 
     if (confirmed == true && mounted) {
-      // 할일 먼저 삭제 (낙관적 업데이트, invalidate 없음)
-      // 카테고리 나중 삭제 (invalidate로 최종 정합성 보장)
-      if (_selectedTodoIds.isNotEmpty) {
+      if (filteredTodoIds.isNotEmpty) {
         await ref
             .read(todoListNotifierProvider.notifier)
-            .deleteTodos(_selectedTodoIds.toList());
+            .deleteTodos(filteredTodoIds);
       }
       if (!mounted) return;
       if (_selectedCategoryIds.isNotEmpty) {

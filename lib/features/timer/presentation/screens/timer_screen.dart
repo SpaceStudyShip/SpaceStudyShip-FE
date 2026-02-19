@@ -1,17 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../../../routes/route_paths.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
-import '../../../../core/widgets/animations/entrance_animations.dart';
 import '../../../../core/widgets/atoms/space_stat_item.dart';
 import '../../../../core/widgets/buttons/app_button.dart';
 import '../../../../core/widgets/cards/app_card.dart';
+import '../../../../core/widgets/dialogs/app_dialog.dart';
 import '../../../todo/domain/entities/todo_entity.dart';
 import '../providers/timer_provider.dart';
+import '../providers/study_stats_provider.dart';
 import '../providers/timer_state.dart';
+import '../utils/timer_format_utils.dart';
 import '../widgets/timer_ring_painter.dart';
 import '../widgets/todo_select_bottom_sheet.dart';
 
@@ -45,9 +50,7 @@ class _TimerScreenState extends ConsumerState<TimerScreen> {
         actions: [
           IconButton(
             icon: Icon(Icons.history_rounded, color: Colors.white, size: 24.w),
-            onPressed: () {
-              // TODO: 타이머 기록 화면 (향후 구현)
-            },
+            onPressed: () => context.push(RoutePaths.timerHistory),
           ),
         ],
       ),
@@ -55,144 +58,95 @@ class _TimerScreenState extends ConsumerState<TimerScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // 연동된 할일 표시
-            if (timerState.linkedTodoTitle != null) ...[
-              FadeSlideIn(
-                child: Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 16.w,
-                    vertical: 8.h,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColors.primary.withValues(alpha: 0.15),
-                    borderRadius: AppRadius.chip,
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.link_rounded,
-                        color: AppColors.primary,
-                        size: 16.w,
-                      ),
-                      SizedBox(width: AppSpacing.s8),
-                      ConstrainedBox(
-                        constraints: BoxConstraints(maxWidth: 200.w),
-                        child: Text(
-                          timerState.linkedTodoTitle!,
-                          style: AppTextStyles.tag_12.copyWith(
-                            color: AppColors.primary,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              SizedBox(height: AppSpacing.s24),
-            ],
-
             // 타이머 링 + 시간 표시
-            FadeSlideIn(
-              child: SizedBox(
-                width: 260.w,
-                height: 260.w,
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    CustomPaint(
-                      size: Size(260.w, 260.w),
-                      painter: TimerRingPainter(
-                        progress: _calculateProgress(timerState.elapsed),
-                        isRunning: isRunning,
-                        strokeWidth: 6.w,
+            SizedBox(
+              width: 260.w,
+              height: 260.w,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  CustomPaint(
+                    size: Size(260.w, 260.w),
+                    painter: TimerRingPainter(
+                      progress: _calculateProgress(timerState.elapsed),
+                      isRunning: isRunning,
+                      strokeWidth: 6.w,
+                    ),
+                  ),
+                  Padding(
+                    padding: AppPadding.horizontal16,
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            _formatDuration(timerState.elapsed),
+                            style: AppTextStyles.timer_48.copyWith(
+                              color: isRunning
+                                  ? AppColors.primary
+                                  : Colors.white,
+                            ),
+                          ),
+                          SizedBox(height: AppSpacing.s4),
+                          _buildStatusText(timerState, isIdle, isRunning),
+                        ],
                       ),
                     ),
-                    Padding(
-                      padding: AppPadding.horizontal16,
-                      child: FittedBox(
-                        fit: BoxFit.scaleDown,
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              _formatDuration(timerState.elapsed),
-                              style: AppTextStyles.timer_48.copyWith(
-                                color: isRunning
-                                    ? AppColors.primary
-                                    : Colors.white,
-                              ),
-                            ),
-                            SizedBox(height: AppSpacing.s4),
-                            Text(
-                              isIdle
-                                  ? '집중 시간을 측정해보세요'
-                                  : isRunning
-                                  ? '집중 중...'
-                                  : '일시정지',
-                              style: AppTextStyles.tag_12.copyWith(
-                                color: AppColors.textSecondary,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
             SizedBox(height: AppSpacing.s48),
 
             // 컨트롤 버튼
-            FadeSlideIn(
-              delay: const Duration(milliseconds: 100),
-              child: _buildControls(isIdle, isRunning, isPaused),
-            ),
+            _buildControls(isIdle, isRunning, isPaused),
             SizedBox(height: AppSpacing.s48),
 
-            // 오늘의 통계 (하드코딩 유지 -- 향후 구현)
-            FadeSlideIn(
-              delay: const Duration(milliseconds: 200),
-              child: Padding(
-                padding: AppPadding.horizontal20,
-                child: AppCard(
-                  style: AppCardStyle.outlined,
-                  padding: AppPadding.all20,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      SpaceStatItem(
-                        icon: Icons.today_rounded,
-                        label: '오늘',
-                        value: '0시간 0분',
-                      ),
-                      Container(
-                        width: 1,
-                        height: 40.h,
-                        color: AppColors.spaceDivider,
-                      ),
-                      SpaceStatItem(
-                        icon: Icons.date_range_rounded,
-                        label: '이번 주',
-                        value: '0시간 0분',
-                      ),
-                      Container(
-                        width: 1,
-                        height: 40.h,
-                        color: AppColors.spaceDivider,
-                      ),
-                      SpaceStatItem(
-                        icon: Icons.local_fire_department_rounded,
-                        label: '연속',
-                        value: '0일',
-                      ),
-                    ],
+            // 오늘의 통계 (Consumer 격리: 매초 타이머 리빌드에 영향받지 않음)
+            Consumer(
+              builder: (context, ref, _) {
+                final todayMinutes = ref.watch(todayStudyMinutesProvider);
+                final weeklyMinutes = ref.watch(weeklyStudyMinutesProvider);
+                final streak = ref.watch(currentStreakProvider);
+                return Padding(
+                  padding: AppPadding.horizontal20,
+                  child: AppCard(
+                    style: AppCardStyle.outlined,
+                    padding: AppPadding.all20,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        SpaceStatItem(
+                          icon: Icons.today_rounded,
+                          label: '오늘',
+                          value: formatMinutes(todayMinutes),
+                        ),
+                        Container(
+                          width: 1,
+                          height: 40.h,
+                          color: AppColors.spaceDivider,
+                        ),
+                        SpaceStatItem(
+                          icon: Icons.date_range_rounded,
+                          label: '이번 주',
+                          value: formatMinutes(weeklyMinutes),
+                        ),
+                        Container(
+                          width: 1,
+                          height: 40.h,
+                          color: AppColors.spaceDivider,
+                        ),
+                        SpaceStatItem(
+                          icon: Icons.local_fire_department_rounded,
+                          label: '연속',
+                          value: '$streak일',
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ),
+                );
+              },
             ),
           ],
         ),
@@ -237,7 +191,7 @@ class _TimerScreenState extends ConsumerState<TimerScreen> {
           Expanded(
             child: AppButton(
               text: '종료',
-              onPressed: () => ref.read(timerNotifierProvider.notifier).stop(),
+              onPressed: _onStop,
               backgroundColor: Colors.transparent,
               foregroundColor: AppColors.error,
               borderColor: AppColors.error.withValues(alpha: 0.5),
@@ -263,6 +217,103 @@ class _TimerScreenState extends ConsumerState<TimerScreen> {
     ref
         .read(timerNotifierProvider.notifier)
         .start(todoId: todo?.id, todoTitle: todo?.title);
+  }
+
+  Future<void> _onStop() async {
+    final result = await ref.read(timerNotifierProvider.notifier).stop();
+    if (!mounted || result == null) return;
+    _showResultDialog(result);
+  }
+
+  void _showResultDialog(
+    ({Duration sessionDuration, String? todoTitle, int? totalMinutes}) result,
+  ) {
+    final sessionText = _formatDuration(result.sessionDuration);
+
+    AppDialog.show(
+      context: context,
+      title: '수고했어요!',
+      emotion: AppDialogEmotion.success,
+      customContent: Column(
+        children: [
+          _buildResultRow('이번 세션', sessionText),
+          if (result.todoTitle != null) ...[
+            Padding(
+              padding: AppPadding.vertical12,
+              child: Divider(color: AppColors.spaceDivider, height: 1),
+            ),
+            _buildResultRow('연동 할 일', result.todoTitle!),
+            if (result.totalMinutes != null)
+              Padding(
+                padding: EdgeInsets.only(top: AppSpacing.s8),
+                child: _buildResultRow(
+                  '누적 시간',
+                  formatMinutes(result.totalMinutes!),
+                ),
+              ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildResultRow(String label, String value) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          label,
+          style: AppTextStyles.tag_12.copyWith(color: AppColors.textTertiary),
+        ),
+        Flexible(
+          child: Text(
+            value,
+            style: AppTextStyles.label_16.copyWith(color: Colors.white),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.end,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildStatusText(TimerState timerState, bool isIdle, bool isRunning) {
+    // 연동된 할일이 있고 idle이 아닌 경우 → 할일 제목 표시
+    if (timerState.linkedTodoTitle != null && !isIdle) {
+      return Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            Icons.link_rounded,
+            color: isRunning ? AppColors.primary : AppColors.textSecondary,
+            size: 14.w,
+          ),
+          SizedBox(width: AppSpacing.s4),
+          ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: 160.w),
+            child: Text(
+              timerState.linkedTodoTitle!,
+              style: AppTextStyles.tag_12.copyWith(
+                color: isRunning ? AppColors.primary : AppColors.textSecondary,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
+      );
+    }
+
+    // 연동 없음 → 기존 상태 텍스트
+    return Text(
+      isIdle
+          ? '집중 시간을 측정해보세요'
+          : isRunning
+          ? '집중 중...'
+          : '일시정지',
+      style: AppTextStyles.tag_12.copyWith(color: AppColors.textSecondary),
+    );
   }
 
   String _formatDuration(Duration d) {

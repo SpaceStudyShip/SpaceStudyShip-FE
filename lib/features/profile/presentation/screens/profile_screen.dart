@@ -141,6 +141,8 @@ class ProfileScreen extends ConsumerWidget {
   }
 
   Widget _buildMenuList(BuildContext context, WidgetRef ref) {
+    final isGuest = ref.watch(isGuestProvider);
+
     return Column(
       children: [
         _buildMenuItem(
@@ -174,7 +176,8 @@ class ProfileScreen extends ConsumerWidget {
             final confirmed = await AppDialog.confirm(
               context: context,
               title: '로그아웃하시겠어요?',
-              emotion: AppDialogEmotion.warning,
+              message: isGuest ? '게스트 모드의 데이터가\n모두 초기화돼요' : null,
+              isDestructive: isGuest,
               confirmText: '로그아웃',
               cancelText: '취소',
             );

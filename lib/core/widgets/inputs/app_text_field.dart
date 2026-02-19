@@ -89,6 +89,7 @@ class AppTextField extends StatefulWidget {
     this.focusNode,
     this.textAlign = TextAlign.start,
     this.validator,
+    this.showBorder = true,
   });
 
   /// 텍스트 컨트롤러
@@ -157,6 +158,9 @@ class AppTextField extends StatefulWidget {
   /// 유효성 검사 함수
   final String? Function(String?)? validator;
 
+  /// 테두리 표시 여부
+  final bool showBorder;
+
   @override
   State<AppTextField> createState() => _AppTextFieldState();
 }
@@ -177,6 +181,7 @@ class _AppTextFieldState extends State<AppTextField> {
 
   @override
   void dispose() {
+    _focusNode.removeListener(_onFocusChange);
     if (widget.focusNode == null) {
       _focusNode.dispose();
     }
@@ -274,14 +279,14 @@ class _AppTextFieldState extends State<AppTextField> {
           duration: TossDesignTokens.animationFast,
           curve: TossDesignTokens.smoothCurve,
           decoration: BoxDecoration(
-            color: widget.enabled
-                ? AppColors.spaceSurface
-                : AppColors.spaceBackground,
+            color: AppColors.spaceBackground,
             borderRadius: AppRadius.large,
-            border: Border.all(
-              color: _getBorderColor(hasError),
-              width: _isFocused ? 2.0 : 1.0,
-            ),
+            border: widget.showBorder
+                ? Border.all(
+                    color: _getBorderColor(hasError),
+                    width: _isFocused ? 2.0 : 1.0,
+                  )
+                : null,
           ),
           child: TextField(
             controller: widget.controller,
@@ -307,10 +312,7 @@ class _AppTextFieldState extends State<AppTextField> {
               hintStyle: AppTextStyles.paragraph_14.copyWith(
                 color: AppColors.textTertiary,
               ),
-              contentPadding: EdgeInsets.symmetric(
-                horizontal: 16.w,
-                vertical: 16.h,
-              ),
+              contentPadding: AppPadding.all16,
               border: InputBorder.none,
               counterText: '', // 글자 수 카운터 숨김
               prefixIcon: widget.prefixIcon != null

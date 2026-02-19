@@ -5,8 +5,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
+import '../../../../core/widgets/atoms/drag_handle.dart';
 import '../../../../core/widgets/buttons/app_button.dart';
 import '../../../../core/widgets/states/space_empty_state.dart';
+import '../../../todo/domain/entities/todo_category_entity.dart';
 import '../../../todo/domain/entities/todo_entity.dart';
 import '../../../todo/presentation/providers/todo_provider.dart';
 
@@ -16,6 +18,8 @@ class TodoSelectBottomSheet extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final todosAsync = ref.watch(todoListNotifierProvider);
+    final categoriesAsync = ref.watch(categoryListNotifierProvider);
+    final categories = categoriesAsync.valueOrNull ?? [];
 
     return DraggableScrollableSheet(
       initialChildSize: 0.5,
@@ -40,27 +44,12 @@ class TodoSelectBottomSheet extends ConsumerWidget {
                 controller: scrollController,
                 slivers: [
                   // 드래그 핸들
-                  SliverToBoxAdapter(
-                    child: Center(
-                      child: Container(
-                        margin: EdgeInsets.only(top: 12.h, bottom: 8.h),
-                        width: 40.w,
-                        height: 4.h,
-                        decoration: BoxDecoration(
-                          color: AppColors.textTertiary.withValues(alpha: 0.4),
-                          borderRadius: BorderRadius.circular(2.r),
-                        ),
-                      ),
-                    ),
-                  ),
+                  const SliverToBoxAdapter(child: DragHandle()),
 
                   // 제목
                   SliverToBoxAdapter(
                     child: Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 20.w,
-                        vertical: 12.h,
-                      ),
+                      padding: AppPadding.bottomSheetTitlePadding,
                       child: Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
@@ -91,10 +80,9 @@ class TodoSelectBottomSheet extends ConsumerWidget {
 
                   // 미완료 할일 목록
                   if (incomplete.isEmpty)
-                    SliverFillRemaining(
-                      hasScrollBody: false,
+                    SliverToBoxAdapter(
                       child: Padding(
-                        padding: AppPadding.all20,
+                        padding: EdgeInsets.only(top: AppSpacing.s40),
                         child: SpaceEmptyState(
                           icon: Icons.check_circle_outline,
                           title: '미완료 할 일이 없어요',
@@ -112,6 +100,7 @@ class TodoSelectBottomSheet extends ConsumerWidget {
                           final todo = incomplete[index];
                           return _TodoSelectTile(
                             todo: todo,
+                            categories: categories,
                             onTap: () => Navigator.of(context).pop(todo),
                           );
                         }, childCount: incomplete.length),
@@ -130,13 +119,20 @@ class TodoSelectBottomSheet extends ConsumerWidget {
 }
 
 class _TodoSelectTile extends StatelessWidget {
-  const _TodoSelectTile({required this.todo, required this.onTap});
+  const _TodoSelectTile({
+    required this.todo,
+    required this.categories,
+    required this.onTap,
+  });
 
   final TodoEntity todo;
+  final List<TodoCategoryEntity> categories;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
+    final infoItems = _buildInfoItems();
+
     return Padding(
       padding: EdgeInsets.only(bottom: 8.h),
       child: Material(
@@ -161,26 +157,64 @@ class _TodoSelectTile extends StatelessWidget {
                 ),
                 SizedBox(width: AppSpacing.s12),
                 Expanded(
-                  child: Text(
-                    todo.title,
-                    style: AppTextStyles.label_16.copyWith(color: Colors.white),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        todo.title,
+                        style: AppTextStyles.label_16.copyWith(
+                          color: Colors.white,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      if (infoItems.isNotEmpty) ...[
+                        SizedBox(height: AppSpacing.s4),
+                        Text(
+                          infoItems.join('  ·  '),
+                          style: AppTextStyles.tag_12.copyWith(
+                            color: AppColors.textTertiary,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ],
                   ),
                 ),
-                if (todo.actualMinutes != null && todo.actualMinutes! > 0)
-                  Text(
-                    '${todo.actualMinutes}분',
-                    style: AppTextStyles.tag_12.copyWith(
-                      color: AppColors.textTertiary,
-                    ),
-                  ),
               ],
             ),
           ),
         ),
       ),
     );
+  }
+
+  List<String> _buildInfoItems() {
+    final items = <String>[];
+
+    // 카테고리 이름 (첫 번째 카테고리만)
+    if (todo.categoryIds.isNotEmpty) {
+      final cat = categories
+          .where((c) => c.id == todo.categoryIds.first)
+          .firstOrNull;
+      if (cat != null) {
+        final prefix = cat.emoji != null ? '${cat.emoji} ' : '';
+        items.add('$prefix${cat.name}');
+      }
+    }
+
+    // 예상 시간
+    if (todo.estimatedMinutes != null && todo.estimatedMinutes! > 0) {
+      items.add('예상 ${todo.estimatedMinutes}분');
+    }
+
+    // 누적 실제 시간
+    if (todo.actualMinutes != null && todo.actualMinutes! > 0) {
+      items.add('누적 ${todo.actualMinutes}분');
+    }
+
+    return items;
   }
 }
 

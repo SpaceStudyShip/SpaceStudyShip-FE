@@ -10,11 +10,13 @@ import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../../../core/constants/toss_design_tokens.dart';
 import '../../../../core/widgets/animations/entrance_animations.dart';
+import '../../../../core/widgets/atoms/drag_handle.dart';
 import '../../../../core/widgets/cards/app_card.dart';
 import '../../../../core/widgets/space/spaceship_avatar.dart';
 import '../../../../core/widgets/space/streak_badge.dart';
 import '../../../../core/widgets/states/space_empty_state.dart';
 import '../../../../routes/route_paths.dart';
+import '../../../timer/presentation/providers/study_stats_provider.dart';
 import '../../../todo/domain/entities/todo_entity.dart';
 import '../../../todo/presentation/providers/todo_provider.dart';
 import '../../../todo/presentation/widgets/dismissible_todo_item.dart';
@@ -39,8 +41,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   String _selectedSpaceshipId = 'default';
   String _selectedSpaceshipIcon = '🚀';
   String? _selectedLottieAsset = 'assets/lotties/default_rocket.json';
-  final int _streakDays = 5;
-  final bool _isStreakActive = true;
   bool _isSpaceshipPressed = false;
   bool _isSheetExpanded = false;
 
@@ -106,16 +106,20 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         scrolledUnderElevation: 0,
-        title: _streakDays > 0
-            ? FadeSlideIn(
-                child: StreakBadge(
-                  days: _streakDays,
-                  isActive: _isStreakActive,
-                  showLabel: true,
-                  size: StreakBadgeSize.large,
-                ),
-              )
-            : null,
+        title: Consumer(
+          builder: (context, ref, _) {
+            final streakDays = ref.watch(currentStreakProvider);
+            if (streakDays <= 0) return const SizedBox.shrink();
+            return FadeSlideIn(
+              child: StreakBadge(
+                days: streakDays,
+                isActive: true,
+                showLabel: true,
+                size: StreakBadgeSize.large,
+              ),
+            );
+          },
+        ),
         centerTitle: false,
         actions: [
           IconButton(
@@ -233,20 +237,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  Widget _buildDragHandle() {
-    return Center(
-      child: Container(
-        margin: EdgeInsets.only(top: 12.h, bottom: 8.h),
-        width: 40.w,
-        height: 4.h,
-        decoration: BoxDecoration(
-          color: AppColors.textTertiary.withValues(alpha: 0.4),
-          borderRadius: BorderRadius.circular(2.r),
-        ),
-      ),
-    );
-  }
-
   /// 접힌 상태: 주간 캘린더 스트립 + 할일 카운트
   Widget _buildCollapsedSheet(ScrollController scrollController) {
     final todosByDate = ref.watch(todosByDateMapProvider);
@@ -265,7 +255,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       controller: scrollController,
       padding: EdgeInsets.zero,
       children: [
-        _buildDragHandle(),
+        const DragHandle(),
 
         // 주간 캘린더 스트립 (컴팩트 모드)
         Padding(
@@ -286,7 +276,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               );
             },
             onPageChanged: (focusedDay) {
-              _focusedDay = focusedDay;
+              setState(() => _focusedDay = focusedDay);
             },
             eventLoader: (day) {
               final key = DateTime(day.year, day.month, day.day);
@@ -308,7 +298,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           },
           behavior: HitTestBehavior.opaque,
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
+            padding: AppPadding.bottomSheetTitlePadding,
             child: Row(
               children: [
                 Text(
@@ -352,7 +342,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       controller: scrollController,
       padding: EdgeInsets.zero,
       children: [
-        _buildDragHandle(),
+        const DragHandle(),
 
         // 월간/주간 토글 캘린더이다.
         Padding(
@@ -372,7 +362,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               setState(() => _calendarFormat = format);
             },
             onPageChanged: (focusedDay) {
-              _focusedDay = focusedDay;
+              setState(() => _focusedDay = focusedDay);
             },
             eventLoader: (day) {
               final key = DateTime(day.year, day.month, day.day);
@@ -385,10 +375,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
         // ── 선택된 날짜의 할일 섹션 ──
         Padding(
-          padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 0),
+          padding: AppPadding.horizontal20,
           child: Row(
             children: [
-              _buildSectionTitle('$dateLabel 할일'),
+              _buildSectionTitle('$dateLabel 할 일'),
               const Spacer(),
               GestureDetector(
                 onTap: () async {

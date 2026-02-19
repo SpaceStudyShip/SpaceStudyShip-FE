@@ -17,6 +17,7 @@ import '../../domain/usecases/sign_in_with_apple_usecase.dart';
 import '../../domain/usecases/sign_in_with_google_usecase.dart';
 import '../../domain/usecases/sign_out_usecase.dart';
 import '../../domain/utils/firebase_auth_error_handler.dart';
+import '../../../timer/presentation/providers/timer_session_provider.dart';
 import '../../../todo/presentation/providers/todo_provider.dart';
 
 part 'auth_provider.g.dart';
@@ -137,8 +138,10 @@ class ActiveLoginNotifier extends _$ActiveLoginNotifier {
 
 /// Firebase Auth State를 실시간으로 제공하는 StreamProvider
 ///
-/// GoRouter의 refreshListenable로 사용되어
-/// 인증 상태 변경 시 자동으로 라우팅을 재평가합니다.
+/// 현재는 미사용. 소셜 로그인 도입 시 Firebase 외부 로그아웃
+/// (토큰 만료, 계정 삭제 등)을 감지하기 위해 RouterNotifier에
+/// listen 추가 예정. AuthInterceptor의 401 → forceLogout() 경로만으로는
+/// Firebase 레벨 상태 변경을 감지할 수 없으므로 보존.
 @riverpod
 Stream<User?> authState(Ref ref) {
   final dataSource = ref.watch(firebaseAuthDataSourceProvider);
@@ -277,6 +280,18 @@ class AuthNotifier extends _$AuthNotifier {
   Future<void> signInAsGuest() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(kIsGuestKey, true);
+
+    // 이전 게스트 세션 잔여 데이터 방어적 정리 (앱 강종 대비)
+    final todoRepo = ref.read(todoRepositoryProvider);
+    await todoRepo.clearAll();
+    final timerRepo = ref.read(timerSessionRepositoryProvider);
+    await timerRepo.clearAll();
+
+    // Riverpod Provider 메모리 캐시 강제 초기화
+    ref.invalidate(timerSessionListNotifierProvider);
+    ref.invalidate(todoListNotifierProvider);
+    ref.invalidate(categoryListNotifierProvider);
+
     state = const AsyncValue.data(
       AuthResultEntity(
         userId: -1,
@@ -301,11 +316,24 @@ class AuthNotifier extends _$AuthNotifier {
       // 게스트 할일 데이터 삭제
       final todoRepo = ref.read(todoRepositoryProvider);
       await todoRepo.clearAll();
-      debugPrint('🧹 게스트 캐시 삭제 완료 ($kIsGuestKey, todos, categories)');
+
+      // 게스트 타이머 세션 데이터 삭제
+      final timerRepo = ref.read(timerSessionRepositoryProvider);
+      await timerRepo.clearAll();
+
+      // Riverpod Provider 메모리 캐시 강제 초기화
+      ref.invalidate(timerSessionListNotifierProvider);
+      ref.invalidate(todoListNotifierProvider);
+      ref.invalidate(categoryListNotifierProvider);
+
+      debugPrint(
+        '🧹 게스트 캐시 삭제 완료 ($kIsGuestKey, todos, categories, timer sessions)',
+      );
       state = const AsyncValue.data(null);
       return;
     }
 
+    final previous = state;
     state = const AsyncValue.loading();
 
     try {
@@ -313,19 +341,11 @@ class AuthNotifier extends _$AuthNotifier {
       await useCase.execute();
       state = const AsyncValue.data(null);
     } on FirebaseAuthException catch (e) {
-      state = AsyncValue.error(
-        FirebaseAuthErrorHandler.createAuthException(e, provider: 'Logout'),
-        StackTrace.current,
-      );
+      state = previous;
+      debugPrint('❌ 로그아웃 실패 (Firebase): $e');
     } catch (e, stack) {
-      if (e is AppException) {
-        state = AsyncValue.error(e, stack);
-      } else {
-        state = AsyncValue.error(
-          AuthException(message: '로그아웃에 실패했습니다.', originalException: e),
-          stack,
-        );
-      }
+      state = previous;
+      debugPrint('❌ 로그아웃 실패: $e\n$stack');
     }
   }
 

@@ -6,8 +6,12 @@ import 'package:intl/intl.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
+import '../../../../core/widgets/atoms/drag_handle.dart';
 import '../../../../core/widgets/dialogs/app_dialog.dart';
+import '../../../../core/widgets/feedback/app_snackbar.dart';
 import '../../../../core/widgets/space/todo_item.dart';
+import '../../../timer/presentation/providers/timer_provider.dart';
+import '../../../timer/presentation/providers/timer_state.dart';
 import '../../domain/entities/todo_entity.dart';
 import '../providers/todo_provider.dart';
 import 'category_select_bottom_sheet.dart';
@@ -52,6 +56,13 @@ class DismissibleTodoItem extends ConsumerWidget {
                 .read(todoListNotifierProvider.notifier)
                 .updateTodo(todo.copyWith(categoryIds: newCategoryIds));
           }
+          return false;
+        }
+        // 타이머에 연동된 할 일이면 삭제 차단
+        final timerState = ref.read(timerNotifierProvider);
+        if (timerState.status != TimerStatus.idle &&
+            timerState.linkedTodoId == todo.id) {
+          AppSnackBar.warning(context, '타이머에 연동된 할 일은 삭제할 수 없어요');
           return false;
         }
         // 삭제 방향: 다중 날짜 할일이면 선택지 표시
@@ -174,19 +185,9 @@ class _MultiDateDeleteSheet extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           // 드래그 핸들
-          Center(
-            child: Container(
-              margin: EdgeInsets.only(top: 12.h, bottom: 8.h),
-              width: 40.w,
-              height: 4.h,
-              decoration: BoxDecoration(
-                color: AppColors.textTertiary.withValues(alpha: 0.4),
-                borderRadius: BorderRadius.circular(2.r),
-              ),
-            ),
-          ),
+          const DragHandle(),
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
+            padding: AppPadding.bottomSheetTitlePadding,
             child: Text(
               '반복 할일 삭제',
               style: AppTextStyles.subHeading_18.copyWith(color: Colors.white),

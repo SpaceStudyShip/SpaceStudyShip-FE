@@ -3,7 +3,9 @@ import 'dart:async';
 import 'package:flutter/widgets.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../domain/entities/timer_session_entity.dart';
 import '../../../todo/presentation/providers/todo_provider.dart';
+import 'timer_session_provider.dart';
 import 'timer_state.dart';
 
 part 'timer_provider.g.dart';
@@ -76,18 +78,51 @@ class TimerNotifier extends _$TimerNotifier with WidgetsBindingObserver {
   }
 
   /// 타이머 정지 + 할일 시간 업데이트
-  Future<void> stop() async {
+  /// 반환: ({Duration sessionDuration, String? todoTitle, int? totalMinutes})
+  Future<({Duration sessionDuration, String? todoTitle, int? totalMinutes})?>
+  stop() async {
     _timer?.cancel();
 
     final todoId = state.linkedTodoId;
-    final elapsedMinutes = state.elapsed.inMinutes;
+    final todoTitle = state.linkedTodoTitle;
+    final sessionDuration = state.elapsed;
+    final elapsedMinutes = sessionDuration.inMinutes;
+    final endedAt = DateTime.now();
 
-    // 연동된 할일이 있고 1분 이상 측정 시 actualMinutes 누적
-    if (todoId != null && elapsedMinutes > 0) {
-      await _updateTodoActualMinutes(todoId, elapsedMinutes);
+    int? totalMinutes;
+
+    try {
+      // 연동된 할일이 있고 1분 이상 측정 시 actualMinutes 누적
+      if (todoId != null && elapsedMinutes > 0) {
+        totalMinutes = await _updateTodoActualMinutes(todoId, elapsedMinutes);
+      }
+
+      // 1분 이상 세션이면 기록 저장
+      if (sessionDuration.inMinutes >= 1) {
+        final session = TimerSessionEntity(
+          id: endedAt.millisecondsSinceEpoch.toString(),
+          todoId: todoId,
+          todoTitle: todoTitle,
+          startedAt: endedAt.subtract(sessionDuration),
+          endedAt: endedAt,
+          durationMinutes: elapsedMinutes,
+        );
+        await ref
+            .read(timerSessionListNotifierProvider.notifier)
+            .addSession(session);
+      }
+    } finally {
+      state = const TimerState();
     }
 
-    state = const TimerState();
+    // 1분 미만 세션은 null 반환 (다이얼로그 생략)
+    return sessionDuration.inMinutes >= 1
+        ? (
+            sessionDuration: sessionDuration,
+            todoTitle: todoTitle,
+            totalMinutes: totalMinutes,
+          )
+        : null;
   }
 
   /// UI 갱신용 periodic timer (시간 계산에는 사용하지 않음)
@@ -100,7 +135,7 @@ class TimerNotifier extends _$TimerNotifier with WidgetsBindingObserver {
     });
   }
 
-  Future<void> _updateTodoActualMinutes(
+  Future<int?> _updateTodoActualMinutes(
     String todoId,
     int additionalMinutes,
   ) async {
@@ -110,9 +145,10 @@ class TimerNotifier extends _$TimerNotifier with WidgetsBindingObserver {
 
     if (todo != null) {
       final currentMinutes = todo.actualMinutes ?? 0;
-      await todoNotifier.updateTodo(
-        todo.copyWith(actualMinutes: currentMinutes + additionalMinutes),
-      );
+      final newTotal = currentMinutes + additionalMinutes;
+      await todoNotifier.updateTodo(todo.copyWith(actualMinutes: newTotal));
+      return newTotal;
     }
+    return null;
   }
 }

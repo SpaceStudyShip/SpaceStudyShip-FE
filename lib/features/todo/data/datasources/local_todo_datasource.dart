@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/todo_category_model.dart';
@@ -60,7 +61,10 @@ class LocalTodoDataSource {
   // === Clear ===
 
   Future<void> clearAll() async {
+    final todoCount = getTodos().length;
+    final categoryCount = getCategories().length;
     await _prefs.remove(_todosKey);
     await _prefs.remove(_categoriesKey);
+    debugPrint('🧹 Todo 캐시 삭제 완료 (할일: $todoCount개, 카테고리: $categoryCount개)');
   }
 }

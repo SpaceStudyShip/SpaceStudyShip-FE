@@ -87,6 +87,7 @@ class TimerNotifier extends _$TimerNotifier with WidgetsBindingObserver {
     final todoTitle = state.linkedTodoTitle;
     final sessionDuration = state.elapsed;
     final elapsedMinutes = sessionDuration.inMinutes;
+    final endedAt = DateTime.now();
 
     int? totalMinutes;
 
@@ -98,11 +99,11 @@ class TimerNotifier extends _$TimerNotifier with WidgetsBindingObserver {
     // 1분 이상 세션이면 기록 저장
     if (sessionDuration.inMinutes >= 1) {
       final session = TimerSessionEntity(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        id: endedAt.millisecondsSinceEpoch.toString(),
         todoId: todoId,
         todoTitle: todoTitle,
-        startedAt: DateTime.now().subtract(sessionDuration),
-        endedAt: DateTime.now(),
+        startedAt: endedAt.subtract(sessionDuration),
+        endedAt: endedAt,
         durationMinutes: elapsedMinutes,
       );
       await ref

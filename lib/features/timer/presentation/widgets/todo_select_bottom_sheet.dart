@@ -18,6 +18,8 @@ class TodoSelectBottomSheet extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final todosAsync = ref.watch(todoListNotifierProvider);
+    final categoriesAsync = ref.watch(categoryListNotifierProvider);
+    final categories = categoriesAsync.valueOrNull ?? [];
 
     return DraggableScrollableSheet(
       initialChildSize: 0.5,
@@ -37,9 +39,6 @@ class TodoSelectBottomSheet extends ConsumerWidget {
               final incomplete = todos
                   .where((t) => !t.isFullyCompleted)
                   .toList();
-
-              final categoriesAsync = ref.watch(categoryListNotifierProvider);
-              final categories = categoriesAsync.valueOrNull ?? [];
 
               return CustomScrollView(
                 controller: scrollController,
@@ -212,7 +211,7 @@ class _TodoSelectTile extends StatelessWidget {
 
     // 누적 실제 시간
     if (todo.actualMinutes != null && todo.actualMinutes! > 0) {
-      items.add('${todo.actualMinutes}분');
+      items.add('누적 ${todo.actualMinutes}분');
     }
 
     return items;

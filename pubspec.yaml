@@ -1,7 +1,7 @@
 name: space_study_ship
 description: "Space Study Ship - 우주 테마 게이미피케이션 학습 관리 앱"
 publish_to: "none"
-version: 1.1.23+67
+version: 1.1.25+69
 environment:
   sdk: ^3.9.2
 dependencies:

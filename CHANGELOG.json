@@ -1,11 +1,29 @@
 {
   "metadata": {
-    "lastUpdated": "2026-02-19T12:27:03Z",
-    "currentVersion": "1.1.23",
+    "lastUpdated": "2026-02-19T13:35:14Z",
+    "currentVersion": "1.1.25",
     "projectType": "flutter",
-    "totalReleases": 23
+    "totalReleases": 24
   },
   "releases": [
+    {
+      "version": "1.1.25",
+      "project_type": "flutter",
+      "date": "2026-02-19",
+      "pr_number": 40,
+      "raw_summary": "## Summary by CodeRabbit\n\n## 릴리즈 노트\n\n* **Chores**\n  * 버전을 1.1.25로 업데이트\n  * CI/CD 워크플로우 최적화로 안정성 개선\n  * 빌드 인프라 의존성 관리 개선",
+      "parsed_changes": {
+        "chores": {
+          "title": "Chores",
+          "items": [
+            "버전을 1.1.25로 업데이트",
+            "CI/CD 워크플로우 최적화로 안정성 개선",
+            "빌드 인프라 의존성 관리 개선"
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "1.1.23",
       "project_type": "flutter",

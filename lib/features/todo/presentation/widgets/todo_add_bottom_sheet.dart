@@ -45,7 +45,7 @@ class _TodoAddBottomSheetState extends ConsumerState<TodoAddBottomSheet> {
     super.initState();
     final todo = widget.initialTodo;
     if (todo != null) {
-      // 수정 모드: 기존 값으로 초기화 됨.
+      // 수정 모드: 기존 값으로 초기화
       _titleController.text = todo.title;
       _selectedCategoryIds = List<String>.from(todo.categoryIds);
       _selectedScheduledDates = todo.scheduledDates

@@ -91,37 +91,38 @@ class TimerNotifier extends _$TimerNotifier with WidgetsBindingObserver {
 
     int? totalMinutes;
 
-    // 연동된 할일이 있고 1분 이상 측정 시 actualMinutes 누적
-    if (todoId != null && elapsedMinutes > 0) {
-      totalMinutes = await _updateTodoActualMinutes(todoId, elapsedMinutes);
-    }
+    try {
+      // 연동된 할일이 있고 1분 이상 측정 시 actualMinutes 누적
+      if (todoId != null && elapsedMinutes > 0) {
+        totalMinutes = await _updateTodoActualMinutes(todoId, elapsedMinutes);
+      }
 
-    // 1분 이상 세션이면 기록 저장
-    if (sessionDuration.inMinutes >= 1) {
-      final session = TimerSessionEntity(
-        id: endedAt.millisecondsSinceEpoch.toString(),
-        todoId: todoId,
-        todoTitle: todoTitle,
-        startedAt: endedAt.subtract(sessionDuration),
-        endedAt: endedAt,
-        durationMinutes: elapsedMinutes,
-      );
-      await ref
-          .read(timerSessionListNotifierProvider.notifier)
-          .addSession(session);
+      // 1분 이상 세션이면 기록 저장
+      if (sessionDuration.inMinutes >= 1) {
+        final session = TimerSessionEntity(
+          id: endedAt.millisecondsSinceEpoch.toString(),
+          todoId: todoId,
+          todoTitle: todoTitle,
+          startedAt: endedAt.subtract(sessionDuration),
+          endedAt: endedAt,
+          durationMinutes: elapsedMinutes,
+        );
+        await ref
+            .read(timerSessionListNotifierProvider.notifier)
+            .addSession(session);
+      }
+    } finally {
+      state = const TimerState();
     }
 
     // 1분 미만 세션은 null 반환 (다이얼로그 생략)
-    final result = sessionDuration.inMinutes >= 1
+    return sessionDuration.inMinutes >= 1
         ? (
             sessionDuration: sessionDuration,
             todoTitle: todoTitle,
             totalMinutes: totalMinutes,
           )
         : null;
-
-    state = const TimerState();
-    return result;
   }
 
   /// UI 갱신용 periodic timer (시간 계산에는 사용하지 않음)

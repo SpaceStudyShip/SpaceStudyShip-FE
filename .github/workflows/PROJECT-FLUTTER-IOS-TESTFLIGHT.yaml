@@ -455,7 +455,9 @@ jobs:
 
       - name: Install Fastlane
         run: |
-          gem install fastlane --force
+          gem update --system
+          gem uninstall CFPropertyList -a -x 2>/dev/null || true
+          gem install fastlane
           echo "✅ Fastlane 설치 완료"
           fastlane --version
 

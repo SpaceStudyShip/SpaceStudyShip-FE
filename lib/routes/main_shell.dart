@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -8,18 +9,19 @@ import '../core/constants/app_colors.dart';
 import '../core/constants/spacing_and_radius.dart';
 import '../core/constants/text_styles.dart';
 import '../core/widgets/backgrounds/space_background.dart';
+import 'navigation_providers.dart';
 
 /// 메인 네비게이션 쉘 (바텀 네비게이션)
 ///
 /// StatefulShellRoute와 함께 사용되어 탭 간 상태를 유지합니다.
 /// 글래스모피즘 배경 + active dot indicator 적용.
-class MainShell extends StatelessWidget {
+class MainShell extends ConsumerWidget {
   const MainShell({super.key, required this.navigationShell});
 
   final StatefulNavigationShell navigationShell;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       backgroundColor: AppColors.spaceBackground,
       body: Stack(
@@ -53,35 +55,35 @@ class MainShell extends StatelessWidget {
                       activeIcon: Icons.home_rounded,
                       label: '홈',
                       isSelected: navigationShell.currentIndex == 0,
-                      onTap: () => _onTap(0),
+                      onTap: () => _onTap(ref, 0),
                     ),
                     _NavItem(
                       icon: Icons.timer_outlined,
                       activeIcon: Icons.timer_rounded,
                       label: '타이머',
                       isSelected: navigationShell.currentIndex == 1,
-                      onTap: () => _onTap(1),
+                      onTap: () => _onTap(ref, 1),
                     ),
                     _NavItem(
                       icon: Icons.explore_outlined,
                       activeIcon: Icons.explore_rounded,
                       label: '탐험',
                       isSelected: navigationShell.currentIndex == 2,
-                      onTap: () => _onTap(2),
+                      onTap: () => _onTap(ref, 2),
                     ),
                     _NavItem(
                       icon: Icons.people_outline_rounded,
                       activeIcon: Icons.people_rounded,
                       label: '소셜',
                       isSelected: navigationShell.currentIndex == 3,
-                      onTap: () => _onTap(3),
+                      onTap: () => _onTap(ref, 3),
                     ),
                     _NavItem(
                       icon: Icons.person_outline_rounded,
                       activeIcon: Icons.person_rounded,
                       label: '프로필',
                       isSelected: navigationShell.currentIndex == 4,
-                      onTap: () => _onTap(4),
+                      onTap: () => _onTap(ref, 4),
                     ),
                   ],
                 ),
@@ -93,7 +95,11 @@ class MainShell extends StatelessWidget {
     );
   }
 
-  void _onTap(int index) {
+  void _onTap(WidgetRef ref, int index) {
+    // 홈 탭 재탭: 바텀시트 닫기 이벤트 발행
+    if (index == 0 && index == navigationShell.currentIndex) {
+      ref.read(homeReTapProvider.notifier).state++;
+    }
     navigationShell.goBranch(
       index,
       initialLocation: index == navigationShell.currentIndex,

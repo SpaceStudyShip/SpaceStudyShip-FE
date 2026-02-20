@@ -92,12 +92,11 @@ if (isGuest && planet.id != 'earth') {
 **Step 3: Add _showLoginPrompt method** (social screen pattern)
 
 ```dart
-void _showLoginPrompt(BuildContext context, WidgetRef ref) async {
+Future<void> _showLoginPrompt(BuildContext context, WidgetRef ref) async {
   final confirmed = await AppDialog.confirm(
     context: context,
     title: '로그인이 필요해요',
     message: '다른 행성을 탐험하려면\n로그인이 필요해요',
-    isDestructive: true,
     confirmText: '로그인',
     cancelText: '취소',
   );

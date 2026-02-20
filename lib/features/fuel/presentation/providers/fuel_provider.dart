@@ -11,7 +11,7 @@ part 'fuel_provider.g.dart';
 
 // === DataSource & Repository ===
 
-@riverpod
+@Riverpod(keepAlive: true)
 FuelLocalDataSource fuelLocalDataSource(Ref ref) {
   throw StateError(
     'FuelLocalDataSource가 초기화되지 않았습니다. '
@@ -19,7 +19,7 @@ FuelLocalDataSource fuelLocalDataSource(Ref ref) {
   );
 }
 
-@riverpod
+@Riverpod(keepAlive: true)
 FuelRepository fuelRepository(Ref ref) {
   final dataSource = ref.watch(fuelLocalDataSourceProvider);
   return FuelRepositoryImpl(dataSource);

@@ -59,7 +59,8 @@ class ExplorationNotifier extends _$ExplorationNotifier {
   bool canUnlockPlanet(String planetId) {
     final planets = state;
     final targetIndex = planets.indexWhere((p) => p.id == planetId);
-    if (targetIndex <= 0) return true;
+    if (targetIndex < 0) return false;
+    if (targetIndex == 0) return true;
     return planets[targetIndex - 1].isUnlocked;
   }
 

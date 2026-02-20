@@ -29,6 +29,7 @@ mixin _$FuelTransactionModel {
   String? get referenceId => throw _privateConstructorUsedError;
   @JsonKey(name: 'balance_after')
   int get balanceAfter => throw _privateConstructorUsedError;
+  @SafeDateTimeConverter()
   @JsonKey(name: 'created_at')
   DateTime get createdAt => throw _privateConstructorUsedError;
 
@@ -56,7 +57,7 @@ abstract class $FuelTransactionModelCopyWith<$Res> {
     String reason,
     @JsonKey(name: 'reference_id') String? referenceId,
     @JsonKey(name: 'balance_after') int balanceAfter,
-    @JsonKey(name: 'created_at') DateTime createdAt,
+    @SafeDateTimeConverter() @JsonKey(name: 'created_at') DateTime createdAt,
   });
 }
 
@@ -138,7 +139,7 @@ abstract class _$$FuelTransactionModelImplCopyWith<$Res>
     String reason,
     @JsonKey(name: 'reference_id') String? referenceId,
     @JsonKey(name: 'balance_after') int balanceAfter,
-    @JsonKey(name: 'created_at') DateTime createdAt,
+    @SafeDateTimeConverter() @JsonKey(name: 'created_at') DateTime createdAt,
   });
 }
 
@@ -209,7 +210,9 @@ class _$FuelTransactionModelImpl implements _FuelTransactionModel {
     required this.reason,
     @JsonKey(name: 'reference_id') this.referenceId,
     @JsonKey(name: 'balance_after') required this.balanceAfter,
-    @JsonKey(name: 'created_at') required this.createdAt,
+    @SafeDateTimeConverter()
+    @JsonKey(name: 'created_at')
+    required this.createdAt,
   });
 
   factory _$FuelTransactionModelImpl.fromJson(Map<String, dynamic> json) =>
@@ -230,6 +233,7 @@ class _$FuelTransactionModelImpl implements _FuelTransactionModel {
   @JsonKey(name: 'balance_after')
   final int balanceAfter;
   @override
+  @SafeDateTimeConverter()
   @JsonKey(name: 'created_at')
   final DateTime createdAt;
 
@@ -294,7 +298,9 @@ abstract class _FuelTransactionModel implements FuelTransactionModel {
     required final String reason,
     @JsonKey(name: 'reference_id') final String? referenceId,
     @JsonKey(name: 'balance_after') required final int balanceAfter,
-    @JsonKey(name: 'created_at') required final DateTime createdAt,
+    @SafeDateTimeConverter()
+    @JsonKey(name: 'created_at')
+    required final DateTime createdAt,
   }) = _$FuelTransactionModelImpl;
 
   factory _FuelTransactionModel.fromJson(Map<String, dynamic> json) =
@@ -315,6 +321,7 @@ abstract class _FuelTransactionModel implements FuelTransactionModel {
   @JsonKey(name: 'balance_after')
   int get balanceAfter;
   @override
+  @SafeDateTimeConverter()
   @JsonKey(name: 'created_at')
   DateTime get createdAt;
 

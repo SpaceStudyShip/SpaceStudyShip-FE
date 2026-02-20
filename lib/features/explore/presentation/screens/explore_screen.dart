@@ -226,8 +226,12 @@ class ExploreScreen extends ConsumerWidget {
     if (!canUnlock) {
       final planets = ref.read(explorationNotifierProvider);
       final targetIndex = planets.indexWhere((p) => p.id == planet.id);
-      final prevPlanet = planets[targetIndex - 1];
-      AppSnackBar.info(context, '${prevPlanet.name}을(를) 먼저 해금해야 합니다!');
+      if (targetIndex > 0) {
+        final prevPlanet = planets[targetIndex - 1];
+        AppSnackBar.info(context, '${prevPlanet.name}을(를) 먼저 해금해야 합니다!');
+      } else {
+        AppSnackBar.info(context, '이전 행성을 먼저 해금해야 합니다!');
+      }
       return;
     }
 
@@ -248,12 +252,11 @@ class ExploreScreen extends ConsumerWidget {
     );
   }
 
-  void _showLoginPrompt(BuildContext context, WidgetRef ref) async {
+  Future<void> _showLoginPrompt(BuildContext context, WidgetRef ref) async {
     final confirmed = await AppDialog.confirm(
       context: context,
       title: '로그인하시겠어요?',
       message: '게스트 모드의 데이터가\n모두 초기화돼요',
-      isDestructive: true,
       confirmText: '로그인',
       cancelText: '취소',
     );

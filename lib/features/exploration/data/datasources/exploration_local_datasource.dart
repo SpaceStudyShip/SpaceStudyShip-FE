@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
@@ -66,7 +67,7 @@ class ExplorationLocalDataSource {
       );
     } catch (e) {
       debugPrint('⚠️ Exploration 상태 파싱 실패, 초기화합니다: $e');
-      _prefs.remove(_stateKey);
+      unawaited(_prefs.remove(_stateKey));
       return {};
     }
   }

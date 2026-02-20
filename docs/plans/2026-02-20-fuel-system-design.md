@@ -25,7 +25,7 @@
 
 ## 파일 구조
 
-```
+```text
 features/fuel/
 ├── data/
 │   ├── datasources/
@@ -60,9 +60,9 @@ features/fuel/
 @freezed
 class FuelEntity with _$FuelEntity {
   const factory FuelEntity({
-    @Default(0.0) double currentFuel,      // 현재 보유량 (통)
-    @Default(0.0) double totalCharged,     // 누적 충전량
-    @Default(0.0) double totalConsumed,    // 누적 소비량
+    @Default(0) int currentFuel,          // 현재 보유량 (통)
+    @Default(0) int totalCharged,         // 누적 충전량
+    @Default(0) int totalConsumed,        // 누적 소비량
     required DateTime lastUpdatedAt,       // 마지막 갱신 시각
   }) = _FuelEntity;
 }
@@ -79,10 +79,10 @@ class FuelTransactionEntity with _$FuelTransactionEntity {
   const factory FuelTransactionEntity({
     required String id,
     required FuelTransactionType type,
-    required double amount,                 // 변동량 (항상 양수)
+    required int amount,                     // 변동량 (항상 양수)
     required FuelTransactionReason reason,
     String? referenceId,                    // 관련 세션/노드 ID
-    required double balanceAfter,           // 변동 후 잔량
+    required int balanceAfter,              // 변동 후 잔량
     required DateTime createdAt,
   }) = _FuelTransactionEntity;
 }
@@ -93,9 +93,9 @@ class FuelTransactionEntity with _$FuelTransactionEntity {
 ```dart
 abstract class FuelRepository {
   FuelEntity getFuel();
-  FuelEntity chargeFuel(double amount, FuelTransactionReason reason, [String? referenceId]);
-  FuelEntity consumeFuel(double amount, FuelTransactionReason reason, [String? referenceId]);
-  bool canConsume(double amount);
+  FuelEntity chargeFuel(int amount, FuelTransactionReason reason, [String? referenceId]);
+  FuelEntity consumeFuel(int amount, FuelTransactionReason reason, [String? referenceId]);
+  bool canConsume(int amount);
   List<FuelTransactionEntity> getTransactions({int? limit});
 }
 ```
@@ -106,13 +106,13 @@ abstract class FuelRepository {
 class ChargeFuelUseCase {
   final FuelRepository _repository;
   ChargeFuelUseCase(this._repository);
-  FuelEntity execute(double amount, FuelTransactionReason reason, [String? referenceId]);
+  FuelEntity execute(int amount, FuelTransactionReason reason, [String? referenceId]);
 }
 
 class ConsumeFuelUseCase {
   final FuelRepository _repository;
   ConsumeFuelUseCase(this._repository);
-  FuelEntity execute(double amount, FuelTransactionReason reason, [String? referenceId]);
+  FuelEntity execute(int amount, FuelTransactionReason reason, [String? referenceId]);
 }
 
 class GetFuelUseCase {
@@ -192,12 +192,12 @@ class FuelNotifier extends _$FuelNotifier {
   FuelEntity build() => ref.watch(fuelRepositoryProvider).getFuel();
 
   void chargeFuel({required int studyMinutes, String? sessionId}) {
-    final amount = studyMinutes / 30.0;  // 30분 = 1통
+    final amount = studyMinutes ~/ 30;  // 30분 = 1통
     final useCase = ref.read(chargeFuelUseCaseProvider);
     state = useCase.execute(amount, FuelTransactionReason.studySession, sessionId);
   }
 
-  void consumeFuel({required double amount, String? nodeId}) {
+  void consumeFuel({required int amount, String? nodeId}) {
     final useCase = ref.read(consumeFuelUseCaseProvider);
     state = useCase.execute(amount, FuelTransactionReason.explorationUnlock, nodeId);
   }
@@ -214,10 +214,10 @@ class FuelTransactionListNotifier extends _$FuelTransactionListNotifier {
 
 // 6. 편의 Provider
 @riverpod
-double currentFuel(Ref ref) => ref.watch(fuelNotifierProvider).currentFuel;
+int currentFuel(Ref ref) => ref.watch(fuelNotifierProvider).currentFuel;
 
 @riverpod
-bool canUnlock(Ref ref, double requiredFuel) => ref.watch(fuelNotifierProvider).currentFuel >= requiredFuel;
+bool canUnlock(Ref ref, int requiredFuel) => ref.watch(fuelNotifierProvider).currentFuel >= requiredFuel;
 ```
 
 ---

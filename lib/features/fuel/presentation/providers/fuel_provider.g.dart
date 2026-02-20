@@ -7,29 +7,28 @@ part of 'fuel_provider.dart';
 // **************************************************************************
 
 String _$fuelLocalDataSourceHash() =>
-    r'69bfb2d791aa60ecf2283318b3d0ff2be3b3d612';
+    r'6744a9e35144df4f110e8c580674772e4c2b6909';
 
 /// See also [fuelLocalDataSource].
 @ProviderFor(fuelLocalDataSource)
-final fuelLocalDataSourceProvider =
-    AutoDisposeProvider<FuelLocalDataSource>.internal(
-      fuelLocalDataSource,
-      name: r'fuelLocalDataSourceProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$fuelLocalDataSourceHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
+final fuelLocalDataSourceProvider = Provider<FuelLocalDataSource>.internal(
+  fuelLocalDataSource,
+  name: r'fuelLocalDataSourceProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$fuelLocalDataSourceHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef FuelLocalDataSourceRef = AutoDisposeProviderRef<FuelLocalDataSource>;
-String _$fuelRepositoryHash() => r'f26bf66992e3ffcd23bfa89ac9976ddf056c0cb1';
+typedef FuelLocalDataSourceRef = ProviderRef<FuelLocalDataSource>;
+String _$fuelRepositoryHash() => r'e39729195218df769eabf37a24db38e9197766ff';
 
 /// See also [fuelRepository].
 @ProviderFor(fuelRepository)
-final fuelRepositoryProvider = AutoDisposeProvider<FuelRepository>.internal(
+final fuelRepositoryProvider = Provider<FuelRepository>.internal(
   fuelRepository,
   name: r'fuelRepositoryProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -41,7 +40,7 @@ final fuelRepositoryProvider = AutoDisposeProvider<FuelRepository>.internal(
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef FuelRepositoryRef = AutoDisposeProviderRef<FuelRepository>;
+typedef FuelRepositoryRef = ProviderRef<FuelRepository>;
 String _$currentFuelHash() => r'af37c1ff662f2086faf31b5f0e70e36e52478619';
 
 /// See also [currentFuel].

@@ -15,7 +15,7 @@ _$FuelTransactionModelImpl _$$FuelTransactionModelImplFromJson(
   reason: json['reason'] as String,
   referenceId: json['reference_id'] as String?,
   balanceAfter: (json['balance_after'] as num).toInt(),
-  createdAt: DateTime.parse(json['created_at'] as String),
+  createdAt: const SafeDateTimeConverter().fromJson(json['created_at']),
 );
 
 Map<String, dynamic> _$$FuelTransactionModelImplToJson(
@@ -27,5 +27,5 @@ Map<String, dynamic> _$$FuelTransactionModelImplToJson(
   'reason': instance.reason,
   'reference_id': instance.referenceId,
   'balance_after': instance.balanceAfter,
-  'created_at': instance.createdAt.toIso8601String(),
+  'created_at': const SafeDateTimeConverter().toJson(instance.createdAt),
 };

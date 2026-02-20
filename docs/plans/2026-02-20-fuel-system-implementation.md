@@ -27,9 +27,9 @@ part 'fuel_entity.freezed.dart';
 @freezed
 class FuelEntity with _$FuelEntity {
   const factory FuelEntity({
-    @Default(0.0) double currentFuel,
-    @Default(0.0) double totalCharged,
-    @Default(0.0) double totalConsumed,
+    @Default(0) int currentFuel,
+    @Default(0) int totalCharged,
+    @Default(0) int totalConsumed,
     required DateTime lastUpdatedAt,
   }) = _FuelEntity;
 }
@@ -52,10 +52,10 @@ class FuelTransactionEntity with _$FuelTransactionEntity {
   const factory FuelTransactionEntity({
     required String id,
     required FuelTransactionType type,
-    required double amount,
+    required int amount,
     required FuelTransactionReason reason,
     String? referenceId,
-    required double balanceAfter,
+    required int balanceAfter,
     required DateTime createdAt,
   }) = _FuelTransactionEntity;
 }
@@ -73,7 +73,7 @@ Expected: No issues
 
 **Step 5: Commit**
 
-```
+```text
 feat: 연료 시스템 Domain 엔티티 생성 (FuelEntity, FuelTransactionEntity)
 ```
 
@@ -97,16 +97,16 @@ import '../entities/fuel_transaction_entity.dart';
 abstract class FuelRepository {
   FuelEntity getFuel();
   FuelEntity chargeFuel(
-    double amount,
+    int amount,
     FuelTransactionReason reason, [
     String? referenceId,
   ]);
   FuelEntity consumeFuel(
-    double amount,
+    int amount,
     FuelTransactionReason reason, [
     String? referenceId,
   ]);
-  bool canConsume(double amount);
+  bool canConsume(int amount);
   List<FuelTransactionEntity> getTransactions({int? limit});
 }
 ```
@@ -124,7 +124,7 @@ class ChargeFuelUseCase {
   ChargeFuelUseCase(this._repository);
 
   FuelEntity execute(
-    double amount,
+    int amount,
     FuelTransactionReason reason, [
     String? referenceId,
   ]) {
@@ -144,7 +144,7 @@ class ConsumeFuelUseCase {
   ConsumeFuelUseCase(this._repository);
 
   FuelEntity execute(
-    double amount,
+    int amount,
     FuelTransactionReason reason, [
     String? referenceId,
   ]) {
@@ -175,7 +175,7 @@ Expected: No issues
 
 **Step 4: Commit**
 
-```
+```text
 feat: 연료 시스템 Repository 인터페이스 및 UseCase 생성
 ```
 
@@ -250,7 +250,7 @@ class FuelTransactionModel with _$FuelTransactionModel {
   const factory FuelTransactionModel({
     required String id,
     required String type,
-    required double amount,
+    required int amount,
     required String reason,
     @JsonKey(name: 'reference_id') String? referenceId,
     @JsonKey(name: 'balance_after') required double balanceAfter,
@@ -298,7 +298,7 @@ Expected: No issues
 
 **Step 5: Commit**
 
-```
+```text
 feat: 연료 시스템 Data 모델 생성 (FuelModel, FuelTransactionModel)
 ```
 
@@ -394,7 +394,7 @@ Expected: No issues
 
 **Step 3: Commit**
 
-```
+```text
 feat: 연료 시스템 LocalDataSource 생성 (SharedPreferences)
 ```
 
@@ -428,7 +428,7 @@ class FuelRepositoryImpl implements FuelRepository {
 
   @override
   FuelEntity chargeFuel(
-    double amount,
+    int amount,
     FuelTransactionReason reason, [
     String? referenceId,
   ]) {
@@ -458,14 +458,14 @@ class FuelRepositoryImpl implements FuelRepository {
 
   @override
   FuelEntity consumeFuel(
-    double amount,
+    int amount,
     FuelTransactionReason reason, [
     String? referenceId,
   ]) {
     final current = _localDataSource.getFuel();
     if (current.currentFuel < amount) {
       throw InsufficientFuelException(
-        required: amount,
+        requiredAmount: amount,
         available: current.currentFuel,
       );
     }
@@ -514,18 +514,16 @@ class FuelRepositoryImpl implements FuelRepository {
 }
 
 class InsufficientFuelException implements Exception {
-  final double required;
-  final double available;
+  final int requiredAmount;
+  final int available;
 
   InsufficientFuelException({
-    required this.required,
+    required this.requiredAmount,
     required this.available,
   });
 
   @override
-  String toString() =>
-      '연료가 부족합니다 (필요: ${required.toStringAsFixed(1)}통, '
-      '보유: ${available.toStringAsFixed(1)}통)';
+  String toString() => '연료가 부족합니다 (필요: $requiredAmount통, 보유: $available통)';
 }
 ```
 
@@ -536,7 +534,7 @@ Expected: No issues
 
 **Step 3: Commit**
 
-```
+```text
 feat: 연료 시스템 Repository 구현체 생성
 ```
 
@@ -607,7 +605,7 @@ class FuelNotifier extends _$FuelNotifier {
   /// 공부 시간으로 연료 충전 (30분 = 1통)
   void chargeFuel({required int studyMinutes, String? sessionId}) {
     if (studyMinutes <= 0) return;
-    final amount = studyMinutes / 30.0;
+    final amount = studyMinutes ~/ 30;
     final useCase = ref.read(chargeFuelUseCaseProvider);
     state = useCase.execute(
       amount,
@@ -619,7 +617,7 @@ class FuelNotifier extends _$FuelNotifier {
   }
 
   /// 탐험 해금 등으로 연료 소비
-  void consumeFuel({required double amount, String? nodeId}) {
+  void consumeFuel({required int amount, String? nodeId}) {
     final useCase = ref.read(consumeFuelUseCaseProvider);
     state = useCase.execute(
       amount,
@@ -645,12 +643,12 @@ class FuelTransactionListNotifier extends _$FuelTransactionListNotifier {
 // === Convenience Providers ===
 
 @riverpod
-double currentFuel(Ref ref) {
+int currentFuel(Ref ref) {
   return ref.watch(fuelNotifierProvider).currentFuel;
 }
 
 @riverpod
-bool canUnlock(Ref ref, double requiredFuel) {
+bool canUnlock(Ref ref, int requiredFuel) {
   return ref.watch(fuelNotifierProvider).currentFuel >= requiredFuel;
 }
 ```
@@ -667,7 +665,7 @@ Expected: No issues
 
 **Step 4: Commit**
 
-```
+```text
 feat: 연료 시스템 Riverpod Provider 체인 생성
 ```
 
@@ -703,7 +701,7 @@ Expected: No issues
 
 **Step 4: Commit**
 
-```
+```text
 feat: main.dart에 연료 DataSource 초기화 추가
 ```
 
@@ -742,7 +740,7 @@ Expected: No issues
 
 **Step 4: Commit**
 
-```
+```text
 feat: 타이머 세션 완료 시 연료 자동 충전 연동
 ```
 
@@ -841,7 +839,7 @@ Expected: No issues
 
 **Step 4: Commit**
 
-```
+```text
 feat: 탐험 화면에 실제 연료 데이터 연동 (하드코딩 제거)
 ```
 
@@ -862,7 +860,7 @@ Confirm that `home_screen.dart` does not reference fuel or FuelGauge directly. I
 
 **Step 2: Commit (if changes made)**
 
-```
+```text
 feat: 홈 화면 연료 표시 연동
 ```
 
@@ -883,7 +881,7 @@ Expected: No issues
 **Step 3: Verify file structure**
 
 Confirm the following files exist:
-```
+```text
 lib/features/fuel/
 ├── data/
 │   ├── datasources/
@@ -917,6 +915,6 @@ lib/features/fuel/
 
 **Step 4: Final commit (if any cleanup needed)**
 
-```
+```text
 chore: 연료 시스템 최종 정리
 ```

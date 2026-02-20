@@ -61,7 +61,7 @@ class FuelRepositoryImpl implements FuelRepository {
     final current = _localDataSource.getFuel();
     if (current.currentFuel < amount) {
       throw InsufficientFuelException(
-        required: amount,
+        requiredAmount: amount,
         available: current.currentFuel,
       );
     }

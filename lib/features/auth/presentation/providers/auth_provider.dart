@@ -17,6 +17,8 @@ import '../../domain/usecases/sign_in_with_apple_usecase.dart';
 import '../../domain/usecases/sign_in_with_google_usecase.dart';
 import '../../domain/usecases/sign_out_usecase.dart';
 import '../../domain/utils/firebase_auth_error_handler.dart';
+import '../../../exploration/presentation/providers/exploration_provider.dart';
+import '../../../fuel/presentation/providers/fuel_provider.dart';
 import '../../../timer/presentation/providers/timer_session_provider.dart';
 import '../../../todo/presentation/providers/todo_provider.dart';
 
@@ -282,15 +284,7 @@ class AuthNotifier extends _$AuthNotifier {
     await prefs.setBool(kIsGuestKey, true);
 
     // 이전 게스트 세션 잔여 데이터 방어적 정리 (앱 강종 대비)
-    final todoRepo = ref.read(todoRepositoryProvider);
-    await todoRepo.clearAll();
-    final timerRepo = ref.read(timerSessionRepositoryProvider);
-    await timerRepo.clearAll();
-
-    // Riverpod Provider 메모리 캐시 강제 초기화
-    ref.invalidate(timerSessionListNotifierProvider);
-    ref.invalidate(todoListNotifierProvider);
-    ref.invalidate(categoryListNotifierProvider);
+    await _clearGuestData();
 
     state = const AsyncValue.data(
       AuthResultEntity(
@@ -312,22 +306,9 @@ class AuthNotifier extends _$AuthNotifier {
     if (currentUser?.isGuest == true) {
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove(kIsGuestKey);
-
-      // 게스트 할일 데이터 삭제
-      final todoRepo = ref.read(todoRepositoryProvider);
-      await todoRepo.clearAll();
-
-      // 게스트 타이머 세션 데이터 삭제
-      final timerRepo = ref.read(timerSessionRepositoryProvider);
-      await timerRepo.clearAll();
-
-      // Riverpod Provider 메모리 캐시 강제 초기화
-      ref.invalidate(timerSessionListNotifierProvider);
-      ref.invalidate(todoListNotifierProvider);
-      ref.invalidate(categoryListNotifierProvider);
-
+      await _clearGuestData();
       debugPrint(
-        '🧹 게스트 캐시 삭제 완료 ($kIsGuestKey, todos, categories, timer sessions)',
+        '🧹 게스트 캐시 삭제 완료 ($kIsGuestKey, todos, categories, timer sessions, fuel, exploration)',
       );
       state = const AsyncValue.data(null);
       return;
@@ -347,6 +328,24 @@ class AuthNotifier extends _$AuthNotifier {
       state = previous;
       debugPrint('❌ 로그아웃 실패: $e\n$stack');
     }
+  }
+
+  /// 게스트 데이터 일괄 삭제 (디스크 + 메모리 캐시)
+  Future<void> _clearGuestData() async {
+    final todoRepo = ref.read(todoRepositoryProvider);
+    await todoRepo.clearAll();
+    final timerRepo = ref.read(timerSessionRepositoryProvider);
+    await timerRepo.clearAll();
+    final fuelRepo = ref.read(fuelRepositoryProvider);
+    await fuelRepo.clearAll();
+    final explorationRepo = ref.read(explorationRepositoryProvider);
+    await explorationRepo.clearAll();
+
+    ref.invalidate(timerSessionListNotifierProvider);
+    ref.invalidate(todoListNotifierProvider);
+    ref.invalidate(categoryListNotifierProvider);
+    ref.invalidate(fuelNotifierProvider);
+    ref.invalidate(explorationNotifierProvider);
   }
 
   /// 닉네임 설정 완료 후 상태 갱신

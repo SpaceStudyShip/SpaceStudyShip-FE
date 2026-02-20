@@ -53,14 +53,14 @@ class ExplorationNodeEntity {
   /// 계층 깊이 (0=galaxy, 1=starSystem, 2=planet, 3=region)
   final int depth;
 
-  /// 아이콘 (이모지: 🌍, 🇰🇷 등)
+  /// 아이콘 (행성: 이모지 🌍 / 지역: 국가 코드 KR)
   final String icon;
 
   /// 상위 노드 ID (null = 최상위)
   final String? parentId;
 
   /// 해금에 필요한 연료
-  final double requiredFuel;
+  final int requiredFuel;
 
   /// 해금 여부
   final bool isUnlocked;
@@ -88,7 +88,7 @@ class ExplorationNodeEntity {
     int? depth,
     String? icon,
     String? parentId,
-    double? requiredFuel,
+    int? requiredFuel,
     bool? isUnlocked,
     bool? isCleared,
     int? sortOrder,

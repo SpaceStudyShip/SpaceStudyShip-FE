@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/constants/app_colors.dart';
@@ -7,31 +8,30 @@ import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../../../core/constants/toss_design_tokens.dart';
 import '../../domain/entities/exploration_node_entity.dart';
-import '../../domain/entities/exploration_progress_entity.dart';
+import '../providers/exploration_provider.dart';
 
 /// 맵 위 행성 노드 위젯
 ///
 /// 우주 맵에서 행성을 원형 아이콘으로 표시합니다.
 /// 해금/잠금/클리어 3가지 상태를 시각적으로 구분합니다.
-class PlanetNode extends StatefulWidget {
+/// 진행도를 내부에서 직접 watch하여 해당 행성만 리빌드됩니다.
+class PlanetNode extends ConsumerStatefulWidget {
   const PlanetNode({
     super.key,
     required this.node,
-    this.progress,
     this.isCurrentLocation = false,
     required this.onTap,
   });
 
   final ExplorationNodeEntity node;
-  final ExplorationProgressEntity? progress;
   final bool isCurrentLocation;
   final VoidCallback onTap;
 
   @override
-  State<PlanetNode> createState() => _PlanetNodeState();
+  ConsumerState<PlanetNode> createState() => _PlanetNodeState();
 }
 
-class _PlanetNodeState extends State<PlanetNode>
+class _PlanetNodeState extends ConsumerState<PlanetNode>
     with SingleTickerProviderStateMixin {
   bool _isPressed = false;
   late final AnimationController _glowController;
@@ -59,6 +59,7 @@ class _PlanetNodeState extends State<PlanetNode>
   Widget build(BuildContext context) {
     final isLocked = !widget.node.isUnlocked;
     final isCleared = widget.node.isCleared;
+    final progress = ref.watch(explorationProgressProvider(widget.node.id));
 
     return GestureDetector(
       onTapDown: (_) => setState(() => _isPressed = true),
@@ -112,16 +113,16 @@ class _PlanetNodeState extends State<PlanetNode>
                     ),
                     SizedBox(width: 2.w),
                     Text(
-                      '${widget.node.requiredFuel.toStringAsFixed(1)}통',
+                      '${widget.node.requiredFuel}통',
                       style: AppTextStyles.tag_10.copyWith(
                         color: AppColors.textTertiary,
                       ),
                     ),
                   ],
                 )
-              else if (widget.progress != null && !isCleared)
+              else if (!isCleared)
                 Text(
-                  '${widget.progress!.clearedChildren}/${widget.progress!.totalChildren}',
+                  '${progress.clearedChildren}/${progress.totalChildren}',
                   style: AppTextStyles.tag_10.copyWith(
                     color: AppColors.primary,
                   ),

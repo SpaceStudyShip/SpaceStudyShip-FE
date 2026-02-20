@@ -1,23 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../../../core/widgets/animations/entrance_animations.dart';
+import '../../../../core/widgets/dialogs/app_dialog.dart';
+import '../../../../core/widgets/feedback/app_snackbar.dart';
 import '../../../../core/widgets/states/space_empty_state.dart';
 import '../../../exploration/domain/entities/exploration_node_entity.dart';
-import '../../../exploration/domain/entities/exploration_progress_entity.dart';
+import '../../../exploration/presentation/providers/exploration_provider.dart';
 import '../../../exploration/presentation/widgets/planet_node.dart';
 import '../../../exploration/presentation/widgets/space_map_background.dart';
 import '../../../exploration/presentation/widgets/space_map_painter.dart';
+import '../../../auth/presentation/providers/auth_provider.dart';
+import '../../../fuel/presentation/providers/fuel_provider.dart';
+import '../../../../core/utils/unlock_dialog_helper.dart';
 import '../../../../core/widgets/space/fuel_gauge.dart';
 
 /// 탐험 스크린 - 우주 항로맵
 ///
 /// 수직 스크롤 우주 맵에서 행성들을 탐색합니다.
 /// 행성들이 지그재그로 배치되며 곡선 경로로 연결됩니다.
-class ExploreScreen extends StatelessWidget {
+class ExploreScreen extends ConsumerWidget {
   const ExploreScreen({super.key});
 
   /// 행성 간 세로 간격
@@ -28,14 +34,19 @@ class ExploreScreen extends StatelessWidget {
   static final double _mapBottomPadding = 80.h;
 
   @override
-  Widget build(BuildContext context) {
-    // TODO: Riverpod Provider 연결 후 제거
-    final currentFuel = 3.5;
-    final planets = _samplePlanets;
-    final progressMap = _sampleProgressMap;
+  Widget build(BuildContext context, WidgetRef ref) {
+    final currentFuel = ref.watch(currentFuelProvider);
+    final isGuest = ref.watch(isGuestProvider);
+    final planets = ref.watch(explorationNotifierProvider);
 
     // 현재 위치: 가장 마지막으로 해금된 행성
-    final currentPlanetId = planets.where((p) => p.isUnlocked).toList().last.id;
+    var currentPlanetId = '';
+    for (int i = planets.length - 1; i >= 0; i--) {
+      if (planets[i].isUnlocked) {
+        currentPlanetId = planets[i].id;
+        break;
+      }
+    }
 
     // 상단/하단 inset 계산 (AppBar + 바텀 네비 영역까지 별 배경 확장)
     final topInset = MediaQuery.of(context).padding.top + kToolbarHeight;
@@ -76,9 +87,11 @@ class ExploreScreen extends StatelessWidget {
           ? _buildEmptyState()
           : _buildSpaceMap(
               context,
+              ref,
               planets,
-              progressMap,
               currentPlanetId,
+              currentFuel,
+              isGuest,
               mapHeight,
               topInset,
             ),
@@ -87,9 +100,11 @@ class ExploreScreen extends StatelessWidget {
 
   Widget _buildSpaceMap(
     BuildContext context,
+    WidgetRef ref,
     List<ExplorationNodeEntity> planets,
-    Map<String, ExplorationProgressEntity> progressMap,
     String currentPlanetId,
+    int currentFuel,
+    bool isGuest,
     double mapHeight,
     double topInset,
   ) {
@@ -145,9 +160,14 @@ class ExploreScreen extends StatelessWidget {
                       delay: Duration(milliseconds: 100 + i * 80),
                       child: PlanetNode(
                         node: planets[i],
-                        progress: progressMap[planets[i].id],
                         isCurrentLocation: planets[i].id == currentPlanetId,
-                        onTap: () => _handlePlanetTap(context, planets[i]),
+                        onTap: () => _handlePlanetTap(
+                          context,
+                          ref,
+                          planets[i],
+                          currentFuel,
+                          isGuest,
+                        ),
                       ),
                     ),
                   ),
@@ -181,18 +201,65 @@ class ExploreScreen extends StatelessWidget {
     return positions;
   }
 
-  void _handlePlanetTap(BuildContext context, ExplorationNodeEntity planet) {
-    if (!planet.isUnlocked) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('연료 ${planet.requiredFuel.toStringAsFixed(1)}통이 필요합니다'),
-          behavior: SnackBarBehavior.floating,
-          duration: const Duration(seconds: 2),
-        ),
-      );
+  void _handlePlanetTap(
+    BuildContext context,
+    WidgetRef ref,
+    ExplorationNodeEntity planet,
+    int currentFuel,
+    bool isGuest,
+  ) {
+    if (planet.isUnlocked) {
+      context.push('/explore/planet/${planet.id}');
       return;
     }
-    context.push('/explore/planet/${planet.id}');
+
+    // 게스트 모드: 지구 외 행성은 로그인 필요
+    if (isGuest) {
+      _showLoginPrompt(context, ref);
+      return;
+    }
+
+    // 이전 행성 미해금: 순서대로만 해금 가능
+    final canUnlock = ref
+        .read(explorationNotifierProvider.notifier)
+        .canUnlockPlanet(planet.id);
+    if (!canUnlock) {
+      final planets = ref.read(explorationNotifierProvider);
+      final targetIndex = planets.indexWhere((p) => p.id == planet.id);
+      final prevPlanet = planets[targetIndex - 1];
+      AppSnackBar.info(context, '${prevPlanet.name}을(를) 먼저 해금해야 합니다!');
+      return;
+    }
+
+    // 잠긴 행성: 연료 부족
+    if (currentFuel < planet.requiredFuel) {
+      AppSnackBar.warning(context, '연료가 부족합니다! (필요: ${planet.requiredFuel}통)');
+      return;
+    }
+
+    // 잠긴 행성: 연료 충분 + 이전 행성 해금됨 → 해금 다이얼로그
+    showUnlockDialog(
+      context: context,
+      nodeName: planet.name,
+      requiredFuel: planet.requiredFuel,
+      onUnlock: () => ref
+          .read(explorationNotifierProvider.notifier)
+          .unlockPlanet(planet.id, planet.requiredFuel),
+    );
+  }
+
+  void _showLoginPrompt(BuildContext context, WidgetRef ref) async {
+    final confirmed = await AppDialog.confirm(
+      context: context,
+      title: '로그인하시겠어요?',
+      message: '게스트 모드의 데이터가\n모두 초기화돼요',
+      isDestructive: true,
+      confirmText: '로그인',
+      cancelText: '취소',
+    );
+    if (confirmed == true) {
+      await ref.read(authNotifierProvider.notifier).signOut();
+    }
   }
 
   Widget _buildEmptyState() {
@@ -204,71 +271,4 @@ class ExploreScreen extends StatelessWidget {
       iconSize: 80,
     );
   }
-
-  // ═══════════════════════════════════════════════════
-  // 임시 샘플 데이터 (Riverpod Provider 연결 후 제거)
-  // ═══════════════════════════════════════════════════
-
-  List<ExplorationNodeEntity> get _samplePlanets => [
-    const ExplorationNodeEntity(
-      id: 'earth',
-      name: '지구',
-      nodeType: ExplorationNodeType.planet,
-      depth: 2,
-      icon: '🌍',
-      requiredFuel: 0,
-      isUnlocked: true,
-      sortOrder: 0,
-      description: '우리의 출발지, 고향 행성',
-      mapX: 0.5,
-      mapY: 0.08,
-    ),
-    const ExplorationNodeEntity(
-      id: 'moon',
-      name: '달',
-      nodeType: ExplorationNodeType.planet,
-      depth: 2,
-      icon: '🌙',
-      requiredFuel: 5.0,
-      isUnlocked: false,
-      sortOrder: 1,
-      description: '지구의 유일한 자연 위성',
-      mapX: 0.15,
-      mapY: 0.30,
-    ),
-    const ExplorationNodeEntity(
-      id: 'mars',
-      name: '화성',
-      nodeType: ExplorationNodeType.planet,
-      depth: 2,
-      icon: '🔴',
-      requiredFuel: 15.0,
-      isUnlocked: false,
-      sortOrder: 2,
-      description: '붉은 행성, 탐험의 꿈',
-      mapX: 0.75,
-      mapY: 0.55,
-    ),
-    const ExplorationNodeEntity(
-      id: 'jupiter',
-      name: '목성',
-      nodeType: ExplorationNodeType.planet,
-      depth: 2,
-      icon: '🟤',
-      requiredFuel: 30.0,
-      isUnlocked: false,
-      sortOrder: 3,
-      description: '태양계 최대의 가스 행성',
-      mapX: 0.3,
-      mapY: 0.78,
-    ),
-  ];
-
-  Map<String, ExplorationProgressEntity> get _sampleProgressMap => {
-    'earth': const ExplorationProgressEntity(
-      nodeId: 'earth',
-      clearedChildren: 1,
-      totalChildren: 5,
-    ),
-  };
 }

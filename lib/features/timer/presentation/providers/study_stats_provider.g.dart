@@ -6,7 +6,7 @@ part of 'study_stats_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$todayStudyMinutesHash() => r'7535caee82fcfe3c691c5eb1a1177831658ead83';
+String _$todayStudyMinutesHash() => r'410d2ddb1ed7f2797f1664c0204aaa7fc3af5b0f';
 
 /// 오늘 공부 시간 (분)
 ///
@@ -26,7 +26,7 @@ final todayStudyMinutesProvider = AutoDisposeProvider<int>.internal(
 // ignore: unused_element
 typedef TodayStudyMinutesRef = AutoDisposeProviderRef<int>;
 String _$weeklyStudyMinutesHash() =>
-    r'3550d67aa39757a3e08c414e1a4ca2a5e195eb46';
+    r'bd67a8f1b8bb35d8f7024038945fb6209b0a3539';
 
 /// 이번 주 공부 시간 (분) — 최근 7일
 ///
@@ -103,7 +103,7 @@ final totalSessionCountProvider = AutoDisposeProvider<int>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef TotalSessionCountRef = AutoDisposeProviderRef<int>;
-String _$currentStreakHash() => r'24f04a04b131635a4526d7973853bb4463819bba';
+String _$currentStreakHash() => r'0a4b30dff7e3e0f05a96f4413232eff23703f82c';
 
 /// 연속 공부 일수 (streak)
 ///

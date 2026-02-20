@@ -17,7 +17,7 @@ import 'streak_badge.dart';
 /// StatusCard(
 ///   location: '서울',
 ///   locationFlag: '🇰🇷',
-///   fuel: 3.5,
+///   fuel: 3,
 ///   streakDays: 5,
 /// )
 /// ```
@@ -39,7 +39,7 @@ class StatusCard extends StatelessWidget {
   final String? locationFlag;
 
   /// 현재 연료
-  final double fuel;
+  final int fuel;
 
   /// 스트릭 일수
   final int streakDays;

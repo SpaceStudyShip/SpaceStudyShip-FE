@@ -15,6 +15,10 @@ import 'core/config/env_config.dart';
 import 'core/services/fcm/firebase_messaging_service.dart';
 import 'core/services/fcm/local_notifications_service.dart';
 import 'core/theme/app_theme.dart';
+import 'features/exploration/data/datasources/exploration_local_datasource.dart';
+import 'features/exploration/presentation/providers/exploration_provider.dart';
+import 'features/fuel/data/datasources/fuel_local_datasource.dart';
+import 'features/fuel/presentation/providers/fuel_provider.dart';
 import 'features/timer/data/datasources/timer_session_local_datasource.dart';
 import 'features/timer/presentation/providers/timer_session_provider.dart';
 import 'features/todo/data/datasources/local_todo_datasource.dart';
@@ -189,6 +193,14 @@ void main() async {
         if (prefs != null)
           timerSessionLocalDataSourceProvider.overrideWithValue(
             TimerSessionLocalDataSource(prefs),
+          ),
+        if (prefs != null)
+          fuelLocalDataSourceProvider.overrideWithValue(
+            FuelLocalDataSource(prefs),
+          ),
+        if (prefs != null)
+          explorationLocalDataSourceProvider.overrideWithValue(
+            ExplorationLocalDataSource(prefs),
           ),
       ],
       child: const MyApp(),

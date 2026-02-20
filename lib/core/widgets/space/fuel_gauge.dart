@@ -10,7 +10,7 @@ import '../../constants/text_styles.dart';
 /// **사용 예시**:
 /// ```dart
 /// FuelGauge(
-///   currentFuel: 3.5,
+///   currentFuel: 3,
 ///   showLabel: true,
 /// )
 /// ```
@@ -24,11 +24,11 @@ class FuelGauge extends StatelessWidget {
     this.size = FuelGaugeSize.medium,
   });
 
-  /// 현재 연료량 (예: 3.5통)
-  final double currentFuel;
+  /// 현재 연료량 (예: 3통)
+  final int currentFuel;
 
   /// 최대 연료량 (표시용, null이면 표시 안 함)
-  final double? maxFuel;
+  final int? maxFuel;
 
   /// 라벨 표시 여부
   final bool showLabel;
@@ -80,8 +80,8 @@ class FuelGauge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final fuelText = maxFuel != null
-        ? '${currentFuel.toStringAsFixed(1)}/${maxFuel!.toStringAsFixed(0)}통'
-        : '${currentFuel.toStringAsFixed(1)}통';
+        ? '$currentFuel/$maxFuel통'
+        : '$currentFuel통';
 
     return Row(
       mainAxisSize: MainAxisSize.min,

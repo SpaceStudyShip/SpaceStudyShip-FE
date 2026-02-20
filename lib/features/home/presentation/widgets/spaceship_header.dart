@@ -29,7 +29,7 @@ class SpaceshipHeader extends StatefulWidget {
 
   final String spaceshipIcon;
   final String spaceshipName;
-  final double fuel;
+  final int fuel;
   final int experience;
   final int streakDays;
   final bool isStreakActive;
@@ -150,7 +150,7 @@ class _SpaceshipHeaderState extends State<SpaceshipHeader> {
                   children: [
                     HomeStatChip(
                       iconData: Icons.local_gas_station_rounded,
-                      value: widget.fuel.toStringAsFixed(0),
+                      value: widget.fuel.toString(),
                       label: '연료',
                       valueColor: _fuelColor,
                     ),

@@ -476,9 +476,9 @@ class _TestWidgetPageState extends State<TestWidgetPage> {
           runSpacing: 12.h,
           alignment: WrapAlignment.center,
           children: const [
-            FuelGauge(currentFuel: 5.0, maxFuel: 5.0, showLabel: false),
-            FuelGauge(currentFuel: 2.5, maxFuel: 5.0, showLabel: false),
-            FuelGauge(currentFuel: 0.5, maxFuel: 5.0, showLabel: false),
+            FuelGauge(currentFuel: 5, maxFuel: 5, showLabel: false),
+            FuelGauge(currentFuel: 3, maxFuel: 5, showLabel: false),
+            FuelGauge(currentFuel: 1, maxFuel: 5, showLabel: false),
           ],
         ),
         SizedBox(height: AppSpacing.s24),
@@ -500,7 +500,7 @@ class _TestWidgetPageState extends State<TestWidgetPage> {
         StatusCard(
           location: '달 기지',
           locationFlag: '🌙',
-          fuel: 75.0,
+          fuel: 75,
           streakDays: 14,
         ),
         SizedBox(height: AppSpacing.s24),

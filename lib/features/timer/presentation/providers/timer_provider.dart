@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../domain/entities/timer_session_entity.dart';
+import '../../../fuel/presentation/providers/fuel_provider.dart';
 import '../../../todo/presentation/providers/todo_provider.dart';
 import 'timer_session_provider.dart';
 import 'timer_state.dart';
@@ -110,6 +111,11 @@ class TimerNotifier extends _$TimerNotifier with WidgetsBindingObserver {
         await ref
             .read(timerSessionListNotifierProvider.notifier)
             .addSession(session);
+
+        // 연료 충전 (30분 = 1통)
+        await ref
+            .read(fuelNotifierProvider.notifier)
+            .chargeFuel(studyMinutes: elapsedMinutes, sessionId: session.id);
       }
     } finally {
       state = const TimerState();

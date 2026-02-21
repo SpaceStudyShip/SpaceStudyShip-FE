@@ -179,8 +179,10 @@ String _$authStateHash() => r'facb22ebd952358284758f2de88b4f654584d127';
 
 /// Firebase Auth State를 실시간으로 제공하는 StreamProvider
 ///
-/// GoRouter의 refreshListenable로 사용되어
-/// 인증 상태 변경 시 자동으로 라우팅을 재평가합니다.
+/// 현재는 미사용. 소셜 로그인 도입 시 Firebase 외부 로그아웃
+/// (토큰 만료, 계정 삭제 등)을 감지하기 위해 RouterNotifier에
+/// listen 추가 예정. AuthInterceptor의 401 → forceLogout() 경로만으로는
+/// Firebase 레벨 상태 변경을 감지할 수 없으므로 보존.
 ///
 /// Copied from [authState].
 @ProviderFor(authState)
@@ -242,7 +244,7 @@ final activeLoginNotifierProvider =
     );
 
 typedef _$ActiveLoginNotifier = AutoDisposeNotifier<SocialLoginProvider?>;
-String _$authNotifierHash() => r'f472b329e8d0c0f6fffc0b3cabc01d82902b60d5';
+String _$authNotifierHash() => r'1a4219cce6f2b3a7ceca7096975c480f55c10470';
 
 /// 인증 상태를 관리하는 Notifier
 ///

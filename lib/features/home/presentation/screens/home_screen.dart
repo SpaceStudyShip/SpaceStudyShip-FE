@@ -22,6 +22,7 @@ import '../../../todo/presentation/providers/todo_provider.dart';
 import '../../../todo/presentation/widgets/dismissible_todo_item.dart';
 import '../../../todo/presentation/widgets/todo_add_bottom_sheet.dart';
 import '../widgets/space_calendar.dart';
+import '../../../../routes/navigation_providers.dart';
 import '../widgets/spaceship_selector.dart';
 
 /// 홈 스크린
@@ -98,6 +99,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // 홈 탭 재탭 → 바텀시트 접기
+    ref.listen(homeReTapProvider, (prev, next) {
+      if (_isSheetExpanded) {
+        _sheetController.animateTo(
+          0.30,
+          duration: const Duration(milliseconds: 350),
+          curve: Curves.easeOutCubic,
+        );
+      }
+    });
+
     return Scaffold(
       backgroundColor: Colors.transparent,
       extendBody: true,

@@ -16,9 +16,10 @@ class SafeDateTimeConverter implements JsonConverter<DateTime, dynamic> {
   @override
   DateTime fromJson(dynamic json) {
     if (json is String) {
-      return DateTime.tryParse(json) ?? DateTime.fromMillisecondsSinceEpoch(0);
+      return DateTime.tryParse(json) ??
+          DateTime.fromMillisecondsSinceEpoch(0, isUtc: true);
     }
-    return DateTime.fromMillisecondsSinceEpoch(0);
+    return DateTime.fromMillisecondsSinceEpoch(0, isUtc: true);
   }
 
   @override

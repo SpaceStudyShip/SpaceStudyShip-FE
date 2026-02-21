@@ -16,8 +16,7 @@ class SafeDateTimeConverter implements JsonConverter<DateTime, dynamic> {
   @override
   DateTime fromJson(dynamic json) {
     if (json is String) {
-      return DateTime.tryParse(json) ??
-          DateTime.fromMillisecondsSinceEpoch(0);
+      return DateTime.tryParse(json) ?? DateTime.fromMillisecondsSinceEpoch(0);
     }
     return DateTime.fromMillisecondsSinceEpoch(0);
   }
@@ -47,12 +46,12 @@ class FuelTransactionModel with _$FuelTransactionModel {
 extension FuelTransactionModelX on FuelTransactionModel {
   FuelTransactionEntity toEntity() => FuelTransactionEntity(
     id: id,
-    type: FuelTransactionType.values
-            .where((e) => e.name == type)
-            .firstOrNull ??
+    type:
+        FuelTransactionType.values.where((e) => e.name == type).firstOrNull ??
         FuelTransactionType.charge,
     amount: amount,
-    reason: FuelTransactionReason.values
+    reason:
+        FuelTransactionReason.values
             .where((e) => e.name == reason)
             .firstOrNull ??
         FuelTransactionReason.studySession,

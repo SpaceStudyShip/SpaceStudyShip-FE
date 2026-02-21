@@ -51,14 +51,17 @@ class FuelNotifier extends _$FuelNotifier {
       FuelTransactionReason.studySession,
       sessionId,
     );
-    // 이력도 갱신
-    ref.invalidate(fuelTransactionListNotifierProvider);
+    // 실제 충전이 발생한 경우에만 이력 갱신
+    if (amount > 0) {
+      ref.invalidate(fuelTransactionListNotifierProvider);
+    }
   }
 
   /// 탐험 해금 등으로 연료 소비
   ///
   /// 잔량 부족 시 [InsufficientFuelException] 발생.
   Future<void> consumeFuel({required int amount, String? nodeId}) async {
+    if (amount <= 0) return;
     final repository = ref.read(fuelRepositoryProvider);
     state = await repository.consumeFuel(
       amount,

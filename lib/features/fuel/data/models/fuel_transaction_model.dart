@@ -8,20 +8,22 @@ part 'fuel_transaction_model.g.dart';
 
 /// DateTime 안전 파싱 컨버터
 ///
-/// `DateTime.tryParse` 실패 시 현재 시각을 fallback으로 사용합니다.
+/// `DateTime.tryParse` 실패 시 epoch(1970-01-01)을 sentinel로 사용합니다.
+/// 저장 시 UTC로 변환하여 타임존 불일치를 방지합니다.
 class SafeDateTimeConverter implements JsonConverter<DateTime, dynamic> {
   const SafeDateTimeConverter();
 
   @override
   DateTime fromJson(dynamic json) {
     if (json is String) {
-      return DateTime.tryParse(json) ?? DateTime.now();
+      return DateTime.tryParse(json) ??
+          DateTime.fromMillisecondsSinceEpoch(0);
     }
-    return DateTime.now();
+    return DateTime.fromMillisecondsSinceEpoch(0);
   }
 
   @override
-  String toJson(DateTime date) => date.toIso8601String();
+  String toJson(DateTime date) => date.toUtc().toIso8601String();
 }
 
 @freezed
@@ -45,9 +47,15 @@ class FuelTransactionModel with _$FuelTransactionModel {
 extension FuelTransactionModelX on FuelTransactionModel {
   FuelTransactionEntity toEntity() => FuelTransactionEntity(
     id: id,
-    type: FuelTransactionType.values.byName(type),
+    type: FuelTransactionType.values
+            .where((e) => e.name == type)
+            .firstOrNull ??
+        FuelTransactionType.charge,
     amount: amount,
-    reason: FuelTransactionReason.values.byName(reason),
+    reason: FuelTransactionReason.values
+            .where((e) => e.name == reason)
+            .firstOrNull ??
+        FuelTransactionReason.studySession,
     referenceId: referenceId,
     balanceAfter: balanceAfter,
     createdAt: createdAt,

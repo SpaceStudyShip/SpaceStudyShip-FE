@@ -63,6 +63,7 @@ class FuelEntity with _$FuelEntity {
     @Default(0) int currentFuel,          // 현재 보유량 (통)
     @Default(0) int totalCharged,         // 누적 충전량
     @Default(0) int totalConsumed,        // 누적 소비량
+    @Default(0) int pendingMinutes,       // 30분 미만 잔여 공부 시간
     required DateTime lastUpdatedAt,       // 마지막 갱신 시각
   }) = _FuelEntity;
 }
@@ -93,10 +94,19 @@ class FuelTransactionEntity with _$FuelTransactionEntity {
 ```dart
 abstract class FuelRepository {
   FuelEntity getFuel();
-  FuelEntity chargeFuel(int amount, FuelTransactionReason reason, [String? referenceId]);
-  FuelEntity consumeFuel(int amount, FuelTransactionReason reason, [String? referenceId]);
-  bool canConsume(int amount);
+  Future<FuelEntity> chargeFuel(
+    int amount,
+    int pendingMinutes,
+    FuelTransactionReason reason, [
+    String? referenceId,
+  ]);
+  Future<FuelEntity> consumeFuel(
+    int amount,
+    FuelTransactionReason reason, [
+    String? referenceId,
+  ]);
   List<FuelTransactionEntity> getTransactions({int? limit});
+  Future<void> clearAll();
 }
 ```
 
@@ -168,56 +178,57 @@ class FuelRepositoryImpl implements FuelRepository {
 
 ```dart
 // 1. DataSource (main.dart에서 override)
-@riverpod
+@Riverpod(keepAlive: true)
 FuelLocalDataSource fuelLocalDataSource(Ref ref) => throw StateError('Not initialized');
 
 // 2. Repository
-@riverpod
+@Riverpod(keepAlive: true)
 FuelRepository fuelRepository(Ref ref) {
   final dataSource = ref.watch(fuelLocalDataSourceProvider);
   return FuelRepositoryImpl(dataSource);
 }
 
-// 3. UseCases
-@riverpod
-ChargeFuelUseCase chargeFuelUseCase(Ref ref) => ChargeFuelUseCase(ref.watch(fuelRepositoryProvider));
-
-@riverpod
-ConsumeFuelUseCase consumeFuelUseCase(Ref ref) => ConsumeFuelUseCase(ref.watch(fuelRepositoryProvider));
-
-// 4. State Notifier
+// 3. State Notifier
 @Riverpod(keepAlive: true)
 class FuelNotifier extends _$FuelNotifier {
   @override
   FuelEntity build() => ref.watch(fuelRepositoryProvider).getFuel();
 
-  void chargeFuel({required int studyMinutes, String? sessionId}) {
-    final amount = studyMinutes ~/ 30;  // 30분 = 1통
-    final useCase = ref.read(chargeFuelUseCaseProvider);
-    state = useCase.execute(amount, FuelTransactionReason.studySession, sessionId);
+  Future<void> chargeFuel({required int studyMinutes, String? sessionId}) async {
+    if (studyMinutes <= 0) return;
+    final totalMinutes = state.pendingMinutes + studyMinutes;
+    final amount = totalMinutes ~/ 30;
+    final newPendingMinutes = totalMinutes % 30;
+    final repository = ref.read(fuelRepositoryProvider);
+    state = await repository.chargeFuel(
+      amount, newPendingMinutes,
+      FuelTransactionReason.studySession, sessionId,
+    );
+    if (amount > 0) {
+      ref.invalidate(fuelTransactionListNotifierProvider);
+    }
   }
 
-  void consumeFuel({required int amount, String? nodeId}) {
-    final useCase = ref.read(consumeFuelUseCaseProvider);
-    state = useCase.execute(amount, FuelTransactionReason.explorationUnlock, nodeId);
+  Future<void> consumeFuel({required int amount, String? nodeId}) async {
+    if (amount <= 0) return;
+    final repository = ref.read(fuelRepositoryProvider);
+    state = await repository.consumeFuel(
+      amount, FuelTransactionReason.explorationUnlock, nodeId,
+    );
+    ref.invalidate(fuelTransactionListNotifierProvider);
   }
 }
 
-// 5. 이력 Notifier
+// 4. 이력 Notifier
 @riverpod
 class FuelTransactionListNotifier extends _$FuelTransactionListNotifier {
   @override
   List<FuelTransactionEntity> build() => ref.watch(fuelRepositoryProvider).getTransactions();
-
-  void refresh() { state = ref.read(fuelRepositoryProvider).getTransactions(); }
 }
 
-// 6. 편의 Provider
+// 5. 편의 Provider
 @riverpod
 int currentFuel(Ref ref) => ref.watch(fuelNotifierProvider).currentFuel;
-
-@riverpod
-bool canUnlock(Ref ref, int requiredFuel) => ref.watch(fuelNotifierProvider).currentFuel >= requiredFuel;
 ```
 
 ---

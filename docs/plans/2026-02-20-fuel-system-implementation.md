@@ -96,18 +96,19 @@ import '../entities/fuel_transaction_entity.dart';
 
 abstract class FuelRepository {
   FuelEntity getFuel();
-  FuelEntity chargeFuel(
+  Future<FuelEntity> chargeFuel(
+    int amount,
+    int pendingMinutes,
+    FuelTransactionReason reason, [
+    String? referenceId,
+  ]);
+  Future<FuelEntity> consumeFuel(
     int amount,
     FuelTransactionReason reason, [
     String? referenceId,
   ]);
-  FuelEntity consumeFuel(
-    int amount,
-    FuelTransactionReason reason, [
-    String? referenceId,
-  ]);
-  bool canConsume(int amount);
   List<FuelTransactionEntity> getTransactions({int? limit});
+  Future<void> clearAll();
 }
 ```
 
@@ -427,20 +428,22 @@ class FuelRepositoryImpl implements FuelRepository {
   }
 
   @override
-  FuelEntity chargeFuel(
+  Future<FuelEntity> chargeFuel(
     int amount,
+    int pendingMinutes,
     FuelTransactionReason reason, [
     String? referenceId,
-  ]) {
+  ]) async {
     final current = _localDataSource.getFuel();
     final newFuel = FuelModel(
       currentFuel: current.currentFuel + amount,
       totalCharged: current.totalCharged + amount,
       totalConsumed: current.totalConsumed,
+      pendingMinutes: pendingMinutes,
       lastUpdatedAt: DateTime.now(),
     );
 
-    _localDataSource.saveFuel(newFuel);
+    await _localDataSource.saveFuel(newFuel);
 
     final transaction = FuelTransactionModel(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
@@ -451,17 +454,17 @@ class FuelRepositoryImpl implements FuelRepository {
       balanceAfter: newFuel.currentFuel,
       createdAt: DateTime.now(),
     );
-    _localDataSource.addTransaction(transaction);
+    await _localDataSource.addTransaction(transaction);
 
     return newFuel.toEntity();
   }
 
   @override
-  FuelEntity consumeFuel(
+  Future<FuelEntity> consumeFuel(
     int amount,
     FuelTransactionReason reason, [
     String? referenceId,
-  ]) {
+  ]) async {
     final current = _localDataSource.getFuel();
     if (current.currentFuel < amount) {
       throw InsufficientFuelException(
@@ -477,7 +480,7 @@ class FuelRepositoryImpl implements FuelRepository {
       lastUpdatedAt: DateTime.now(),
     );
 
-    _localDataSource.saveFuel(newFuel);
+    await _localDataSource.saveFuel(newFuel);
 
     final transaction = FuelTransactionModel(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
@@ -488,14 +491,9 @@ class FuelRepositoryImpl implements FuelRepository {
       balanceAfter: newFuel.currentFuel,
       createdAt: DateTime.now(),
     );
-    _localDataSource.addTransaction(transaction);
+    await _localDataSource.addTransaction(transaction);
 
     return newFuel.toEntity();
-  }
-
-  @override
-  bool canConsume(double amount) {
-    return _localDataSource.getFuel().currentFuel >= amount;
   }
 
   @override

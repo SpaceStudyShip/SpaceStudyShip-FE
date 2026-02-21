@@ -95,8 +95,8 @@ if (isGuest && planet.id != 'earth') {
 Future<void> _showLoginPrompt(BuildContext context, WidgetRef ref) async {
   final confirmed = await AppDialog.confirm(
     context: context,
-    title: '로그인이 필요해요',
-    message: '다른 행성을 탐험하려면\n로그인이 필요해요',
+    title: '로그인하시겠어요?',
+    message: '게스트 모드의 데이터가\n모두 초기화돼요',
     confirmText: '로그인',
     cancelText: '취소',
   );

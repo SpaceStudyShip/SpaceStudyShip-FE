@@ -201,13 +201,13 @@ class ExploreScreen extends ConsumerWidget {
     return positions;
   }
 
-  void _handlePlanetTap(
+  Future<void> _handlePlanetTap(
     BuildContext context,
     WidgetRef ref,
     ExplorationNodeEntity planet,
     int currentFuel,
     bool isGuest,
-  ) {
+  ) async {
     if (planet.isUnlocked) {
       context.push('/explore/planet/${planet.id}');
       return;
@@ -215,7 +215,7 @@ class ExploreScreen extends ConsumerWidget {
 
     // 게스트 모드: 지구 외 행성은 로그인 필요
     if (isGuest) {
-      _showLoginPrompt(context, ref);
+      await _showLoginPrompt(context, ref);
       return;
     }
 
@@ -261,7 +261,13 @@ class ExploreScreen extends ConsumerWidget {
       cancelText: '취소',
     );
     if (confirmed == true) {
-      await ref.read(authNotifierProvider.notifier).signOut();
+      try {
+        await ref.read(authNotifierProvider.notifier).signOut();
+      } catch (e) {
+        if (context.mounted) {
+          AppSnackBar.error(context, '로그인 화면 전환에 실패했습니다.');
+        }
+      }
     }
   }
 

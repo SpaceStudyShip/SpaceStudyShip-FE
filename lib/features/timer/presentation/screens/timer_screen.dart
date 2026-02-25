@@ -12,6 +12,7 @@ import '../../../../core/widgets/atoms/space_stat_item.dart';
 import '../../../../core/widgets/buttons/app_button.dart';
 import '../../../../core/widgets/cards/app_card.dart';
 import '../../../../core/widgets/dialogs/app_dialog.dart';
+import '../../../badge/domain/entities/badge_entity.dart';
 import '../../../todo/domain/entities/todo_entity.dart';
 import '../providers/timer_provider.dart';
 import '../providers/study_stats_provider.dart';
@@ -226,7 +227,7 @@ class _TimerScreenState extends ConsumerState<TimerScreen> {
   }
 
   void _showResultDialog(
-    ({Duration sessionDuration, String? todoTitle, int? totalMinutes}) result,
+    ({Duration sessionDuration, String? todoTitle, int? totalMinutes, List<BadgeEntity> newBadges}) result,
   ) {
     final sessionText = _formatDuration(result.sessionDuration);
 

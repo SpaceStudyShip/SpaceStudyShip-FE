@@ -4,6 +4,8 @@ import 'package:flutter/widgets.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../domain/entities/timer_session_entity.dart';
+import '../../../badge/domain/entities/badge_entity.dart';
+import '../../../badge/presentation/providers/badge_provider.dart';
 import '../../../fuel/presentation/providers/fuel_provider.dart';
 import '../../../todo/presentation/providers/todo_provider.dart';
 import 'timer_session_provider.dart';
@@ -78,9 +80,9 @@ class TimerNotifier extends _$TimerNotifier with WidgetsBindingObserver {
     _startPeriodicUiUpdate();
   }
 
-  /// 타이머 정지 + 할일 시간 업데이트
-  /// 반환: ({Duration sessionDuration, String? todoTitle, int? totalMinutes})
-  Future<({Duration sessionDuration, String? todoTitle, int? totalMinutes})?>
+  /// 타이머 정지 + 할일 시간 업데이트 + 배지 해금 체크
+  /// 반환: sessionDuration, todoTitle, totalMinutes, newBadges 레코드 (1분 미만 세션은 null)
+  Future<({Duration sessionDuration, String? todoTitle, int? totalMinutes, List<BadgeEntity> newBadges})?>
   stop() async {
     _timer?.cancel();
 
@@ -91,6 +93,7 @@ class TimerNotifier extends _$TimerNotifier with WidgetsBindingObserver {
     final endedAt = DateTime.now();
 
     int? totalMinutes;
+    List<BadgeEntity> newBadges = [];
 
     try {
       // 연동된 할일이 있고 1분 이상 측정 시 actualMinutes 누적
@@ -116,6 +119,11 @@ class TimerNotifier extends _$TimerNotifier with WidgetsBindingObserver {
         await ref
             .read(fuelNotifierProvider.notifier)
             .chargeFuel(studyMinutes: elapsedMinutes, sessionId: session.id);
+
+        // 배지 해금 체크
+        newBadges = await ref
+            .read(badgeNotifierProvider.notifier)
+            .checkAndUnlock();
       }
     } finally {
       state = const TimerState();
@@ -127,6 +135,7 @@ class TimerNotifier extends _$TimerNotifier with WidgetsBindingObserver {
             sessionDuration: sessionDuration,
             todoTitle: todoTitle,
             totalMinutes: totalMinutes,
+            newBadges: newBadges,
           )
         : null;
   }

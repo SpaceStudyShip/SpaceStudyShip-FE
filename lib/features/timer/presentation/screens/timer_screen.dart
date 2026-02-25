@@ -223,15 +223,25 @@ class _TimerScreenState extends ConsumerState<TimerScreen> {
   Future<void> _onStop() async {
     final result = await ref.read(timerNotifierProvider.notifier).stop();
     if (!mounted || result == null) return;
-    _showResultDialog(result);
+    await _showResultDialog(result);
+
+    // 새로 해금된 배지가 있으면 결과 다이얼로그 닫힌 후 배지 팝업
+    if (result.newBadges.isNotEmpty) {
+      await Future.delayed(const Duration(milliseconds: 500));
+      if (!mounted) return;
+      for (final badge in result.newBadges) {
+        await _showBadgeUnlockDialog(badge);
+        if (!mounted) return;
+      }
+    }
   }
 
-  void _showResultDialog(
+  Future<void> _showResultDialog(
     ({Duration sessionDuration, String? todoTitle, int? totalMinutes, List<BadgeEntity> newBadges}) result,
-  ) {
+  ) async {
     final sessionText = _formatDuration(result.sessionDuration);
 
-    AppDialog.show(
+    await AppDialog.show(
       context: context,
       title: '수고했어요!',
       emotion: AppDialogEmotion.success,
@@ -253,6 +263,32 @@ class _TimerScreenState extends ConsumerState<TimerScreen> {
                 ),
               ),
           ],
+        ],
+      ),
+    );
+  }
+
+  Future<void> _showBadgeUnlockDialog(BadgeEntity badge) async {
+    await AppDialog.show(
+      context: context,
+      title: '배지 획득!',
+      emotion: AppDialogEmotion.success,
+      customContent: Column(
+        children: [
+          Text(badge.icon, style: TextStyle(fontSize: 48.sp)),
+          SizedBox(height: AppSpacing.s12),
+          Text(
+            badge.name,
+            style: AppTextStyles.subHeading_18.copyWith(color: Colors.white),
+          ),
+          SizedBox(height: AppSpacing.s8),
+          Text(
+            badge.description,
+            style: AppTextStyles.paragraph_14.copyWith(
+              color: AppColors.textSecondary,
+            ),
+            textAlign: TextAlign.center,
+          ),
         ],
       ),
     );

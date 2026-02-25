@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -92,8 +93,12 @@ class ExplorationNotifier extends _$ExplorationNotifier {
       // 3. 상태 갱신
       _reload();
 
-      // 배지 해금 체크 (탐험 기반)
-      await ref.read(badgeNotifierProvider.notifier).checkAndUnlock();
+      // 배지 해금 체크 (탐험 기반) — 실패해도 탐험 해금에 영향 없음
+      try {
+        await ref.read(badgeNotifierProvider.notifier).checkAndUnlock();
+      } catch (e) {
+        debugPrint('탐험 후 배지 해금 체크 실패: $e');
+      }
     } finally {
       _isUnlocking = false;
     }
@@ -141,8 +146,12 @@ class RegionListNotifier extends _$RegionListNotifier {
       // 4. 행성 목록도 갱신 (자동 클리어 반영)
       ref.read(explorationNotifierProvider.notifier).refresh();
 
-      // 배지 해금 체크 (탐험 기반)
-      await ref.read(badgeNotifierProvider.notifier).checkAndUnlock();
+      // 배지 해금 체크 (탐험 기반) — 실패해도 지역 해금에 영향 없음
+      try {
+        await ref.read(badgeNotifierProvider.notifier).checkAndUnlock();
+      } catch (e) {
+        debugPrint('탐험 후 배지 해금 체크 실패: $e');
+      }
     } finally {
       _isUnlocking = false;
     }

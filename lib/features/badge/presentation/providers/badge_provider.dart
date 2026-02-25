@@ -86,7 +86,7 @@ class BadgeNotifier extends _$BadgeNotifier {
 
         if (shouldUnlock) {
           await repository.unlockBadge(badge.id);
-          newlyUnlocked.add(badge);
+          newlyUnlocked.add(badge.copyWith(isUnlocked: true));
         }
       } catch (e) {
         debugPrint('배지 해금 체크 실패 (${badge.id}): $e');

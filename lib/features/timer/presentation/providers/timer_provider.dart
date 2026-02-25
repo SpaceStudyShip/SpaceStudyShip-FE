@@ -127,10 +127,14 @@ class TimerNotifier extends _$TimerNotifier with WidgetsBindingObserver {
             .read(fuelNotifierProvider.notifier)
             .chargeFuel(studyMinutes: elapsedMinutes, sessionId: session.id);
 
-        // 배지 해금 체크
-        newBadges = await ref
-            .read(badgeNotifierProvider.notifier)
-            .checkAndUnlock(sessionStartTime: session.startedAt);
+        // 배지 해금 체크 — 실패해도 세션 저장에 영향 없음
+        try {
+          newBadges = await ref
+              .read(badgeNotifierProvider.notifier)
+              .checkAndUnlock(sessionStartTime: session.startedAt);
+        } catch (e) {
+          debugPrint('배지 해금 체크 실패: $e');
+        }
       }
     } finally {
       state = const TimerState();

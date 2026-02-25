@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../../../core/widgets/backgrounds/space_background.dart';
-import '../../../../core/widgets/dialogs/app_dialog.dart';
-import '../../../../core/widgets/space/badge_card.dart';
 import '../../../../core/widgets/states/space_empty_state.dart';
 import '../../domain/entities/badge_entity.dart';
 import '../providers/badge_provider.dart';
+import '../widgets/badge_card.dart';
+import '../widgets/badge_detail_dialog.dart';
 
 /// 배지 컬렉션 스크린
 ///
@@ -120,8 +118,7 @@ class BadgeCollectionScreen extends ConsumerWidget {
               name: badge.name,
               isUnlocked: badge.isUnlocked,
               rarity: badge.rarity,
-              description: badge.description,
-              onTap: () => _showBadgeDetail(context, badge),
+              onTap: () => showBadgeDetailDialog(context, badge),
             );
           },
         ),
@@ -132,30 +129,4 @@ class BadgeCollectionScreen extends ConsumerWidget {
     return widgets;
   }
 
-  void _showBadgeDetail(
-    BuildContext context,
-    BadgeEntity badge,
-  ) {
-    AppDialog.show(
-      context: context,
-      title: badge.isUnlocked ? badge.name : '???',
-      customContent: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            badge.isUnlocked ? badge.icon : '🔒',
-            style: TextStyle(fontSize: 48.sp),
-          ),
-          SizedBox(height: AppSpacing.s12),
-          Text(
-            badge.isUnlocked ? badge.description : '아직 해금되지 않은 배지예요',
-            style: AppTextStyles.paragraph_14.copyWith(
-              color: AppColors.textSecondary,
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    );
-  }
 }

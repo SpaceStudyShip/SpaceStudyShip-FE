@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../constants/app_colors.dart';
-import '../../constants/space_icons.dart';
-import '../../constants/spacing_and_radius.dart';
-import '../../constants/text_styles.dart';
-import '../../constants/toss_design_tokens.dart';
-import '../../../features/badge/domain/entities/badge_entity.dart';
-export '../../../features/badge/domain/entities/badge_entity.dart' show BadgeRarity;
+import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/space_icons.dart';
+import '../../../../core/constants/spacing_and_radius.dart';
+import '../../../../core/constants/text_styles.dart';
+import '../../../../core/constants/toss_design_tokens.dart';
+import '../../domain/entities/badge_entity.dart';
 
 /// 뱃지 카드 위젯 - 컬렉션용
 ///
@@ -29,7 +28,6 @@ class BadgeCard extends StatefulWidget {
     this.isUnlocked = false,
     this.rarity = BadgeRarity.normal,
     this.onTap,
-    this.description,
   });
 
   /// 뱃지 아이콘 (이모지)
@@ -46,9 +44,6 @@ class BadgeCard extends StatefulWidget {
 
   /// 탭 콜백
   final VoidCallback? onTap;
-
-  /// 설명
-  final String? description;
 
   @override
   State<BadgeCard> createState() => _BadgeCardState();

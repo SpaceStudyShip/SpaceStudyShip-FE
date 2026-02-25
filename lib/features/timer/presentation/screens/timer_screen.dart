@@ -13,6 +13,7 @@ import '../../../../core/widgets/buttons/app_button.dart';
 import '../../../../core/widgets/cards/app_card.dart';
 import '../../../../core/widgets/dialogs/app_dialog.dart';
 import '../../../badge/domain/entities/badge_entity.dart';
+import '../../../badge/presentation/widgets/badge_detail_dialog.dart';
 import '../../../todo/domain/entities/todo_entity.dart';
 import '../providers/timer_provider.dart';
 import '../providers/study_stats_provider.dart';
@@ -269,29 +270,7 @@ class _TimerScreenState extends ConsumerState<TimerScreen> {
   }
 
   Future<void> _showBadgeUnlockDialog(BadgeEntity badge) async {
-    await AppDialog.show(
-      context: context,
-      title: '배지 획득!',
-      emotion: AppDialogEmotion.success,
-      customContent: Column(
-        children: [
-          Text(badge.icon, style: TextStyle(fontSize: 48.sp)),
-          SizedBox(height: AppSpacing.s12),
-          Text(
-            badge.name,
-            style: AppTextStyles.subHeading_18.copyWith(color: Colors.white),
-          ),
-          SizedBox(height: AppSpacing.s8),
-          Text(
-            badge.description,
-            style: AppTextStyles.paragraph_14.copyWith(
-              color: AppColors.textSecondary,
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    );
+    await showBadgeDetailDialog(context, badge, isUnlockCelebration: true);
   }
 
   Widget _buildResultRow(String label, String value) {

@@ -37,16 +37,6 @@ class BadgeLocalDataSource {
     await _saveAll(current.values.toList());
   }
 
-  /// 신규 표시 제거
-  Future<void> markSeen(String badgeId) async {
-    final current = getUnlockedBadges();
-    final model = current[badgeId];
-    if (model != null && model.isNew) {
-      current[badgeId] = model.copyWith(isNew: false);
-      await _saveAll(current.values.toList());
-    }
-  }
-
   /// 전체 초기화
   Future<void> clearAll() async {
     await _prefs.remove(_unlockedKey);

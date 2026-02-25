@@ -123,7 +123,7 @@ class TimerNotifier extends _$TimerNotifier with WidgetsBindingObserver {
         // 배지 해금 체크
         newBadges = await ref
             .read(badgeNotifierProvider.notifier)
-            .checkAndUnlock();
+            .checkAndUnlock(sessionStartTime: session.startedAt);
       }
     } finally {
       state = const TimerState();

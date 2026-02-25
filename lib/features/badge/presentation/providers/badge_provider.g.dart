@@ -61,45 +61,7 @@ final unlockedBadgeCountProvider = AutoDisposeProvider<int>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef UnlockedBadgeCountRef = AutoDisposeProviderRef<int>;
-String _$totalBadgeCountHash() => r'8f883df1ac36590afb12805d1ac232ae371d2fa3';
-
-/// 전체 배지 수
-///
-/// Copied from [totalBadgeCount].
-@ProviderFor(totalBadgeCount)
-final totalBadgeCountProvider = AutoDisposeProvider<int>.internal(
-  totalBadgeCount,
-  name: r'totalBadgeCountProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$totalBadgeCountHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef TotalBadgeCountRef = AutoDisposeProviderRef<int>;
-String _$hasNewBadgeHash() => r'47055e2a9fe5e65d47a791db44836b999977879c';
-
-/// 신규(New) 배지 존재 여부
-///
-/// Copied from [hasNewBadge].
-@ProviderFor(hasNewBadge)
-final hasNewBadgeProvider = AutoDisposeProvider<bool>.internal(
-  hasNewBadge,
-  name: r'hasNewBadgeProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$hasNewBadgeHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef HasNewBadgeRef = AutoDisposeProviderRef<bool>;
-String _$badgeNotifierHash() => r'ffb04febc13fe1c931090760cd1975901f11425d';
+String _$badgeNotifierHash() => r'ad13e70d5d21f2d41098e468f25fdacdcca38080';
 
 /// See also [BadgeNotifier].
 @ProviderFor(BadgeNotifier)

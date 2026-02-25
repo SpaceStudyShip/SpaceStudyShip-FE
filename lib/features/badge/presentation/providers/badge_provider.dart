@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -6,7 +7,6 @@ import '../../data/repositories/badge_repository_impl.dart';
 import '../../domain/entities/badge_entity.dart';
 import '../../domain/repositories/badge_repository.dart';
 import '../../../timer/presentation/providers/study_stats_provider.dart';
-import '../../../timer/presentation/providers/timer_session_provider.dart';
 import '../../../fuel/presentation/providers/fuel_provider.dart';
 import '../../../exploration/presentation/providers/exploration_provider.dart';
 
@@ -42,7 +42,7 @@ class BadgeNotifier extends _$BadgeNotifier {
   ///
   /// 타이머 세션 종료 시 호출.
   /// 반환: 새로 해금된 배지 목록 (팝업 표시용)
-  Future<List<BadgeEntity>> checkAndUnlock() async {
+  Future<List<BadgeEntity>> checkAndUnlock({DateTime? sessionStartTime}) async {
     final repository = ref.read(badgeRepositoryProvider);
     final currentBadges = repository.getAllBadges();
     final locked = currentBadges.where((b) => !b.isUnlocked).toList();
@@ -66,30 +66,30 @@ class BadgeNotifier extends _$BadgeNotifier {
 
     // 히든 배지: 현재 시간 체크
     final currentHour = DateTime.now().hour;
-
-    // 세션 목록 (히든 배지 체크용)
-    final sessions = ref.read(timerSessionListNotifierProvider);
+    final sessionStartHour = sessionStartTime?.hour;
 
     final newlyUnlocked = <BadgeEntity>[];
 
     for (final badge in locked) {
-      final shouldUnlock = _checkCondition(
-        badge: badge,
-        totalMinutes: totalMinutes,
-        streak: streak,
-        sessionCount: sessionCount,
-        totalCharged: fuelState.totalCharged,
-        unlockedPlanets: unlockedPlanets,
-        unlockedRegions: unlockedRegions,
-        currentHour: currentHour,
-        hasSessionAtHour: (int hour) => sessions.any(
-          (s) => s.startedAt.hour == hour || s.endedAt.hour == hour,
-        ),
-      );
+      try {
+        final shouldUnlock = _checkCondition(
+          badge: badge,
+          totalMinutes: totalMinutes,
+          streak: streak,
+          sessionCount: sessionCount,
+          totalCharged: fuelState.totalCharged,
+          unlockedPlanets: unlockedPlanets,
+          unlockedRegions: unlockedRegions,
+          currentHour: currentHour,
+          sessionStartHour: sessionStartHour,
+        );
 
-      if (shouldUnlock) {
-        await repository.unlockBadge(badge.id);
-        newlyUnlocked.add(badge);
+        if (shouldUnlock) {
+          await repository.unlockBadge(badge.id);
+          newlyUnlocked.add(badge);
+        }
+      } catch (e) {
+        debugPrint('배지 해금 체크 실패 (${badge.id}): $e');
       }
     }
 
@@ -109,7 +109,7 @@ class BadgeNotifier extends _$BadgeNotifier {
     required int unlockedPlanets,
     required int unlockedRegions,
     required int currentHour,
-    required bool Function(int hour) hasSessionAtHour,
+    int? sessionStartHour,
   }) {
     switch (badge.category) {
       case BadgeCategory.studyTime:
@@ -129,7 +129,9 @@ class BadgeNotifier extends _$BadgeNotifier {
       case BadgeCategory.fuel:
         return totalCharged >= badge.requiredValue;
       case BadgeCategory.hidden:
-        return hasSessionAtHour(badge.requiredValue);
+        // 세션 종료 시각 또는 시작 시각이 해당 시간대에 포함되면 해금
+        return currentHour == badge.requiredValue ||
+            sessionStartHour == badge.requiredValue;
     }
   }
 }
@@ -140,18 +142,4 @@ class BadgeNotifier extends _$BadgeNotifier {
 @riverpod
 int unlockedBadgeCount(Ref ref) {
   return ref.watch(badgeNotifierProvider).where((b) => b.isUnlocked).length;
-}
-
-/// 전체 배지 수
-@riverpod
-int totalBadgeCount(Ref ref) {
-  return ref.watch(badgeNotifierProvider).length;
-}
-
-/// 신규(New) 배지 존재 여부
-@riverpod
-bool hasNewBadge(Ref ref) {
-  final dataSource = ref.watch(badgeLocalDataSourceProvider);
-  final unlocked = dataSource.getUnlockedBadges();
-  return unlocked.values.any((m) => m.isNew);
 }

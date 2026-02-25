@@ -17,6 +17,7 @@ import '../../domain/usecases/sign_in_with_apple_usecase.dart';
 import '../../domain/usecases/sign_in_with_google_usecase.dart';
 import '../../domain/usecases/sign_out_usecase.dart';
 import '../../domain/utils/firebase_auth_error_handler.dart';
+import '../../../badge/presentation/providers/badge_provider.dart';
 import '../../../exploration/presentation/providers/exploration_provider.dart';
 import '../../../fuel/presentation/providers/fuel_provider.dart';
 import '../../../timer/presentation/providers/timer_session_provider.dart';
@@ -205,23 +206,21 @@ class AuthNotifier extends _$AuthNotifier {
     // ──────────────────────────────────────────────
   }
 
-  /// Google 로그인 수행
-  ///
-  /// UseCase를 통해 Firebase 로그인 → 백엔드 로그인 → 토큰 저장을 수행합니다.
-  /// 성공 시 [AuthResultEntity]를 state에 설정합니다.
-  Future<void> signInWithGoogle() async {
-    ref
-        .read(activeLoginNotifierProvider.notifier)
-        .set(SocialLoginProvider.google);
+  /// 소셜 로그인 공통 처리
+  Future<void> _signInWithSocial({
+    required SocialLoginProvider provider,
+    required Future<AuthResultEntity> Function() execute,
+    required String providerName,
+  }) async {
+    ref.read(activeLoginNotifierProvider.notifier).set(provider);
     state = const AsyncValue.loading();
 
     try {
-      final useCase = ref.read(signInWithGoogleUseCaseProvider);
-      final result = await useCase.execute();
+      final result = await execute();
       state = AsyncValue.data(result);
     } on FirebaseAuthException catch (e) {
       state = AsyncValue.error(
-        FirebaseAuthErrorHandler.createAuthException(e, provider: 'Google'),
+        FirebaseAuthErrorHandler.createAuthException(e, provider: providerName),
         StackTrace.current,
       );
       rethrow;
@@ -240,39 +239,28 @@ class AuthNotifier extends _$AuthNotifier {
     }
   }
 
+  /// Google 로그인 수행
+  ///
+  /// UseCase를 통해 Firebase 로그인 → 백엔드 로그인 → 토큰 저장을 수행합니다.
+  /// 성공 시 [AuthResultEntity]를 state에 설정합니다.
+  Future<void> signInWithGoogle() async {
+    await _signInWithSocial(
+      provider: SocialLoginProvider.google,
+      execute: () => ref.read(signInWithGoogleUseCaseProvider).execute(),
+      providerName: 'Google',
+    );
+  }
+
   /// Apple 로그인 수행
   ///
   /// UseCase를 통해 Firebase 로그인 → 백엔드 로그인 → 토큰 저장을 수행합니다.
   /// 성공 시 [AuthResultEntity]를 state에 설정합니다.
   Future<void> signInWithApple() async {
-    ref
-        .read(activeLoginNotifierProvider.notifier)
-        .set(SocialLoginProvider.apple);
-    state = const AsyncValue.loading();
-
-    try {
-      final useCase = ref.read(signInWithAppleUseCaseProvider);
-      final result = await useCase.execute();
-      state = AsyncValue.data(result);
-    } on FirebaseAuthException catch (e) {
-      state = AsyncValue.error(
-        FirebaseAuthErrorHandler.createAuthException(e, provider: 'Apple'),
-        StackTrace.current,
-      );
-      rethrow;
-    } catch (e, stack) {
-      if (e is AppException) {
-        state = AsyncValue.error(e, stack);
-      } else {
-        state = AsyncValue.error(
-          AuthException(message: '알 수 없는 오류가 발생했습니다.', originalException: e),
-          stack,
-        );
-      }
-      rethrow;
-    } finally {
-      ref.read(activeLoginNotifierProvider.notifier).clear();
-    }
+    await _signInWithSocial(
+      provider: SocialLoginProvider.apple,
+      execute: () => ref.read(signInWithAppleUseCaseProvider).execute(),
+      providerName: 'Apple',
+    );
   }
 
   /// 게스트로 로그인
@@ -332,20 +320,30 @@ class AuthNotifier extends _$AuthNotifier {
 
   /// 게스트 데이터 일괄 삭제 (디스크 + 메모리 캐시)
   Future<void> _clearGuestData() async {
-    final todoRepo = ref.read(todoRepositoryProvider);
-    await todoRepo.clearAll();
-    final timerRepo = ref.read(timerSessionRepositoryProvider);
-    await timerRepo.clearAll();
-    final fuelRepo = ref.read(fuelRepositoryProvider);
-    await fuelRepo.clearAll();
-    final explorationRepo = ref.read(explorationRepositoryProvider);
-    await explorationRepo.clearAll();
+    // 각 저장소 독립 삭제 — 하나 실패해도 나머지 계속 진행
+    final clearTasks = <Future<void> Function()>[
+      () => ref.read(todoRepositoryProvider).clearAll(),
+      () => ref.read(timerSessionRepositoryProvider).clearAll(),
+      () => ref.read(fuelRepositoryProvider).clearAll(),
+      () => ref.read(explorationRepositoryProvider).clearAll(),
+      () => ref.read(badgeRepositoryProvider).clearAll(),
+    ];
 
+    for (final task in clearTasks) {
+      try {
+        await task();
+      } catch (e) {
+        debugPrint('게스트 데이터 삭제 실패: $e');
+      }
+    }
+
+    // 메모리 캐시 무효화 (예외 발생 불가)
     ref.invalidate(timerSessionListNotifierProvider);
     ref.invalidate(todoListNotifierProvider);
     ref.invalidate(categoryListNotifierProvider);
     ref.invalidate(fuelNotifierProvider);
     ref.invalidate(explorationNotifierProvider);
+    ref.invalidate(badgeNotifierProvider);
   }
 
   /// 닉네임 설정 완료 후 상태 갱신

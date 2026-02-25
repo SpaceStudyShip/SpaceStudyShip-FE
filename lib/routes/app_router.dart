@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,6 +9,7 @@ import '../core/constants/app_colors.dart';
 import '../core/constants/spacing_and_radius.dart';
 import '../core/constants/text_styles.dart';
 import '../core/widgets/backgrounds/space_background.dart';
+import '../core/widgets/buttons/app_button.dart';
 import '../features/auth/domain/entities/auth_result_entity.dart';
 import '../features/auth/presentation/providers/auth_provider.dart';
 import '../features/auth/presentation/screens/splash_screen.dart';
@@ -55,7 +57,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
 
   return GoRouter(
     initialLocation: RoutePaths.splash,
-    debugLogDiagnostics: true,
+    debugLogDiagnostics: kDebugMode,
     refreshListenable: routerNotifier,
     redirect: (context, state) {
       final authState = ref.read(authNotifierProvider);
@@ -402,9 +404,9 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                   ),
                 ),
                 SizedBox(height: AppSpacing.s24),
-                ElevatedButton(
+                AppButton(
+                  text: '홈으로 돌아가기',
                   onPressed: () => context.go(RoutePaths.home),
-                  child: const Text('홈으로 돌아가기'),
                 ),
               ],
             ),

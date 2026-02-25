@@ -93,7 +93,7 @@ class ExplorationNotifier extends _$ExplorationNotifier {
       _reload();
 
       // 배지 해금 체크 (탐험 기반)
-      ref.read(badgeNotifierProvider.notifier).checkAndUnlock();
+      await ref.read(badgeNotifierProvider.notifier).checkAndUnlock();
     } finally {
       _isUnlocking = false;
     }
@@ -142,7 +142,7 @@ class RegionListNotifier extends _$RegionListNotifier {
       ref.read(explorationNotifierProvider.notifier).refresh();
 
       // 배지 해금 체크 (탐험 기반)
-      ref.read(badgeNotifierProvider.notifier).checkAndUnlock();
+      await ref.read(badgeNotifierProvider.notifier).checkAndUnlock();
     } finally {
       _isUnlocking = false;
     }

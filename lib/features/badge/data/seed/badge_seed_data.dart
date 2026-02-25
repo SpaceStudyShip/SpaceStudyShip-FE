@@ -277,17 +277,4 @@ class BadgeSeedData {
     ...fuel,
     ...hidden,
   ];
-
-  /// ID로 배지 검색
-  static BadgeEntity getBadgeById(String id) {
-    return allBadges.firstWhere(
-      (badge) => badge.id == id,
-      orElse: () => allBadges.first,
-    );
-  }
-
-  /// 카테고리별 배지 목록 반환
-  static List<BadgeEntity> getBadgesByCategory(BadgeCategory category) {
-    return allBadges.where((badge) => badge.category == category).toList();
-  }
 }

@@ -6,6 +6,7 @@ import '../../data/repositories/exploration_repository_impl.dart';
 import '../../domain/entities/exploration_node_entity.dart';
 import '../../domain/entities/exploration_progress_entity.dart';
 import '../../domain/repositories/exploration_repository.dart';
+import '../../../badge/presentation/providers/badge_provider.dart';
 import '../../../fuel/presentation/providers/fuel_provider.dart';
 
 part 'exploration_provider.g.dart';
@@ -90,6 +91,9 @@ class ExplorationNotifier extends _$ExplorationNotifier {
 
       // 3. 상태 갱신
       _reload();
+
+      // 배지 해금 체크 (탐험 기반)
+      ref.read(badgeNotifierProvider.notifier).checkAndUnlock();
     } finally {
       _isUnlocking = false;
     }
@@ -136,6 +140,9 @@ class RegionListNotifier extends _$RegionListNotifier {
 
       // 4. 행성 목록도 갱신 (자동 클리어 반영)
       ref.read(explorationNotifierProvider.notifier).refresh();
+
+      // 배지 해금 체크 (탐험 기반)
+      ref.read(badgeNotifierProvider.notifier).checkAndUnlock();
     } finally {
       _isUnlocking = false;
     }

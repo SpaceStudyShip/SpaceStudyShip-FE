@@ -9,7 +9,7 @@ import '../../../../core/widgets/backgrounds/space_background.dart';
 import '../../../../core/widgets/dialogs/app_dialog.dart';
 import '../../../../core/widgets/space/badge_card.dart';
 import '../../../../core/widgets/states/space_empty_state.dart';
-import '../../domain/entities/badge_entity.dart' as badge_domain;
+import '../../domain/entities/badge_entity.dart';
 import '../providers/badge_provider.dart';
 
 /// 배지 컬렉션 스크린
@@ -75,15 +75,15 @@ class BadgeCollectionScreen extends ConsumerWidget {
 
   List<Widget> _buildCategoryGroups(
     BuildContext context,
-    List<badge_domain.BadgeEntity> badges,
+    List<BadgeEntity> badges,
   ) {
     const categories = [
-      (badge_domain.BadgeCategory.studyTime, '공부 시간'),
-      (badge_domain.BadgeCategory.streak, '연속 기록'),
-      (badge_domain.BadgeCategory.session, '세션'),
-      (badge_domain.BadgeCategory.exploration, '탐험'),
-      (badge_domain.BadgeCategory.fuel, '연료'),
-      (badge_domain.BadgeCategory.hidden, '히든'),
+      (BadgeCategory.studyTime, '공부 시간'),
+      (BadgeCategory.streak, '연속 기록'),
+      (BadgeCategory.session, '세션'),
+      (BadgeCategory.exploration, '탐험'),
+      (BadgeCategory.fuel, '연료'),
+      (BadgeCategory.hidden, '히든'),
     ];
 
     final widgets = <Widget>[];
@@ -119,7 +119,7 @@ class BadgeCollectionScreen extends ConsumerWidget {
               icon: badge.icon,
               name: badge.name,
               isUnlocked: badge.isUnlocked,
-              rarity: _mapRarity(badge.rarity),
+              rarity: badge.rarity,
               description: badge.description,
               onTap: () => _showBadgeDetail(context, badge),
             );
@@ -132,25 +132,9 @@ class BadgeCollectionScreen extends ConsumerWidget {
     return widgets;
   }
 
-  /// domain BadgeRarity -> widget BadgeRarity 변환
-  BadgeRarity _mapRarity(badge_domain.BadgeRarity rarity) {
-    switch (rarity) {
-      case badge_domain.BadgeRarity.normal:
-        return BadgeRarity.normal;
-      case badge_domain.BadgeRarity.rare:
-        return BadgeRarity.rare;
-      case badge_domain.BadgeRarity.epic:
-        return BadgeRarity.epic;
-      case badge_domain.BadgeRarity.legendary:
-        return BadgeRarity.legendary;
-      case badge_domain.BadgeRarity.hidden:
-        return BadgeRarity.hidden;
-    }
-  }
-
   void _showBadgeDetail(
     BuildContext context,
-    badge_domain.BadgeEntity badge,
+    BadgeEntity badge,
   ) {
     AppDialog.show(
       context: context,

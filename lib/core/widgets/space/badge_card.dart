@@ -6,24 +6,8 @@ import '../../constants/space_icons.dart';
 import '../../constants/spacing_and_radius.dart';
 import '../../constants/text_styles.dart';
 import '../../constants/toss_design_tokens.dart';
-
-/// 뱃지 희귀도
-enum BadgeRarity {
-  /// 일반 (회색 테두리)
-  normal,
-
-  /// 희귀 (파란색 테두리)
-  rare,
-
-  /// 에픽 (보라색 테두리)
-  epic,
-
-  /// 레전더리 (금색 테두리 + 빛나는 효과)
-  legendary,
-
-  /// 히든 (무지개색)
-  hidden,
-}
+import '../../../features/badge/domain/entities/badge_entity.dart';
+export '../../../features/badge/domain/entities/badge_entity.dart' show BadgeRarity;
 
 /// 뱃지 카드 위젯 - 컬렉션용
 ///

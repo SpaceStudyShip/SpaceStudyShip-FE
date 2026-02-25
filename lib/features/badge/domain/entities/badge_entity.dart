@@ -12,7 +12,7 @@ enum BadgeCategory {
   hidden, // 숨겨진 조건
 }
 
-/// 배지 희귀도 (core/widgets/space/badge_card.dart의 BadgeRarity와 통합 예정)
+/// 배지 희귀도
 enum BadgeRarity {
   normal,
   rare,

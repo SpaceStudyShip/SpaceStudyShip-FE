@@ -23,6 +23,7 @@ import '../features/profile/presentation/screens/profile_screen.dart';
 import '../features/profile/presentation/screens/about_screen.dart';
 import '../features/profile/presentation/screens/spaceship_collection_screen.dart';
 import '../features/todo/presentation/screens/category_todo_screen.dart';
+import '../features/badge/presentation/screens/badge_collection_screen.dart';
 import '../features/todo/presentation/screens/todo_list_screen.dart';
 
 /// 스플래시 최소 표시 시간 (2초)
@@ -326,7 +327,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                     path: 'badges',
                     name: 'badges',
                     builder: (context, state) =>
-                        const PlaceholderScreen(title: '배지 컬렉션'),
+                        const BadgeCollectionScreen(),
                     routes: [
                       GoRoute(
                         path: ':id',

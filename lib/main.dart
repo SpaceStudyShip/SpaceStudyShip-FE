@@ -15,6 +15,8 @@ import 'core/config/env_config.dart';
 import 'core/services/fcm/firebase_messaging_service.dart';
 import 'core/services/fcm/local_notifications_service.dart';
 import 'core/theme/app_theme.dart';
+import 'features/badge/data/datasources/badge_local_datasource.dart';
+import 'features/badge/presentation/providers/badge_provider.dart';
 import 'features/exploration/data/datasources/exploration_local_datasource.dart';
 import 'features/exploration/presentation/providers/exploration_provider.dart';
 import 'features/fuel/data/datasources/fuel_local_datasource.dart';
@@ -201,6 +203,10 @@ void main() async {
         if (prefs != null)
           explorationLocalDataSourceProvider.overrideWithValue(
             ExplorationLocalDataSource(prefs),
+          ),
+        if (prefs != null)
+          badgeLocalDataSourceProvider.overrideWithValue(
+            BadgeLocalDataSource(prefs),
           ),
       ],
       child: const MyApp(),

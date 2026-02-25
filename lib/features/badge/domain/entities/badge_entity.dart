@@ -13,13 +13,7 @@ enum BadgeCategory {
 }
 
 /// 배지 희귀도
-enum BadgeRarity {
-  normal,
-  rare,
-  epic,
-  legendary,
-  hidden,
-}
+enum BadgeRarity { normal, rare, epic, legendary, hidden }
 
 @freezed
 class BadgeEntity with _$BadgeEntity {

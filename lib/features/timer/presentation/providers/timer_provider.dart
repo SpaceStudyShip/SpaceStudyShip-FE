@@ -82,7 +82,14 @@ class TimerNotifier extends _$TimerNotifier with WidgetsBindingObserver {
 
   /// 타이머 정지 + 할일 시간 업데이트 + 배지 해금 체크
   /// 반환: sessionDuration, todoTitle, totalMinutes, newBadges 레코드 (1분 미만 세션은 null)
-  Future<({Duration sessionDuration, String? todoTitle, int? totalMinutes, List<BadgeEntity> newBadges})?>
+  Future<
+    ({
+      Duration sessionDuration,
+      String? todoTitle,
+      int? totalMinutes,
+      List<BadgeEntity> newBadges,
+    })?
+  >
   stop() async {
     _timer?.cancel();
 

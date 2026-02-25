@@ -15,10 +15,7 @@ class BadgeRepositoryImpl implements BadgeRepository {
     return BadgeSeedData.allBadges.map((badge) {
       final unlock = unlocked[badge.id];
       if (unlock != null) {
-        return badge.copyWith(
-          isUnlocked: true,
-          unlockedAt: unlock.unlockedAt,
-        );
+        return badge.copyWith(isUnlocked: true, unlockedAt: unlock.unlockedAt);
       }
       return badge;
     }).toList();
@@ -35,10 +32,7 @@ class BadgeRepositoryImpl implements BadgeRepository {
     if (unlocked.containsKey(badgeId)) return; // 이미 해금됨
 
     await _localDataSource.unlockBadge(
-      BadgeUnlockModel(
-        badgeId: badgeId,
-        unlockedAt: DateTime.now(),
-      ),
+      BadgeUnlockModel(badgeId: badgeId, unlockedAt: DateTime.now()),
     );
   }
 

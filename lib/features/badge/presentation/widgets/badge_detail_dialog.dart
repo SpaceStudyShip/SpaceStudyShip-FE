@@ -20,7 +20,9 @@ Future<void> showBadgeDetailDialog(
     title: isUnlockCelebration
         ? '배지 획득!'
         : (badge.isUnlocked ? badge.name : '???'),
-    emotion: isUnlockCelebration ? AppDialogEmotion.success : AppDialogEmotion.none,
+    emotion: isUnlockCelebration
+        ? AppDialogEmotion.success
+        : AppDialogEmotion.none,
     customContent: Column(
       mainAxisSize: MainAxisSize.min,
       children: [

@@ -238,7 +238,13 @@ class _TimerScreenState extends ConsumerState<TimerScreen> {
   }
 
   Future<void> _showResultDialog(
-    ({Duration sessionDuration, String? todoTitle, int? totalMinutes, List<BadgeEntity> newBadges}) result,
+    ({
+      Duration sessionDuration,
+      String? todoTitle,
+      int? totalMinutes,
+      List<BadgeEntity> newBadges,
+    })
+    result,
   ) async {
     final sessionText = _formatDuration(result.sessionDuration);
 

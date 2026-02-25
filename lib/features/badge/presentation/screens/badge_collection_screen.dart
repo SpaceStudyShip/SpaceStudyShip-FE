@@ -128,5 +128,4 @@ class BadgeCollectionScreen extends ConsumerWidget {
 
     return widgets;
   }
-
 }

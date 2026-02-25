@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/constants/app_colors.dart';
-import '../../../../core/constants/space_icons.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../../../core/constants/toss_design_tokens.dart';
@@ -116,24 +115,10 @@ class _BadgeCardState extends State<BadgeCard> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // 아이콘
-              Stack(
-                alignment: Alignment.center,
-                children: [
-                  widget.isUnlocked
-                      ? SpaceIcons.buildIcon(widget.icon, size: 32.w)
-                      : Icon(
-                          SpaceIcons.resolve(widget.icon),
-                          size: 32.w,
-                          color: AppColors.textTertiary,
-                        ),
-                  if (!widget.isUnlocked)
-                    Icon(
-                      Icons.lock_rounded,
-                      size: 20.w,
-                      color: AppColors.textTertiary,
-                    ),
-                ],
+              // 아이콘 (이모지 직접 렌더링)
+              Text(
+                widget.isUnlocked ? widget.icon : '🔒',
+                style: TextStyle(fontSize: 28.sp),
               ),
               SizedBox(height: AppSpacing.s8),
 

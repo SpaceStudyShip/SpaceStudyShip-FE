@@ -19,7 +19,11 @@ Future<void> showBadgeDetailDialog(
     context: context,
     title: isUnlockCelebration
         ? '배지 획득!'
-        : (badge.isUnlocked ? badge.name : '???'),
+        : badge.isUnlocked
+        ? badge.name
+        : badge.category == BadgeCategory.hidden
+        ? '???'
+        : badge.name,
     emotion: isUnlockCelebration
         ? AppDialogEmotion.success
         : AppDialogEmotion.none,
@@ -27,7 +31,11 @@ Future<void> showBadgeDetailDialog(
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
-          badge.isUnlocked || isUnlockCelebration ? badge.icon : '🔒',
+          badge.isUnlocked || isUnlockCelebration
+              ? badge.icon
+              : badge.category == BadgeCategory.hidden
+              ? '🔒'
+              : badge.icon,
           style: TextStyle(fontSize: 48.sp),
         ),
         SizedBox(height: AppSpacing.s12),
@@ -41,7 +49,9 @@ Future<void> showBadgeDetailDialog(
         Text(
           badge.isUnlocked || isUnlockCelebration
               ? badge.description
-              : '아직 해금되지 않은 배지예요',
+              : badge.category == BadgeCategory.hidden
+              ? '아직 해금되지 않은 배지예요'
+              : badge.description,
           style: AppTextStyles.paragraph_14.copyWith(
             color: AppColors.textSecondary,
           ),

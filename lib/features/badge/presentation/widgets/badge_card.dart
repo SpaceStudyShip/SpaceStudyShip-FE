@@ -117,9 +117,7 @@ class _BadgeCardState extends State<BadgeCard> {
             children: [
               // 아이콘 (이모지 직접 렌더링)
               Semantics(
-                label: widget.isUnlocked
-                    ? '${widget.name} 배지 아이콘'
-                    : '잠긴 배지',
+                label: widget.isUnlocked ? '${widget.name} 배지 아이콘' : '잠긴 배지',
                 child: ExcludeSemantics(
                   child: Text(
                     widget.isUnlocked ? widget.icon : '🔒',

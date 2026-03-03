@@ -59,9 +59,14 @@ extension BadgeEntityX on BadgeEntity {
   }
 
   String _formatNumber(int value) {
-    if (value >= 1000) {
-      return '${value ~/ 1000},${(value % 1000).toString().padLeft(3, '0')}';
+    final str = value.toString();
+    final buffer = StringBuffer();
+    for (var i = 0; i < str.length; i++) {
+      if (i > 0 && (str.length - i) % 3 == 0) {
+        buffer.write(',');
+      }
+      buffer.write(str[i]);
     }
-    return value.toString();
+    return buffer.toString();
   }
 }

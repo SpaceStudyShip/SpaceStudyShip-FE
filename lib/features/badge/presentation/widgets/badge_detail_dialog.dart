@@ -51,7 +51,7 @@ Future<void> showBadgeDetailDialog(
               ? badge.description
               : badge.category == BadgeCategory.hidden
               ? '아직 해금되지 않은 배지예요'
-              : badge.description,
+              : '해금 조건: ${badge.unlockConditionText}',
           style: AppTextStyles.paragraph_14.copyWith(
             color: AppColors.textSecondary,
           ),

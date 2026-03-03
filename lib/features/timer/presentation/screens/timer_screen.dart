@@ -19,7 +19,7 @@ import '../providers/timer_provider.dart';
 import '../providers/study_stats_provider.dart';
 import '../providers/timer_state.dart';
 import '../utils/timer_format_utils.dart';
-import '../widgets/timer_ring_painter.dart';
+import '../widgets/orbit_timer_widget.dart';
 import '../widgets/todo_select_bottom_sheet.dart';
 
 class TimerScreen extends ConsumerStatefulWidget {
@@ -45,10 +45,23 @@ class _TimerScreenState extends ConsumerState<TimerScreen> {
         backgroundColor: Colors.transparent,
         scrolledUnderElevation: 0,
         elevation: 0,
-        title: Text(
-          '타이머',
-          style: AppTextStyles.heading_20.copyWith(color: Colors.white),
-        ),
+        title: isIdle
+            ? Text(
+                '타이머',
+                style: AppTextStyles.heading_20.copyWith(color: Colors.white),
+              )
+            : Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    _formatDuration(timerState.elapsed),
+                    style: AppTextStyles.heading_20.copyWith(
+                      color: isRunning ? AppColors.primary : Colors.white,
+                    ),
+                  ),
+                  _buildStatusText(timerState, isIdle, isRunning),
+                ],
+              ),
         actions: [
           IconButton(
             icon: Icon(Icons.history_rounded, color: Colors.white, size: 24.w),
@@ -60,44 +73,11 @@ class _TimerScreenState extends ConsumerState<TimerScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // 타이머 링 + 시간 표시
-            SizedBox(
-              width: 260.w,
-              height: 260.w,
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  CustomPaint(
-                    size: Size(260.w, 260.w),
-                    painter: TimerRingPainter(
-                      progress: _calculateProgress(timerState.elapsed),
-                      isRunning: isRunning,
-                      strokeWidth: 6.w,
-                    ),
-                  ),
-                  Padding(
-                    padding: AppPadding.horizontal16,
-                    child: FittedBox(
-                      fit: BoxFit.scaleDown,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            _formatDuration(timerState.elapsed),
-                            style: AppTextStyles.timer_48.copyWith(
-                              color: isRunning
-                                  ? AppColors.primary
-                                  : Colors.white,
-                            ),
-                          ),
-                          SizedBox(height: AppSpacing.s4),
-                          _buildStatusText(timerState, isIdle, isRunning),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+            // 항성-행성 공전 타이머
+            OrbitTimerWidget(
+              elapsed: timerState.elapsed,
+              isRunning: isRunning,
+              isPaused: isPaused,
             ),
             SizedBox(height: AppSpacing.s48),
 
@@ -343,11 +323,5 @@ class _TimerScreenState extends ConsumerState<TimerScreen> {
     final minutes = d.inMinutes.remainder(60).toString().padLeft(2, '0');
     final seconds = d.inSeconds.remainder(60).toString().padLeft(2, '0');
     return '$hours:$minutes:$seconds';
-  }
-
-  /// 1시간(3600초)을 한 바퀴로 계산. 넘으면 다시 0부터.
-  double _calculateProgress(Duration elapsed) {
-    const oneHourSeconds = 3600;
-    return (elapsed.inSeconds % oneHourSeconds) / oneHourSeconds;
   }
 }

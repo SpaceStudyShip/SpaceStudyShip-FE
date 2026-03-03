@@ -41,7 +41,7 @@ class BadgeLocalDataSource {
       return {for (final m in models) m.badgeId: m};
     } catch (e) {
       debugPrint('Badge 데이터 파싱 실패, 초기화합니다: $e');
-      _prefs.remove(_unlockedKey);
+      unawaited(_synchronized(() => _prefs.remove(_unlockedKey)));
       return {};
     }
   }

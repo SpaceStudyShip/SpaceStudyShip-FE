@@ -43,7 +43,6 @@ export 'states/app_empty_state.dart';
 // ============================================
 // Space Theme - 우주 테마 위젯
 // ============================================
-export 'space/badge_card.dart';
 export 'space/booster_banner.dart';
 export 'space/fuel_gauge.dart';
 export 'space/ranking_item.dart';

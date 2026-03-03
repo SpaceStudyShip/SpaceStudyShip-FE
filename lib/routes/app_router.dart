@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,6 +9,7 @@ import '../core/constants/app_colors.dart';
 import '../core/constants/spacing_and_radius.dart';
 import '../core/constants/text_styles.dart';
 import '../core/widgets/backgrounds/space_background.dart';
+import '../core/widgets/buttons/app_button.dart';
 import '../features/auth/domain/entities/auth_result_entity.dart';
 import '../features/auth/presentation/providers/auth_provider.dart';
 import '../features/auth/presentation/screens/splash_screen.dart';
@@ -23,6 +25,7 @@ import '../features/profile/presentation/screens/profile_screen.dart';
 import '../features/profile/presentation/screens/about_screen.dart';
 import '../features/profile/presentation/screens/spaceship_collection_screen.dart';
 import '../features/todo/presentation/screens/category_todo_screen.dart';
+import '../features/badge/presentation/screens/badge_collection_screen.dart';
 import '../features/todo/presentation/screens/todo_list_screen.dart';
 
 /// 스플래시 최소 표시 시간 (2초)
@@ -54,7 +57,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
 
   return GoRouter(
     initialLocation: RoutePaths.splash,
-    debugLogDiagnostics: true,
+    debugLogDiagnostics: kDebugMode,
     refreshListenable: routerNotifier,
     redirect: (context, state) {
       final authState = ref.read(authNotifierProvider);
@@ -325,8 +328,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                   GoRoute(
                     path: 'badges',
                     name: 'badges',
-                    builder: (context, state) =>
-                        const PlaceholderScreen(title: '배지 컬렉션'),
+                    builder: (context, state) => const BadgeCollectionScreen(),
                     routes: [
                       GoRoute(
                         path: ':id',
@@ -401,9 +403,9 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                   ),
                 ),
                 SizedBox(height: AppSpacing.s24),
-                ElevatedButton(
+                AppButton(
+                  text: '홈으로 돌아가기',
                   onPressed: () => context.go(RoutePaths.home),
-                  child: const Text('홈으로 돌아가기'),
                 ),
               ],
             ),

@@ -4,6 +4,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../constants/app_colors.dart';
 import '../constants/spacing_and_radius.dart';
 import '../constants/text_styles.dart';
+import '../../features/badge/presentation/widgets/badge_card.dart';
+import '../../features/badge/domain/entities/badge_entity.dart';
 import 'widgets.dart';
 
 /// 토스 스타일 위젯 테스트 페이지

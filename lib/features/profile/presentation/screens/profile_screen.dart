@@ -10,6 +10,9 @@ import '../../../../core/widgets/atoms/space_stat_item.dart';
 import '../../../../core/widgets/dialogs/app_dialog.dart';
 import '../../../auth/domain/entities/auth_result_entity.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
+import '../../../timer/presentation/providers/study_stats_provider.dart';
+import '../../../timer/presentation/utils/timer_format_utils.dart';
+import '../../../badge/presentation/providers/badge_provider.dart';
 import '../../../../routes/route_paths.dart';
 
 /// 프로필 스크린 추후 개선 가능
@@ -55,7 +58,18 @@ class ProfileScreen extends ConsumerWidget {
               SizedBox(height: AppSpacing.s24),
 
               // 통계 요약
-              _buildStatsCard(),
+              Consumer(
+                builder: (context, ref, _) {
+                  final totalMinutes = ref.watch(totalStudyMinutesProvider);
+                  final streak = ref.watch(currentStreakProvider);
+                  final unlockedBadges = ref.watch(unlockedBadgeCountProvider);
+                  return _buildStatsCard(
+                    studyTime: formatMinutes(totalMinutes),
+                    streak: '$streak일',
+                    badgeCount: '$unlockedBadges개',
+                  );
+                },
+              ),
               SizedBox(height: AppSpacing.s24),
 
               // 메뉴 리스트
@@ -119,7 +133,11 @@ class ProfileScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildStatsCard() {
+  Widget _buildStatsCard({
+    required String studyTime,
+    required String streak,
+    required String badgeCount,
+  }) {
     return Container(
       padding: AppPadding.all20,
       decoration: BoxDecoration(
@@ -130,11 +148,11 @@ class ProfileScreen extends ConsumerWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          SpaceStatItem(label: '총 공부', value: '0시간', valueFirst: true),
+          SpaceStatItem(label: '총 공부', value: studyTime, valueFirst: true),
           Container(width: 1, height: 40.h, color: AppColors.spaceDivider),
-          SpaceStatItem(label: '연속', value: '0일', valueFirst: true),
+          SpaceStatItem(label: '연속', value: streak, valueFirst: true),
           Container(width: 1, height: 40.h, color: AppColors.spaceDivider),
-          SpaceStatItem(label: '배지', value: '0개', valueFirst: true),
+          SpaceStatItem(label: '배지', value: badgeCount, valueFirst: true),
         ],
       ),
     );

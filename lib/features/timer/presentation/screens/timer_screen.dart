@@ -12,6 +12,8 @@ import '../../../../core/widgets/atoms/space_stat_item.dart';
 import '../../../../core/widgets/buttons/app_button.dart';
 import '../../../../core/widgets/cards/app_card.dart';
 import '../../../../core/widgets/dialogs/app_dialog.dart';
+import '../../../badge/domain/entities/badge_entity.dart';
+import '../../../badge/presentation/widgets/badge_detail_dialog.dart';
 import '../../../todo/domain/entities/todo_entity.dart';
 import '../providers/timer_provider.dart';
 import '../providers/study_stats_provider.dart';
@@ -222,15 +224,31 @@ class _TimerScreenState extends ConsumerState<TimerScreen> {
   Future<void> _onStop() async {
     final result = await ref.read(timerNotifierProvider.notifier).stop();
     if (!mounted || result == null) return;
-    _showResultDialog(result);
+    await _showResultDialog(result);
+
+    // 새로 해금된 배지가 있으면 결과 다이얼로그 닫힌 후 배지 팝업
+    if (result.newBadges.isNotEmpty) {
+      await Future.delayed(const Duration(milliseconds: 500));
+      if (!mounted) return;
+      for (final badge in result.newBadges) {
+        await _showBadgeUnlockDialog(badge);
+        if (!mounted) return;
+      }
+    }
   }
 
-  void _showResultDialog(
-    ({Duration sessionDuration, String? todoTitle, int? totalMinutes}) result,
-  ) {
+  Future<void> _showResultDialog(
+    ({
+      Duration sessionDuration,
+      String? todoTitle,
+      int? totalMinutes,
+      List<BadgeEntity> newBadges,
+    })
+    result,
+  ) async {
     final sessionText = _formatDuration(result.sessionDuration);
 
-    AppDialog.show(
+    await AppDialog.show(
       context: context,
       title: '수고했어요!',
       emotion: AppDialogEmotion.success,
@@ -255,6 +273,10 @@ class _TimerScreenState extends ConsumerState<TimerScreen> {
         ],
       ),
     );
+  }
+
+  Future<void> _showBadgeUnlockDialog(BadgeEntity badge) async {
+    await showBadgeDetailDialog(context, badge, isUnlockCelebration: true);
   }
 
   Widget _buildResultRow(String label, String value) {

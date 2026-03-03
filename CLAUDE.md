@@ -117,9 +117,11 @@ Scaffold(
 
 | 커맨드 | 검사 항목 |
 |--------|----------|
-| `/review-1` | Dead code, runtime safety (stream/timer leak), 불필요한 리빌드 |
-| `/review-2` | AppColors/AppSpacing/AppPadding/AppRadius 하드코딩, 공통 위젯 미사용 |
-| `/review-3` | 아키텍처 레이어 위반, DRY, 불필요한 구조, Riverpod 패턴, 네이밍 |
+| `/review` | 범용 리뷰 (보안, 성능, 버그, 코드 품질 — 모든 프로젝트) |
+| `/review-flutter` | **Flutter 종합 리뷰** — safety/design-system/architecture + 범용 리뷰를 4개 병렬 서브에이전트로 실행 |
+| `/review-safety` | Dead code, runtime safety (stream/timer leak), 불필요한 리빌드 |
+| `/review-design-system` | AppColors/AppSpacing/AppPadding/AppRadius/AppTextStyles 하드코딩, 공통 위젯 미사용 |
+| `/review-architecture` | 아키텍처 레이어 위반, DRY, 불필요한 구조, Riverpod 패턴, 네이밍 |
 
 ---
 

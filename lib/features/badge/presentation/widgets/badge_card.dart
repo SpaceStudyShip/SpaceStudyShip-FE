@@ -1,29 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../constants/app_colors.dart';
-import '../../constants/space_icons.dart';
-import '../../constants/spacing_and_radius.dart';
-import '../../constants/text_styles.dart';
-import '../../constants/toss_design_tokens.dart';
-
-/// 뱃지 희귀도
-enum BadgeRarity {
-  /// 일반 (회색 테두리)
-  normal,
-
-  /// 희귀 (파란색 테두리)
-  rare,
-
-  /// 에픽 (보라색 테두리)
-  epic,
-
-  /// 레전더리 (금색 테두리 + 빛나는 효과)
-  legendary,
-
-  /// 히든 (무지개색)
-  hidden,
-}
+import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/spacing_and_radius.dart';
+import '../../../../core/constants/text_styles.dart';
+import '../../../../core/constants/toss_design_tokens.dart';
+import '../../domain/entities/badge_entity.dart';
 
 /// 뱃지 카드 위젯 - 컬렉션용
 ///
@@ -45,7 +27,6 @@ class BadgeCard extends StatefulWidget {
     this.isUnlocked = false,
     this.rarity = BadgeRarity.normal,
     this.onTap,
-    this.description,
   });
 
   /// 뱃지 아이콘 (이모지)
@@ -62,9 +43,6 @@ class BadgeCard extends StatefulWidget {
 
   /// 탭 콜백
   final VoidCallback? onTap;
-
-  /// 설명
-  final String? description;
 
   @override
   State<BadgeCard> createState() => _BadgeCardState();
@@ -137,24 +115,15 @@ class _BadgeCardState extends State<BadgeCard> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // 아이콘
-              Stack(
-                alignment: Alignment.center,
-                children: [
-                  widget.isUnlocked
-                      ? SpaceIcons.buildIcon(widget.icon, size: 32.w)
-                      : Icon(
-                          SpaceIcons.resolve(widget.icon),
-                          size: 32.w,
-                          color: AppColors.textTertiary,
-                        ),
-                  if (!widget.isUnlocked)
-                    Icon(
-                      Icons.lock_rounded,
-                      size: 20.w,
-                      color: AppColors.textTertiary,
-                    ),
-                ],
+              // 아이콘 (이모지 직접 렌더링)
+              Semantics(
+                label: widget.isUnlocked ? '${widget.name} 배지 아이콘' : '잠긴 배지',
+                child: ExcludeSemantics(
+                  child: Text(
+                    widget.isUnlocked ? widget.icon : '🔒',
+                    style: TextStyle(fontSize: 28.sp),
+                  ),
+                ),
               ),
               SizedBox(height: AppSpacing.s8),
 

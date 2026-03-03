@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
@@ -10,7 +11,22 @@ class BadgeLocalDataSource {
 
   final SharedPreferences _prefs;
 
+  Future<void> _writeLock = Future.value();
+
   BadgeLocalDataSource(this._prefs);
+
+  /// write 작업 직렬화 — 동시 호출 시 순차 실행 보장
+  Future<void> _synchronized(Future<void> Function() fn) async {
+    final previous = _writeLock;
+    final completer = Completer<void>();
+    _writeLock = completer.future;
+    await previous;
+    try {
+      await fn();
+    } finally {
+      completer.complete();
+    }
+  }
 
   /// 해금된 배지 ID -> UnlockModel 맵
   Map<String, BadgeUnlockModel> getUnlockedBadges() {
@@ -32,15 +48,19 @@ class BadgeLocalDataSource {
 
   /// 배지 해금 저장
   Future<void> unlockBadge(BadgeUnlockModel model) async {
-    final current = getUnlockedBadges();
-    current[model.badgeId] = model;
-    await _saveAll(current.values.toList());
+    await _synchronized(() async {
+      final current = getUnlockedBadges();
+      current[model.badgeId] = model;
+      await _saveAll(current.values.toList());
+    });
   }
 
   /// 전체 초기화
   Future<void> clearAll() async {
-    await _prefs.remove(_unlockedKey);
-    debugPrint('Badge 캐시 삭제 완료');
+    await _synchronized(() async {
+      await _prefs.remove(_unlockedKey);
+      debugPrint('Badge 캐시 삭제 완료');
+    });
   }
 
   Future<void> _saveAll(List<BadgeUnlockModel> models) async {

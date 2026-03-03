@@ -116,9 +116,16 @@ class _BadgeCardState extends State<BadgeCard> {
             mainAxisSize: MainAxisSize.min,
             children: [
               // 아이콘 (이모지 직접 렌더링)
-              Text(
-                widget.isUnlocked ? widget.icon : '🔒',
-                style: TextStyle(fontSize: 28.sp),
+              Semantics(
+                label: widget.isUnlocked
+                    ? '${widget.name} 배지 아이콘'
+                    : '잠긴 배지',
+                child: ExcludeSemantics(
+                  child: Text(
+                    widget.isUnlocked ? widget.icon : '🔒',
+                    style: TextStyle(fontSize: 28.sp),
+                  ),
+                ),
               ),
               SizedBox(height: AppSpacing.s8),
 

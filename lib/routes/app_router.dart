@@ -13,6 +13,7 @@ import '../core/widgets/buttons/app_button.dart';
 import '../features/auth/domain/entities/auth_result_entity.dart';
 import '../features/auth/presentation/providers/auth_provider.dart';
 import '../features/auth/presentation/screens/splash_screen.dart';
+import '../features/settings/presentation/screens/settings_screen.dart';
 import '../features/auth/presentation/screens/login_screen.dart';
 import '../features/auth/presentation/screens/onboarding_screen.dart';
 import '../features/timer/presentation/screens/timer_history_screen.dart';
@@ -322,8 +323,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                   GoRoute(
                     path: 'settings',
                     name: 'settings',
-                    builder: (context, state) =>
-                        const PlaceholderScreen(title: '설정'),
+                    builder: (context, state) => const SettingsScreen(),
                   ),
                   GoRoute(
                     path: 'badges',

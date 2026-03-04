@@ -22,10 +22,7 @@ class TimerAnimationData {
   static const defaultAsset = basicTimerAsset;
 
   static const List<TimerAnimationData> animations = [
-    TimerAnimationData(
-      asset: basicTimerAsset,
-      name: '기본 타이머',
-    ),
+    TimerAnimationData(asset: basicTimerAsset, name: '기본 타이머'),
     TimerAnimationData(
       asset: 'assets/lotties/Earth_and_Connections.json',
       name: '지구와 연결',

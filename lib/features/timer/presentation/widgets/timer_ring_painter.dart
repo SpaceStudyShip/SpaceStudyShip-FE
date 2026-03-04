@@ -67,8 +67,7 @@ class TimerRingPainter extends CustomPainter {
     // Glow 효과 (실행 중일 때)
     if (isRunning) {
       final glowPaint = Paint()
-        ..color =
-            (progressColor ?? AppColors.primary).withValues(alpha: 0.15)
+        ..color = (progressColor ?? AppColors.primary).withValues(alpha: 0.15)
         ..style = PaintingStyle.stroke
         ..strokeWidth = strokeWidth * 3
         ..strokeCap = StrokeCap.round

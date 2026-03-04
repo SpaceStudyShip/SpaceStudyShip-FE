@@ -52,7 +52,7 @@ class _TimerScreenState extends ConsumerState<TimerScreen> {
         title: (isIdle || isBasicTimer)
             ? Text(
                 '타이머',
-                style: AppTextStyles.heading_20.copyWith(color: Colors.white),
+                style: AppTextStyles.heading_20.copyWith(color: AppColors.textPrimary),
               )
             : Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -60,7 +60,7 @@ class _TimerScreenState extends ConsumerState<TimerScreen> {
                   Text(
                     formatDuration(timerState.elapsed),
                     style: AppTextStyles.heading_20.copyWith(
-                      color: isRunning ? AppColors.primary : Colors.white,
+                      color: isRunning ? AppColors.primary : AppColors.textPrimary,
                     ),
                   ),
                   _buildStatusText(timerState, isIdle, isRunning),

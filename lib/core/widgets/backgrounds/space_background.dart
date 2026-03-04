@@ -1,23 +1,28 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../constants/app_colors.dart';
+import '../../../features/settings/presentation/providers/settings_provider.dart';
 
-/// 우주 별 배경 위젯 (화면 전체용)
+/// 우주 별 배경 위젯 (화면 전체용 + 맵용)
 ///
 /// 랜덤 배치된 별들이 반짝이는 우주 배경을 표현합니다.
-/// ExploreScreen의 SpaceMapBackground와 동일한 비주얼이지만
-/// 일반 화면 크기에 최적화되어 별 수가 적습니다 (30개).
-/// RepaintBoundary + TickerMode 기반 성능 보호.
-class SpaceBackground extends StatefulWidget {
-  const SpaceBackground({super.key});
+/// [height]가 null이면 SizedBox.expand으로 화면 전체를 채우고,
+/// 값이 있으면 해당 높이로 렌더링합니다 (ExploreScreen 스크롤 맵용).
+/// Settings의 starTwinkleEnabled에 따라 반짝임을 on/off합니다.
+class SpaceBackground extends ConsumerStatefulWidget {
+  const SpaceBackground({super.key, this.height});
+
+  /// 맵 전체 높이 (null이면 SizedBox.expand)
+  final double? height;
 
   @override
-  State<SpaceBackground> createState() => _SpaceBackgroundState();
+  ConsumerState<SpaceBackground> createState() => _SpaceBackgroundState();
 }
 
-class _SpaceBackgroundState extends State<SpaceBackground>
+class _SpaceBackgroundState extends ConsumerState<SpaceBackground>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
   late final List<_Star> _stars;
@@ -64,13 +69,9 @@ class _SpaceBackgroundState extends State<SpaceBackground>
       // 크기: 지수 분포 → 작은 별이 많고 큰 별은 드물게 (실제 밤하늘)
       final sizeRoll = random.nextDouble();
       final size = sizeRoll < 0.6
-          ? 0.3 +
-                random.nextDouble() *
-                    0.5 // 60%: 아주 작은 별 (0.3~0.8)
+          ? 0.3 + random.nextDouble() * 0.5 // 60%: 아주 작은 별 (0.3~0.8)
           : sizeRoll < 0.85
-          ? 0.8 +
-                random.nextDouble() *
-                    0.8 // 25%: 중간 별 (0.8~1.6)
+          ? 0.8 + random.nextDouble() * 0.8 // 25%: 중간 별 (0.8~1.6)
           : 1.6 + random.nextDouble() * 1.0; // 15%: 큰 별 (1.6~2.6)
 
       // 틴트: 큰 별일수록 색상 가질 확률 높음
@@ -115,30 +116,58 @@ class _SpaceBackgroundState extends State<SpaceBackground>
 
   @override
   Widget build(BuildContext context) {
-    return RepaintBoundary(
-      child: SizedBox.expand(
-        child: Stack(
-          children: [
-            // Layer 1: 네뷸라 오버레이
-            Positioned.fill(child: CustomPaint(painter: _NebulaPainter())),
+    final twinkleEnabled = ref.watch(starTwinkleEnabledProvider);
 
-            // Layer 2: 별 필드
-            Positioned.fill(
-              child: AnimatedBuilder(
-                animation: _controller,
-                builder: (context, child) {
-                  return CustomPaint(
-                    painter: _StarPainter(
-                      stars: _stars,
-                      twinkleValue: _controller.value,
-                    ),
-                  );
-                },
-              ),
-            ),
-          ],
+    // 반짝임 설정에 따라 애니메이션 제어
+    if (twinkleEnabled && TickerMode.of(context)) {
+      if (!_controller.isAnimating) {
+        _controller.repeat(reverse: true);
+      }
+    } else if (!twinkleEnabled) {
+      _controller.stop();
+    }
+
+    final content = Stack(
+      children: [
+        // Layer 1: 네뷸라 오버레이
+        Positioned.fill(
+          child: CustomPaint(
+            size: widget.height != null
+                ? Size(double.infinity, widget.height!)
+                : Size.zero,
+            painter: _NebulaPainter(),
+          ),
         ),
-      ),
+
+        // Layer 2: 별 필드
+        Positioned.fill(
+          child: AnimatedBuilder(
+            animation: _controller,
+            builder: (context, child) {
+              return CustomPaint(
+                size: widget.height != null
+                    ? Size(double.infinity, widget.height!)
+                    : Size.zero,
+                painter: _StarPainter(
+                  stars: _stars,
+                  twinkleValue: twinkleEnabled ? _controller.value : 0.0,
+                  twinkleEnabled: twinkleEnabled,
+                ),
+              );
+            },
+          ),
+        ),
+      ],
+    );
+
+    return RepaintBoundary(
+      child: widget.height != null
+          ? SizedBox(
+              width: double.infinity,
+              height: widget.height,
+              child: content,
+            )
+          : SizedBox.expand(child: content),
     );
   }
 }
@@ -211,16 +240,21 @@ class _NebulaPainter extends CustomPainter {
 }
 
 class _StarPainter extends CustomPainter {
-  _StarPainter({required this.stars, required this.twinkleValue});
+  _StarPainter({
+    required this.stars,
+    required this.twinkleValue,
+    required this.twinkleEnabled,
+  });
 
   final List<_Star> stars;
   final double twinkleValue;
+  final bool twinkleEnabled;
 
   @override
   void paint(Canvas canvas, Size size) {
     for (final star in stars) {
       double opacity;
-      if (star.twinkle) {
+      if (star.twinkle && twinkleEnabled) {
         final phase = (twinkleValue + star.twinkleOffset) % 1.0;
         opacity =
             star.baseOpacity +
@@ -250,6 +284,7 @@ class _StarPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(_StarPainter oldDelegate) {
-    return oldDelegate.twinkleValue != twinkleValue;
+    return oldDelegate.twinkleValue != twinkleValue ||
+        oldDelegate.twinkleEnabled != twinkleEnabled;
   }
 }

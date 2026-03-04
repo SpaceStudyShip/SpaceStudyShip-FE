@@ -7,12 +7,12 @@ part of 'timer_animation_provider.dart';
 // **************************************************************************
 
 String _$timerAnimationNotifierHash() =>
-    r'36e2a73d4443acc55f3bf4b3027d7bde4250a193';
+    r'eb56cd9570ab7ff46937b831d9d9efd9501a8918';
 
 /// See also [TimerAnimationNotifier].
 @ProviderFor(TimerAnimationNotifier)
 final timerAnimationNotifierProvider =
-    AutoDisposeNotifierProvider<TimerAnimationNotifier, String>.internal(
+    NotifierProvider<TimerAnimationNotifier, String>.internal(
       TimerAnimationNotifier.new,
       name: r'timerAnimationNotifierProvider',
       debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -22,6 +22,6 @@ final timerAnimationNotifierProvider =
       allTransitiveDependencies: null,
     );
 
-typedef _$TimerAnimationNotifier = AutoDisposeNotifier<String>;
+typedef _$TimerAnimationNotifier = Notifier<String>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

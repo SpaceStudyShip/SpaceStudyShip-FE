@@ -5,7 +5,7 @@ import '../../presentation/widgets/timer_animation_selector.dart';
 
 part 'timer_animation_provider.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 class TimerAnimationNotifier extends _$TimerAnimationNotifier {
   static const _prefKey = 'timer_lottie_asset';
 

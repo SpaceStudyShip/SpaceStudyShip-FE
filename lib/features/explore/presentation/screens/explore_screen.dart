@@ -12,7 +12,7 @@ import '../../../../core/widgets/states/space_empty_state.dart';
 import '../../../exploration/domain/entities/exploration_node_entity.dart';
 import '../../../exploration/presentation/providers/exploration_provider.dart';
 import '../../../exploration/presentation/widgets/planet_node.dart';
-import '../../../exploration/presentation/widgets/space_map_background.dart';
+import '../../../../core/widgets/backgrounds/space_background.dart';
 import '../../../exploration/presentation/widgets/space_map_painter.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../../fuel/presentation/providers/fuel_provider.dart';
@@ -139,7 +139,7 @@ class ExploreScreen extends ConsumerWidget {
               clipBehavior: Clip.none,
               children: [
                 // Layer 1: 별 배경 (반짝임)
-                Positioned.fill(child: SpaceMapBackground(height: mapHeight)),
+                Positioned.fill(child: SpaceBackground(height: mapHeight)),
 
                 // Layer 2: 경로선 (CustomPainter)
                 Positioned.fill(

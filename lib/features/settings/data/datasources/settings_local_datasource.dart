@@ -12,6 +12,9 @@ class SettingsLocalDataSource {
   }
 
   Future<void> setStarTwinkleEnabled({required bool enabled}) async {
-    await _prefs.setBool(_keyStarTwinkle, enabled);
+    final success = await _prefs.setBool(_keyStarTwinkle, enabled);
+    if (!success) {
+      throw Exception('SharedPreferences 저장 실패: $_keyStarTwinkle');
+    }
   }
 }

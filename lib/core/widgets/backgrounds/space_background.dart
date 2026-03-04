@@ -69,9 +69,13 @@ class _SpaceBackgroundState extends ConsumerState<SpaceBackground>
       // 크기: 지수 분포 → 작은 별이 많고 큰 별은 드물게 (실제 밤하늘)
       final sizeRoll = random.nextDouble();
       final size = sizeRoll < 0.6
-          ? 0.3 + random.nextDouble() * 0.5 // 60%: 아주 작은 별 (0.3~0.8)
+          ? 0.3 +
+                random.nextDouble() *
+                    0.5 // 60%: 아주 작은 별 (0.3~0.8)
           : sizeRoll < 0.85
-          ? 0.8 + random.nextDouble() * 0.8 // 25%: 중간 별 (0.8~1.6)
+          ? 0.8 +
+                random.nextDouble() *
+                    0.8 // 25%: 중간 별 (0.8~1.6)
           : 1.6 + random.nextDouble() * 1.0; // 15%: 큰 별 (1.6~2.6)
 
       // 틴트: 큰 별일수록 색상 가질 확률 높음

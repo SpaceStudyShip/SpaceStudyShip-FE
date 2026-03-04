@@ -17,6 +17,7 @@ class OrbitTimerPainter extends CustomPainter {
     this.isRunning = false,
     this.isPaused = false,
     this.orbitStrokeWidth = 1.5,
+    this.starSize = 60,
   });
 
   final double progress;
@@ -24,6 +25,7 @@ class OrbitTimerPainter extends CustomPainter {
   final bool isRunning;
   final bool isPaused;
   final double orbitStrokeWidth;
+  final double starSize;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -31,6 +33,7 @@ class OrbitTimerPainter extends CustomPainter {
     final radiusX = size.width / 2 * 0.85;
     final radiusY = radiusX * cos(tilt); // Y축 압축 = 타원 효과
 
+    _drawStarShadow(canvas, center);
     _drawOrbitPath(canvas, center, radiusX, radiusY);
 
     if (isRunning && progress > 0) {
@@ -116,12 +119,7 @@ class OrbitTimerPainter extends CustomPainter {
   }
 
   /// 행성 뒤 꼬리 (~20° 그라데이션 arc)
-  void _drawTail(
-    Canvas canvas,
-    Offset center,
-    double radiusX,
-    double radiusY,
-  ) {
+  void _drawTail(Canvas canvas, Offset center, double radiusX, double radiusY) {
     final rect = Rect.fromCenter(
       center: center,
       width: radiusX * 2,
@@ -148,11 +146,32 @@ class OrbitTimerPainter extends CustomPainter {
     }
   }
 
+  /// 항성 아래 타원형 그림자 — 부유감 표현
+  void _drawStarShadow(Canvas canvas, Offset center) {
+    final shadowCenter = Offset(center.dx, center.dy + starSize * 0.3);
+    final shadowWidth = starSize * 0.7;
+    // tilt에 비례하여 그림자가 납작해짐
+    final shadowHeight = starSize * 0.15 * (1 + sin(tilt) * 0.5);
+
+    final shadowRect = Rect.fromCenter(
+      center: shadowCenter,
+      width: shadowWidth,
+      height: shadowHeight,
+    );
+
+    final shadowPaint = Paint()
+      ..color = Colors.black.withValues(alpha: 0.1)
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8);
+
+    canvas.drawOval(shadowRect, shadowPaint);
+  }
+
   @override
   bool shouldRepaint(OrbitTimerPainter oldDelegate) {
     return oldDelegate.progress != progress ||
         oldDelegate.tilt != tilt ||
         oldDelegate.isRunning != isRunning ||
-        oldDelegate.isPaused != isPaused;
+        oldDelegate.isPaused != isPaused ||
+        oldDelegate.starSize != starSize;
   }
 }

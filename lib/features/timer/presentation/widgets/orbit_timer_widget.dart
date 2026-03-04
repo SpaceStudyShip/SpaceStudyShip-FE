@@ -125,15 +125,8 @@ class _OrbitTimerWidgetState extends State<OrbitTimerWidget>
     return (widget.elapsed.inSeconds % thirtyMinSeconds) / thirtyMinSeconds;
   }
 
-  /// pseudo-3D 기울기: 30분 1사이클, 0°→45°→0°
-  double get _tilt {
-    const thirtyMinSeconds = 1800;
-    final cycleProgress =
-        (widget.elapsed.inSeconds % thirtyMinSeconds) / thirtyMinSeconds;
-    // sin(0→2π)로 0→1→0→-1→0 → abs로 0→1→0→1→0
-    // 하지만 디자인: 0분=0°, 15분=45°, 30분=0° → sin(progress * pi) 사용
-    return (pi / 4) * sin(cycleProgress * pi);
-  }
+  /// 고정 3D 시점 각도 (30° — 위에서 비스듬히 내려다보는 태양계 시점)
+  static const double _tilt = pi / 6;
 
   /// 행성 위치 계산 (타원 궤도 위의 x, y 좌표)
   Offset _planetPosition(double canvasSize) {
@@ -166,6 +159,14 @@ class _OrbitTimerWidgetState extends State<OrbitTimerWidget>
     return sin(angle) > 0;
   }
 
+  /// 행성 광원 각도 — 공전 위치에 따라 하이라이트 방향 회전
+  double get _planetLightAngle {
+    final angle = -pi / 2 + 2 * pi * _orbitProgress;
+    // 앞에 올 때: -0.8 (좌상단 하이라이트)
+    // 뒤로 갈 때: 2.3 (후면, 어둡게)
+    return -0.8 + (angle + pi / 2);
+  }
+
   @override
   Widget build(BuildContext context) {
     final canvasSize = widget.size.w;
@@ -188,6 +189,7 @@ class _OrbitTimerWidgetState extends State<OrbitTimerWidget>
             final planetOpacity = _planetOpacity;
             final planetInFront = _planetInFront;
             final scaledPlanetSize = basePlanetSize * planetScale;
+            final planetLightAngle = _planetLightAngle;
 
             // 항성 글로우 강도 (running: 0.15~0.25 pulse, idle: 0.15 고정)
             final glowIntensity = widget.isRunning
@@ -210,6 +212,7 @@ class _OrbitTimerWidgetState extends State<OrbitTimerWidget>
                       tilt: _tilt,
                       isRunning: widget.isRunning,
                       isPaused: widget.isPaused,
+                      starSize: starSize,
                     ),
                   ),
                 ),
@@ -220,6 +223,7 @@ class _OrbitTimerWidgetState extends State<OrbitTimerWidget>
                     planetPos,
                     scaledPlanetSize,
                     effectivePlanetOpacity,
+                    planetLightAngle,
                   ),
 
                 // 항성 (중앙)
@@ -245,6 +249,7 @@ class _OrbitTimerWidgetState extends State<OrbitTimerWidget>
                     planetPos,
                     scaledPlanetSize,
                     effectivePlanetOpacity,
+                    planetLightAngle,
                   ),
               ],
             );
@@ -258,6 +263,7 @@ class _OrbitTimerWidgetState extends State<OrbitTimerWidget>
     Offset position,
     double size,
     double opacity,
+    double lightAngle,
   ) {
     return Positioned(
       left: position.dx - size / 2,
@@ -272,11 +278,11 @@ class _OrbitTimerWidgetState extends State<OrbitTimerWidget>
               style: widget.planetStyle,
               showGlow: widget.isRunning,
               glowIntensity: widget.isRunning ? 0.15 : 0,
+              lightAngle: lightAngle,
             ),
           ),
         ),
       ),
     );
   }
-
 }

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 import '../models/planet_style.dart';
@@ -11,6 +13,7 @@ class PlanetPainter extends CustomPainter {
     required this.style,
     this.showGlow = false,
     this.glowIntensity = 0.2,
+    this.lightAngle = -0.8,
   });
 
   /// 구체 색상 스타일
@@ -21,6 +24,9 @@ class PlanetPainter extends CustomPainter {
 
   /// 글로우 강도 (0.0 ~ 1.0)
   final double glowIntensity;
+
+  /// 광원 각도 (라디안). 공전 위치에 따라 하이라이트 방향 회전.
+  final double lightAngle;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -36,16 +42,14 @@ class PlanetPainter extends CustomPainter {
       canvas.drawCircle(center, radius * 1.3, glowPaint);
     }
 
-    // 3D 그라데이션 구체
+    // 3D 그라데이션 구체 — 광원 각도에 따라 하이라이트 위치 회전
+    final highlightX = cos(lightAngle) * 0.3;
+    final highlightY = sin(lightAngle) * 0.3;
     final spherePaint = Paint()
       ..shader = RadialGradient(
-        center: const Alignment(-0.3, -0.3), // 좌상단 하이라이트
+        center: Alignment(highlightX, highlightY),
         radius: 0.9,
-        colors: [
-          style.highlightColor,
-          style.baseColor,
-          style.shadowColor,
-        ],
+        colors: [style.highlightColor, style.baseColor, style.shadowColor],
         stops: const [0.0, 0.5, 1.0],
       ).createShader(Rect.fromCircle(center: center, radius: radius));
 
@@ -56,6 +60,7 @@ class PlanetPainter extends CustomPainter {
   bool shouldRepaint(PlanetPainter oldDelegate) {
     return oldDelegate.showGlow != showGlow ||
         oldDelegate.glowIntensity != glowIntensity ||
-        oldDelegate.style != style;
+        oldDelegate.style != style ||
+        oldDelegate.lightAngle != lightAngle;
   }
 }

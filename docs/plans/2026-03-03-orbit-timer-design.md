@@ -28,7 +28,7 @@
 - 30분: tilt=0° → 원형으로 복귀 → 반복
 
 ### 위치/크기 계산
-```
+```text
 x = radius * cos(angle)
 y = radius * sin(angle) * cos(tilt)   // Y축 압축 = 타원 효과
 
@@ -44,7 +44,7 @@ opacity = 0.7 + 0.3 * (depthFactor + 1) / 2  // 원근 투명도
 ## 렌더링: CustomPaint 그라데이션 구체
 
 ### 항성 (중앙)
-```
+```text
 RadialGradient:
   center: Alignment(-0.3, -0.3)  // 좌상단 하이라이트
   colors: [highlightColor, baseColor, shadowColor]
@@ -97,7 +97,7 @@ class PlanetStyle {
 
 기존 타이머 화면 구조 유지. 타이머 링 영역만 교체.
 
-```
+```text
 ┌────────────────────────────────┐
 │  [AppBar] 타이머         📋    │
 │                                │
@@ -123,7 +123,7 @@ class PlanetStyle {
 
 ## 파일 구조
 
-```
+```text
 lib/features/timer/presentation/
 ├── widgets/
 │   ├── timer_ring_painter.dart         ← 기존 유지

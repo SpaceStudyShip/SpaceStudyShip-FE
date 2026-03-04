@@ -18,7 +18,7 @@ import 'core/theme/app_theme.dart';
 import 'features/badge/data/datasources/badge_local_datasource.dart';
 import 'features/badge/presentation/providers/badge_provider.dart';
 import 'features/settings/data/datasources/settings_local_datasource.dart';
-import 'features/settings/data/providers/settings_data_providers.dart';
+import 'features/settings/presentation/providers/settings_provider.dart';
 import 'features/exploration/data/datasources/exploration_local_datasource.dart';
 import 'features/exploration/presentation/providers/exploration_provider.dart';
 import 'features/fuel/data/datasources/fuel_local_datasource.dart';

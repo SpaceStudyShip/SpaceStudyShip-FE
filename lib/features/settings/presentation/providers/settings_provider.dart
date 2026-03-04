@@ -1,12 +1,30 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../data/providers/settings_data_providers.dart';
+import '../../data/datasources/settings_local_datasource.dart';
+import '../../data/repositories/settings_repository_impl.dart';
 import '../../domain/entities/app_settings_entity.dart';
+import '../../domain/repositories/settings_repository.dart';
 import '../../domain/usecases/get_settings_usecase.dart';
 import '../../domain/usecases/set_star_twinkle_usecase.dart';
 
 part 'settings_provider.g.dart';
+
+// === DataSource & Repository ===
+
+@riverpod
+SettingsLocalDataSource settingsLocalDataSource(Ref ref) {
+  throw StateError(
+    'SettingsLocalDataSource가 초기화되지 않았습니다. '
+    'SharedPreferences 초기화를 확인하세요.',
+  );
+}
+
+@riverpod
+SettingsRepository settingsRepository(Ref ref) {
+  final dataSource = ref.watch(settingsLocalDataSourceProvider);
+  return SettingsRepositoryImpl(dataSource);
+}
 
 // === UseCase Providers ===
 

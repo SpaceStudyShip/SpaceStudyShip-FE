@@ -75,7 +75,9 @@ class TimerAnimationSelector extends StatelessWidget {
           }),
 
           // 안전 영역 여백
-          SizedBox(height: MediaQuery.of(context).padding.bottom + AppSpacing.s20),
+          SizedBox(
+            height: MediaQuery.of(context).padding.bottom + AppSpacing.s20,
+          ),
         ],
       ),
     );
@@ -89,7 +91,10 @@ class TimerAnimationSelector extends StatelessWidget {
     return GestureDetector(
       onTap: () => Navigator.of(context).pop(anim.asset),
       child: Container(
-        margin: EdgeInsets.symmetric(horizontal: AppSpacing.s20, vertical: AppSpacing.s8),
+        margin: EdgeInsets.symmetric(
+          horizontal: AppSpacing.s20,
+          vertical: AppSpacing.s8,
+        ),
         padding: AppPadding.all16,
         decoration: BoxDecoration(
           color: isSelected
@@ -146,7 +151,9 @@ class TimerAnimationSelector extends StatelessWidget {
       child: Center(
         child: Text(
           '00:00',
-          style: AppTextStyles.tag10Semibold.copyWith(color: AppColors.textPrimary),
+          style: AppTextStyles.tag10Semibold.copyWith(
+            color: AppColors.textPrimary,
+          ),
         ),
       ),
     );

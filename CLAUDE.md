@@ -20,9 +20,9 @@ flutter analyze
 
 ---
 
-## Architecture: Clean 3-Layer
+## Architecture: Clean 3-Layer + DIP
 
-**의존성 방향:** `Presentation → Domain → Data` (역방향 금지)
+**의존성 방향:** `Presentation → Domain ← Data` (Domain이 중심, 역방향 금지)
 
 ```
 features/<feature>/

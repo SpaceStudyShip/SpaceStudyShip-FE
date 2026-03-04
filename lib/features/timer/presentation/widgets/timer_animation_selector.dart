@@ -75,7 +75,7 @@ class TimerAnimationSelector extends StatelessWidget {
           }),
 
           // 안전 영역 여백
-          SizedBox(height: MediaQuery.of(context).padding.bottom + 20.h),
+          SizedBox(height: MediaQuery.of(context).padding.bottom + AppSpacing.s20),
         ],
       ),
     );
@@ -89,7 +89,7 @@ class TimerAnimationSelector extends StatelessWidget {
     return GestureDetector(
       onTap: () => Navigator.of(context).pop(anim.asset),
       child: Container(
-        margin: EdgeInsets.symmetric(horizontal: 20.w, vertical: 6.h),
+        margin: EdgeInsets.symmetric(horizontal: AppSpacing.s20, vertical: AppSpacing.s8),
         padding: AppPadding.all16,
         decoration: BoxDecoration(
           color: isSelected
@@ -146,11 +146,7 @@ class TimerAnimationSelector extends StatelessWidget {
       child: Center(
         child: Text(
           '00:00',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 10.sp,
-            fontWeight: FontWeight.w600,
-          ),
+          style: AppTextStyles.tag10Semibold.copyWith(color: AppColors.textPrimary),
         ),
       ),
     );
@@ -165,7 +161,7 @@ Future<String?> showTimerAnimationSelector({
   return showModalBottomSheet<String>(
     context: context,
     backgroundColor: Colors.transparent,
-    barrierColor: Colors.black54,
+    barrierColor: AppColors.barrier,
     isScrollControlled: true,
     isDismissible: true,
     enableDrag: true,

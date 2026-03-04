@@ -19,7 +19,7 @@ import '../providers/timer_provider.dart';
 import '../providers/study_stats_provider.dart';
 import '../providers/timer_state.dart';
 import '../utils/timer_format_utils.dart';
-import '../widgets/orbit_timer_widget.dart';
+import '../widgets/lottie_timer_widget.dart';
 import '../widgets/todo_select_bottom_sheet.dart';
 
 class TimerScreen extends ConsumerStatefulWidget {
@@ -54,7 +54,7 @@ class _TimerScreenState extends ConsumerState<TimerScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    _formatDuration(timerState.elapsed),
+                    formatDuration(timerState.elapsed),
                     style: AppTextStyles.heading_20.copyWith(
                       color: isRunning ? AppColors.primary : Colors.white,
                     ),
@@ -73,13 +73,8 @@ class _TimerScreenState extends ConsumerState<TimerScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // 항성-행성 공전 타이머
-            OrbitTimerWidget(
-              elapsed: timerState.elapsed,
-              isRunning: isRunning,
-              isPaused: isPaused,
-            ),
-            SizedBox(height: AppSpacing.s48),
+            // 타이머 Lottie 애니메이션
+            LottieTimerWidget(isRunning: isRunning),
 
             // 컨트롤 버튼
             _buildControls(isIdle, isRunning, isPaused),
@@ -226,7 +221,7 @@ class _TimerScreenState extends ConsumerState<TimerScreen> {
     })
     result,
   ) async {
-    final sessionText = _formatDuration(result.sessionDuration);
+    final sessionText = formatDuration(result.sessionDuration);
 
     await AppDialog.show(
       context: context,
@@ -318,10 +313,4 @@ class _TimerScreenState extends ConsumerState<TimerScreen> {
     );
   }
 
-  String _formatDuration(Duration d) {
-    final hours = d.inHours.toString().padLeft(2, '0');
-    final minutes = d.inMinutes.remainder(60).toString().padLeft(2, '0');
-    final seconds = d.inSeconds.remainder(60).toString().padLeft(2, '0');
-    return '$hours:$minutes:$seconds';
-  }
 }

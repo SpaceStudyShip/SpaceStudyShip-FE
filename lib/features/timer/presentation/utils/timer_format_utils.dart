@@ -11,3 +11,13 @@ String formatMinutes(int totalMinutes) {
   if (hours > 0) return '$hours시간';
   return '$minutes분';
 }
+
+/// Duration을 'HH:MM:SS' 포맷으로 변환
+///
+/// 예: Duration(hours: 1, minutes: 30, seconds: 5) → '01:30:05'
+String formatDuration(Duration d) {
+  final hours = d.inHours.toString().padLeft(2, '0');
+  final minutes = d.inMinutes.remainder(60).toString().padLeft(2, '0');
+  final seconds = d.inSeconds.remainder(60).toString().padLeft(2, '0');
+  return '$hours:$minutes:$seconds';
+}

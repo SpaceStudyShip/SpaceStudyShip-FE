@@ -16,7 +16,7 @@ import '../../domain/repositories/auth_repository.dart';
 import '../../domain/usecases/sign_in_with_apple_usecase.dart';
 import '../../domain/usecases/sign_in_with_google_usecase.dart';
 import '../../domain/usecases/sign_out_usecase.dart';
-import '../../domain/utils/firebase_auth_error_handler.dart';
+import '../../data/utils/firebase_auth_error_handler.dart';
 import '../../../badge/presentation/providers/badge_provider.dart';
 import '../../../exploration/presentation/providers/exploration_provider.dart';
 import '../../../fuel/presentation/providers/fuel_provider.dart';

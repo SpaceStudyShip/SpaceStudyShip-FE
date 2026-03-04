@@ -105,6 +105,9 @@ class AppColors {
   /// Space Divider - 구분선, 경계선
   static const Color spaceDivider = Color(0xFF2D3555);
 
+  /// Barrier - 모달/바텀시트 딤 배경 (54% 불투명 블랙)
+  static const Color barrier = Color(0x8A000000);
+
   // ============================================
   // Text: 텍스트 계층 (opacity 기반)
   // ============================================

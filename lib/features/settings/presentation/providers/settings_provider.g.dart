@@ -6,45 +6,45 @@ part of 'settings_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$settingsLocalDataSourceHash() =>
-    r'e1785bd38ba66083904adecd6167992d5c4db412';
+String _$getSettingsUseCaseHash() =>
+    r'09c503ca87f7a3fdda8750ca6f256cd5ef800f73';
 
-/// See also [settingsLocalDataSource].
-@ProviderFor(settingsLocalDataSource)
-final settingsLocalDataSourceProvider =
-    AutoDisposeProvider<SettingsLocalDataSource>.internal(
-      settingsLocalDataSource,
-      name: r'settingsLocalDataSourceProvider',
+/// See also [getSettingsUseCase].
+@ProviderFor(getSettingsUseCase)
+final getSettingsUseCaseProvider =
+    AutoDisposeProvider<GetSettingsUseCase>.internal(
+      getSettingsUseCase,
+      name: r'getSettingsUseCaseProvider',
       debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
           ? null
-          : _$settingsLocalDataSourceHash,
+          : _$getSettingsUseCaseHash,
       dependencies: null,
       allTransitiveDependencies: null,
     );
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef SettingsLocalDataSourceRef =
-    AutoDisposeProviderRef<SettingsLocalDataSource>;
-String _$settingsRepositoryHash() =>
-    r'64bdbd4e731ae5defba90b5a302432d3e2b4386b';
+typedef GetSettingsUseCaseRef = AutoDisposeProviderRef<GetSettingsUseCase>;
+String _$setStarTwinkleUseCaseHash() =>
+    r'ac9229e119661492e0af680d3dcc030edc8b96e3';
 
-/// See also [settingsRepository].
-@ProviderFor(settingsRepository)
-final settingsRepositoryProvider =
-    AutoDisposeProvider<SettingsRepository>.internal(
-      settingsRepository,
-      name: r'settingsRepositoryProvider',
+/// See also [setStarTwinkleUseCase].
+@ProviderFor(setStarTwinkleUseCase)
+final setStarTwinkleUseCaseProvider =
+    AutoDisposeProvider<SetStarTwinkleUseCase>.internal(
+      setStarTwinkleUseCase,
+      name: r'setStarTwinkleUseCaseProvider',
       debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
           ? null
-          : _$settingsRepositoryHash,
+          : _$setStarTwinkleUseCaseHash,
       dependencies: null,
       allTransitiveDependencies: null,
     );
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef SettingsRepositoryRef = AutoDisposeProviderRef<SettingsRepository>;
+typedef SetStarTwinkleUseCaseRef =
+    AutoDisposeProviderRef<SetStarTwinkleUseCase>;
 String _$starTwinkleEnabledHash() =>
     r'dd46d2acc9bd838f18250b7ddcaadc825994bffa';
 
@@ -63,7 +63,7 @@ final starTwinkleEnabledProvider = AutoDisposeProvider<bool>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef StarTwinkleEnabledRef = AutoDisposeProviderRef<bool>;
-String _$settingsNotifierHash() => r'6e12a246c7f62edf9b2d258b52b48ea887c4b293';
+String _$settingsNotifierHash() => r'e5590548d61a207a0e84fc69ef25dea67626ca2f';
 
 /// See also [SettingsNotifier].
 @ProviderFor(SettingsNotifier)

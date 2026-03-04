@@ -4,7 +4,7 @@
 
 **프로젝트명:** Space Study Ship (우주공부선)
 **목표:** 우주 탐험 테마 게이미피케이션 학습 관리 앱
-**기술 스택:** Flutter + Spring Boot + Firebase + MySQL
+**기술 스택:** Flutter + Spring Boot + Firebase + PostgreSQL
 
 ---
 
@@ -120,7 +120,7 @@
 | 항목            | 내용                                                               |
 | --------------- | ------------------------------------------------------------------ |
 | 프로젝트 초기화 | Spring Boot 3.x + Gradle + Java/Kotlin                             |
-| DB 설계         | MySQL 스키마 (User, Timer Session, Todo, Badge, Fuel, Exploration) |
+| DB 설계         | PostgreSQL 스키마 (User, Timer Session, Todo, Badge, Fuel, Exploration) |
 | API 명세        | Swagger/OpenAPI 문서화                                             |
 | 공통 모듈       | 예외 처리, 응답 포맷, 로깅                                         |
 | 배포 환경       | Docker + AWS/GCP 기본 세팅                                         |

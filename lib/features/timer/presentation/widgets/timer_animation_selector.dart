@@ -6,6 +6,10 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../../../core/widgets/atoms/drag_handle.dart';
+import 'timer_ring_painter.dart';
+
+/// 타이머 모드 식별 상수
+const basicTimerAsset = 'basic';
 
 /// 타이머 애니메이션 데이터
 class TimerAnimationData {
@@ -14,9 +18,14 @@ class TimerAnimationData {
   final String asset;
   final String name;
 
-  static const defaultAsset = 'assets/lotties/Earth_and_Connections.json';
+  /// 기본값: 기본 타이머 (원형 링 + 숫자)
+  static const defaultAsset = basicTimerAsset;
 
   static const List<TimerAnimationData> animations = [
+    TimerAnimationData(
+      asset: basicTimerAsset,
+      name: '기본 타이머',
+    ),
     TimerAnimationData(
       asset: 'assets/lotties/Earth_and_Connections.json',
       name: '지구와 연결',
@@ -30,6 +39,9 @@ class TimerAnimationData {
   static bool isValidAsset(String asset) {
     return animations.any((a) => a.asset == asset);
   }
+
+  /// Lottie 애니메이션인지 여부
+  bool get isLottie => asset != basicTimerAsset;
 }
 
 /// 타이머 애니메이션 선택 바텀시트
@@ -54,7 +66,7 @@ class TimerAnimationSelector extends StatelessWidget {
           Padding(
             padding: AppPadding.bottomSheetTitlePadding,
             child: Text(
-              '타이머 애니메이션',
+              '타이머 스타일',
               style: AppTextStyles.subHeading_18.copyWith(color: Colors.white),
             ),
           ),
@@ -95,11 +107,13 @@ class TimerAnimationSelector extends StatelessWidget {
         ),
         child: Row(
           children: [
-            // Lottie 미리보기
+            // 미리보기
             SizedBox(
               width: 64.w,
               height: 64.w,
-              child: Lottie.asset(anim.asset, fit: BoxFit.contain),
+              child: anim.isLottie
+                  ? Lottie.asset(anim.asset, fit: BoxFit.contain)
+                  : _buildBasicTimerPreview(),
             ),
             SizedBox(width: AppSpacing.s16),
             // 이름
@@ -119,6 +133,27 @@ class TimerAnimationSelector extends StatelessWidget {
                 size: 24.w,
               ),
           ],
+        ),
+      ),
+    );
+  }
+
+  /// 기본 타이머 미리보기: 작은 원형 링 + 시간 텍스트
+  Widget _buildBasicTimerPreview() {
+    return CustomPaint(
+      painter: TimerRingPainter(
+        progress: 0.65,
+        isRunning: true,
+        strokeWidth: 3.w,
+      ),
+      child: Center(
+        child: Text(
+          '00:00',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 10.sp,
+            fontWeight: FontWeight.w600,
+          ),
         ),
       ),
     );

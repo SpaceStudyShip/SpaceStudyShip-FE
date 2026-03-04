@@ -20,6 +20,8 @@ import '../providers/study_stats_provider.dart';
 import '../providers/timer_state.dart';
 import '../utils/timer_format_utils.dart';
 import '../widgets/lottie_timer_widget.dart';
+import '../providers/timer_animation_provider.dart';
+import '../widgets/timer_animation_selector.dart';
 import '../widgets/todo_select_bottom_sheet.dart';
 
 class TimerScreen extends ConsumerStatefulWidget {
@@ -36,6 +38,8 @@ class _TimerScreenState extends ConsumerState<TimerScreen> {
     final isRunning = timerState.status == TimerStatus.running;
     final isPaused = timerState.status == TimerStatus.paused;
     final isIdle = timerState.status == TimerStatus.idle;
+    final currentAsset = ref.watch(timerAnimationNotifierProvider);
+    final isBasicTimer = currentAsset == basicTimerAsset;
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -45,7 +49,7 @@ class _TimerScreenState extends ConsumerState<TimerScreen> {
         backgroundColor: Colors.transparent,
         scrolledUnderElevation: 0,
         elevation: 0,
-        title: isIdle
+        title: (isIdle || isBasicTimer)
             ? Text(
                 '타이머',
                 style: AppTextStyles.heading_20.copyWith(color: Colors.white),
@@ -73,8 +77,17 @@ class _TimerScreenState extends ConsumerState<TimerScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // 타이머 Lottie 애니메이션
-            LottieTimerWidget(isRunning: isRunning),
+            // 타이머 비주얼 (기본 링 or Lottie) — 고정 높이로 레이아웃 안정화
+            SizedBox(
+              height: 400.w,
+              child: Center(
+                child: TimerVisualWidget(
+                  isRunning: isRunning,
+                  elapsed: timerState.elapsed,
+                ),
+              ),
+            ),
+            SizedBox(height: AppSpacing.s48),
 
             // 컨트롤 버튼
             _buildControls(isIdle, isRunning, isPaused),
@@ -312,5 +325,4 @@ class _TimerScreenState extends ConsumerState<TimerScreen> {
       style: AppTextStyles.tag_12.copyWith(color: AppColors.textSecondary),
     );
   }
-
 }

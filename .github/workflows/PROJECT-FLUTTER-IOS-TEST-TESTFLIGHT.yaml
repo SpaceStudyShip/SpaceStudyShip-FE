@@ -51,6 +51,10 @@ on:
   repository_dispatch:
     types: [build-ios-app]
 
+permissions:
+  issues: write
+  pull-requests: write
+
 # ============================================
 # 🔧 프로젝트별 설정 (아래 값들을 수정하세요)
 # ============================================

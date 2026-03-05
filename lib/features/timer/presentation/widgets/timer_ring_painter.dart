@@ -7,17 +7,6 @@ import '../../../../core/constants/app_colors.dart';
 /// 원형 프로그레스 링 CustomPainter
 ///
 /// 타이머 진행률을 원형 링으로 표시합니다.
-///
-/// **사용 예시**:
-/// ```dart
-/// CustomPaint(
-///   size: Size(200, 200),
-///   painter: TimerRingPainter(
-///     progress: 0.75,
-///     isRunning: true,
-///   ),
-/// )
-/// ```
 class TimerRingPainter extends CustomPainter {
   TimerRingPainter({
     required this.progress,

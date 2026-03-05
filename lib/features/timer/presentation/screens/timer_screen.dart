@@ -19,7 +19,9 @@ import '../providers/timer_provider.dart';
 import '../providers/study_stats_provider.dart';
 import '../providers/timer_state.dart';
 import '../utils/timer_format_utils.dart';
-import '../widgets/timer_ring_painter.dart';
+import '../widgets/lottie_timer_widget.dart';
+import '../providers/timer_animation_provider.dart';
+import '../widgets/timer_animation_selector.dart';
 import '../widgets/todo_select_bottom_sheet.dart';
 
 class TimerScreen extends ConsumerStatefulWidget {
@@ -36,6 +38,8 @@ class _TimerScreenState extends ConsumerState<TimerScreen> {
     final isRunning = timerState.status == TimerStatus.running;
     final isPaused = timerState.status == TimerStatus.paused;
     final isIdle = timerState.status == TimerStatus.idle;
+    final currentAsset = ref.watch(timerAnimationNotifierProvider);
+    final isBasicTimer = currentAsset == basicTimerAsset;
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -45,10 +49,27 @@ class _TimerScreenState extends ConsumerState<TimerScreen> {
         backgroundColor: Colors.transparent,
         scrolledUnderElevation: 0,
         elevation: 0,
-        title: Text(
-          '타이머',
-          style: AppTextStyles.heading_20.copyWith(color: Colors.white),
-        ),
+        title: (isIdle || isBasicTimer)
+            ? Text(
+                '타이머',
+                style: AppTextStyles.heading_20.copyWith(
+                  color: AppColors.textPrimary,
+                ),
+              )
+            : Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    formatDuration(timerState.elapsed),
+                    style: AppTextStyles.heading_20.copyWith(
+                      color: isRunning
+                          ? AppColors.primary
+                          : AppColors.textPrimary,
+                    ),
+                  ),
+                  _buildStatusText(timerState, isIdle, isRunning),
+                ],
+              ),
         actions: [
           IconButton(
             icon: Icon(Icons.history_rounded, color: Colors.white, size: 24.w),
@@ -60,43 +81,14 @@ class _TimerScreenState extends ConsumerState<TimerScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // 타이머 링 + 시간 표시
+            // 타이머 비주얼 (기본 링 or Lottie) — 고정 높이로 레이아웃 안정화
             SizedBox(
-              width: 260.w,
-              height: 260.w,
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  CustomPaint(
-                    size: Size(260.w, 260.w),
-                    painter: TimerRingPainter(
-                      progress: _calculateProgress(timerState.elapsed),
-                      isRunning: isRunning,
-                      strokeWidth: 6.w,
-                    ),
-                  ),
-                  Padding(
-                    padding: AppPadding.horizontal16,
-                    child: FittedBox(
-                      fit: BoxFit.scaleDown,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            _formatDuration(timerState.elapsed),
-                            style: AppTextStyles.timer_48.copyWith(
-                              color: isRunning
-                                  ? AppColors.primary
-                                  : Colors.white,
-                            ),
-                          ),
-                          SizedBox(height: AppSpacing.s4),
-                          _buildStatusText(timerState, isIdle, isRunning),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
+              height: 400.w,
+              child: Center(
+                child: TimerVisualWidget(
+                  isRunning: isRunning,
+                  elapsed: timerState.elapsed,
+                ),
               ),
             ),
             SizedBox(height: AppSpacing.s48),
@@ -246,7 +238,7 @@ class _TimerScreenState extends ConsumerState<TimerScreen> {
     })
     result,
   ) async {
-    final sessionText = _formatDuration(result.sessionDuration);
+    final sessionText = formatDuration(result.sessionDuration);
 
     await AppDialog.show(
       context: context,
@@ -336,18 +328,5 @@ class _TimerScreenState extends ConsumerState<TimerScreen> {
           : '일시정지',
       style: AppTextStyles.tag_12.copyWith(color: AppColors.textSecondary),
     );
-  }
-
-  String _formatDuration(Duration d) {
-    final hours = d.inHours.toString().padLeft(2, '0');
-    final minutes = d.inMinutes.remainder(60).toString().padLeft(2, '0');
-    final seconds = d.inSeconds.remainder(60).toString().padLeft(2, '0');
-    return '$hours:$minutes:$seconds';
-  }
-
-  /// 1시간(3600초)을 한 바퀴로 계산. 넘으면 다시 0부터.
-  double _calculateProgress(Duration elapsed) {
-    const oneHourSeconds = 3600;
-    return (elapsed.inSeconds % oneHourSeconds) / oneHourSeconds;
   }
 }

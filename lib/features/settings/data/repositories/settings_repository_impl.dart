@@ -10,12 +10,12 @@ class SettingsRepositoryImpl implements SettingsRepository {
   @override
   AppSettingsEntity getSettings() {
     return AppSettingsEntity(
-      starTwinkleEnabled: _dataSource.getStarTwinkleEnabled(),
+      starTwinkleEnabled: _dataSource.isStarTwinkleEnabled(),
     );
   }
 
   @override
-  Future<void> setStarTwinkleEnabled({required bool enabled}) async {
-    await _dataSource.setStarTwinkleEnabled(enabled: enabled);
+  Future<void> setStarTwinkleEnabled({required bool isEnabled}) async {
+    await _dataSource.setStarTwinkleEnabled(isEnabled: isEnabled);
   }
 }

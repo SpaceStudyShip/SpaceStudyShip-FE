@@ -5,7 +5,7 @@ class SetStarTwinkleUseCase {
 
   SetStarTwinkleUseCase(this._repository);
 
-  Future<void> execute({required bool enabled}) {
-    return _repository.setStarTwinkleEnabled(enabled: enabled);
+  Future<void> execute({required bool isEnabled}) {
+    return _repository.setStarTwinkleEnabled(isEnabled: isEnabled);
   }
 }

@@ -7,13 +7,13 @@ class SettingsLocalDataSource {
 
   SettingsLocalDataSource(this._prefs);
 
-  bool getStarTwinkleEnabled() {
+  bool isStarTwinkleEnabled() {
     return _prefs.getBool(_keyStarTwinkle) ?? true;
   }
 
-  Future<void> setStarTwinkleEnabled({required bool enabled}) async {
-    final success = await _prefs.setBool(_keyStarTwinkle, enabled);
-    if (!success) {
+  Future<void> setStarTwinkleEnabled({required bool isEnabled}) async {
+    final isSaved = await _prefs.setBool(_keyStarTwinkle, isEnabled);
+    if (!isSaved) {
       throw Exception('SharedPreferences 저장 실패: $_keyStarTwinkle');
     }
   }

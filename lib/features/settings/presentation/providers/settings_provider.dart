@@ -37,7 +37,7 @@ class SettingsNotifier extends _$SettingsNotifier {
 
     try {
       final useCase = ref.read(setStarTwinkleUseCaseProvider);
-      await useCase.execute(enabled: newValue);
+      await useCase.execute(isEnabled: newValue);
     } catch (_) {
       state = previousState;
       rethrow;

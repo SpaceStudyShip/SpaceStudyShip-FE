@@ -335,6 +335,126 @@ class _TodosForDateProviderElement
   DateTime get date => (origin as TodosForDateProvider).date;
 }
 
+String _$todosNotForDateHash() => r'd9a7cfb7df5ca2c2c0a6f31c40dd8fbcda127400';
+
+/// See also [todosNotForDate].
+@ProviderFor(todosNotForDate)
+const todosNotForDateProvider = TodosNotForDateFamily();
+
+/// See also [todosNotForDate].
+class TodosNotForDateFamily extends Family<List<TodoEntity>> {
+  /// See also [todosNotForDate].
+  const TodosNotForDateFamily();
+
+  /// See also [todosNotForDate].
+  TodosNotForDateProvider call(DateTime date) {
+    return TodosNotForDateProvider(date);
+  }
+
+  @override
+  TodosNotForDateProvider getProviderOverride(
+    covariant TodosNotForDateProvider provider,
+  ) {
+    return call(provider.date);
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'todosNotForDateProvider';
+}
+
+/// See also [todosNotForDate].
+class TodosNotForDateProvider extends AutoDisposeProvider<List<TodoEntity>> {
+  /// See also [todosNotForDate].
+  TodosNotForDateProvider(DateTime date)
+    : this._internal(
+        (ref) => todosNotForDate(ref as TodosNotForDateRef, date),
+        from: todosNotForDateProvider,
+        name: r'todosNotForDateProvider',
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$todosNotForDateHash,
+        dependencies: TodosNotForDateFamily._dependencies,
+        allTransitiveDependencies:
+            TodosNotForDateFamily._allTransitiveDependencies,
+        date: date,
+      );
+
+  TodosNotForDateProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.date,
+  }) : super.internal();
+
+  final DateTime date;
+
+  @override
+  Override overrideWith(
+    List<TodoEntity> Function(TodosNotForDateRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: TodosNotForDateProvider._internal(
+        (ref) => create(ref as TodosNotForDateRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        date: date,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeProviderElement<List<TodoEntity>> createElement() {
+    return _TodosNotForDateProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is TodosNotForDateProvider && other.date == date;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, date.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin TodosNotForDateRef on AutoDisposeProviderRef<List<TodoEntity>> {
+  /// The parameter `date` of this provider.
+  DateTime get date;
+}
+
+class _TodosNotForDateProviderElement
+    extends AutoDisposeProviderElement<List<TodoEntity>>
+    with TodosNotForDateRef {
+  _TodosNotForDateProviderElement(super.provider);
+
+  @override
+  DateTime get date => (origin as TodosNotForDateProvider).date;
+}
+
 String _$unscheduledTodosHash() => r'6392feb486da0deccf3be9ca35e32a2eba1a66e1';
 
 /// See also [unscheduledTodos].

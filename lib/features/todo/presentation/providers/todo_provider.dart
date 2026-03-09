@@ -300,6 +300,21 @@ List<TodoEntity> todosForDate(Ref ref, DateTime date) {
   }).toList();
 }
 
+// === 해당 날짜에 배정되지 않은 할일 (todo bank용) ===
+
+@riverpod
+List<TodoEntity> todosNotForDate(Ref ref, DateTime date) {
+  final todos = ref.watch(todoListNotifierProvider).valueOrNull ?? [];
+  final normalizedDate = DateTime(date.year, date.month, date.day);
+  return todos.where((t) {
+    if (t.scheduledDates.isEmpty) return false;
+    return !t.scheduledDates.any((d) {
+      final scheduled = DateTime(d.year, d.month, d.day);
+      return scheduled == normalizedDate;
+    });
+  }).toList();
+}
+
 // === 미지정 할일 필터 ===
 
 @riverpod

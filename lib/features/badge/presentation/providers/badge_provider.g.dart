@@ -61,7 +61,7 @@ final unlockedBadgeCountProvider = AutoDisposeProvider<int>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef UnlockedBadgeCountRef = AutoDisposeProviderRef<int>;
-String _$badgeNotifierHash() => r'ad13e70d5d21f2d41098e468f25fdacdcca38080';
+String _$badgeNotifierHash() => r'121f7003985d1c63cac4dc17728c23c75a31529b';
 
 /// See also [BadgeNotifier].
 @ProviderFor(BadgeNotifier)

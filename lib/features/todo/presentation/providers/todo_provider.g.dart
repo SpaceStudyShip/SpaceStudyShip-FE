@@ -194,7 +194,7 @@ final deleteCategoryUseCaseProvider =
 // ignore: unused_element
 typedef DeleteCategoryUseCaseRef =
     AutoDisposeProviderRef<DeleteCategoryUseCase>;
-String _$todosForDateHash() => r'9af8ac0f2a2d3d7d8d191238f0d4f23c52da6ddf';
+String _$todosForDateHash() => r'5b3fdfd35342374991d2a3254a2b58755b3c3048';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -335,7 +335,7 @@ class _TodosForDateProviderElement
   DateTime get date => (origin as TodosForDateProvider).date;
 }
 
-String _$todosNotForDateHash() => r'd9a7cfb7df5ca2c2c0a6f31c40dd8fbcda127400';
+String _$todosNotForDateHash() => r'eea5324e8b8ac04c8d396fa8837c97a56dba259f';
 
 /// See also [todosNotForDate].
 @ProviderFor(todosNotForDate)
@@ -472,7 +472,7 @@ final unscheduledTodosProvider = AutoDisposeProvider<List<TodoEntity>>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef UnscheduledTodosRef = AutoDisposeProviderRef<List<TodoEntity>>;
-String _$todosByDateMapHash() => r'63550762dadad72a407562f09198045aafdb1ece';
+String _$todosByDateMapHash() => r'6dc1d0fabc90511db8196e00c2d42897b473afc8';
 
 /// See also [todosByDateMap].
 @ProviderFor(todosByDateMap)
@@ -738,7 +738,7 @@ class _CategoryTodoStatsProviderElement
   String? get categoryId => (origin as CategoryTodoStatsProvider).categoryId;
 }
 
-String _$todoListNotifierHash() => r'7a2600651b82a5cf90efe6d25e37eefaadbed87e';
+String _$todoListNotifierHash() => r'157130d482c19d25a2c1adeaa51e4824b408e79f';
 
 /// See also [TodoListNotifier].
 @ProviderFor(TodoListNotifier)

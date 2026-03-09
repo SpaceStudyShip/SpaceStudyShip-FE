@@ -128,6 +128,20 @@ class TodoListNotifier extends _$TodoListNotifier {
     }
   }
 
+  /// 특정 날짜를 할일에 추가 (todo bank → 날짜 배정)
+  Future<void> addDateToTodo(TodoEntity todo, DateTime date) async {
+    final normalized = TodoEntity.normalizeDate(date);
+    if (todo.scheduledDates.any(
+      (d) => TodoEntity.normalizeDate(d) == normalized,
+    )) {
+      return;
+    }
+    final updated = todo.copyWith(
+      scheduledDates: [...todo.scheduledDates, normalized],
+    );
+    await updateTodo(updated);
+  }
+
   Future<void> updateTodo(TodoEntity todo) async {
     final previousState = state;
     state = AsyncData(
@@ -291,12 +305,11 @@ class CategoryListNotifier extends _$CategoryListNotifier {
 @riverpod
 List<TodoEntity> todosForDate(Ref ref, DateTime date) {
   final todos = ref.watch(todoListNotifierProvider).valueOrNull ?? [];
-  final normalizedDate = DateTime(date.year, date.month, date.day);
+  final normalizedDate = TodoEntity.normalizeDate(date);
   return todos.where((t) {
-    return t.scheduledDates.any((d) {
-      final scheduled = DateTime(d.year, d.month, d.day);
-      return scheduled == normalizedDate;
-    });
+    return t.scheduledDates.any(
+      (d) => TodoEntity.normalizeDate(d) == normalizedDate,
+    );
   }).toList();
 }
 
@@ -305,13 +318,12 @@ List<TodoEntity> todosForDate(Ref ref, DateTime date) {
 @riverpod
 List<TodoEntity> todosNotForDate(Ref ref, DateTime date) {
   final todos = ref.watch(todoListNotifierProvider).valueOrNull ?? [];
-  final normalizedDate = DateTime(date.year, date.month, date.day);
+  final normalizedDate = TodoEntity.normalizeDate(date);
   return todos.where((t) {
     if (t.scheduledDates.isEmpty) return false;
-    return !t.scheduledDates.any((d) {
-      final scheduled = DateTime(d.year, d.month, d.day);
-      return scheduled == normalizedDate;
-    });
+    return !t.scheduledDates.any(
+      (d) => TodoEntity.normalizeDate(d) == normalizedDate,
+    );
   }).toList();
 }
 
@@ -331,7 +343,7 @@ Map<DateTime, List<TodoEntity>> todosByDateMap(Ref ref) {
   final map = <DateTime, List<TodoEntity>>{};
   for (final todo in todos) {
     for (final date in todo.scheduledDates) {
-      final key = DateTime(date.year, date.month, date.day);
+      final key = TodoEntity.normalizeDate(date);
       map.putIfAbsent(key, () => []).add(todo);
     }
   }

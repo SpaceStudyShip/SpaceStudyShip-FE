@@ -30,4 +30,7 @@ class TodoEntity with _$TodoEntity {
     if (scheduledDates.isEmpty) return completedDates.isNotEmpty;
     return scheduledDates.every((d) => isCompletedForDate(d));
   }
+
+  String? get studyTimeLabel =>
+      actualMinutes != null && actualMinutes! > 0 ? '$actualMinutes분 공부' : null;
 }

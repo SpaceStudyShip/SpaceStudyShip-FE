@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../../../core/widgets/dialogs/app_dialog.dart';
 import '../../../../core/widgets/feedback/app_snackbar.dart';
@@ -50,7 +51,8 @@ class DismissibleTodoItem extends ConsumerWidget {
         extentRatio: 0.25,
         children: [
           CustomSlidableAction(
-            onPressed: (_) => _moveCategory(context, ref),
+            onPressed: (slidableContext) =>
+                _moveCategory(slidableContext, context, ref),
             backgroundColor: Colors.transparent,
             child: _buildActionContent(
               icon: Icons.drive_file_move_outline,
@@ -68,7 +70,8 @@ class DismissibleTodoItem extends ConsumerWidget {
         children: [
           if (contextDate != null)
             CustomSlidableAction(
-              onPressed: (_) => _removeFromDate(context, ref),
+              onPressed: (slidableContext) =>
+                  _removeFromDate(slidableContext, context, ref),
               backgroundColor: Colors.transparent,
               child: _buildActionContent(
                 icon: Icons.event_busy_rounded,
@@ -77,7 +80,8 @@ class DismissibleTodoItem extends ConsumerWidget {
               ),
             ),
           CustomSlidableAction(
-            onPressed: (_) => _deleteTodo(context, ref),
+            onPressed: (slidableContext) =>
+                _deleteTodo(slidableContext, context, ref),
             backgroundColor: Colors.transparent,
             child: _buildActionContent(
               icon: Icons.delete_outline,
@@ -90,9 +94,7 @@ class DismissibleTodoItem extends ConsumerWidget {
 
       child: TodoItem(
         title: todo.title,
-        subtitle: todo.actualMinutes != null && todo.actualMinutes! > 0
-            ? '${todo.actualMinutes}분 공부'
-            : null,
+        subtitle: todo.studyTimeLabel,
         isCompleted: isCompleted,
         onToggle: () {
           final date = contextDate ?? DateTime.now();
@@ -114,15 +116,20 @@ class DismissibleTodoItem extends ConsumerWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Icon(icon, color: color, size: 22.w),
-        SizedBox(height: 4.h),
+        SizedBox(height: AppSpacing.s4),
         Text(label, style: AppTextStyles.tag_12.copyWith(color: color)),
       ],
     );
   }
 
   /// 카테고리 이동
-  Future<void> _moveCategory(BuildContext context, WidgetRef ref) async {
-    Slidable.of(context)?.close();
+  Future<void> _moveCategory(
+    BuildContext slidableContext,
+    BuildContext context,
+    WidgetRef ref,
+  ) async {
+    Slidable.of(slidableContext)?.close();
+    if (!context.mounted) return;
     final newCategoryIds = await showCategorySelectBottomSheet(
       context: context,
       currentCategoryIds: todo.categoryIds,
@@ -135,13 +142,29 @@ class DismissibleTodoItem extends ConsumerWidget {
   }
 
   /// 선택된 날짜에서 제거 (bank로 복귀)
-  Future<void> _removeFromDate(BuildContext context, WidgetRef ref) async {
-    Slidable.of(context)?.close();
+  Future<void> _removeFromDate(
+    BuildContext slidableContext,
+    BuildContext context,
+    WidgetRef ref,
+  ) async {
+    Slidable.of(slidableContext)?.close();
     if (contextDate == null) return;
-    // 타이머 연동 체크
     if (_isLinkedToTimer(ref)) {
       AppSnackBar.warning(context, '타이머에 연동된 할 일은 제거할 수 없어요');
       return;
+    }
+    // 마지막 날짜인 경우 확인 다이얼로그
+    if (todo.scheduledDates.length == 1) {
+      final confirmed = await AppDialog.confirm(
+        context: context,
+        title: '할일 제거',
+        message: "'${todo.title}'의 마지막 배정 날짜입니다.\n제거하면 할일이 삭제됩니다.",
+        emotion: AppDialogEmotion.warning,
+        confirmText: '제거',
+        cancelText: '취소',
+        isDestructive: true,
+      );
+      if (confirmed != true || !context.mounted) return;
     }
     await ref
         .read(todoListNotifierProvider.notifier)
@@ -149,9 +172,12 @@ class DismissibleTodoItem extends ConsumerWidget {
   }
 
   /// 할일 완전 삭제
-  Future<void> _deleteTodo(BuildContext context, WidgetRef ref) async {
-    Slidable.of(context)?.close();
-    // 타이머 연동 체크
+  Future<void> _deleteTodo(
+    BuildContext slidableContext,
+    BuildContext context,
+    WidgetRef ref,
+  ) async {
+    Slidable.of(slidableContext)?.close();
     if (_isLinkedToTimer(ref)) {
       AppSnackBar.warning(context, '타이머에 연동된 할 일은 삭제할 수 없어요');
       return;
@@ -166,7 +192,7 @@ class DismissibleTodoItem extends ConsumerWidget {
       isDestructive: true,
     );
     if (confirmed == true && context.mounted) {
-      ref.read(todoListNotifierProvider.notifier).deleteTodo(todo.id);
+      await ref.read(todoListNotifierProvider.notifier).deleteTodo(todo.id);
     }
   }
 

@@ -495,7 +495,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget _buildTodoBankSection(DateTime selectedDate) {
     return Consumer(
       builder: (context, ref, _) {
-        final todosNotForDate = ref.watch(todosNotForDateProvider(selectedDate));
+        final todosNotForDate = ref.watch(
+          todosNotForDateProvider(selectedDate),
+        );
         if (todosNotForDate.isEmpty) return const SizedBox.shrink();
 
         return Column(
@@ -512,9 +514,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, AppSpacing.s8),
                 child: TodoItem(
                   title: todo.title,
-                  subtitle: todo.actualMinutes != null && todo.actualMinutes! > 0
-                      ? '${todo.actualMinutes}분 공부'
-                      : null,
+                  subtitle: todo.studyTimeLabel,
                   isCompleted: false,
                   leading: Icon(
                     Icons.add_circle_outline_rounded,
@@ -533,11 +533,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   void _addTodoToDate(WidgetRef ref, TodoEntity todo, DateTime date) {
-    final normalized = DateTime(date.year, date.month, date.day);
-    final updated = todo.copyWith(
-      scheduledDates: [...todo.scheduledDates, normalized],
-    );
-    ref.read(todoListNotifierProvider.notifier).updateTodo(updated);
+    ref.read(todoListNotifierProvider.notifier).addDateToTodo(todo, date);
   }
 
   Widget _buildEmptyTodoCard() {

@@ -92,17 +92,30 @@ class DismissibleTodoItem extends ConsumerWidget {
         ],
       ),
 
-      child: TodoItem(
-        title: todo.title,
-        subtitle: todo.studyTimeLabel,
-        isCompleted: isCompleted,
-        onToggle: () {
-          final date = contextDate ?? DateTime.now();
-          ref
-              .read(todoListNotifierProvider.notifier)
-              .toggleTodoForDate(todo, date);
-        },
-        onTap: onTap ?? () => _openEditSheet(context, ref),
+      child: Builder(
+        builder: (slidableChildContext) => TodoItem(
+          title: todo.title,
+          subtitle: todo.studyTimeLabel,
+          isCompleted: isCompleted,
+          onToggle: () {
+            final date = contextDate ?? DateTime.now();
+            ref
+                .read(todoListNotifierProvider.notifier)
+                .toggleTodoForDate(todo, date);
+          },
+          onTap:
+              onTap ??
+              () {
+                final slidable = Slidable.of(slidableChildContext);
+                if (slidable != null &&
+                    (slidable.animation.value > 0 ||
+                        slidable.animation.isAnimating)) {
+                  slidable.close();
+                  return;
+                }
+                _openEditSheet(context, ref);
+              },
+        ),
       ),
     );
   }

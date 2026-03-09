@@ -125,6 +125,14 @@ Scaffold(
 
 ---
 
+## Agent Skills (`.agents/skills/`)
+
+UI/UX 디자인 또는 프론트엔드 구현 작업 시 자동으로 참조할 것:
+- `.agents/skills/frontend-design/SKILL.md` — 프론트엔드 디자인 가이드 (UI 구현 전 Read로 로드)
+- `.agents/skills/find-skills/SKILL.md` — 새로운 스킬 검색/설치 (`npx skills find <query>`)
+
+---
+
 ## Key References
 
 - [docs/05_WIDGETS_GUIDE.md](docs/05_WIDGETS_GUIDE.md) — 위젯 카탈로그 (위젯 생성 전 필독)

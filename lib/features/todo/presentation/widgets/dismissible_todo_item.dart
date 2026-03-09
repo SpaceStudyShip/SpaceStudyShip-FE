@@ -98,10 +98,10 @@ class DismissibleTodoItem extends ConsumerWidget {
           subtitle: todo.studyTimeLabel,
           isCompleted: isCompleted,
           onToggle: () {
-            final date = contextDate ?? DateTime.now();
+            if (contextDate == null) return;
             ref
                 .read(todoListNotifierProvider.notifier)
-                .toggleTodoForDate(todo, date);
+                .toggleTodoForDate(todo, contextDate!);
           },
           onTap:
               onTap ??

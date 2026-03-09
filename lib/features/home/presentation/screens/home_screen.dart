@@ -347,6 +347,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       _selectedDay.day,
     );
     final todosForSelected = ref.watch(todosForDateProvider(selectedKey));
+    final bankTodos = ref.watch(todosNotForDateProvider(selectedKey));
     final unscheduled = ref.watch(unscheduledTodosProvider);
     final todosByDate = ref.watch(todosByDateMapProvider);
     final dateLabel = DateFormat('M/d', 'ko_KR').format(_selectedDay);
@@ -422,18 +423,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         ),
         SizedBox(height: AppSpacing.s8),
 
-        if (todosForSelected.isEmpty)
+        if (todosForSelected.isEmpty && bankTodos.isEmpty)
           Padding(
             padding: AppPadding.horizontal20,
             child: _buildEmptyTodoCard(),
           )
-        else
+        else if (todosForSelected.isNotEmpty)
           ...todosForSelected.map(
             (todo) => _buildTodoRow(todo, contextDate: _selectedDay),
           ),
 
         // ── 할 일 추가 (todo bank) ──
-        _buildTodoBankSection(selectedKey),
+        _buildTodoBankSection(selectedKey, bankTodos),
 
         // ── 카테고리 관리 버튼 ──
         Padding(
@@ -492,43 +493,39 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   /// 할 일 추가 (todo bank): 선택된 날짜에 배정되지 않은 할일 목록
   ///
   /// 탭하면 해당 날짜에 즉시 추가된다.
-  Widget _buildTodoBankSection(DateTime selectedDate) {
-    return Consumer(
-      builder: (context, ref, _) {
-        final todosNotForDate = ref.watch(
-          todosNotForDateProvider(selectedDate),
-        );
-        if (todosNotForDate.isEmpty) return const SizedBox.shrink();
+  Widget _buildTodoBankSection(
+    DateTime selectedDate,
+    List<TodoEntity> bankTodos,
+  ) {
+    if (bankTodos.isEmpty) return const SizedBox.shrink();
 
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: AppSpacing.s16),
-            Padding(
-              padding: AppPadding.horizontal20,
-              child: _buildSectionTitle('할 일 추가'),
-            ),
-            SizedBox(height: AppSpacing.s8),
-            ...todosNotForDate.map(
-              (todo) => Padding(
-                padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, AppSpacing.s8),
-                child: TodoItem(
-                  title: todo.title,
-                  subtitle: todo.studyTimeLabel,
-                  isCompleted: false,
-                  leading: Icon(
-                    Icons.add_circle_outline_rounded,
-                    color: AppColors.primary,
-                    size: 24.w,
-                  ),
-                  onToggle: () => _addTodoToDate(ref, todo, selectedDate),
-                  onTap: () => _addTodoToDate(ref, todo, selectedDate),
-                ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(height: AppSpacing.s16),
+        Padding(
+          padding: AppPadding.horizontal20,
+          child: _buildSectionTitle('할 일 추가'),
+        ),
+        SizedBox(height: AppSpacing.s8),
+        ...bankTodos.map(
+          (todo) => Padding(
+            padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, AppSpacing.s8),
+            child: TodoItem(
+              title: todo.title,
+              subtitle: todo.studyTimeLabel,
+              isCompleted: false,
+              leading: Icon(
+                Icons.add_circle_outline_rounded,
+                color: AppColors.primary,
+                size: 24.w,
               ),
+              onToggle: () => _addTodoToDate(ref, todo, selectedDate),
+              onTap: () => _addTodoToDate(ref, todo, selectedDate),
             ),
-          ],
-        );
-      },
+          ),
+        ),
+      ],
     );
   }
 

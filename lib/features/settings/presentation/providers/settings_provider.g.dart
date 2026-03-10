@@ -63,7 +63,7 @@ final starTwinkleEnabledProvider = AutoDisposeProvider<bool>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef StarTwinkleEnabledRef = AutoDisposeProviderRef<bool>;
-String _$settingsNotifierHash() => r'e5590548d61a207a0e84fc69ef25dea67626ca2f';
+String _$settingsNotifierHash() => r'09dd0a8d82513eb4a2b24203f0048bf9fb748fea';
 
 /// See also [SettingsNotifier].
 @ProviderFor(SettingsNotifier)

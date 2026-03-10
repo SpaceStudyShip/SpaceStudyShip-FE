@@ -19,6 +19,7 @@ import '../../../../routes/route_paths.dart';
 import '../../../timer/presentation/providers/study_stats_provider.dart';
 import '../../../todo/domain/entities/todo_entity.dart';
 import '../../../todo/presentation/providers/todo_provider.dart';
+import '../../../../core/widgets/space/todo_item.dart';
 import '../../../todo/presentation/widgets/dismissible_todo_item.dart';
 import '../../../todo/presentation/widgets/todo_add_bottom_sheet.dart';
 import '../widgets/space_calendar.dart';
@@ -346,6 +347,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       _selectedDay.day,
     );
     final todosForSelected = ref.watch(todosForDateProvider(selectedKey));
+    final bankTodos = ref.watch(todosNotForDateProvider(selectedKey));
     final unscheduled = ref.watch(unscheduledTodosProvider);
     final todosByDate = ref.watch(todosByDateMapProvider);
     final dateLabel = DateFormat('M/d', 'ko_KR').format(_selectedDay);
@@ -421,15 +423,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         ),
         SizedBox(height: AppSpacing.s8),
 
-        if (todosForSelected.isEmpty)
+        if (todosForSelected.isEmpty && bankTodos.isEmpty)
           Padding(
             padding: AppPadding.horizontal20,
             child: _buildEmptyTodoCard(),
           )
-        else
+        else if (todosForSelected.isNotEmpty)
           ...todosForSelected.map(
             (todo) => _buildTodoRow(todo, contextDate: _selectedDay),
           ),
+
+        // ── 할 일 추가 (todo bank) ──
+        _buildTodoBankSection(selectedKey, bankTodos),
 
         // ── 카테고리 관리 버튼 ──
         Padding(
@@ -483,6 +488,53 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 8.h),
       child: DismissibleTodoItem(todo: todo, contextDate: contextDate),
     );
+  }
+
+  /// 할 일 추가 (todo bank): 선택된 날짜에 배정되지 않은 할일 목록
+  ///
+  /// 탭하면 해당 날짜에 즉시 추가된다.
+  Widget _buildTodoBankSection(
+    DateTime selectedDate,
+    List<TodoEntity> bankTodos,
+  ) {
+    if (bankTodos.isEmpty) return const SizedBox.shrink();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(height: AppSpacing.s16),
+        Padding(
+          padding: AppPadding.horizontal20,
+          child: _buildSectionTitle('할 일 추가'),
+        ),
+        SizedBox(height: AppSpacing.s8),
+        ...bankTodos.map(
+          (todo) => Padding(
+            padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, AppSpacing.s8),
+            child: TodoItem(
+              title: todo.title,
+              subtitle: todo.studyTimeLabel,
+              isCompleted: false,
+              leading: Icon(
+                Icons.add_circle_outline_rounded,
+                color: AppColors.primary,
+                size: 24.w,
+              ),
+              onToggle: () => _addTodoToDate(ref, todo, selectedDate),
+              onTap: () => _addTodoToDate(ref, todo, selectedDate),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Future<void> _addTodoToDate(
+    WidgetRef ref,
+    TodoEntity todo,
+    DateTime date,
+  ) async {
+    await ref.read(todoListNotifierProvider.notifier).addDateToTodo(todo, date);
   }
 
   Widget _buildEmptyTodoCard() {

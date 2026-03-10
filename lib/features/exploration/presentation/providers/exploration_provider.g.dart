@@ -208,7 +208,7 @@ class _ExplorationProgressProviderElement
 }
 
 String _$explorationNotifierHash() =>
-    r'c774ca8225cc050cb9e6f247f36e9e0493e4874c';
+    r'0934da4a60377bef28a4a744d9c5fce5acd4cb32';
 
 /// 행성 목록 상태
 ///
@@ -230,7 +230,7 @@ final explorationNotifierProvider =
 
 typedef _$ExplorationNotifier = Notifier<List<ExplorationNodeEntity>>;
 String _$regionListNotifierHash() =>
-    r'24380eb73e0ae93bc2cce7228fa4097bb211ba24';
+    r'aee531fb3209715c68491f42d65e86bdfc8adee6';
 
 abstract class _$RegionListNotifier
     extends BuildlessAutoDisposeNotifier<List<ExplorationNodeEntity>> {

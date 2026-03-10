@@ -529,8 +529,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  void _addTodoToDate(WidgetRef ref, TodoEntity todo, DateTime date) {
-    ref.read(todoListNotifierProvider.notifier).addDateToTodo(todo, date);
+  Future<void> _addTodoToDate(
+    WidgetRef ref,
+    TodoEntity todo,
+    DateTime date,
+  ) async {
+    await ref.read(todoListNotifierProvider.notifier).addDateToTodo(todo, date);
   }
 
   Widget _buildEmptyTodoCard() {

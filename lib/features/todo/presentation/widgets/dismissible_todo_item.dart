@@ -148,7 +148,7 @@ class DismissibleTodoItem extends ConsumerWidget {
       currentCategoryIds: todo.categoryIds,
     );
     if (newCategoryIds != null && context.mounted) {
-      ref
+      await ref
           .read(todoListNotifierProvider.notifier)
           .updateTodo(todo.copyWith(categoryIds: newCategoryIds));
     }
@@ -216,7 +216,7 @@ class DismissibleTodoItem extends ConsumerWidget {
       initialTodo: todo,
     );
     if (result != null && context.mounted) {
-      ref
+      await ref
           .read(todoListNotifierProvider.notifier)
           .updateTodo(
             todo.copyWith(

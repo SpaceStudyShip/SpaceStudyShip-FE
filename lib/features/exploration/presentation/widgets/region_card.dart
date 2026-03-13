@@ -64,8 +64,11 @@ class _RegionCardState extends State<RegionCard> {
         duration: TossDesignTokens.animationFast,
         curve: TossDesignTokens.springCurve,
         child: Container(
-          margin: EdgeInsets.only(bottom: 10.h),
-          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
+          margin: EdgeInsets.only(bottom: AppSpacing.s12),
+          padding: EdgeInsets.symmetric(
+            horizontal: AppSpacing.s16,
+            vertical: 14.h,
+          ),
           decoration: BoxDecoration(
             color: isCleared
                 ? AppColors.success.withValues(alpha: 0.08)
@@ -84,36 +87,22 @@ class _RegionCardState extends State<RegionCard> {
           ),
           child: Row(
             children: [
-              // 지역 아이콘
-              _buildRegionIcon(isLocked, isCleared),
-              SizedBox(width: AppSpacing.s12),
+              // 지역 아이콘 (클리어 시 체크 오버레이)
+              _buildRegionIconWithStatus(isLocked, isCleared),
+              SizedBox(width: AppSpacing.s16),
 
               // 지역 정보
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            widget.node.name,
-                            style: AppTextStyles.paragraph14Semibold.copyWith(
-                              color: isLocked
-                                  ? AppColors.textTertiary
-                                  : Colors.white,
-                            ),
-                          ),
-                        ),
-                        if (isCleared)
-                          Icon(
-                            Icons.check_circle_rounded,
-                            color: AppColors.success,
-                            size: 18.w,
-                          ),
-                      ],
+                    Text(
+                      widget.node.name,
+                      style: AppTextStyles.paragraph14Semibold.copyWith(
+                        color: isLocked ? AppColors.textTertiary : Colors.white,
+                      ),
                     ),
-                    SizedBox(height: 2.h),
+                    SizedBox(height: AppSpacing.s4),
                     if (isLocked)
                       _buildLockedInfo()
                     else if (widget.node.description.isNotEmpty)
@@ -137,6 +126,39 @@ class _RegionCardState extends State<RegionCard> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildRegionIconWithStatus(bool isLocked, bool isCleared) {
+    final icon = _buildRegionIcon(isLocked, isCleared);
+    if (!isCleared) return icon;
+
+    final double size = 40.w;
+    return SizedBox(
+      width: size,
+      height: size,
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          icon,
+          Positioned(
+            right: -2,
+            bottom: -2,
+            child: Container(
+              decoration: BoxDecoration(
+                color: AppColors.spaceBackground,
+                shape: BoxShape.circle,
+              ),
+              padding: EdgeInsets.all(1),
+              child: Icon(
+                Icons.check_circle_rounded,
+                color: AppColors.success,
+                size: 16.w,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -227,7 +249,10 @@ class _RegionCardState extends State<RegionCard> {
   Widget _buildUnlockButton() {
     return AnimatedContainer(
       duration: TossDesignTokens.animationFast,
-      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+      padding: EdgeInsets.symmetric(
+        horizontal: AppSpacing.s16,
+        vertical: AppSpacing.s8,
+      ),
       decoration: BoxDecoration(
         color: _canUnlock
             ? AppColors.primary
@@ -236,7 +261,7 @@ class _RegionCardState extends State<RegionCard> {
       ),
       child: Text(
         '해금',
-        style: AppTextStyles.tag_12.copyWith(
+        style: AppTextStyles.paragraph14Semibold.copyWith(
           color: _canUnlock ? Colors.white : AppColors.textTertiary,
         ),
       ),

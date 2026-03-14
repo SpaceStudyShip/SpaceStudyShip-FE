@@ -202,4 +202,33 @@ class AppRadius {
 
   /// SnackBar용 라운드 (12px)
   static BorderRadius get snackbar => BorderRadius.circular(12.r);
+
+  /// 플로팅 네비게이션 바용 라운드 (28px)
+  static BorderRadius get floatingNav => BorderRadius.circular(28.r);
+}
+
+// ============================================
+// FloatingNavMetrics - 플로팅 네비게이션 바 수치
+// ============================================
+
+/// 플로팅 네비게이션 바 레이아웃 관련 상수
+///
+/// 하단 여백 계산 시 사용:
+/// ```dart
+/// MediaQuery.of(context).padding.bottom + FloatingNavMetrics.totalHeight
+/// ```
+class FloatingNavMetrics {
+  FloatingNavMetrics._();
+
+  /// 네비 바 내부 높이 (아이콘 + 라벨 + 패딩)
+  static double get barHeight => 64.h;
+
+  /// 네비 바 하단 마진
+  static double get bottomMargin => 12.h;
+
+  /// 네비 바 좌우 마진
+  static double get horizontalMargin => 20.w;
+
+  /// 하단 여백 계산용 총 높이 (barHeight + bottomMargin)
+  static double get totalHeight => barHeight + bottomMargin;
 }

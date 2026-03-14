@@ -738,6 +738,136 @@ class _CategoryTodoStatsProviderElement
   String? get categoryId => (origin as CategoryTodoStatsProvider).categoryId;
 }
 
+String _$todoCompletionStatsForDateHash() =>
+    r'8b054977087c6775d5eaed00ee49fb368dc2b127';
+
+/// See also [todoCompletionStatsForDate].
+@ProviderFor(todoCompletionStatsForDate)
+const todoCompletionStatsForDateProvider = TodoCompletionStatsForDateFamily();
+
+/// See also [todoCompletionStatsForDate].
+class TodoCompletionStatsForDateFamily
+    extends Family<({int total, int completed})> {
+  /// See also [todoCompletionStatsForDate].
+  const TodoCompletionStatsForDateFamily();
+
+  /// See also [todoCompletionStatsForDate].
+  TodoCompletionStatsForDateProvider call(DateTime date) {
+    return TodoCompletionStatsForDateProvider(date);
+  }
+
+  @override
+  TodoCompletionStatsForDateProvider getProviderOverride(
+    covariant TodoCompletionStatsForDateProvider provider,
+  ) {
+    return call(provider.date);
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'todoCompletionStatsForDateProvider';
+}
+
+/// See also [todoCompletionStatsForDate].
+class TodoCompletionStatsForDateProvider
+    extends AutoDisposeProvider<({int total, int completed})> {
+  /// See also [todoCompletionStatsForDate].
+  TodoCompletionStatsForDateProvider(DateTime date)
+    : this._internal(
+        (ref) => todoCompletionStatsForDate(
+          ref as TodoCompletionStatsForDateRef,
+          date,
+        ),
+        from: todoCompletionStatsForDateProvider,
+        name: r'todoCompletionStatsForDateProvider',
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$todoCompletionStatsForDateHash,
+        dependencies: TodoCompletionStatsForDateFamily._dependencies,
+        allTransitiveDependencies:
+            TodoCompletionStatsForDateFamily._allTransitiveDependencies,
+        date: date,
+      );
+
+  TodoCompletionStatsForDateProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.date,
+  }) : super.internal();
+
+  final DateTime date;
+
+  @override
+  Override overrideWith(
+    ({int total, int completed}) Function(
+      TodoCompletionStatsForDateRef provider,
+    )
+    create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: TodoCompletionStatsForDateProvider._internal(
+        (ref) => create(ref as TodoCompletionStatsForDateRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        date: date,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeProviderElement<({int total, int completed})> createElement() {
+    return _TodoCompletionStatsForDateProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is TodoCompletionStatsForDateProvider && other.date == date;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, date.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin TodoCompletionStatsForDateRef
+    on AutoDisposeProviderRef<({int total, int completed})> {
+  /// The parameter `date` of this provider.
+  DateTime get date;
+}
+
+class _TodoCompletionStatsForDateProviderElement
+    extends AutoDisposeProviderElement<({int total, int completed})>
+    with TodoCompletionStatsForDateRef {
+  _TodoCompletionStatsForDateProviderElement(super.provider);
+
+  @override
+  DateTime get date => (origin as TodoCompletionStatsForDateProvider).date;
+}
+
 String _$todoListNotifierHash() => r'157130d482c19d25a2c1adeaa51e4824b408e79f';
 
 /// See also [TodoListNotifier].

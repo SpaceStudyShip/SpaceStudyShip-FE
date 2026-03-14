@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../../../core/widgets/animations/entrance_animations.dart';
 import '../../../../core/widgets/dialogs/app_dialog.dart';
@@ -50,7 +51,8 @@ class ExploreScreen extends ConsumerWidget {
 
     // 상단/하단 inset 계산 (AppBar + 바텀 네비 영역까지 별 배경 확장)
     final topInset = MediaQuery.of(context).padding.top + kToolbarHeight;
-    final bottomInset = MediaQuery.of(context).padding.bottom + 72.h;
+    final bottomInset =
+        MediaQuery.of(context).padding.bottom + FloatingNavMetrics.totalHeight;
 
     // 맵 전체 높이 계산 (AppBar + 바텀 네비 영역 포함)
     final mapHeight =

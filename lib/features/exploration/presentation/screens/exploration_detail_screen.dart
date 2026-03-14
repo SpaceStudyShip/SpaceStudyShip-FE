@@ -97,7 +97,7 @@ class ExplorationDetailScreen extends ConsumerWidget {
                     20.w,
                     32.h +
                         MediaQuery.of(context).padding.bottom +
-                        kBottomNavigationBarHeight,
+                        FloatingNavMetrics.totalHeight,
                   ),
                   sliver: SliverList(
                     delegate: SliverChildBuilderDelegate((context, index) {

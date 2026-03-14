@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
+import '../../../../core/utils/show_app_bottom_sheet.dart';
 import '../../../../core/widgets/atoms/drag_handle.dart';
 import '../../../../core/widgets/buttons/app_button.dart';
 import '../../../../core/widgets/states/space_empty_state.dart';
@@ -221,13 +222,8 @@ class _TodoSelectTile extends StatelessWidget {
 /// 할일 선택 바텀시트 표시 헬퍼
 /// 반환: null(dismiss) / true(연동없이시작) / TodoEntity(할일선택)
 Future<Object?> showTodoSelectBottomSheet({required BuildContext context}) {
-  return showModalBottomSheet<Object>(
+  return showAppBottomSheet<Object>(
     context: context,
-    backgroundColor: Colors.transparent,
-    barrierColor: Colors.black54,
-    isScrollControlled: true,
-    isDismissible: true,
-    enableDrag: true,
-    builder: (context) => const TodoSelectBottomSheet(),
+    builder: (context, _) => const TodoSelectBottomSheet(),
   );
 }

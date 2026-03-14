@@ -9,6 +9,7 @@ import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../../../core/widgets/atoms/calendar_header.dart';
 import '../../../../core/widgets/atoms/drag_handle.dart';
+import '../../../../core/utils/show_app_bottom_sheet.dart';
 import '../../../../core/widgets/buttons/app_button.dart';
 import '../../../../core/widgets/inputs/app_text_field.dart';
 import '../../domain/entities/todo_entity.dart';
@@ -20,11 +21,13 @@ class TodoAddBottomSheet extends ConsumerStatefulWidget {
     this.initialCategoryIds,
     this.initialScheduledDates,
     this.initialTodo,
+    required this.bottomPadding,
   });
 
   final List<String>? initialCategoryIds;
   final List<DateTime>? initialScheduledDates;
   final TodoEntity? initialTodo;
+  final double bottomPadding;
 
   @override
   ConsumerState<TodoAddBottomSheet> createState() => _TodoAddBottomSheetState();
@@ -318,7 +321,7 @@ class _TodoAddBottomSheetState extends ConsumerState<TodoAddBottomSheet> {
                   ),
                 ),
 
-                SizedBox(height: MediaQuery.of(context).padding.bottom + 20.h),
+                SizedBox(height: widget.bottomPadding),
               ],
             ),
           ),
@@ -496,17 +499,13 @@ Future<Map<String, dynamic>?> showTodoAddBottomSheet({
   List<DateTime>? initialScheduledDates,
   TodoEntity? initialTodo,
 }) {
-  return showModalBottomSheet<Map<String, dynamic>>(
+  return showAppBottomSheet<Map<String, dynamic>>(
     context: context,
-    backgroundColor: Colors.transparent,
-    barrierColor: Colors.black54,
-    isScrollControlled: true,
-    isDismissible: true,
-    enableDrag: true,
-    builder: (context) => TodoAddBottomSheet(
+    builder: (context, bottomPadding) => TodoAddBottomSheet(
       initialCategoryIds: initialCategoryIds,
       initialScheduledDates: initialScheduledDates,
       initialTodo: initialTodo,
+      bottomPadding: bottomPadding,
     ),
   );
 }

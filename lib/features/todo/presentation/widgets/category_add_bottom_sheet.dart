@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
+import '../../../../core/utils/show_app_bottom_sheet.dart';
 import '../../../../core/widgets/atoms/drag_handle.dart';
 import '../../../../core/widgets/buttons/app_button.dart';
 import '../../../../core/widgets/inputs/app_text_field.dart';
@@ -33,9 +34,14 @@ const _emojiPresets = [
 ];
 
 class CategoryAddBottomSheet extends StatefulWidget {
-  const CategoryAddBottomSheet({super.key, this.initialCategory});
+  const CategoryAddBottomSheet({
+    super.key,
+    this.initialCategory,
+    required this.bottomPadding,
+  });
 
   final ({String id, String name, String? emoji})? initialCategory;
+  final double bottomPadding;
 
   @override
   State<CategoryAddBottomSheet> createState() => _CategoryAddBottomSheetState();
@@ -181,7 +187,7 @@ class _CategoryAddBottomSheetState extends State<CategoryAddBottomSheet> {
                 ),
               ),
 
-              SizedBox(height: MediaQuery.of(context).padding.bottom + 20.h),
+              SizedBox(height: widget.bottomPadding),
             ],
           ),
         ),
@@ -195,14 +201,11 @@ Future<Map<String, dynamic>?> showCategoryAddBottomSheet({
   required BuildContext context,
   ({String id, String name, String? emoji})? initialCategory,
 }) {
-  return showModalBottomSheet<Map<String, dynamic>>(
+  return showAppBottomSheet<Map<String, dynamic>>(
     context: context,
-    backgroundColor: Colors.transparent,
-    barrierColor: Colors.black54,
-    isScrollControlled: true,
-    isDismissible: true,
-    enableDrag: true,
-    builder: (context) =>
-        CategoryAddBottomSheet(initialCategory: initialCategory),
+    builder: (context, bottomPadding) => CategoryAddBottomSheet(
+      initialCategory: initialCategory,
+      bottomPadding: bottomPadding,
+    ),
   );
 }

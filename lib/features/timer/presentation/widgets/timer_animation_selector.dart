@@ -5,6 +5,7 @@ import 'package:lottie/lottie.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
+import '../../../../core/utils/show_app_bottom_sheet.dart';
 import '../../../../core/widgets/atoms/drag_handle.dart';
 import 'timer_ring_painter.dart';
 
@@ -43,9 +44,14 @@ class TimerAnimationData {
 
 /// 타이머 애니메이션 선택 바텀시트
 class TimerAnimationSelector extends StatelessWidget {
-  const TimerAnimationSelector({super.key, required this.currentAsset});
+  const TimerAnimationSelector({
+    super.key,
+    required this.currentAsset,
+    required this.bottomPadding,
+  });
 
   final String currentAsset;
+  final double bottomPadding;
 
   @override
   Widget build(BuildContext context) {
@@ -74,10 +80,7 @@ class TimerAnimationSelector extends StatelessWidget {
             return _buildAnimationItem(context, anim, isSelected);
           }),
 
-          // 안전 영역 여백
-          SizedBox(
-            height: MediaQuery.of(context).padding.bottom + AppSpacing.s20,
-          ),
+          SizedBox(height: bottomPadding),
         ],
       ),
     );
@@ -165,13 +168,11 @@ Future<String?> showTimerAnimationSelector({
   required BuildContext context,
   required String currentAsset,
 }) {
-  return showModalBottomSheet<String>(
+  return showAppBottomSheet<String>(
     context: context,
-    backgroundColor: Colors.transparent,
-    barrierColor: AppColors.barrier,
-    isScrollControlled: true,
-    isDismissible: true,
-    enableDrag: true,
-    builder: (context) => TimerAnimationSelector(currentAsset: currentAsset),
+    builder: (context, bottomPadding) => TimerAnimationSelector(
+      currentAsset: currentAsset,
+      bottomPadding: bottomPadding,
+    ),
   );
 }

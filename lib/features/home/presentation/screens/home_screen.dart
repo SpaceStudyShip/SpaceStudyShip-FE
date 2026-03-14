@@ -70,7 +70,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   void _onSheetChanged() {
-    final expanded = _sheetController.size > 0.4;
+    final expanded = _sheetController.size > 0.3;
     if (expanded != _isSheetExpanded) {
       setState(() {
         _isSheetExpanded = expanded;
@@ -104,7 +104,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     ref.listen(homeReTapProvider, (prev, next) {
       if (_isSheetExpanded) {
         _sheetController.animateTo(
-          0.30,
+          0.18,
           duration: const Duration(milliseconds: 350),
           curve: Curves.easeOutCubic,
         );
@@ -154,7 +154,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           GestureDetector(
             onTap: () {
               _sheetController.animateTo(
-                0.30,
+                0.18,
                 duration: const Duration(milliseconds: 300),
                 curve: Curves.easeOut,
               );
@@ -188,7 +188,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           setState(() => _isSpaceshipPressed = false);
           if (_isSheetExpanded) {
             _sheetController.animateTo(
-              0.25,
+              0.18,
               duration: const Duration(milliseconds: 300),
               curve: Curves.easeOut,
             );
@@ -224,11 +224,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget _buildBottomSheet() {
     return DraggableScrollableSheet(
       controller: _sheetController,
-      initialChildSize: 0.30,
-      minChildSize: 0.30,
+      initialChildSize: 0.18,
+      minChildSize: 0.18,
       maxChildSize: 0.85,
       snap: true,
-      snapSizes: const [0.30, 0.85],
+      snapSizes: const [0.18, 0.85],
       builder: (context, scrollController) {
         return Container(
           decoration: BoxDecoration(
@@ -250,57 +250,25 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  /// 접힌 상태: 주간 캘린더 스트립 + 할일 카운트
+  /// 접힌 상태: 컴팩트 카드 (진행률 바 + 완료 카운트)
   Widget _buildCollapsedSheet(ScrollController scrollController) {
-    final todosByDate = ref.watch(todosByDateMapProvider);
     final todayKey = DateTime(
       DateTime.now().year,
       DateTime.now().month,
       DateTime.now().day,
     );
-    final todayTodoCount =
-        todosByDate[todayKey]
-            ?.where((t) => !t.isCompletedForDate(todayKey))
-            .length ??
-        0;
+    final stats = ref.watch(todoCompletionStatsForDateProvider(todayKey));
+    final hasAnyTodo = stats.total > 0;
+    final progress = hasAnyTodo ? stats.completed / stats.total : 0.0;
 
     return ListView(
       controller: scrollController,
       padding: EdgeInsets.zero,
+      physics: const ClampingScrollPhysics(),
       children: [
         const DragHandle(),
 
-        // 주간 캘린더 스트립 (컴팩트 모드)
-        Padding(
-          padding: AppPadding.horizontal20,
-          child: SpaceCalendar(
-            focusedDay: _focusedDay,
-            selectedDay: _selectedDay,
-            isCompact: true,
-            onDaySelected: (selectedDay, focusedDay) {
-              setState(() {
-                _selectedDay = selectedDay;
-                _focusedDay = focusedDay;
-              });
-              _sheetController.animateTo(
-                0.85,
-                duration: const Duration(milliseconds: 400),
-                curve: Curves.easeOutCubic,
-              );
-            },
-            onPageChanged: (focusedDay) {
-              setState(() => _focusedDay = focusedDay);
-            },
-            eventLoader: (day) {
-              final key = DateTime(day.year, day.month, day.day);
-              return todosByDate[key] ?? [];
-            },
-          ),
-        ),
-
-        SizedBox(height: AppSpacing.s12),
-
-        // 오늘의 할일 카운트 + 펼치기 안내
+        // 컴팩트 카드 본체
         GestureDetector(
           onTap: () {
             _sheetController.animateTo(
@@ -311,26 +279,60 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           },
           behavior: HitTestBehavior.opaque,
           child: Padding(
-            padding: AppPadding.bottomSheetTitlePadding,
-            child: Row(
+            padding: AppPadding.horizontal20,
+            child: Column(
               children: [
-                Text(
-                  '오늘의 할 일',
-                  style: AppTextStyles.heading_20.copyWith(color: Colors.white),
+                // 타이틀 행: "오늘의 할 일" + 완료 카운트
+                Row(
+                  children: [
+                    Icon(
+                      Icons.edit_note_rounded,
+                      color: AppColors.primary,
+                      size: 20.w,
+                    ),
+                    SizedBox(width: AppSpacing.s8),
+                    Text(
+                      '오늘의 할 일',
+                      style: AppTextStyles.label_16.copyWith(
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                    const Spacer(),
+                    if (hasAnyTodo)
+                      Text(
+                        '${stats.completed}/${stats.total} 완료',
+                        style: AppTextStyles.tag_12.copyWith(
+                          color: AppColors.textTertiary,
+                        ),
+                      )
+                    else
+                      Text(
+                        '할 일을 추가해보세요',
+                        style: AppTextStyles.tag_12.copyWith(
+                          color: AppColors.textTertiary,
+                        ),
+                      ),
+                  ],
                 ),
-                SizedBox(width: AppSpacing.s8),
-                Text(
-                  '$todayTodoCount개',
-                  style: AppTextStyles.subHeading_18.copyWith(
-                    color: AppColors.textTertiary,
+
+                // 진행률 바 (할일이 있을 때만)
+                if (hasAnyTodo) ...[
+                  SizedBox(height: AppSpacing.s12),
+                  ClipRRect(
+                    borderRadius: AppRadius.small,
+                    child: LinearProgressIndicator(
+                      value: progress,
+                      minHeight: 4.h,
+                      backgroundColor:
+                          Colors.white.withValues(alpha: 0.08),
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        AppColors.primary,
+                      ),
+                    ),
                   ),
-                ),
-                const Spacer(),
-                Icon(
-                  Icons.keyboard_arrow_up_rounded,
-                  color: AppColors.textTertiary,
-                  size: 24.w,
-                ),
+                ],
+
+                SizedBox(height: AppSpacing.s4),
               ],
             ),
           ),

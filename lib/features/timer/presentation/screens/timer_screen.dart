@@ -91,7 +91,7 @@ class _TimerScreenState extends ConsumerState<TimerScreen> {
                 ),
               ),
             ),
-            SizedBox(height: AppSpacing.s48),
+            // SizedBox(height: AppSpacing.s20),
 
             // 컨트롤 버튼
             _buildControls(isIdle, isRunning, isPaused),

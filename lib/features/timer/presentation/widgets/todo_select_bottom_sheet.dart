@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
+import '../../../../core/utils/show_app_bottom_sheet.dart';
 import '../../../../core/widgets/atoms/drag_handle.dart';
 import '../../../../core/widgets/buttons/app_button.dart';
 import '../../../../core/widgets/states/space_empty_state.dart';
@@ -13,7 +14,9 @@ import '../../../todo/domain/entities/todo_entity.dart';
 import '../../../todo/presentation/providers/todo_provider.dart';
 
 class TodoSelectBottomSheet extends ConsumerWidget {
-  const TodoSelectBottomSheet({super.key});
+  const TodoSelectBottomSheet({super.key, required this.bottomPadding});
+
+  final double bottomPadding;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -106,6 +109,7 @@ class TodoSelectBottomSheet extends ConsumerWidget {
                         }, childCount: incomplete.length),
                       ),
                     ),
+                  SliverToBoxAdapter(child: SizedBox(height: bottomPadding)),
                 ],
               );
             },
@@ -221,13 +225,9 @@ class _TodoSelectTile extends StatelessWidget {
 /// 할일 선택 바텀시트 표시 헬퍼
 /// 반환: null(dismiss) / true(연동없이시작) / TodoEntity(할일선택)
 Future<Object?> showTodoSelectBottomSheet({required BuildContext context}) {
-  return showModalBottomSheet<Object>(
+  return showAppBottomSheet<Object>(
     context: context,
-    backgroundColor: Colors.transparent,
-    barrierColor: Colors.black54,
-    isScrollControlled: true,
-    isDismissible: true,
-    enableDrag: true,
-    builder: (context) => const TodoSelectBottomSheet(),
+    builder: (context, bottomPadding) =>
+        TodoSelectBottomSheet(bottomPadding: bottomPadding),
   );
 }

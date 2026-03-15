@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
+import '../../../../core/utils/show_app_bottom_sheet.dart';
 import '../../../../core/widgets/space/spaceship_card.dart';
 
 /// 우주선 데이터 모델 (임시)
@@ -96,6 +97,7 @@ class SpaceshipSelector extends StatelessWidget {
     required this.spaceships,
     required this.selectedId,
     required this.onSelect,
+    required this.bottomPadding,
   });
 
   /// 우주선 목록
@@ -106,6 +108,9 @@ class SpaceshipSelector extends StatelessWidget {
 
   /// 선택 콜백
   final ValueChanged<String> onSelect;
+
+  /// 플로팅 네비 반영 하단 패딩
+  final double bottomPadding;
 
   @override
   Widget build(BuildContext context) {
@@ -167,8 +172,7 @@ class SpaceshipSelector extends StatelessWidget {
             ),
           ),
 
-          // 안전 영역 여백
-          SizedBox(height: MediaQuery.of(context).padding.bottom + 20.h),
+          SizedBox(height: bottomPadding),
         ],
       ),
     );
@@ -182,17 +186,13 @@ Future<void> showSpaceshipSelector({
   required String selectedId,
   required ValueChanged<String> onSelect,
 }) {
-  return showModalBottomSheet(
+  return showAppBottomSheet(
     context: context,
-    backgroundColor: Colors.transparent,
-    barrierColor: Colors.black54,
-    isScrollControlled: true,
-    isDismissible: true,
-    enableDrag: true,
-    builder: (context) => SpaceshipSelector(
+    builder: (context, bottomPadding) => SpaceshipSelector(
       spaceships: spaceships,
       selectedId: selectedId,
       onSelect: onSelect,
+      bottomPadding: bottomPadding,
     ),
   );
 }

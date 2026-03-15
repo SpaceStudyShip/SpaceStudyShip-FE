@@ -50,7 +50,12 @@ class ProfileScreen extends ConsumerWidget {
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: AppPadding.all20,
+          padding: EdgeInsets.fromLTRB(
+            AppSpacing.s20,
+            AppSpacing.s20,
+            AppSpacing.s20,
+            AppSpacing.s20 + FloatingNavMetrics.totalHeight,
+          ),
           child: Column(
             children: [
               // 프로필 정보

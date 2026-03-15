@@ -118,7 +118,7 @@ class _TodoListScreenState extends ConsumerState<TodoListScreen> {
       floatingActionButton: _isEditMode && _selectedCount > 0
           ? Padding(
               padding: EdgeInsets.only(
-                bottom: kBottomNavigationBarHeight + 50.h,
+                bottom: FloatingNavMetrics.totalHeight + 50.h,
               ),
               child: FloatingActionButton.extended(
                 onPressed: () => _confirmBatchDelete(context),

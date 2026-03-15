@@ -377,3 +377,18 @@ List<TodoEntity> todosForCategory(Ref ref, String? categoryId) {
     completedCount: catTodos.where((t) => t.isFullyCompleted).length,
   );
 }
+
+// === 날짜별 할일 완료 통계 (홈 컴팩트 카드용) ===
+
+@riverpod
+({int total, int completed}) todoCompletionStatsForDate(
+  Ref ref,
+  DateTime date,
+) {
+  final todos = ref.watch(todosForDateProvider(date));
+  final normalizedDate = TodoEntity.normalizeDate(date);
+  return (
+    total: todos.length,
+    completed: todos.where((t) => t.isCompletedForDate(normalizedDate)).length,
+  );
+}

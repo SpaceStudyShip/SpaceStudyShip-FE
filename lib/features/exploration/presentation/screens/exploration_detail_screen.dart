@@ -91,7 +91,14 @@ class ExplorationDetailScreen extends ConsumerWidget {
               // 지역 목록
               if (regions.isNotEmpty)
                 SliverPadding(
-                  padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, 32.h),
+                  padding: EdgeInsets.fromLTRB(
+                    20.w,
+                    16.h,
+                    20.w,
+                    32.h +
+                        MediaQuery.of(context).padding.bottom +
+                        FloatingNavMetrics.totalHeight,
+                  ),
                   sliver: SliverList(
                     delegate: SliverChildBuilderDelegate((context, index) {
                       final region = regions[index];

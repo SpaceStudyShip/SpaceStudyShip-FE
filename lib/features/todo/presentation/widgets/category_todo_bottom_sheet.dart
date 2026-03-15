@@ -23,11 +23,13 @@ class CategoryTodoBottomSheet extends ConsumerWidget {
     this.categoryId,
     this.categoryName = '미분류',
     this.categoryIconId,
+    required this.bottomPadding,
   });
 
   final String? categoryId;
   final String categoryName;
   final String? categoryIconId;
+  final double bottomPadding;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -35,11 +37,11 @@ class CategoryTodoBottomSheet extends ConsumerWidget {
     final stats = ref.watch(categoryTodoStatsProvider(categoryId));
 
     return DraggableScrollableSheet(
-      initialChildSize: 0.4,
-      minChildSize: 0.2,
+      initialChildSize: 0.55,
+      minChildSize: 0.3,
       maxChildSize: 0.9,
       snap: true,
-      snapSizes: const [0.4, 0.7, 0.9],
+      snapSizes: const [0.55, 0.75, 0.9],
       expand: false,
       builder: (context, scrollController) {
         return Container(
@@ -97,8 +99,9 @@ class CategoryTodoBottomSheet extends ConsumerWidget {
                     onPressed: () async {
                       final result = await showTodoAddBottomSheet(
                         context: context,
-                        initialCategoryIds:
-                            categoryId != null ? [categoryId!] : null,
+                        initialCategoryIds: categoryId != null
+                            ? [categoryId!]
+                            : null,
                       );
                       if (result != null && context.mounted) {
                         ref
@@ -107,7 +110,7 @@ class CategoryTodoBottomSheet extends ConsumerWidget {
                               title: result['title'] as String,
                               categoryIds:
                                   (result['categoryIds'] as List<String>?) ??
-                                      [],
+                                  [],
                               scheduledDates:
                                   result['scheduledDates'] as List<DateTime>?,
                             );
@@ -141,22 +144,17 @@ class CategoryTodoBottomSheet extends ConsumerWidget {
                 SliverPadding(
                   padding: AppPadding.horizontal20,
                   sliver: SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                        final todo = todos[index];
-                        return Padding(
-                          padding: EdgeInsets.only(bottom: 8.h),
-                          child: DismissibleTodoItem(todo: todo),
-                        );
-                      },
-                      childCount: todos.length,
-                    ),
+                    delegate: SliverChildBuilderDelegate((context, index) {
+                      final todo = todos[index];
+                      return Padding(
+                        padding: EdgeInsets.only(bottom: 8.h),
+                        child: DismissibleTodoItem(todo: todo),
+                      );
+                    }, childCount: todos.length),
                   ),
                 ),
 
-              SliverToBoxAdapter(
-                child: SizedBox(height: AppSpacing.s32),
-              ),
+              SliverToBoxAdapter(child: SizedBox(height: bottomPadding)),
             ],
           ),
         );

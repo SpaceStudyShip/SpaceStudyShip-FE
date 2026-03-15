@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
 
 /// 행성 롱프레스 시 표시되는 컨텍스트 메뉴 결과
@@ -25,7 +26,7 @@ Future<PlanetMenuAction?> showPlanetContextMenu({
     ),
     color: AppColors.spaceSurface,
     shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(12.r),
+      borderRadius: AppRadius.large,
       side: BorderSide(color: AppColors.spaceDivider),
     ),
     items: [
@@ -34,7 +35,7 @@ Future<PlanetMenuAction?> showPlanetContextMenu({
         child: Row(
           children: [
             Icon(Icons.edit_rounded, size: 18.w, color: Colors.white),
-            SizedBox(width: 8.w),
+            SizedBox(width: AppSpacing.s8),
             Text(
               '수정',
               style: AppTextStyles.label_16.copyWith(color: Colors.white),
@@ -47,7 +48,7 @@ Future<PlanetMenuAction?> showPlanetContextMenu({
         child: Row(
           children: [
             Icon(Icons.open_with_rounded, size: 18.w, color: Colors.white),
-            SizedBox(width: 8.w),
+            SizedBox(width: AppSpacing.s8),
             Text(
               '위치 이동',
               style: AppTextStyles.label_16.copyWith(color: Colors.white),
@@ -60,7 +61,7 @@ Future<PlanetMenuAction?> showPlanetContextMenu({
         child: Row(
           children: [
             Icon(Icons.delete_outline, size: 18.w, color: AppColors.error),
-            SizedBox(width: 8.w),
+            SizedBox(width: AppSpacing.s8),
             Text(
               '삭제',
               style: AppTextStyles.label_16.copyWith(color: AppColors.error),

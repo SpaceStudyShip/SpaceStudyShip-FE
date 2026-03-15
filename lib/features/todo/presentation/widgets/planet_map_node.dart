@@ -123,9 +123,8 @@ class _PlanetMapNodeState extends State<PlanetMapNode> {
                 duration: TossDesignTokens.animationFast,
                 child: Text(
                   '${widget.completedCount}/${widget.todoCount} 완료',
-                  style: AppTextStyles.tag_12.copyWith(
+                  style: AppTextStyles.tag_10.copyWith(
                     color: AppColors.textTertiary,
-                    fontSize: 10.sp,
                   ),
                   textAlign: TextAlign.center,
                 ),

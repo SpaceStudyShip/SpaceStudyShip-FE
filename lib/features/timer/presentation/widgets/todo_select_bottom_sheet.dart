@@ -115,7 +115,16 @@ class TodoSelectBottomSheet extends ConsumerWidget {
               );
             },
             loading: () => const Center(child: AppLoading()),
-            error: (_, _) => const SizedBox.shrink(),
+            error: (_, _) => Padding(
+              padding: EdgeInsets.only(top: AppSpacing.s40),
+              child: const SpaceEmptyState(
+                icon: Icons.error_outline,
+                title: '할 일을 불러오지 못했어요',
+                subtitle: '잠시 후 다시 시도해 주세요',
+                iconSize: 32,
+                animated: false,
+              ),
+            ),
           ),
         );
       },

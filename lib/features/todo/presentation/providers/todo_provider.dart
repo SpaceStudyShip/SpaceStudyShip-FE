@@ -218,7 +218,6 @@ class TodoListNotifier extends _$TodoListNotifier {
   }
 
   Future<void> deleteTodos(List<String> ids) async {
-    final previousState = state;
     state = AsyncData(
       state.valueOrNull?.where((t) => !ids.contains(t.id)).toList() ?? [],
     );
@@ -228,7 +227,7 @@ class TodoListNotifier extends _$TodoListNotifier {
         await useCase.execute(id);
       }
     } catch (_) {
-      state = previousState;
+      ref.invalidateSelf();
       rethrow;
     }
   }
@@ -293,7 +292,6 @@ class CategoryListNotifier extends _$CategoryListNotifier {
   }
 
   Future<void> deleteCategories(List<String> ids) async {
-    final previousState = state;
     state = AsyncData(
       state.valueOrNull?.where((c) => !ids.contains(c.id)).toList() ?? [],
     );
@@ -304,7 +302,7 @@ class CategoryListNotifier extends _$CategoryListNotifier {
       }
       ref.invalidate(todoListNotifierProvider);
     } catch (_) {
-      state = previousState;
+      ref.invalidateSelf();
       rethrow;
     }
   }
@@ -387,14 +385,6 @@ List<TodoEntity> todosForCategory(Ref ref, String? categoryId) {
     completedCount: catTodos.where((t) => t.isFullyCompleted).length,
   );
 }
-
-// === 맵 UI 상태 ===
-
-/// 드래그 모드 중인 행성 ID (null = 일반 모드)
-final draggingPlanetIdProvider = StateProvider<String?>((ref) => null);
-
-/// 바텀시트에서 열린 카테고리 ID (null = 닫힘)
-final openCategoryIdProvider = StateProvider<String?>((ref) => null);
 
 // === 날짜별 할일 완료 통계 (홈 컴팩트 카드용) ===
 

@@ -169,7 +169,11 @@ class _TimerHistoryScreenState extends ConsumerState<TimerHistoryScreen> {
       builder: (context, state, fetchNextPage) => PagedListView<int, DateGroup>(
         state: state,
         fetchNextPage: fetchNextPage,
-        padding: EdgeInsets.only(left: 20.w, right: 20.w, bottom: 16.h),
+        padding: EdgeInsets.only(
+          left: 20.w,
+          right: 20.w,
+          bottom: FloatingNavMetrics.totalHeight,
+        ),
         builderDelegate: PagedChildBuilderDelegate<DateGroup>(
           itemBuilder: (context, dateGroup, index) =>
               _buildDateGroup(dateGroup),

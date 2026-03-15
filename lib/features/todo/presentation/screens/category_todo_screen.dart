@@ -103,7 +103,7 @@ class CategoryTodoScreen extends ConsumerWidget {
                 top: MediaQuery.of(context).padding.top + kToolbarHeight + 16.h,
                 left: 20.w,
                 right: 20.w,
-                bottom: 16.h,
+                bottom: FloatingNavMetrics.totalHeight,
               ),
               itemCount: categoryTodos.length,
               itemBuilder: (context, index) {

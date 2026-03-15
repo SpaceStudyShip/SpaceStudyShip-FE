@@ -14,10 +14,7 @@ import '../../../todo/domain/entities/todo_entity.dart';
 import '../../../todo/presentation/providers/todo_provider.dart';
 
 class TodoSelectBottomSheet extends ConsumerWidget {
-  const TodoSelectBottomSheet({
-    super.key,
-    required this.bottomPadding,
-  });
+  const TodoSelectBottomSheet({super.key, required this.bottomPadding});
 
   final double bottomPadding;
 
@@ -112,9 +109,7 @@ class TodoSelectBottomSheet extends ConsumerWidget {
                         }, childCount: incomplete.length),
                       ),
                     ),
-                  SliverToBoxAdapter(
-                    child: SizedBox(height: bottomPadding),
-                  ),
+                  SliverToBoxAdapter(child: SizedBox(height: bottomPadding)),
                 ],
               );
             },

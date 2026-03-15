@@ -85,6 +85,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         scrolledUnderElevation: 0,
+        titleSpacing: 20.w,
         title: Consumer(
           builder: (context, ref, _) {
             final streakDays = ref.watch(currentStreakProvider);
@@ -111,7 +112,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               // TODO: 알림 화면
             },
           ),
-          SizedBox(width: 2.w),
+          SizedBox(width: 4.w),
         ],
       ),
       body: Column(

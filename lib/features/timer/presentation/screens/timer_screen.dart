@@ -49,6 +49,7 @@ class _TimerScreenState extends ConsumerState<TimerScreen> {
         backgroundColor: Colors.transparent,
         scrolledUnderElevation: 0,
         elevation: 0,
+        titleSpacing: 20.w,
         title: (isIdle || isBasicTimer)
             ? Text(
                 '타이머',
@@ -75,6 +76,7 @@ class _TimerScreenState extends ConsumerState<TimerScreen> {
             icon: Icon(Icons.history_rounded, color: Colors.white, size: 24.w),
             onPressed: () => context.push(RoutePaths.timerHistory),
           ),
+          SizedBox(width: 4.w),
         ],
       ),
       body: Center(

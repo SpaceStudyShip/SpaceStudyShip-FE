@@ -73,13 +73,14 @@ class ExploreScreen extends ConsumerWidget {
         backgroundColor: Colors.transparent,
         scrolledUnderElevation: 0,
         elevation: 0,
+        titleSpacing: 20.w,
         title: Text(
           '우주 탐험',
           style: AppTextStyles.heading_20.copyWith(color: Colors.white),
         ),
         actions: [
           Padding(
-            padding: EdgeInsets.only(right: 16.w),
+            padding: EdgeInsets.only(right: 20.w),
             child: FuelGauge(
               currentFuel: currentFuel,
               showLabel: false,

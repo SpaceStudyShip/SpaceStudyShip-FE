@@ -267,8 +267,11 @@ class CategoryListNotifier extends _$CategoryListNotifier {
   }
 
   Future<void> updateCategoryPosition(String id, double x, double y) async {
-    final category = state.valueOrNull?.firstWhere((c) => c.id == id);
-    if (category == null) return;
+    final categories = state.valueOrNull;
+    if (categories == null) return;
+    final index = categories.indexWhere((c) => c.id == id);
+    if (index == -1) return;
+    final category = categories[index];
     await updateCategory(category.copyWith(positionX: x, positionY: y));
   }
 }

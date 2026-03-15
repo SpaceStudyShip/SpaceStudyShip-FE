@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../../../core/constants/toss_design_tokens.dart';
 import 'planet_map_node.dart';
@@ -68,7 +69,7 @@ class _SpaceStationNodeState extends State<SpaceStationNode> {
                 opacity: showLabel ? 1.0 : 0.0,
                 duration: TossDesignTokens.animationFast,
                 child: Padding(
-                  padding: EdgeInsets.only(top: 4.h),
+                  padding: EdgeInsets.only(top: AppSpacing.s4),
                   child: Text(
                     '미분류',
                     style: AppTextStyles.tag_12.copyWith(color: Colors.white),

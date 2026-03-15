@@ -27,6 +27,9 @@ import '../../../../core/widgets/space/fuel_gauge.dart';
 class ExploreScreen extends ConsumerWidget {
   const ExploreScreen({super.key});
 
+  /// 행성 노드 폭
+  static final double _nodeWidth = 100.w;
+
   /// 행성 간 세로 간격
   static final double _planetSpacing = 160.h;
 
@@ -156,7 +159,7 @@ class ExploreScreen extends ConsumerWidget {
                 // Layer 3: 행성 노드들 (Positioned + ScaleIn)
                 for (int i = 0; i < planets.length; i++)
                   Positioned(
-                    left: planetOffsets[planets[i].id]!.dx - 50.w,
+                    left: planetOffsets[planets[i].id]!.dx - _nodeWidth / 2,
                     top: planetOffsets[planets[i].id]!.dy - 30.h,
                     child: ScaleIn(
                       delay: Duration(milliseconds: 100 + i * 80),
@@ -189,8 +192,8 @@ class ExploreScreen extends ConsumerWidget {
     double topInset,
   ) {
     final positions = <String, Offset>{};
-    final nodeWidth = 100.w;
-    final horizontalPadding = 8.w;
+    final nodeWidth = _nodeWidth;
+    final horizontalPadding = AppSpacing.s8;
     final usableWidth = screenWidth - nodeWidth - horizontalPadding * 2;
 
     for (int i = 0; i < planets.length; i++) {

@@ -147,7 +147,7 @@ class CategoryTodoBottomSheet extends ConsumerWidget {
                     delegate: SliverChildBuilderDelegate((context, index) {
                       final todo = todos[index];
                       return Padding(
-                        padding: EdgeInsets.only(bottom: 8.h),
+                        padding: EdgeInsets.only(bottom: AppSpacing.s8),
                         child: DismissibleTodoItem(todo: todo),
                       );
                     }, childCount: todos.length),

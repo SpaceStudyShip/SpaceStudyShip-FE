@@ -9,7 +9,7 @@ import 'app_button.dart';
 /// **디자인 스펙**:
 /// - 배경색: Colors.white (#FFFFFF)
 /// - 텍스트색: Color(0xFF000000)
-/// - 아이콘: assets/icons/icon_google.svg (20x20)
+/// - 아이콘: assets/icons/social/icon_google.svg (20x20)
 /// - 아이콘-텍스트 간격: 8px
 ///
 /// **사용 예시**:
@@ -46,7 +46,7 @@ class GoogleLoginButton extends StatelessWidget {
       text: 'Google로 시작하기',
       onPressed: onPressed,
       icon: SvgPicture.asset(
-        'assets/icons/icon_google.svg',
+        'assets/icons/social/icon_google.svg',
         width: 20.w,
         height: 20.h,
       ),
@@ -66,7 +66,7 @@ class GoogleLoginButton extends StatelessWidget {
 /// **디자인 스펙**:
 /// - 배경색: Color(0xFF000000) (순수 블랙)
 /// - 텍스트색: Colors.white (#FFFFFF)
-/// - 아이콘: assets/icons/icon_apple.svg (20x20)
+/// - 아이콘: assets/icons/social/icon_apple.svg (20x20)
 /// - 아이콘-텍스트 간격: 8px
 ///
 /// **사용 예시**:
@@ -103,7 +103,7 @@ class AppleLoginButton extends StatelessWidget {
       text: 'Apple로 시작하기',
       onPressed: onPressed,
       icon: SvgPicture.asset(
-        'assets/icons/icon_apple.svg',
+        'assets/icons/social/icon_apple.svg',
         width: 20.w,
         height: 20.h,
       ),

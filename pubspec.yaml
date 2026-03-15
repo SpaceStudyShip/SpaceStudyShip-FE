@@ -80,6 +80,9 @@ flutter:
     - assets/fonts/
     - assets/lotties/
     - assets/icons/
+    - assets/icons/social/
+    - assets/icons/categories/
+    - assets/icons/planets/
     - .env
   fonts:
     - family: Pretendard-Thin

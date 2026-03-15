@@ -38,7 +38,6 @@ class _CategoryAddBottomSheetState extends State<CategoryAddBottomSheet> {
       _selectedIconId =
           widget.initialCategory!.iconId ?? CategoryIcons.defaultIconId;
     }
-    _nameController.addListener(() => setState(() {}));
   }
 
   @override
@@ -156,12 +155,15 @@ class _CategoryAddBottomSheetState extends State<CategoryAddBottomSheet> {
               // 추가 버튼
               Padding(
                 padding: AppPadding.horizontal20,
-                child: AppButton(
-                  text: _isEditMode ? '수정하기' : '추가하기',
-                  onPressed: _nameController.text.trim().isEmpty
-                      ? null
-                      : _submit,
-                  width: double.infinity,
+                child: ListenableBuilder(
+                  listenable: _nameController,
+                  builder: (context, _) => AppButton(
+                    text: _isEditMode ? '수정하기' : '추가하기',
+                    onPressed: _nameController.text.trim().isEmpty
+                        ? null
+                        : _submit,
+                    width: double.infinity,
+                  ),
                 ),
               ),
 

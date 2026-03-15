@@ -44,11 +44,7 @@ class CategoryIcons {
 
   /// 아이콘 ID → SvgPicture 위젯
   static Widget buildIcon(String? iconId, {double? size}) {
-    return SvgPicture.asset(
-      assetPath(iconId),
-      width: size,
-      height: size,
-    );
+    return SvgPicture.asset(assetPath(iconId), width: size, height: size);
   }
 
   static const _assetNames = {

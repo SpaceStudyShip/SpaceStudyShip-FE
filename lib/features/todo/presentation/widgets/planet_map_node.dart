@@ -73,8 +73,8 @@ class _PlanetMapNodeState extends State<PlanetMapNode> {
           scale: widget.isDragging
               ? 1.1
               : _isPressed
-                  ? TossDesignTokens.cardTapScale
-                  : 1.0,
+              ? TossDesignTokens.cardTapScale
+              : 1.0,
           duration: TossDesignTokens.animationFast,
           curve: TossDesignTokens.springCurve,
           child: Column(

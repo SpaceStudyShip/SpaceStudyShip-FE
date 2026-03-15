@@ -54,10 +54,7 @@ class _SpaceStationNodeState extends State<SpaceStationNode> {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: AppColors.spaceSurface,
-                  border: Border.all(
-                    color: AppColors.spaceDivider,
-                    width: 2,
-                  ),
+                  border: Border.all(color: AppColors.spaceDivider, width: 2),
                 ),
                 child: Icon(
                   Icons.space_dashboard_rounded,
@@ -74,9 +71,7 @@ class _SpaceStationNodeState extends State<SpaceStationNode> {
                   padding: EdgeInsets.only(top: 4.h),
                   child: Text(
                     '미분류',
-                    style: AppTextStyles.tag_12.copyWith(
-                      color: Colors.white,
-                    ),
+                    style: AppTextStyles.tag_12.copyWith(color: Colors.white),
                     textAlign: TextAlign.center,
                   ),
                 ),

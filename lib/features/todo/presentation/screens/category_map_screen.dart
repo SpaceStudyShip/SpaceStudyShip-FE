@@ -118,9 +118,7 @@ class _CategoryMapScreenState extends ConsumerState<CategoryMapScreen> {
             error: (_, _) => Center(
               child: Text(
                 '데이터를 불러오지 못했어요',
-                style: AppTextStyles.label_16.copyWith(
-                  color: AppColors.error,
-                ),
+                style: AppTextStyles.label_16.copyWith(color: AppColors.error),
               ),
             ),
           ),
@@ -173,11 +171,8 @@ class _CategoryMapScreenState extends ConsumerState<CategoryMapScreen> {
                     categoryName: cat.name,
                     categoryIconId: cat.iconId,
                   ),
-                  onLongPressStart: (details) => _showContextMenu(
-                    context,
-                    cat,
-                    details.globalPosition,
-                  ),
+                  onLongPressStart: (details) =>
+                      _showContextMenu(cat, details.globalPosition),
                 );
               },
             );
@@ -207,88 +202,85 @@ class _CategoryMapScreenState extends ConsumerState<CategoryMapScreen> {
         }
 
         return InteractiveViewer(
-      transformationController: _transformationController,
-      minScale: 0.5,
-      maxScale: 3.0,
-      panEnabled: _draggingId == null && !_isBottomSheetOpen,
-      scaleEnabled: !_isBottomSheetOpen,
-      constrained: false,
-      boundaryMargin: EdgeInsets.all(canvasSize * 0.2),
-      child: SizedBox(
-        width: canvasSize,
-        height: canvasSize,
-        child: ValueListenableBuilder<ZoomTier>(
-          valueListenable: _zoomTierNotifier,
-          builder: (context, zoomTier, _) {
-            return Stack(
-              children: [
-                // 우주 정거장 (중앙)
-                Positioned(
-                  left: canvasSize * 0.5 - 32.w,
-                  top: canvasSize * 0.5 - 32.w,
-                  child: Consumer(
-                    builder: (context, ref, _) {
-                      final stats = ref.watch(
-                        categoryTodoStatsProvider(null),
-                      );
-                      return SpaceStationNode(
-                        uncategorizedCount: stats.todoCount,
-                        zoomTier: zoomTier,
-                        onTap: () => _openBottomSheet(
-                          context,
-                          categoryId: null,
-                          categoryName: '미분류',
-                        ),
-                      );
-                    },
-                  ),
-                ),
-
-                // 행성 노드들
-                ...categories.map((cat) {
-                  final pos = positions[cat.id] ?? const Offset(0.5, 0.5);
-                  final isDragging = _draggingId == cat.id;
-                  final effectivePos =
-                      isDragging && _dragLocalPosition != null
-                          ? _dragLocalPosition!
-                          : Offset(
-                              pos.dx * canvasSize,
-                              pos.dy * canvasSize,
-                            );
-
-                  return Positioned(
-                    left: effectivePos.dx - 40.w,
-                    top: effectivePos.dy - 40.w,
-                    child: isDragging
-                        ? GestureDetector(
-                            onPanUpdate: (details) {
-                              setState(() {
-                                _dragLocalPosition = Offset(
-                                  (_dragLocalPosition?.dx ??
-                                          effectivePos.dx) +
-                                      details.delta.dx,
-                                  (_dragLocalPosition?.dy ??
-                                          effectivePos.dy) +
-                                      details.delta.dy,
-                                );
-                              });
-                            },
-                            onPanEnd: (_) => _endDrag(cat.id, canvasSize),
-                            child: _buildPlanetNode(
-                              cat,
-                              zoomTier,
-                              isDragging,
+          transformationController: _transformationController,
+          minScale: 0.5,
+          maxScale: 3.0,
+          panEnabled: _draggingId == null && !_isBottomSheetOpen,
+          scaleEnabled: !_isBottomSheetOpen,
+          constrained: false,
+          boundaryMargin: EdgeInsets.all(canvasSize * 0.2),
+          child: SizedBox(
+            width: canvasSize,
+            height: canvasSize,
+            child: ValueListenableBuilder<ZoomTier>(
+              valueListenable: _zoomTierNotifier,
+              builder: (context, zoomTier, _) {
+                return Stack(
+                  children: [
+                    // 우주 정거장 (중앙)
+                    Positioned(
+                      left: canvasSize * 0.5 - 32.w,
+                      top: canvasSize * 0.5 - 32.w,
+                      child: Consumer(
+                        builder: (context, ref, _) {
+                          final stats = ref.watch(
+                            categoryTodoStatsProvider(null),
+                          );
+                          return SpaceStationNode(
+                            uncategorizedCount: stats.todoCount,
+                            zoomTier: zoomTier,
+                            onTap: () => _openBottomSheet(
+                              context,
+                              categoryId: null,
+                              categoryName: '미분류',
                             ),
-                          )
-                        : _buildPlanetNode(cat, zoomTier, isDragging),
-                  );
-                }),
-              ],
-            );
-          },
-        ),
-      ),
-    );
+                          );
+                        },
+                      ),
+                    ),
+
+                    // 행성 노드들
+                    ...categories.map((cat) {
+                      final pos = positions[cat.id] ?? const Offset(0.5, 0.5);
+                      final isDragging = _draggingId == cat.id;
+                      final effectivePos =
+                          isDragging && _dragLocalPosition != null
+                          ? _dragLocalPosition!
+                          : Offset(pos.dx * canvasSize, pos.dy * canvasSize);
+
+                      return Positioned(
+                        left: effectivePos.dx - 40.w,
+                        top: effectivePos.dy - 40.w,
+                        child: isDragging
+                            ? GestureDetector(
+                                onPanUpdate: (details) {
+                                  setState(() {
+                                    _dragLocalPosition = Offset(
+                                      (_dragLocalPosition?.dx ??
+                                              effectivePos.dx) +
+                                          details.delta.dx,
+                                      (_dragLocalPosition?.dy ??
+                                              effectivePos.dy) +
+                                          details.delta.dy,
+                                    );
+                                  });
+                                },
+                                onPanEnd: (_) => _endDrag(cat.id, canvasSize),
+                                child: _buildPlanetNode(
+                                  cat,
+                                  zoomTier,
+                                  isDragging,
+                                ),
+                              )
+                            : _buildPlanetNode(cat, zoomTier, isDragging),
+                      );
+                    }),
+                  ],
+                );
+              },
+            ),
+          ),
+        );
       },
     );
   }
@@ -316,7 +308,7 @@ class _CategoryMapScreenState extends ConsumerState<CategoryMapScreen> {
             categoryIconId: cat.iconId,
           ),
           onLongPress: (details) =>
-              _showContextMenu(context, cat, details.globalPosition),
+              _showContextMenu(cat, details.globalPosition),
         );
       },
     );
@@ -343,25 +335,20 @@ class _CategoryMapScreenState extends ConsumerState<CategoryMapScreen> {
     });
   }
 
-  Future<void> _showContextMenu(
-    BuildContext context,
-    TodoCategoryEntity cat,
-    Offset position,
-  ) async {
+  Future<void> _showContextMenu(TodoCategoryEntity cat, Offset position) async {
     final action = await showPlanetContextMenu(
       context: context,
       position: position,
     );
     if (!mounted || action == null) return;
 
-    final ctx = context;
     switch (action) {
       case PlanetMenuAction.edit:
-        _editCategory(ctx, cat);
+        _editCategory(context, cat);
       case PlanetMenuAction.move:
         _startDrag(cat);
       case PlanetMenuAction.delete:
-        _deleteCategory(ctx, cat);
+        _deleteCategory(context, cat);
     }
   }
 
@@ -380,16 +367,12 @@ class _CategoryMapScreenState extends ConsumerState<CategoryMapScreen> {
 
   void _endDrag(String catId, double canvasSize) {
     if (_dragLocalPosition == null) return;
-    final normalizedX =
-        (_dragLocalPosition!.dx / canvasSize).clamp(0.05, 0.95);
-    final normalizedY =
-        (_dragLocalPosition!.dy / canvasSize).clamp(0.05, 0.95);
+    final normalizedX = (_dragLocalPosition!.dx / canvasSize).clamp(0.05, 0.95);
+    final normalizedY = (_dragLocalPosition!.dy / canvasSize).clamp(0.05, 0.95);
 
-    ref.read(categoryListNotifierProvider.notifier).updateCategoryPosition(
-          catId,
-          normalizedX,
-          normalizedY,
-        );
+    ref
+        .read(categoryListNotifierProvider.notifier)
+        .updateCategoryPosition(catId, normalizedX, normalizedY);
 
     setState(() {
       _draggingId = null;
@@ -406,7 +389,9 @@ class _CategoryMapScreenState extends ConsumerState<CategoryMapScreen> {
       initialCategory: (id: cat.id, name: cat.name, iconId: cat.iconId),
     );
     if (result != null && mounted) {
-      ref.read(categoryListNotifierProvider.notifier).updateCategory(
+      ref
+          .read(categoryListNotifierProvider.notifier)
+          .updateCategory(
             cat.copyWith(
               name: result['name'] as String,
               iconId: result['iconId'] as String?,
@@ -434,8 +419,7 @@ class _CategoryMapScreenState extends ConsumerState<CategoryMapScreen> {
   }
 
   Future<void> _addCategory(BuildContext context) async {
-    final categories =
-        ref.read(categoryListNotifierProvider).valueOrNull ?? [];
+    final categories = ref.read(categoryListNotifierProvider).valueOrNull ?? [];
     if (categories.length >= 20) {
       if (mounted) {
         AppSnackBar.info(context, '카테고리는 최대 20개까지 추가할 수 있어요');
@@ -445,7 +429,9 @@ class _CategoryMapScreenState extends ConsumerState<CategoryMapScreen> {
 
     final result = await showCategoryAddBottomSheet(context: context);
     if (result != null && mounted) {
-      ref.read(categoryListNotifierProvider.notifier).addCategory(
+      ref
+          .read(categoryListNotifierProvider.notifier)
+          .addCategory(
             name: result['name'] as String,
             iconId: result['iconId'] as String?,
           );
@@ -484,62 +470,62 @@ class _CategoryListTile extends StatelessWidget {
           onTap: onTap,
           borderRadius: AppRadius.large,
           child: Padding(
-          padding: EdgeInsets.symmetric(
-            vertical: AppSpacing.s12,
-            horizontal: AppSpacing.s4,
-          ),
-          child: Row(
-            children: [
-              icon,
-              SizedBox(width: AppSpacing.s12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      name,
-                      style: AppTextStyles.label_16.copyWith(
-                        color: Colors.white,
+            padding: EdgeInsets.symmetric(
+              vertical: AppSpacing.s12,
+              horizontal: AppSpacing.s4,
+            ),
+            child: Row(
+              children: [
+                icon,
+                SizedBox(width: AppSpacing.s12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        name,
+                        style: AppTextStyles.label_16.copyWith(
+                          color: Colors.white,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    SizedBox(height: AppSpacing.s4),
-                    Text(
-                      '$completedCount/$todoCount 완료',
-                      style: AppTextStyles.tag_12.copyWith(
-                        color: AppColors.textTertiary,
+                      SizedBox(height: AppSpacing.s4),
+                      Text(
+                        '$completedCount/$todoCount 완료',
+                        style: AppTextStyles.tag_12.copyWith(
+                          color: AppColors.textTertiary,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              SizedBox(width: AppSpacing.s12),
-              // 진행률 바
-              SizedBox(
-                width: 48.w,
-                height: 4.h,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(2.r),
-                  child: LinearProgressIndicator(
-                    value: progress,
-                    backgroundColor: AppColors.spaceDivider,
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                      AppColors.primary,
+                SizedBox(width: AppSpacing.s12),
+                // 진행률 바
+                SizedBox(
+                  width: 48.w,
+                  height: 4.h,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(2.r),
+                    child: LinearProgressIndicator(
+                      value: progress,
+                      backgroundColor: AppColors.spaceDivider,
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        AppColors.primary,
+                      ),
                     ),
                   ),
                 ),
-              ),
-              SizedBox(width: AppSpacing.s8),
-              Icon(
-                Icons.chevron_right_rounded,
-                color: AppColors.textTertiary,
-                size: 20.w,
-              ),
-            ],
+                SizedBox(width: AppSpacing.s8),
+                Icon(
+                  Icons.chevron_right_rounded,
+                  color: AppColors.textTertiary,
+                  size: 20.w,
+                ),
+              ],
+            ),
           ),
         ),
-      ),
       ),
     );
   }
@@ -548,25 +534,21 @@ class _CategoryListTile extends StatelessWidget {
 // === Private Utility Functions ===
 
 /// 나선형 자동 배치 알고리즘
-Map<String, Offset> _computeAutoPositions(
-  List<TodoCategoryEntity> categories,
-) {
+Map<String, Offset> _computeAutoPositions(List<TodoCategoryEntity> categories) {
   final positions = <String, Offset>{};
   final needsPlacement = categories
       .where((c) => c.positionX == null || c.positionY == null)
       .toList();
-  final hasPosition = categories
-      .where((c) => c.positionX != null && c.positionY != null);
+  final hasPosition = categories.where(
+    (c) => c.positionX != null && c.positionY != null,
+  );
 
   for (final cat in hasPosition) {
     positions[cat.id] = Offset(cat.positionX!, cat.positionY!);
   }
 
   const center = Offset(0.5, 0.5);
-  const rings = [
-    (radius: 0.15, maxCount: 6),
-    (radius: 0.30, maxCount: 12),
-  ];
+  const rings = [(radius: 0.15, maxCount: 6), (radius: 0.30, maxCount: 12)];
 
   var placementIndex = 0;
   for (final cat in needsPlacement) {

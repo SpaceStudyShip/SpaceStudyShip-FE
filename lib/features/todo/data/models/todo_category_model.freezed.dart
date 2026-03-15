@@ -23,7 +23,8 @@ TodoCategoryModel _$TodoCategoryModelFromJson(Map<String, dynamic> json) {
 mixin _$TodoCategoryModel {
   String get id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
-  String? get emoji => throw _privateConstructorUsedError;
+  @JsonKey(name: 'icon_id')
+  String? get iconId => throw _privateConstructorUsedError;
   @JsonKey(name: 'created_at')
   DateTime get createdAt => throw _privateConstructorUsedError;
   @JsonKey(name: 'updated_at')
@@ -49,7 +50,7 @@ abstract class $TodoCategoryModelCopyWith<$Res> {
   $Res call({
     String id,
     String name,
-    String? emoji,
+    @JsonKey(name: 'icon_id') String? iconId,
     @JsonKey(name: 'created_at') DateTime createdAt,
     @JsonKey(name: 'updated_at') DateTime? updatedAt,
   });
@@ -72,7 +73,7 @@ class _$TodoCategoryModelCopyWithImpl<$Res, $Val extends TodoCategoryModel>
   $Res call({
     Object? id = null,
     Object? name = null,
-    Object? emoji = freezed,
+    Object? iconId = freezed,
     Object? createdAt = null,
     Object? updatedAt = freezed,
   }) {
@@ -86,9 +87,9 @@ class _$TodoCategoryModelCopyWithImpl<$Res, $Val extends TodoCategoryModel>
                 ? _value.name
                 : name // ignore: cast_nullable_to_non_nullable
                       as String,
-            emoji: freezed == emoji
-                ? _value.emoji
-                : emoji // ignore: cast_nullable_to_non_nullable
+            iconId: freezed == iconId
+                ? _value.iconId
+                : iconId // ignore: cast_nullable_to_non_nullable
                       as String?,
             createdAt: null == createdAt
                 ? _value.createdAt
@@ -116,7 +117,7 @@ abstract class _$$TodoCategoryModelImplCopyWith<$Res>
   $Res call({
     String id,
     String name,
-    String? emoji,
+    @JsonKey(name: 'icon_id') String? iconId,
     @JsonKey(name: 'created_at') DateTime createdAt,
     @JsonKey(name: 'updated_at') DateTime? updatedAt,
   });
@@ -138,7 +139,7 @@ class __$$TodoCategoryModelImplCopyWithImpl<$Res>
   $Res call({
     Object? id = null,
     Object? name = null,
-    Object? emoji = freezed,
+    Object? iconId = freezed,
     Object? createdAt = null,
     Object? updatedAt = freezed,
   }) {
@@ -152,9 +153,9 @@ class __$$TodoCategoryModelImplCopyWithImpl<$Res>
             ? _value.name
             : name // ignore: cast_nullable_to_non_nullable
                   as String,
-        emoji: freezed == emoji
-            ? _value.emoji
-            : emoji // ignore: cast_nullable_to_non_nullable
+        iconId: freezed == iconId
+            ? _value.iconId
+            : iconId // ignore: cast_nullable_to_non_nullable
                   as String?,
         createdAt: null == createdAt
             ? _value.createdAt
@@ -175,7 +176,7 @@ class _$TodoCategoryModelImpl implements _TodoCategoryModel {
   const _$TodoCategoryModelImpl({
     required this.id,
     required this.name,
-    this.emoji,
+    @JsonKey(name: 'icon_id') this.iconId,
     @JsonKey(name: 'created_at') required this.createdAt,
     @JsonKey(name: 'updated_at') this.updatedAt,
   });
@@ -188,7 +189,8 @@ class _$TodoCategoryModelImpl implements _TodoCategoryModel {
   @override
   final String name;
   @override
-  final String? emoji;
+  @JsonKey(name: 'icon_id')
+  final String? iconId;
   @override
   @JsonKey(name: 'created_at')
   final DateTime createdAt;
@@ -198,7 +200,7 @@ class _$TodoCategoryModelImpl implements _TodoCategoryModel {
 
   @override
   String toString() {
-    return 'TodoCategoryModel(id: $id, name: $name, emoji: $emoji, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'TodoCategoryModel(id: $id, name: $name, iconId: $iconId, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 
   @override
@@ -208,7 +210,7 @@ class _$TodoCategoryModelImpl implements _TodoCategoryModel {
             other is _$TodoCategoryModelImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.name, name) || other.name == name) &&
-            (identical(other.emoji, emoji) || other.emoji == emoji) &&
+            (identical(other.iconId, iconId) || other.iconId == iconId) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt) &&
             (identical(other.updatedAt, updatedAt) ||
@@ -218,7 +220,7 @@ class _$TodoCategoryModelImpl implements _TodoCategoryModel {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode =>
-      Object.hash(runtimeType, id, name, emoji, createdAt, updatedAt);
+      Object.hash(runtimeType, id, name, iconId, createdAt, updatedAt);
 
   /// Create a copy of TodoCategoryModel
   /// with the given fields replaced by the non-null parameter values.
@@ -241,7 +243,7 @@ abstract class _TodoCategoryModel implements TodoCategoryModel {
   const factory _TodoCategoryModel({
     required final String id,
     required final String name,
-    final String? emoji,
+    @JsonKey(name: 'icon_id') final String? iconId,
     @JsonKey(name: 'created_at') required final DateTime createdAt,
     @JsonKey(name: 'updated_at') final DateTime? updatedAt,
   }) = _$TodoCategoryModelImpl;
@@ -254,7 +256,8 @@ abstract class _TodoCategoryModel implements TodoCategoryModel {
   @override
   String get name;
   @override
-  String? get emoji;
+  @JsonKey(name: 'icon_id')
+  String? get iconId;
   @override
   @JsonKey(name: 'created_at')
   DateTime get createdAt;

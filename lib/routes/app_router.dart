@@ -179,7 +179,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                           return CategoryTodoScreen(
                             categoryId: categoryId,
                             categoryName: extra?['name'] as String? ?? '카테고리',
-                            categoryEmoji: extra?['emoji'] as String?,
+                            categoryIconId: extra?['iconId'] as String?,
                           );
                         },
                       ),

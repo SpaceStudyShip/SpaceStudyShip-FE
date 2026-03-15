@@ -7,7 +7,7 @@ class TodoCategoryEntity with _$TodoCategoryEntity {
   const factory TodoCategoryEntity({
     required String id,
     required String name,
-    String? emoji,
+    String? iconId,
     required DateTime createdAt,
     DateTime? updatedAt,
   }) = _TodoCategoryEntity;

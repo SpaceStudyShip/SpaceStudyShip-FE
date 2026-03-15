@@ -9,6 +9,7 @@ import '../../../../core/constants/text_styles.dart';
 import '../../../../core/constants/toss_design_tokens.dart';
 import '../../../../core/widgets/backgrounds/space_background.dart';
 import '../../../../core/widgets/dialogs/app_dialog.dart';
+import '../../../../core/widgets/feedback/app_loading.dart';
 import '../../../../core/widgets/feedback/app_snackbar.dart';
 import '../../../../core/widgets/space/todo_item.dart';
 import '../../../../routes/route_paths.dart';
@@ -151,7 +152,7 @@ class _TodoListScreenState extends ConsumerState<TodoListScreen> {
     AsyncValue<List<TodoCategoryEntity>> categoriesAsync,
   ) {
     if (!todosHasValue && !categoriesAsync.hasValue) {
-      return const Center(child: CircularProgressIndicator());
+      return const Center(child: AppLoading());
     }
 
     if (todosHasError || categoriesAsync.hasError) {
@@ -216,7 +217,7 @@ class _TodoListScreenState extends ConsumerState<TodoListScreen> {
                   final stats = ref.watch(categoryTodoStatsProvider(cat.id));
                   return CategoryCard(
                     name: cat.name,
-                    emoji: cat.emoji,
+                    iconId: cat.iconId,
                     todoCount: stats.todoCount,
                     completedCount: stats.completedCount,
                     isEditMode: _isEditMode,
@@ -230,7 +231,7 @@ class _TodoListScreenState extends ConsumerState<TodoListScreen> {
                       } else {
                         context.push(
                           RoutePaths.categoryTodoPath(cat.id),
-                          extra: {'name': cat.name, 'emoji': cat.emoji},
+                          extra: {'name': cat.name, 'iconId': cat.iconId},
                         );
                       }
                     },
@@ -336,7 +337,7 @@ class _TodoListScreenState extends ConsumerState<TodoListScreen> {
   ) async {
     final result = await showCategoryAddBottomSheet(
       context: context,
-      initialCategory: (id: cat.id, name: cat.name, emoji: cat.emoji),
+      initialCategory: (id: cat.id, name: cat.name, iconId: cat.iconId),
     );
     if (result != null && mounted) {
       ref
@@ -344,7 +345,7 @@ class _TodoListScreenState extends ConsumerState<TodoListScreen> {
           .updateCategory(
             cat.copyWith(
               name: result['name'] as String,
-              emoji: result['emoji'] as String?,
+              iconId: result['iconId'] as String?,
             ),
           );
     }
@@ -357,7 +358,7 @@ class _TodoListScreenState extends ConsumerState<TodoListScreen> {
           .read(categoryListNotifierProvider.notifier)
           .addCategory(
             name: result['name'] as String,
-            emoji: result['emoji'] as String?,
+            iconId: result['iconId'] as String?,
           );
     }
   }

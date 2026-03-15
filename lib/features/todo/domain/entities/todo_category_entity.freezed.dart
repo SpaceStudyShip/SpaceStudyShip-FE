@@ -19,7 +19,7 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$TodoCategoryEntity {
   String get id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
-  String? get emoji => throw _privateConstructorUsedError;
+  String? get iconId => throw _privateConstructorUsedError;
   DateTime get createdAt => throw _privateConstructorUsedError;
   DateTime? get updatedAt => throw _privateConstructorUsedError;
 
@@ -40,7 +40,7 @@ abstract class $TodoCategoryEntityCopyWith<$Res> {
   $Res call({
     String id,
     String name,
-    String? emoji,
+    String? iconId,
     DateTime createdAt,
     DateTime? updatedAt,
   });
@@ -63,7 +63,7 @@ class _$TodoCategoryEntityCopyWithImpl<$Res, $Val extends TodoCategoryEntity>
   $Res call({
     Object? id = null,
     Object? name = null,
-    Object? emoji = freezed,
+    Object? iconId = freezed,
     Object? createdAt = null,
     Object? updatedAt = freezed,
   }) {
@@ -77,9 +77,9 @@ class _$TodoCategoryEntityCopyWithImpl<$Res, $Val extends TodoCategoryEntity>
                 ? _value.name
                 : name // ignore: cast_nullable_to_non_nullable
                       as String,
-            emoji: freezed == emoji
-                ? _value.emoji
-                : emoji // ignore: cast_nullable_to_non_nullable
+            iconId: freezed == iconId
+                ? _value.iconId
+                : iconId // ignore: cast_nullable_to_non_nullable
                       as String?,
             createdAt: null == createdAt
                 ? _value.createdAt
@@ -107,7 +107,7 @@ abstract class _$$TodoCategoryEntityImplCopyWith<$Res>
   $Res call({
     String id,
     String name,
-    String? emoji,
+    String? iconId,
     DateTime createdAt,
     DateTime? updatedAt,
   });
@@ -129,7 +129,7 @@ class __$$TodoCategoryEntityImplCopyWithImpl<$Res>
   $Res call({
     Object? id = null,
     Object? name = null,
-    Object? emoji = freezed,
+    Object? iconId = freezed,
     Object? createdAt = null,
     Object? updatedAt = freezed,
   }) {
@@ -143,9 +143,9 @@ class __$$TodoCategoryEntityImplCopyWithImpl<$Res>
             ? _value.name
             : name // ignore: cast_nullable_to_non_nullable
                   as String,
-        emoji: freezed == emoji
-            ? _value.emoji
-            : emoji // ignore: cast_nullable_to_non_nullable
+        iconId: freezed == iconId
+            ? _value.iconId
+            : iconId // ignore: cast_nullable_to_non_nullable
                   as String?,
         createdAt: null == createdAt
             ? _value.createdAt
@@ -166,7 +166,7 @@ class _$TodoCategoryEntityImpl implements _TodoCategoryEntity {
   const _$TodoCategoryEntityImpl({
     required this.id,
     required this.name,
-    this.emoji,
+    this.iconId,
     required this.createdAt,
     this.updatedAt,
   });
@@ -176,7 +176,7 @@ class _$TodoCategoryEntityImpl implements _TodoCategoryEntity {
   @override
   final String name;
   @override
-  final String? emoji;
+  final String? iconId;
   @override
   final DateTime createdAt;
   @override
@@ -184,7 +184,7 @@ class _$TodoCategoryEntityImpl implements _TodoCategoryEntity {
 
   @override
   String toString() {
-    return 'TodoCategoryEntity(id: $id, name: $name, emoji: $emoji, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'TodoCategoryEntity(id: $id, name: $name, iconId: $iconId, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 
   @override
@@ -194,7 +194,7 @@ class _$TodoCategoryEntityImpl implements _TodoCategoryEntity {
             other is _$TodoCategoryEntityImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.name, name) || other.name == name) &&
-            (identical(other.emoji, emoji) || other.emoji == emoji) &&
+            (identical(other.iconId, iconId) || other.iconId == iconId) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt) &&
             (identical(other.updatedAt, updatedAt) ||
@@ -203,7 +203,7 @@ class _$TodoCategoryEntityImpl implements _TodoCategoryEntity {
 
   @override
   int get hashCode =>
-      Object.hash(runtimeType, id, name, emoji, createdAt, updatedAt);
+      Object.hash(runtimeType, id, name, iconId, createdAt, updatedAt);
 
   /// Create a copy of TodoCategoryEntity
   /// with the given fields replaced by the non-null parameter values.
@@ -221,7 +221,7 @@ abstract class _TodoCategoryEntity implements TodoCategoryEntity {
   const factory _TodoCategoryEntity({
     required final String id,
     required final String name,
-    final String? emoji,
+    final String? iconId,
     required final DateTime createdAt,
     final DateTime? updatedAt,
   }) = _$TodoCategoryEntityImpl;
@@ -231,7 +231,7 @@ abstract class _TodoCategoryEntity implements TodoCategoryEntity {
   @override
   String get name;
   @override
-  String? get emoji;
+  String? get iconId;
   @override
   DateTime get createdAt;
   @override

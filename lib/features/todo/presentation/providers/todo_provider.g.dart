@@ -888,7 +888,7 @@ final todoListNotifierProvider =
 
 typedef _$TodoListNotifier = AutoDisposeAsyncNotifier<List<TodoEntity>>;
 String _$categoryListNotifierHash() =>
-    r'245f4131a6d5be10df9252f7cef077b7c68dda51';
+    r'ac0741e8fcecd22bf25a7453752d91211121744e';
 
 /// See also [CategoryListNotifier].
 @ProviderFor(CategoryListNotifier)

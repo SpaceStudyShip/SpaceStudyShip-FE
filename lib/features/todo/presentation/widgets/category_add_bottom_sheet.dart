@@ -2,36 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/category_icons.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../../../core/utils/show_app_bottom_sheet.dart';
 import '../../../../core/widgets/atoms/drag_handle.dart';
 import '../../../../core/widgets/buttons/app_button.dart';
 import '../../../../core/widgets/inputs/app_text_field.dart';
-
-/// 이모지 프리셋 목록
-const _emojiPresets = [
-  '📁',
-  '📚',
-  '📐',
-  '🔬',
-  '🎨',
-  '💻',
-  '🎵',
-  '🏃',
-  '📝',
-  '🌍',
-  '🧮',
-  '📖',
-  '✏️',
-  '🔭',
-  '🎯',
-  '💡',
-  '🧪',
-  '📊',
-  '🗂️',
-  '⭐',
-];
 
 class CategoryAddBottomSheet extends StatefulWidget {
   const CategoryAddBottomSheet({
@@ -40,7 +17,7 @@ class CategoryAddBottomSheet extends StatefulWidget {
     required this.bottomPadding,
   });
 
-  final ({String id, String name, String? emoji})? initialCategory;
+  final ({String id, String name, String? iconId})? initialCategory;
   final double bottomPadding;
 
   @override
@@ -49,7 +26,7 @@ class CategoryAddBottomSheet extends StatefulWidget {
 
 class _CategoryAddBottomSheetState extends State<CategoryAddBottomSheet> {
   final _nameController = TextEditingController();
-  String _selectedEmoji = '📁';
+  String _selectedIconId = CategoryIcons.defaultIconId;
 
   bool get _isEditMode => widget.initialCategory != null;
 
@@ -58,7 +35,8 @@ class _CategoryAddBottomSheetState extends State<CategoryAddBottomSheet> {
     super.initState();
     if (widget.initialCategory != null) {
       _nameController.text = widget.initialCategory!.name;
-      _selectedEmoji = widget.initialCategory!.emoji ?? '📁';
+      _selectedIconId =
+          widget.initialCategory!.iconId ?? CategoryIcons.defaultIconId;
     }
     _nameController.addListener(() => setState(() {}));
   }
@@ -75,7 +53,7 @@ class _CategoryAddBottomSheetState extends State<CategoryAddBottomSheet> {
     Navigator.of(context).pop({
       if (_isEditMode) 'id': widget.initialCategory!.id,
       'name': name,
-      'emoji': _selectedEmoji,
+      'iconId': _selectedIconId,
     });
   }
 
@@ -126,7 +104,7 @@ class _CategoryAddBottomSheetState extends State<CategoryAddBottomSheet> {
               ),
               SizedBox(height: AppSpacing.s16),
 
-              // 이모지 선택
+              // 아이콘 선택
               Padding(
                 padding: AppPadding.horizontal20,
                 child: Align(
@@ -145,12 +123,12 @@ class _CategoryAddBottomSheetState extends State<CategoryAddBottomSheet> {
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
                   padding: AppPadding.horizontal20,
-                  itemCount: _emojiPresets.length,
+                  itemCount: CategoryIcons.presets.length,
                   itemBuilder: (context, index) {
-                    final emoji = _emojiPresets[index];
-                    final isSelected = emoji == _selectedEmoji;
+                    final iconId = CategoryIcons.presets[index];
+                    final isSelected = iconId == _selectedIconId;
                     return GestureDetector(
-                      onTap: () => setState(() => _selectedEmoji = emoji),
+                      onTap: () => setState(() => _selectedIconId = iconId),
                       child: Container(
                         width: 44.w,
                         margin: EdgeInsets.only(right: 8.w),
@@ -166,7 +144,7 @@ class _CategoryAddBottomSheetState extends State<CategoryAddBottomSheet> {
                           ),
                         ),
                         child: Center(
-                          child: Text(emoji, style: TextStyle(fontSize: 22.sp)),
+                          child: CategoryIcons.buildIcon(iconId, size: 28.w),
                         ),
                       ),
                     );
@@ -199,7 +177,7 @@ class _CategoryAddBottomSheetState extends State<CategoryAddBottomSheet> {
 /// 카테고리 추가 바텀시트를 표시하는 헬퍼 함수
 Future<Map<String, dynamic>?> showCategoryAddBottomSheet({
   required BuildContext context,
-  ({String id, String name, String? emoji})? initialCategory,
+  ({String id, String name, String? iconId})? initialCategory,
 }) {
   return showAppBottomSheet<Map<String, dynamic>>(
     context: context,

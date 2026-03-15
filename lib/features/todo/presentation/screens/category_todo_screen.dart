@@ -3,7 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/category_icons.dart';
 import '../../../../core/widgets/backgrounds/space_background.dart';
+import '../../../../core/widgets/feedback/app_loading.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../../../core/widgets/states/space_empty_state.dart';
@@ -16,12 +18,12 @@ class CategoryTodoScreen extends ConsumerWidget {
     super.key,
     required this.categoryId,
     required this.categoryName,
-    this.categoryEmoji,
+    this.categoryIconId,
   });
 
   final String categoryId;
   final String categoryName;
-  final String? categoryEmoji;
+  final String? categoryIconId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -44,9 +46,9 @@ class CategoryTodoScreen extends ConsumerWidget {
         title: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            if (categoryEmoji != null)
-              Text(categoryEmoji!, style: TextStyle(fontSize: 20.sp)),
-            if (categoryEmoji != null) SizedBox(width: AppSpacing.s8),
+            if (categoryIconId != null)
+              CategoryIcons.buildIcon(categoryIconId, size: 20.w),
+            if (categoryIconId != null) SizedBox(width: AppSpacing.s8),
             Text(
               categoryName,
               style: AppTextStyles.subHeading_18.copyWith(color: Colors.white),
@@ -81,7 +83,7 @@ class CategoryTodoScreen extends ConsumerWidget {
         children: [
           const Positioned.fill(child: SpaceBackground()),
           if (isInitialLoading)
-            const Center(child: CircularProgressIndicator())
+            const Center(child: AppLoading())
           else if (hasError)
             Center(
               child: Text(

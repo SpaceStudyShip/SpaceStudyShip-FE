@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/category_icons.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../../../core/constants/toss_design_tokens.dart';
@@ -10,7 +11,7 @@ class CategoryCard extends StatefulWidget {
   const CategoryCard({
     super.key,
     required this.name,
-    this.emoji,
+    this.iconId,
     required this.todoCount,
     required this.completedCount,
     required this.onTap,
@@ -20,7 +21,7 @@ class CategoryCard extends StatefulWidget {
   });
 
   final String name;
-  final String? emoji;
+  final String? iconId;
   final int todoCount;
   final int completedCount;
   final VoidCallback onTap;
@@ -92,10 +93,7 @@ class _CategoryCardState extends State<CategoryCard> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
-                      widget.emoji ?? '📁',
-                      style: TextStyle(fontSize: 32.sp),
-                    ),
+                    CategoryIcons.buildIcon(widget.iconId, size: 32.w),
                     SizedBox(height: AppSpacing.s8),
                     Text(
                       widget.name,

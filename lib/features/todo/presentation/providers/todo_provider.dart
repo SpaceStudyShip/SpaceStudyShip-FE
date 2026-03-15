@@ -244,9 +244,9 @@ class CategoryListNotifier extends _$CategoryListNotifier {
     return useCase.execute();
   }
 
-  Future<void> addCategory({required String name, String? emoji}) async {
+  Future<void> addCategory({required String name, String? iconId}) async {
     final useCase = ref.read(createCategoryUseCaseProvider);
-    await useCase.execute(name: name, emoji: emoji);
+    await useCase.execute(name: name, iconId: iconId);
     ref.invalidateSelf();
   }
 

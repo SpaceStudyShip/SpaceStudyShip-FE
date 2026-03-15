@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
@@ -38,7 +36,7 @@ class SocialScreen extends ConsumerWidget {
         backgroundColor: Colors.transparent,
         scrolledUnderElevation: 0,
         elevation: 0,
-        titleSpacing: 20.w,
+        titleSpacing: AppSpacing.s20,
         title: Text(
           '소셜',
           style: AppTextStyles.heading_20.copyWith(color: Colors.white),
@@ -97,7 +95,7 @@ class SocialScreen extends ConsumerWidget {
           backgroundColor: Colors.transparent,
           scrolledUnderElevation: 0,
           elevation: 0,
-          titleSpacing: 20.w,
+          titleSpacing: AppSpacing.s20,
           title: Text(
             '소셜',
             style: AppTextStyles.heading_20.copyWith(color: Colors.white),

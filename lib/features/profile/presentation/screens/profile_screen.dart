@@ -32,7 +32,7 @@ class ProfileScreen extends ConsumerWidget {
         backgroundColor: Colors.transparent,
         scrolledUnderElevation: 0,
         elevation: 0,
-        titleSpacing: 20.w,
+        titleSpacing: AppSpacing.s20,
         title: Text(
           '프로필',
           style: AppTextStyles.heading_20.copyWith(color: Colors.white),
@@ -40,13 +40,16 @@ class ProfileScreen extends ConsumerWidget {
         actions: [
           IconButton(
             padding: EdgeInsets.zero,
-            constraints: BoxConstraints(minWidth: 48.w, minHeight: 48.w),
-            icon: AppIcons.settings(size: 40.w),
+            constraints: BoxConstraints(
+              minWidth: AppSpacing.s48,
+              minHeight: AppSpacing.s48,
+            ),
+            icon: AppIcons.settings(size: AppSpacing.s40),
             onPressed: () {
               context.push(RoutePaths.settings);
             },
           ),
-          SizedBox(width: 4.w),
+          SizedBox(width: AppSpacing.s4),
         ],
       ),
       body: SafeArea(

@@ -89,19 +89,26 @@ class _CategoryMapScreenState extends ConsumerState<CategoryMapScreen> {
         actions: [
           IconButton(
             padding: EdgeInsets.zero,
-            constraints: BoxConstraints(minWidth: 48.w, minHeight: 48.w),
+            constraints: BoxConstraints(
+              minWidth: AppSpacing.s48,
+              minHeight: AppSpacing.s48,
+            ),
             onPressed: () => setState(() => _isListView = !_isListView),
             icon: _isListView
-                ? Icon(Icons.grid_view_rounded, size: 30.w)
-                : AppIcons.menu(size: 40.w),
+                ? Icon(Icons.grid_view_rounded, size: AppSpacing.s32)
+                : AppIcons.menu(size: AppSpacing.s40),
           ),
+
           IconButton(
             padding: EdgeInsets.zero,
-            constraints: BoxConstraints(minWidth: 48.w, minHeight: 48.w),
+            constraints: BoxConstraints(
+              minWidth: AppSpacing.s48,
+              minHeight: AppSpacing.s48,
+            ),
             onPressed: () => _addCategory(context),
-            icon: AppIcons.plus(size: 40.w),
+            icon: AppIcons.plus(size: AppSpacing.s40),
           ),
-          SizedBox(width: 4.w),
+          SizedBox(width: AppSpacing.s4),
         ],
       ),
       body: Stack(

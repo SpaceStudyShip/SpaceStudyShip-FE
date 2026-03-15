@@ -20,6 +20,8 @@ mixin _$TodoCategoryEntity {
   String get id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
   String? get iconId => throw _privateConstructorUsedError;
+  double? get positionX => throw _privateConstructorUsedError;
+  double? get positionY => throw _privateConstructorUsedError;
   DateTime get createdAt => throw _privateConstructorUsedError;
   DateTime? get updatedAt => throw _privateConstructorUsedError;
 
@@ -41,6 +43,8 @@ abstract class $TodoCategoryEntityCopyWith<$Res> {
     String id,
     String name,
     String? iconId,
+    double? positionX,
+    double? positionY,
     DateTime createdAt,
     DateTime? updatedAt,
   });
@@ -64,6 +68,8 @@ class _$TodoCategoryEntityCopyWithImpl<$Res, $Val extends TodoCategoryEntity>
     Object? id = null,
     Object? name = null,
     Object? iconId = freezed,
+    Object? positionX = freezed,
+    Object? positionY = freezed,
     Object? createdAt = null,
     Object? updatedAt = freezed,
   }) {
@@ -81,6 +87,14 @@ class _$TodoCategoryEntityCopyWithImpl<$Res, $Val extends TodoCategoryEntity>
                 ? _value.iconId
                 : iconId // ignore: cast_nullable_to_non_nullable
                       as String?,
+            positionX: freezed == positionX
+                ? _value.positionX
+                : positionX // ignore: cast_nullable_to_non_nullable
+                      as double?,
+            positionY: freezed == positionY
+                ? _value.positionY
+                : positionY // ignore: cast_nullable_to_non_nullable
+                      as double?,
             createdAt: null == createdAt
                 ? _value.createdAt
                 : createdAt // ignore: cast_nullable_to_non_nullable
@@ -108,6 +122,8 @@ abstract class _$$TodoCategoryEntityImplCopyWith<$Res>
     String id,
     String name,
     String? iconId,
+    double? positionX,
+    double? positionY,
     DateTime createdAt,
     DateTime? updatedAt,
   });
@@ -130,6 +146,8 @@ class __$$TodoCategoryEntityImplCopyWithImpl<$Res>
     Object? id = null,
     Object? name = null,
     Object? iconId = freezed,
+    Object? positionX = freezed,
+    Object? positionY = freezed,
     Object? createdAt = null,
     Object? updatedAt = freezed,
   }) {
@@ -147,6 +165,14 @@ class __$$TodoCategoryEntityImplCopyWithImpl<$Res>
             ? _value.iconId
             : iconId // ignore: cast_nullable_to_non_nullable
                   as String?,
+        positionX: freezed == positionX
+            ? _value.positionX
+            : positionX // ignore: cast_nullable_to_non_nullable
+                  as double?,
+        positionY: freezed == positionY
+            ? _value.positionY
+            : positionY // ignore: cast_nullable_to_non_nullable
+                  as double?,
         createdAt: null == createdAt
             ? _value.createdAt
             : createdAt // ignore: cast_nullable_to_non_nullable
@@ -167,6 +193,8 @@ class _$TodoCategoryEntityImpl implements _TodoCategoryEntity {
     required this.id,
     required this.name,
     this.iconId,
+    this.positionX,
+    this.positionY,
     required this.createdAt,
     this.updatedAt,
   });
@@ -178,13 +206,17 @@ class _$TodoCategoryEntityImpl implements _TodoCategoryEntity {
   @override
   final String? iconId;
   @override
+  final double? positionX;
+  @override
+  final double? positionY;
+  @override
   final DateTime createdAt;
   @override
   final DateTime? updatedAt;
 
   @override
   String toString() {
-    return 'TodoCategoryEntity(id: $id, name: $name, iconId: $iconId, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'TodoCategoryEntity(id: $id, name: $name, iconId: $iconId, positionX: $positionX, positionY: $positionY, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 
   @override
@@ -195,6 +227,10 @@ class _$TodoCategoryEntityImpl implements _TodoCategoryEntity {
             (identical(other.id, id) || other.id == id) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.iconId, iconId) || other.iconId == iconId) &&
+            (identical(other.positionX, positionX) ||
+                other.positionX == positionX) &&
+            (identical(other.positionY, positionY) ||
+                other.positionY == positionY) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt) &&
             (identical(other.updatedAt, updatedAt) ||
@@ -202,8 +238,16 @@ class _$TodoCategoryEntityImpl implements _TodoCategoryEntity {
   }
 
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, id, name, iconId, createdAt, updatedAt);
+  int get hashCode => Object.hash(
+    runtimeType,
+    id,
+    name,
+    iconId,
+    positionX,
+    positionY,
+    createdAt,
+    updatedAt,
+  );
 
   /// Create a copy of TodoCategoryEntity
   /// with the given fields replaced by the non-null parameter values.
@@ -222,6 +266,8 @@ abstract class _TodoCategoryEntity implements TodoCategoryEntity {
     required final String id,
     required final String name,
     final String? iconId,
+    final double? positionX,
+    final double? positionY,
     required final DateTime createdAt,
     final DateTime? updatedAt,
   }) = _$TodoCategoryEntityImpl;
@@ -232,6 +278,10 @@ abstract class _TodoCategoryEntity implements TodoCategoryEntity {
   String get name;
   @override
   String? get iconId;
+  @override
+  double? get positionX;
+  @override
+  double? get positionY;
   @override
   DateTime get createdAt;
   @override

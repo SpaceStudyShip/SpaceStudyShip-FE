@@ -8,6 +8,8 @@ class TodoCategoryEntity with _$TodoCategoryEntity {
     required String id,
     required String name,
     String? iconId,
+    double? positionX,
+    double? positionY,
     required DateTime createdAt,
     DateTime? updatedAt,
   }) = _TodoCategoryEntity;

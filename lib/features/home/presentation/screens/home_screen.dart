@@ -116,14 +116,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       ),
       body: Column(
         children: [
-          SizedBox(
-            height: MediaQuery.of(context).padding.top + kToolbarHeight,
-          ),
+          SizedBox(height: MediaQuery.of(context).padding.top + kToolbarHeight),
           Expanded(child: _buildSpaceshipArea()),
           _buildCompactCard(),
           // 플로팅 네비 + 안전 영역 여백
           SizedBox(
-            height: MediaQuery.of(context).padding.bottom +
+            height:
+                MediaQuery.of(context).padding.bottom +
                 FloatingNavMetrics.totalHeight +
                 AppSpacing.s12,
           ),
@@ -288,8 +287,7 @@ class _TodoCalendarModal extends ConsumerStatefulWidget {
   final void Function(DateTime) onPageChanged;
 
   @override
-  ConsumerState<_TodoCalendarModal> createState() =>
-      _TodoCalendarModalState();
+  ConsumerState<_TodoCalendarModal> createState() => _TodoCalendarModalState();
 }
 
 class _TodoCalendarModalState extends ConsumerState<_TodoCalendarModal> {

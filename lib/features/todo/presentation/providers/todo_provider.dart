@@ -381,7 +381,10 @@ List<TodoEntity> todosForCategory(Ref ref, String? categoryId) {
 // === 날짜별 할일 완료 통계 (홈 컴팩트 카드용) ===
 
 @riverpod
-({int total, int completed}) todoCompletionStatsForDate(Ref ref, DateTime date) {
+({int total, int completed}) todoCompletionStatsForDate(
+  Ref ref,
+  DateTime date,
+) {
   final todos = ref.watch(todosForDateProvider(date));
   final normalizedDate = TodoEntity.normalizeDate(date);
   return (

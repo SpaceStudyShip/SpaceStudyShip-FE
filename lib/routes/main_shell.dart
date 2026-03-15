@@ -65,10 +65,7 @@ class MainShell extends ConsumerWidget {
 /// 불투명 다크 배경 캡슐 + 슬라이딩 glass pill 인디케이터.
 /// 롱프레스 + 드래그로 인디케이터를 이동, 릴리스 시 가장 가까운 탭으로 전환.
 class _FloatingNavBar extends StatefulWidget {
-  const _FloatingNavBar({
-    required this.currentIndex,
-    required this.onTap,
-  });
+  const _FloatingNavBar({required this.currentIndex, required this.onTap});
 
   final int currentIndex;
   final ValueChanged<int> onTap;
@@ -108,8 +105,10 @@ class _FloatingNavBarState extends State<_FloatingNavBar> {
   void _onLongPressStart(LongPressStartDetails details) {
     setState(() {
       _isDragging = true;
-      _dragLeft = (widget.currentIndex * _itemWidth)
-          .clamp(0.0, _barWidth - _itemWidth);
+      _dragLeft = (widget.currentIndex * _itemWidth).clamp(
+        0.0,
+        _barWidth - _itemWidth,
+      );
     });
   }
 
@@ -140,10 +139,7 @@ class _FloatingNavBarState extends State<_FloatingNavBar> {
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.center,
-          colors: [
-            Colors.white.withValues(alpha: 0.06),
-            Colors.transparent,
-          ],
+          colors: [Colors.white.withValues(alpha: 0.06), Colors.transparent],
         ),
         border: Border(
           top: BorderSide(
@@ -170,19 +166,23 @@ class _FloatingNavBarState extends State<_FloatingNavBar> {
           final itemWidth = _itemWidth;
 
           // 인디케이터 위치: 드래그 중이면 드래그 위치, 아니면 현재 탭
-          final indicatorLeft =
-              _isDragging ? _dragLeft : widget.currentIndex * itemWidth;
+          final indicatorLeft = _isDragging
+              ? _dragLeft
+              : widget.currentIndex * itemWidth;
 
           // 드래그 중 하이라이트할 탭
-          final highlightIndex =
-              _isDragging ? _dragHoverIndex : widget.currentIndex;
+          final highlightIndex = _isDragging
+              ? _dragHoverIndex
+              : widget.currentIndex;
 
           return GestureDetector(
             onLongPressStart: _onLongPressStart,
             onLongPressMoveUpdate: (details) {
               setState(() {
-                _dragLeft = (details.localPosition.dx - itemWidth / 2)
-                    .clamp(0.0, _barWidth - itemWidth);
+                _dragLeft = (details.localPosition.dx - itemWidth / 2).clamp(
+                  0.0,
+                  _barWidth - itemWidth,
+                );
               });
             },
             onLongPressEnd: _onLongPressEnd,
@@ -239,10 +239,7 @@ class _FloatingNavBarState extends State<_FloatingNavBar> {
 ///
 /// iOS 시계 앱 스타일: 약간 밝은 배경 + 얇은 밝은 border glow.
 class _GlassPillIndicator extends StatelessWidget {
-  const _GlassPillIndicator({
-    required this.width,
-    required this.height,
-  });
+  const _GlassPillIndicator({required this.width, required this.height});
 
   final double width;
   final double height;
@@ -315,8 +312,9 @@ class _NavItemWidget extends StatelessWidget {
           style:
               (isSelected ? AppTextStyles.tag10Semibold : AppTextStyles.tag_10)
                   .copyWith(
-                    color:
-                        isSelected ? AppColors.primary : AppColors.textTertiary,
+                    color: isSelected
+                        ? AppColors.primary
+                        : AppColors.textTertiary,
                   ),
         ),
       ],

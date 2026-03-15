@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/app_icons.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../../../core/widgets/atoms/space_stat_item.dart';
@@ -31,21 +32,21 @@ class ProfileScreen extends ConsumerWidget {
         backgroundColor: Colors.transparent,
         scrolledUnderElevation: 0,
         elevation: 0,
+        titleSpacing: 20.w,
         title: Text(
           '프로필',
           style: AppTextStyles.heading_20.copyWith(color: Colors.white),
         ),
         actions: [
           IconButton(
-            icon: Icon(
-              Icons.settings_outlined,
-              color: Colors.white,
-              size: 24.w,
-            ),
+            padding: EdgeInsets.zero,
+            constraints: BoxConstraints(minWidth: 48.w, minHeight: 48.w),
+            icon: AppIcons.settings(size: 40.w),
             onPressed: () {
               context.push(RoutePaths.settings);
             },
           ),
+          SizedBox(width: 4.w),
         ],
       ),
       body: SafeArea(

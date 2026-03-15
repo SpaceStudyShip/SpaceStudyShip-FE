@@ -14,7 +14,12 @@ import '../../../todo/domain/entities/todo_entity.dart';
 import '../../../todo/presentation/providers/todo_provider.dart';
 
 class TodoSelectBottomSheet extends ConsumerWidget {
-  const TodoSelectBottomSheet({super.key});
+  const TodoSelectBottomSheet({
+    super.key,
+    required this.bottomPadding,
+  });
+
+  final double bottomPadding;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -107,6 +112,9 @@ class TodoSelectBottomSheet extends ConsumerWidget {
                         }, childCount: incomplete.length),
                       ),
                     ),
+                  SliverToBoxAdapter(
+                    child: SizedBox(height: bottomPadding),
+                  ),
                 ],
               );
             },
@@ -224,6 +232,7 @@ class _TodoSelectTile extends StatelessWidget {
 Future<Object?> showTodoSelectBottomSheet({required BuildContext context}) {
   return showAppBottomSheet<Object>(
     context: context,
-    builder: (context, _) => const TodoSelectBottomSheet(),
+    builder: (context, bottomPadding) =>
+        TodoSelectBottomSheet(bottomPadding: bottomPadding),
   );
 }

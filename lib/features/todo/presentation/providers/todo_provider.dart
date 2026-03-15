@@ -216,22 +216,6 @@ class TodoListNotifier extends _$TodoListNotifier {
       rethrow;
     }
   }
-
-  Future<void> deleteTodos(List<String> ids) async {
-    final previousState = state;
-    state = AsyncData(
-      state.valueOrNull?.where((t) => !ids.contains(t.id)).toList() ?? [],
-    );
-    try {
-      final useCase = ref.read(deleteTodoUseCaseProvider);
-      for (final id in ids) {
-        await useCase.execute(id);
-      }
-    } catch (_) {
-      state = previousState;
-      rethrow;
-    }
-  }
 }
 
 // === 카테고리 상태 관리 ===
@@ -244,9 +228,9 @@ class CategoryListNotifier extends _$CategoryListNotifier {
     return useCase.execute();
   }
 
-  Future<void> addCategory({required String name, String? emoji}) async {
+  Future<void> addCategory({required String name, String? iconId}) async {
     final useCase = ref.read(createCategoryUseCaseProvider);
-    await useCase.execute(name: name, emoji: emoji);
+    await useCase.execute(name: name, iconId: iconId);
     ref.invalidateSelf();
   }
 
@@ -282,21 +266,10 @@ class CategoryListNotifier extends _$CategoryListNotifier {
     }
   }
 
-  Future<void> deleteCategories(List<String> ids) async {
-    final previousState = state;
-    state = AsyncData(
-      state.valueOrNull?.where((c) => !ids.contains(c.id)).toList() ?? [],
-    );
-    try {
-      final useCase = ref.read(deleteCategoryUseCaseProvider);
-      for (final id in ids) {
-        await useCase.execute(id);
-      }
-      ref.invalidate(todoListNotifierProvider);
-    } catch (_) {
-      state = previousState;
-      rethrow;
-    }
+  Future<void> updateCategoryPosition(String id, double x, double y) async {
+    final category = state.valueOrNull?.firstWhere((c) => c.id == id);
+    if (category == null) return;
+    await updateCategory(category.copyWith(positionX: x, positionY: y));
   }
 }
 

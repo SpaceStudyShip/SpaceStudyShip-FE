@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/constants/app_colors.dart';
-import '../../../../core/constants/space_icons.dart';
+import '../../../../core/constants/planet_icons.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../../../core/constants/toss_design_tokens.dart';
@@ -73,7 +73,7 @@ class _PlanetNodeState extends ConsumerState<PlanetNode>
         duration: TossDesignTokens.animationFast,
         curve: TossDesignTokens.springCurve,
         child: SizedBox(
-          width: 80.w,
+          width: 100.w,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -81,7 +81,7 @@ class _PlanetNodeState extends ConsumerState<PlanetNode>
               if (widget.isCurrentLocation) ...[
                 Icon(
                   Icons.rocket_launch_rounded,
-                  size: 16.sp,
+                  size: 20.sp,
                   color: AppColors.primary,
                 ),
                 SizedBox(height: 2.h),
@@ -95,11 +95,12 @@ class _PlanetNodeState extends ConsumerState<PlanetNode>
               // 행성 이름
               Text(
                 widget.node.name,
-                style: AppTextStyles.tag_12.copyWith(
+                style: AppTextStyles.label16Medium.copyWith(
                   color: isLocked ? AppColors.textTertiary : Colors.white,
                 ),
                 textAlign: TextAlign.center,
               ),
+              SizedBox(height: AppSpacing.s4),
 
               // 진행도 or 필요 연료
               if (isLocked)
@@ -108,13 +109,13 @@ class _PlanetNodeState extends ConsumerState<PlanetNode>
                   children: [
                     Icon(
                       Icons.lock_rounded,
-                      size: 10.sp,
+                      size: 12.sp,
                       color: AppColors.textTertiary,
                     ),
                     SizedBox(width: 2.w),
                     Text(
                       '${widget.node.requiredFuel}통',
-                      style: AppTextStyles.tag_10.copyWith(
+                      style: AppTextStyles.tag_12.copyWith(
                         color: AppColors.textTertiary,
                       ),
                     ),
@@ -123,7 +124,7 @@ class _PlanetNodeState extends ConsumerState<PlanetNode>
               else if (!isCleared)
                 Text(
                   '${progress.clearedChildren}/${progress.totalChildren}',
-                  style: AppTextStyles.tag_10.copyWith(
+                  style: AppTextStyles.tag_12.copyWith(
                     color: AppColors.primary,
                   ),
                   textAlign: TextAlign.center,
@@ -134,13 +135,13 @@ class _PlanetNodeState extends ConsumerState<PlanetNode>
                   children: [
                     Icon(
                       Icons.check_circle_rounded,
-                      size: 10.sp,
+                      size: 12.sp,
                       color: AppColors.success,
                     ),
                     SizedBox(width: 2.w),
                     Text(
                       '클리어',
-                      style: AppTextStyles.tag_10.copyWith(
+                      style: AppTextStyles.tag_12.copyWith(
                         color: AppColors.success,
                       ),
                     ),
@@ -154,9 +155,8 @@ class _PlanetNodeState extends ConsumerState<PlanetNode>
   }
 
   Widget _buildPlanetCircle(bool isLocked, bool isCleared) {
-    final circleSize = 56.w;
-    final planetGradient = SpaceIcons.gradientOf(widget.node.icon);
-    final planetColor = SpaceIcons.colorOf(widget.node.icon);
+    final iconSize = 80.w;
+    final planetColor = PlanetIcons.colorOf(widget.node.icon);
 
     return AnimatedBuilder(
       animation: _glowController,
@@ -166,65 +166,35 @@ class _PlanetNodeState extends ConsumerState<PlanetNode>
             : 0.0;
 
         return Container(
-          width: circleSize,
-          height: circleSize,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            gradient: isLocked
-                ? null
-                : RadialGradient(
-                    center: const Alignment(-0.3, -0.3),
-                    radius: 0.9,
-                    colors: [
-                      planetGradient[0].withValues(
-                        alpha: isCleared ? 0.15 : 0.3,
-                      ),
-                      planetGradient[1].withValues(
-                        alpha: isCleared ? 0.08 : 0.15,
-                      ),
-                    ],
-                  ),
-            color: isLocked
-                ? AppColors.spaceDivider.withValues(alpha: 0.4)
-                : null,
-            border: Border.all(
-              color: isCleared
-                  ? AppColors.success.withValues(alpha: 0.6)
-                  : isLocked
-                  ? AppColors.spaceDivider.withValues(alpha: 0.5)
-                  : planetColor.withValues(alpha: 0.5),
-              width: isCleared ? 2.0 : 1.5,
-            ),
-            boxShadow: glowOpacity > 0
-                ? [
+          width: iconSize,
+          height: iconSize,
+          decoration: glowOpacity > 0
+              ? BoxDecoration(
+                  shape: BoxShape.circle,
+                  boxShadow: [
                     BoxShadow(
                       color: planetColor.withValues(alpha: glowOpacity),
                       blurRadius: 20,
                       spreadRadius: 4,
                     ),
-                  ]
-                : null,
-          ),
-          child: Center(
-            child: isLocked
-                ? Icon(
-                    Icons.lock_rounded,
-                    size: 22.sp,
-                    color: AppColors.textTertiary,
-                  )
-                : ShaderMask(
-                    shaderCallback: (bounds) => LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: planetGradient,
-                    ).createShader(bounds),
+                  ],
+                )
+              : null,
+          child: isLocked
+              ? Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: AppColors.spaceDivider.withValues(alpha: 0.4),
+                  ),
+                  child: Center(
                     child: Icon(
-                      SpaceIcons.resolve(widget.node.icon),
-                      size: 26.sp,
-                      color: Colors.white,
+                      Icons.lock_rounded,
+                      size: 22.sp,
+                      color: AppColors.textTertiary,
                     ),
                   ),
-          ),
+                )
+              : PlanetIcons.buildIcon(widget.node.icon, size: iconSize),
         );
       },
     );

@@ -11,7 +11,9 @@ class TodoCategoryModel with _$TodoCategoryModel {
   const factory TodoCategoryModel({
     required String id,
     required String name,
-    String? emoji,
+    @JsonKey(name: 'icon_id') String? iconId,
+    @JsonKey(name: 'position_x') double? positionX,
+    @JsonKey(name: 'position_y') double? positionY,
     @JsonKey(name: 'created_at') required DateTime createdAt,
     @JsonKey(name: 'updated_at') DateTime? updatedAt,
   }) = _TodoCategoryModel;
@@ -24,7 +26,9 @@ extension TodoCategoryModelX on TodoCategoryModel {
   TodoCategoryEntity toEntity() => TodoCategoryEntity(
     id: id,
     name: name,
-    emoji: emoji,
+    iconId: iconId,
+    positionX: positionX,
+    positionY: positionY,
     createdAt: createdAt,
     updatedAt: updatedAt,
   );
@@ -34,7 +38,9 @@ extension TodoCategoryEntityToModelX on TodoCategoryEntity {
   TodoCategoryModel toModel() => TodoCategoryModel(
     id: id,
     name: name,
-    emoji: emoji,
+    iconId: iconId,
+    positionX: positionX,
+    positionY: positionY,
     createdAt: createdAt,
     updatedAt: updatedAt,
   );

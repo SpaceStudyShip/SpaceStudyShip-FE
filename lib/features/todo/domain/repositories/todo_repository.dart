@@ -15,7 +15,7 @@ abstract class TodoRepository {
   Future<List<TodoCategoryEntity>> getCategories();
   Future<TodoCategoryEntity> createCategory({
     required String name,
-    String? emoji,
+    String? iconId,
   });
   Future<TodoCategoryEntity> updateCategory(TodoCategoryEntity category);
   Future<void> deleteCategory(String id);

@@ -79,13 +79,13 @@ class LocalTodoRepositoryImpl implements TodoRepository {
   @override
   Future<TodoCategoryEntity> createCategory({
     required String name,
-    String? emoji,
+    String? iconId,
   }) async {
     final now = DateTime.now();
     final model = TodoCategoryModel(
       id: _uuid.v4(),
       name: name,
-      emoji: emoji,
+      iconId: iconId,
       createdAt: now,
       updatedAt: now,
     );

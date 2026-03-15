@@ -156,7 +156,7 @@ class ExploreScreen extends ConsumerWidget {
                 // Layer 3: 행성 노드들 (Positioned + ScaleIn)
                 for (int i = 0; i < planets.length; i++)
                   Positioned(
-                    left: planetOffsets[planets[i].id]!.dx - 40.w,
+                    left: planetOffsets[planets[i].id]!.dx - 50.w,
                     top: planetOffsets[planets[i].id]!.dy - 30.h,
                     child: ScaleIn(
                       delay: Duration(milliseconds: 100 + i * 80),
@@ -189,8 +189,8 @@ class ExploreScreen extends ConsumerWidget {
     double topInset,
   ) {
     final positions = <String, Offset>{};
-    final nodeWidth = 80.w;
-    final horizontalPadding = 20.w;
+    final nodeWidth = 100.w;
+    final horizontalPadding = 8.w;
     final usableWidth = screenWidth - nodeWidth - horizontalPadding * 2;
 
     for (int i = 0; i < planets.length; i++) {
@@ -257,8 +257,8 @@ class ExploreScreen extends ConsumerWidget {
   Future<void> _showLoginPrompt(BuildContext context, WidgetRef ref) async {
     final confirmed = await AppDialog.confirm(
       context: context,
-      title: '로그인하시겠어요?',
-      message: '게스트 모드의 데이터가\n모두 초기화돼요',
+      title: '로그인이 필요해요',
+      message: '다른 행성을 탐험하려면 로그인이 필요해요.\n게스트 모드의 데이터는 초기화돼요.',
       confirmText: '로그인',
       cancelText: '취소',
     );

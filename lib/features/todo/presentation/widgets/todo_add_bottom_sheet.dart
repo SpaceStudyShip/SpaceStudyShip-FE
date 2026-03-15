@@ -495,8 +495,7 @@ class _CategoryChip extends StatelessWidget {
             Text(
               label,
               style: AppTextStyles.tag_12.copyWith(
-                color:
-                    isSelected ? AppColors.primary : AppColors.textSecondary,
+                color: isSelected ? AppColors.primary : AppColors.textSecondary,
               ),
             ),
           ],

@@ -181,9 +181,7 @@ class _TimerHistoryScreenState extends ConsumerState<TimerHistoryScreen> {
           noItemsFoundIndicatorBuilder: (_) => const SizedBox.shrink(),
           newPageProgressIndicatorBuilder: (_) => Padding(
             padding: AppPadding.all16,
-            child: const Center(
-              child: AppLoading(size: 24),
-            ),
+            child: const Center(child: AppLoading(size: 24)),
           ),
         ),
       ),

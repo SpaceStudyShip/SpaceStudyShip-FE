@@ -21,13 +21,7 @@ class SpaceIcons {
   // ============================================
 
   static const Map<String, IconData> _emojiToIcon = {
-    // 행성
-    '🌍': Icons.public_rounded,
-    '🌎': Icons.public_rounded,
-    '🌏': Icons.public_rounded,
-    '🌙': Icons.nightlight_round,
-    '🔴': Icons.circle,
-    '🟤': Icons.circle,
+    // 천체
     '⭐': Icons.star_rounded,
     '🌟': Icons.auto_awesome_rounded,
     '☀️': Icons.wb_sunny_rounded,
@@ -63,12 +57,6 @@ class SpaceIcons {
   // ============================================
 
   static const Map<String, Color> _planetColors = {
-    '🌍': Color(0xFF4FC3F7), // Earth: blue-green
-    '🌎': Color(0xFF4FC3F7),
-    '🌏': Color(0xFF4FC3F7),
-    '🌙': Color(0xFFB0BEC5), // Moon: silver
-    '🔴': Color(0xFFEF5350), // Mars: red
-    '🟤': Color(0xFFBCAAA4), // Jupiter: brown
     '⭐': Color(0xFFFFD740), // Star: gold
     '🌟': Color(0xFFFFD740),
     '☀️': Color(0xFFFFA726), // Sun: orange
@@ -83,12 +71,6 @@ class SpaceIcons {
   // ============================================
 
   static const Map<String, List<Color>> _planetGradients = {
-    '🌍': [Color(0xFF4FC3F7), Color(0xFF0288D1)],
-    '🌎': [Color(0xFF4FC3F7), Color(0xFF0288D1)],
-    '🌏': [Color(0xFF4FC3F7), Color(0xFF0288D1)],
-    '🌙': [Color(0xFFCFD8DC), Color(0xFF78909C)],
-    '🔴': [Color(0xFFEF5350), Color(0xFFC62828)],
-    '🟤': [Color(0xFFD7CCC8), Color(0xFF8D6E63)],
     '⭐': [Color(0xFFFFD740), Color(0xFFFFA000)],
     '🌟': [Color(0xFFFFE57F), Color(0xFFFFAB00)],
     '☀️': [Color(0xFFFFCC02), Color(0xFFFF6F00)],
@@ -139,53 +121,6 @@ class SpaceIcons {
         colors: gradientOf(emoji),
       ).createShader(bounds),
       child: Icon(iconData, size: size, color: Colors.white),
-    );
-  }
-
-  /// 그라데이션 원형 배경 + 아이콘 위젯 (행성 노드용)
-  static Widget buildCircleIcon(
-    String emoji, {
-    double circleSize = 56,
-    double iconSize = 28,
-    double glowOpacity = 0.0,
-  }) {
-    final gradient = gradientOf(emoji);
-    final baseColor = colorOf(emoji);
-
-    return Container(
-      width: circleSize,
-      height: circleSize,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        gradient: RadialGradient(
-          center: const Alignment(-0.3, -0.3),
-          radius: 0.9,
-          colors: [
-            gradient[0].withValues(alpha: 0.3),
-            gradient[1].withValues(alpha: 0.15),
-          ],
-        ),
-        border: Border.all(color: baseColor.withValues(alpha: 0.5), width: 1.5),
-        boxShadow: glowOpacity > 0
-            ? [
-                BoxShadow(
-                  color: baseColor.withValues(alpha: glowOpacity),
-                  blurRadius: 16,
-                  spreadRadius: 2,
-                ),
-              ]
-            : null,
-      ),
-      child: Center(
-        child: ShaderMask(
-          shaderCallback: (bounds) => LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: gradient,
-          ).createShader(bounds),
-          child: Icon(resolve(emoji), size: iconSize, color: Colors.white),
-        ),
-      ),
     );
   }
 }

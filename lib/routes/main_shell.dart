@@ -34,15 +34,16 @@ class MainShell extends ConsumerWidget {
           navigationShell,
 
           // 플로팅 바텀 네비게이션
-          Positioned(
-            left: FloatingNavMetrics.horizontalMargin,
-            right: FloatingNavMetrics.horizontalMargin,
-            bottom: bottomPadding + FloatingNavMetrics.bottomMargin,
-            child: _FloatingNavBar(
-              currentIndex: navigationShell.currentIndex,
-              onTap: (index) => _onTap(ref, index),
+          if (ref.watch(showFloatingNavProvider))
+            Positioned(
+              left: FloatingNavMetrics.horizontalMargin,
+              right: FloatingNavMetrics.horizontalMargin,
+              bottom: bottomPadding + FloatingNavMetrics.bottomMargin,
+              child: _FloatingNavBar(
+                currentIndex: navigationShell.currentIndex,
+                onTap: (index) => _onTap(ref, index),
+              ),
             ),
-          ),
         ],
       ),
     );

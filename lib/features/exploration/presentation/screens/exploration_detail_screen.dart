@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/planet_icons.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/widgets/backgrounds/space_background.dart';
@@ -142,13 +143,15 @@ class ExplorationDetailScreen extends ConsumerWidget {
     ExplorationNodeEntity planet,
     ExplorationProgressEntity progress,
   ) {
+    final planetColor = PlanetIcons.colorOf(planet.icon);
+
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            AppColors.primary.withValues(alpha: 0.2),
+            planetColor.withValues(alpha: 0.2),
             AppColors.spaceBackground,
           ],
           stops: const [0.0, 0.9],
@@ -159,27 +162,8 @@ class ExplorationDetailScreen extends ConsumerWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SizedBox(height: AppSpacing.s16),
-            // 행성 아이콘
-            Container(
-              width: 72.w,
-              height: 72.w,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: AppColors.primary.withValues(alpha: 0.15),
-                border: Border.all(
-                  color: AppColors.primary.withValues(alpha: 0.3),
-                  width: 2,
-                ),
-              ),
-              child: Center(
-                child: Text(
-                  planet.icon,
-                  style: TextStyle(
-                    fontSize: 36.sp,
-                  ), // 이모지 아이콘 크기 (typography 아님)
-                ),
-              ),
-            ),
+            // 행성 SVG 아이콘
+            PlanetIcons.buildIcon(planet.icon, size: 80.w),
             SizedBox(height: AppSpacing.s8),
             // 설명
             if (planet.description.isNotEmpty)

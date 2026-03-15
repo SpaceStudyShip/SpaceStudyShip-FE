@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
@@ -62,6 +63,42 @@ class _AboutScreenState extends State<AboutScreen> {
                     source: 'LottieFiles',
                     license: 'Lottie Simple License',
                   ),
+                  SizedBox(height: AppSpacing.s12),
+                  _buildCreditItem(
+                    title: 'Planets',
+                    author: 'Seda',
+                    source: 'Figma Community',
+                    license: 'CC BY 4.0 — Modified',
+                    url:
+                        'https://www.figma.com/community/file/941091315882192462/planets',
+                  ),
+                  SizedBox(height: AppSpacing.s12),
+                  _buildCreditItem(
+                    title: '20+ FREE SCI-FI Game Planet UI Icons',
+                    author: 'Simple Studio',
+                    source: 'Figma Community',
+                    license: 'CC BY 4.0 — Modified',
+                    url:
+                        'https://www.figma.com/community/file/948549928836769815/20-free-sci-fi-game-planet-ui-icons',
+                  ),
+                  SizedBox(height: AppSpacing.s12),
+                  _buildCreditItem(
+                    title: 'Free Rotating Planet Loaders',
+                    author: 'Shubhangi Kaushal',
+                    source: 'Figma Community',
+                    license: 'CC BY 4.0 — Modified',
+                    url:
+                        'https://www.figma.com/community/file/1227252643007941112/free-rotating-planet-loaders',
+                  ),
+                  SizedBox(height: AppSpacing.s12),
+                  _buildCreditItem(
+                    title: '20+ Premium Planet Illustrations',
+                    author: 'Simple Studio',
+                    source: 'Figma Community',
+                    license: 'CC BY 4.0 — Modified',
+                    url:
+                        'https://www.figma.com/community/file/948550441311747097/20-premium-planet-illustrations',
+                  ),
                   SizedBox(height: AppSpacing.s32),
 
                   // 라이선스 안내
@@ -70,6 +107,7 @@ class _AboutScreenState extends State<AboutScreen> {
                   _buildLicenseNote(),
                   SizedBox(height: AppSpacing.s16),
                   _buildOpenSourceButton(context),
+                  SizedBox(height: FloatingNavMetrics.totalHeight),
                 ],
               ),
             ),
@@ -140,8 +178,9 @@ class _AboutScreenState extends State<AboutScreen> {
     required String author,
     required String source,
     required String license,
+    String? url,
   }) {
-    return Container(
+    final content = Container(
       padding: AppPadding.all16,
       decoration: BoxDecoration(
         color: AppColors.spaceSurface,
@@ -151,9 +190,23 @@ class _AboutScreenState extends State<AboutScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            title,
-            style: AppTextStyles.label16Medium.copyWith(color: Colors.white),
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  title,
+                  style: AppTextStyles.label16Medium.copyWith(
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+              if (url != null)
+                Icon(
+                  Icons.open_in_new_rounded,
+                  size: 16.sp,
+                  color: AppColors.textTertiary,
+                ),
+            ],
           ),
           SizedBox(height: AppSpacing.s8),
           _buildInfoRow('Author', author),
@@ -163,6 +216,14 @@ class _AboutScreenState extends State<AboutScreen> {
           _buildInfoRow('License', license),
         ],
       ),
+    );
+
+    if (url == null) return content;
+
+    return GestureDetector(
+      onTap: () =>
+          launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication),
+      child: content,
     );
   }
 

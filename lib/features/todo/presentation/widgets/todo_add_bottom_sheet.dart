@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/category_icons.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../../../core/widgets/atoms/calendar_header.dart';
@@ -193,7 +194,8 @@ class _TodoAddBottomSheetState extends ConsumerState<TodoAddBottomSheet> {
                                 (cat) => Padding(
                                   padding: EdgeInsets.only(right: 8.w),
                                   child: _CategoryChip(
-                                    label: '${cat.emoji ?? "📁"} ${cat.name}',
+                                    iconId: cat.iconId,
+                                    label: cat.name,
                                     isSelected: _selectedCategoryIds.contains(
                                       cat.id,
                                     ),
@@ -460,8 +462,10 @@ class _CategoryChip extends StatelessWidget {
     required this.label,
     required this.isSelected,
     required this.onTap,
+    this.iconId,
   });
 
+  final String? iconId;
   final String label;
   final bool isSelected;
   final VoidCallback onTap;
@@ -481,11 +485,20 @@ class _CategoryChip extends StatelessWidget {
             color: isSelected ? AppColors.primary : AppColors.spaceDivider,
           ),
         ),
-        child: Text(
-          label,
-          style: AppTextStyles.tag_12.copyWith(
-            color: isSelected ? AppColors.primary : AppColors.textSecondary,
-          ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (iconId != null) ...[
+              CategoryIcons.buildIcon(iconId, size: 14.w),
+              SizedBox(width: AppSpacing.s4),
+            ],
+            Text(
+              label,
+              style: AppTextStyles.tag_12.copyWith(
+                color: isSelected ? AppColors.primary : AppColors.textSecondary,
+              ),
+            ),
+          ],
         ),
       ),
     );

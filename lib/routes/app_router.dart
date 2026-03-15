@@ -25,9 +25,8 @@ import '../features/social/presentation/screens/social_screen.dart';
 import '../features/profile/presentation/screens/profile_screen.dart';
 import '../features/profile/presentation/screens/about_screen.dart';
 import '../features/profile/presentation/screens/spaceship_collection_screen.dart';
-import '../features/todo/presentation/screens/category_todo_screen.dart';
 import '../features/badge/presentation/screens/badge_collection_screen.dart';
-import '../features/todo/presentation/screens/todo_list_screen.dart';
+import '../features/todo/presentation/screens/category_map_screen.dart';
 
 /// 스플래시 최소 표시 시간 (2초)
 final splashDelayProvider = FutureProvider<void>((ref) async {
@@ -166,24 +165,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                   GoRoute(
                     path: 'todo',
                     name: 'todoList',
-                    builder: (context, state) => const TodoListScreen(),
-                    routes: [
-                      // 카테고리별 할일 목록
-                      GoRoute(
-                        path: 'category/:categoryId',
-                        name: 'categoryTodo',
-                        builder: (context, state) {
-                          final categoryId =
-                              state.pathParameters['categoryId']!;
-                          final extra = state.extra as Map<String, dynamic>?;
-                          return CategoryTodoScreen(
-                            categoryId: categoryId,
-                            categoryName: extra?['name'] as String? ?? '카테고리',
-                            categoryEmoji: extra?['emoji'] as String?,
-                          );
-                        },
-                      ),
-                    ],
+                    builder: (context, state) => const CategoryMapScreen(),
                   ),
                   // Todo 상세
                   GoRoute(

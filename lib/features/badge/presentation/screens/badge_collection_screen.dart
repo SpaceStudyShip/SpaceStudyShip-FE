@@ -62,6 +62,7 @@ class BadgeCollectionScreen extends ConsumerWidget {
 
                         // 카테고리별 배지 그룹
                         ..._buildCategoryGroups(context, badges),
+                        SizedBox(height: FloatingNavMetrics.totalHeight),
                       ],
                     ),
                   ),

@@ -95,6 +95,7 @@ class SettingsScreen extends ConsumerWidget {
                 ),
 
                 Divider(color: AppColors.spaceDivider),
+                SizedBox(height: FloatingNavMetrics.totalHeight),
               ],
             ),
           ),

@@ -3,9 +3,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/category_icons.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
+import '../../../../core/constants/toss_design_tokens.dart';
+import '../../../../core/utils/show_app_bottom_sheet.dart';
+import '../../../../core/widgets/atoms/drag_handle.dart';
 import '../../../../core/widgets/buttons/app_button.dart';
+import '../../../../core/widgets/feedback/app_loading.dart';
 import '../providers/todo_provider.dart';
 
 /// 다중 카테고리 선택 바텀시트
@@ -16,9 +21,11 @@ class CategorySelectBottomSheet extends ConsumerStatefulWidget {
   const CategorySelectBottomSheet({
     super.key,
     this.currentCategoryIds = const [],
+    required this.bottomPadding,
   });
 
   final List<String> currentCategoryIds;
+  final double bottomPadding;
 
   @override
   ConsumerState<CategorySelectBottomSheet> createState() =>
@@ -66,21 +73,11 @@ class _CategorySelectBottomSheetState
         mainAxisSize: MainAxisSize.min,
         children: [
           // 드래그 핸들
-          Center(
-            child: Container(
-              margin: EdgeInsets.only(top: 12.h, bottom: 8.h),
-              width: 40.w,
-              height: 4.h,
-              decoration: BoxDecoration(
-                color: AppColors.textTertiary.withValues(alpha: 0.4),
-                borderRadius: BorderRadius.circular(2.r),
-              ),
-            ),
-          ),
+          const DragHandle(),
 
           // 제목
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
+            padding: AppPadding.bottomSheetTitlePadding,
             child: Align(
               alignment: Alignment.centerLeft,
               child: Text(
@@ -94,7 +91,7 @@ class _CategorySelectBottomSheetState
 
           // 미분류 옵션
           _CategoryOption(
-            emoji: '📋',
+            iconId: null,
             name: '미분류',
             isSelected: _selectedIds.isEmpty,
             onTap: _selectUncategorized,
@@ -112,7 +109,7 @@ class _CategorySelectBottomSheetState
               children: categories.map((cat) {
                 final isSelected = _selectedIds.contains(cat.id);
                 return _CategoryOption(
-                  emoji: cat.emoji ?? '📁',
+                  iconId: cat.iconId,
                   name: cat.name,
                   isSelected: isSelected,
                   onTap: () => _toggleCategory(cat.id),
@@ -121,7 +118,7 @@ class _CategorySelectBottomSheetState
             ),
             loading: () => Padding(
               padding: AppPadding.all16,
-              child: const Center(child: CircularProgressIndicator()),
+              child: const Center(child: AppLoading()),
             ),
             error: (e, st) => Padding(
               padding: AppPadding.all16,
@@ -144,7 +141,7 @@ class _CategorySelectBottomSheetState
             ),
           ),
 
-          SizedBox(height: MediaQuery.of(context).padding.bottom + 12.h),
+          SizedBox(height: widget.bottomPadding),
         ],
       ),
     );
@@ -153,13 +150,13 @@ class _CategorySelectBottomSheetState
 
 class _CategoryOption extends StatelessWidget {
   const _CategoryOption({
-    required this.emoji,
+    required this.iconId,
     required this.name,
     required this.isSelected,
     required this.onTap,
   });
 
-  final String emoji;
+  final String? iconId;
   final String name;
   final bool isSelected;
   final VoidCallback onTap;
@@ -172,7 +169,7 @@ class _CategoryOption extends StatelessWidget {
         padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 14.h),
         child: Row(
           children: [
-            Text(emoji, style: TextStyle(fontSize: 20.sp)),
+            CategoryIcons.buildIcon(iconId, size: 20.w),
             SizedBox(width: AppSpacing.s12),
             Expanded(
               child: Text(
@@ -181,7 +178,7 @@ class _CategoryOption extends StatelessWidget {
               ),
             ),
             AnimatedContainer(
-              duration: const Duration(milliseconds: 150),
+              duration: TossDesignTokens.animationFast,
               width: 22.w,
               height: 22.w,
               decoration: BoxDecoration(
@@ -211,14 +208,11 @@ Future<List<String>?> showCategorySelectBottomSheet({
   required BuildContext context,
   List<String> currentCategoryIds = const [],
 }) {
-  return showModalBottomSheet<List<String>>(
+  return showAppBottomSheet<List<String>>(
     context: context,
-    backgroundColor: Colors.transparent,
-    barrierColor: Colors.black54,
-    isScrollControlled: true,
-    isDismissible: true,
-    enableDrag: true,
-    builder: (context) =>
-        CategorySelectBottomSheet(currentCategoryIds: currentCategoryIds),
+    builder: (context, bottomPadding) => CategorySelectBottomSheet(
+      currentCategoryIds: currentCategoryIds,
+      bottomPadding: bottomPadding,
+    ),
   );
 }

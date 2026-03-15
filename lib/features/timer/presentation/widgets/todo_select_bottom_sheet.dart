@@ -8,6 +8,7 @@ import '../../../../core/constants/text_styles.dart';
 import '../../../../core/utils/show_app_bottom_sheet.dart';
 import '../../../../core/widgets/atoms/drag_handle.dart';
 import '../../../../core/widgets/buttons/app_button.dart';
+import '../../../../core/widgets/feedback/app_loading.dart';
 import '../../../../core/widgets/states/space_empty_state.dart';
 import '../../../todo/domain/entities/todo_category_entity.dart';
 import '../../../todo/domain/entities/todo_entity.dart';
@@ -113,8 +114,17 @@ class TodoSelectBottomSheet extends ConsumerWidget {
                 ],
               );
             },
-            loading: () => const Center(child: CircularProgressIndicator()),
-            error: (_, _) => const SizedBox.shrink(),
+            loading: () => const Center(child: AppLoading()),
+            error: (_, _) => Padding(
+              padding: EdgeInsets.only(top: AppSpacing.s40),
+              child: const SpaceEmptyState(
+                icon: Icons.error_outline,
+                title: '할 일을 불러오지 못했어요',
+                subtitle: '잠시 후 다시 시도해 주세요',
+                iconSize: 32,
+                animated: false,
+              ),
+            ),
           ),
         );
       },
@@ -203,8 +213,7 @@ class _TodoSelectTile extends StatelessWidget {
           .where((c) => c.id == todo.categoryIds.first)
           .firstOrNull;
       if (cat != null) {
-        final prefix = cat.emoji != null ? '${cat.emoji} ' : '';
-        items.add('$prefix${cat.name}');
+        items.add(cat.name);
       }
     }
 

@@ -6,6 +6,7 @@ import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../../../core/widgets/buttons/app_button.dart';
 import '../../../../core/widgets/dialogs/app_dialog.dart';
+import '../../../../core/widgets/feedback/app_snackbar.dart';
 import '../../../../core/widgets/states/space_empty_state.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
 
@@ -59,14 +60,19 @@ class SocialScreen extends ConsumerWidget {
                 onPressed: () async {
                   final confirmed = await AppDialog.confirm(
                     context: context,
-                    title: '로그인하시겠어요?',
-                    message: '게스트 모드의 데이터가\n모두 초기화돼요',
-                    isDestructive: true,
+                    title: '로그인이 필요해요',
+                    message: '소셜 기능을 이용하려면 로그인이 필요해요.\n게스트 모드의 데이터는 초기화돼요.',
                     confirmText: '로그인',
                     cancelText: '취소',
                   );
                   if (confirmed == true) {
-                    await ref.read(authNotifierProvider.notifier).signOut();
+                    try {
+                      await ref.read(authNotifierProvider.notifier).signOut();
+                    } catch (e) {
+                      if (context.mounted) {
+                        AppSnackBar.error(context, '로그인 화면 전환에 실패했습니다.');
+                      }
+                    }
                   }
                 },
                 width: 200,

@@ -10,6 +10,7 @@ import '../../../../core/constants/text_styles.dart';
 import '../../../../core/widgets/atoms/space_stat_item.dart';
 import '../../../../core/widgets/backgrounds/space_background.dart';
 import '../../../../core/widgets/cards/app_card.dart';
+import '../../../../core/widgets/feedback/app_loading.dart';
 import '../../../../core/widgets/states/space_empty_state.dart';
 import '../../domain/entities/timer_session_entity.dart';
 import '../providers/study_stats_provider.dart';
@@ -169,19 +170,18 @@ class _TimerHistoryScreenState extends ConsumerState<TimerHistoryScreen> {
       builder: (context, state, fetchNextPage) => PagedListView<int, DateGroup>(
         state: state,
         fetchNextPage: fetchNextPage,
-        padding: EdgeInsets.only(left: 20.w, right: 20.w, bottom: 16.h),
+        padding: EdgeInsets.only(
+          left: 20.w,
+          right: 20.w,
+          bottom: FloatingNavMetrics.totalHeight,
+        ),
         builderDelegate: PagedChildBuilderDelegate<DateGroup>(
           itemBuilder: (context, dateGroup, index) =>
               _buildDateGroup(dateGroup),
           noItemsFoundIndicatorBuilder: (_) => const SizedBox.shrink(),
           newPageProgressIndicatorBuilder: (_) => Padding(
             padding: AppPadding.all16,
-            child: const Center(
-              child: CircularProgressIndicator(
-                color: AppColors.primary,
-                strokeWidth: 2,
-              ),
-            ),
+            child: const Center(child: AppLoading(size: 24)),
           ),
         ),
       ),

@@ -93,6 +93,7 @@ class SpaceshipCollectionScreen extends StatelessWidget {
                       return _buildCollectionCard(_spaceships[index]);
                     },
                   ),
+                  SizedBox(height: FloatingNavMetrics.totalHeight),
                 ],
               ),
             ),

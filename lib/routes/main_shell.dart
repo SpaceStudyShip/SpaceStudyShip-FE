@@ -142,23 +142,9 @@ class _FloatingNavBarState extends State<_FloatingNavBar> {
           end: Alignment.center,
           colors: [Colors.white.withValues(alpha: 0.06), Colors.transparent],
         ),
-        border: Border(
-          top: BorderSide(
-            color: Colors.white.withValues(alpha: 0.20),
-            width: 0.5,
-          ),
-          left: BorderSide(
-            color: Colors.white.withValues(alpha: 0.10),
-            width: 0.5,
-          ),
-          right: BorderSide(
-            color: Colors.white.withValues(alpha: 0.04),
-            width: 0.5,
-          ),
-          bottom: BorderSide(
-            color: Colors.white.withValues(alpha: 0.03),
-            width: 0.5,
-          ),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.10),
+          width: 0.5,
         ),
       ),
       child: LayoutBuilder(

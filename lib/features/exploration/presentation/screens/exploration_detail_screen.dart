@@ -49,12 +49,16 @@ class _ExplorationDetailScreenState
   late final AnimationController _bounceController;
   late final Animation<double> _bounceAnimation;
 
+  // 플로팅 네비 notifier (dispose 시 안전하게 사용하기 위해 캐싱)
+  late final StateController<bool> _navNotifier;
+
   @override
   void initState() {
     super.initState();
-    // 플로팅 네비 숨기기
+    // 플로팅 네비 숨기기 (notifier 캐싱)
+    _navNotifier = ref.read(showFloatingNavProvider.notifier);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(showFloatingNavProvider.notifier).state = false;
+      _navNotifier.state = false;
     });
 
     // 플립 애니메이션
@@ -89,12 +93,6 @@ class _ExplorationDetailScreenState
 
   @override
   void dispose() {
-    // 플로팅 네비 복원 (위젯 트리 빌드 후 안전하게 실행)
-    Future(() {
-      if (ref.context.mounted) {
-        ref.read(showFloatingNavProvider.notifier).state = true;
-      }
-    });
     _flipController.dispose();
     _bounceController.dispose();
     super.dispose();
@@ -116,8 +114,7 @@ class _ExplorationDetailScreenState
   Widget build(BuildContext context) {
     final planet = ref.watch(
       explorationNotifierProvider.select(
-        (planets) =>
-            planets.where((p) => p.id == widget.planetId).firstOrNull,
+        (planets) => planets.where((p) => p.id == widget.planetId).firstOrNull,
       ),
     );
     if (planet == null) {
@@ -193,7 +190,7 @@ class _ExplorationDetailScreenState
             const Spacer(flex: 3),
 
             // 행성 아이콘
-            PlanetIcons.buildIcon(planet.icon, size: 160.w),
+            PlanetIcons.buildIcon(planet.icon, size: 280.w),
             SizedBox(height: AppSpacing.s20),
 
             // 행성 이름
@@ -300,10 +297,7 @@ class _ExplorationDetailScreenState
         child: Column(
           children: [
             // AppBar (행성 이름 + 플립 복귀)
-            _buildAppBarRow(
-              title: planet.name,
-              showFlipButton: true,
-            ),
+            _buildAppBarRow(title: planet.name, showFlipButton: true),
 
             // 연료 게이지 (우측 정렬)
             Padding(
@@ -376,10 +370,7 @@ class _ExplorationDetailScreenState
   }
 
   /// 공통 AppBar 행
-  Widget _buildAppBarRow({
-    String? title,
-    bool showFlipButton = false,
-  }) {
+  Widget _buildAppBarRow({String? title, bool showFlipButton = false}) {
     return Padding(
       padding: EdgeInsets.fromLTRB(
         AppSpacing.s4,
@@ -396,7 +387,10 @@ class _ExplorationDetailScreenState
               color: Colors.white,
               size: 20.w,
             ),
-            onPressed: () => Navigator.of(context).pop(),
+            onPressed: () {
+              _navNotifier.state = true;
+              Navigator.of(context).pop();
+            },
           ),
 
           // 타이틀 (뒷면에서만)
@@ -413,11 +407,7 @@ class _ExplorationDetailScreenState
           // 플립 복귀 버튼 (뒷면에서만)
           if (showFlipButton)
             IconButton(
-              icon: Icon(
-                Icons.flip_rounded,
-                color: Colors.white,
-                size: 22.w,
-              ),
+              icon: Icon(Icons.flip_rounded, color: Colors.white, size: 22.w),
               onPressed: _flipToFront,
             )
           else

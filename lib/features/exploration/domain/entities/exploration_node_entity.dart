@@ -39,6 +39,7 @@ class ExplorationNodeEntity {
     this.description = '',
     this.mapX = 0.5,
     this.mapY = 0.0,
+    this.unlockedAt,
   });
 
   /// 노드 고유 ID
@@ -80,6 +81,9 @@ class ExplorationNodeEntity {
   /// 맵 세로 위치 (0.0 ~ 1.0 비율)
   final double mapY;
 
+  /// 해금된 시각 (null = 아직 해금되지 않음)
+  final DateTime? unlockedAt;
+
   /// copyWith
   ExplorationNodeEntity copyWith({
     String? id,
@@ -95,6 +99,7 @@ class ExplorationNodeEntity {
     String? description,
     double? mapX,
     double? mapY,
+    DateTime? unlockedAt,
   }) {
     return ExplorationNodeEntity(
       id: id ?? this.id,
@@ -110,6 +115,7 @@ class ExplorationNodeEntity {
       description: description ?? this.description,
       mapX: mapX ?? this.mapX,
       mapY: mapY ?? this.mapY,
+      unlockedAt: unlockedAt ?? this.unlockedAt,
     );
   }
 }

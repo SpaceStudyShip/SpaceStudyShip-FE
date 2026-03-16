@@ -50,7 +50,7 @@ class _ExplorationDetailScreenState
   @override
   void initState() {
     super.initState();
-    _navNotifier = ref.read(showFloatingNavProvider.notifier);
+    _navNotifier = ref.read(isFloatingNavVisibleProvider.notifier);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _navNotifier.state = false;
     });

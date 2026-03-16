@@ -14,14 +14,14 @@ Future<void> showLoginPrompt({
   required WidgetRef ref,
   required String message,
 }) async {
-  final confirmed = await AppDialog.confirm(
+  final isConfirmed = await AppDialog.confirm(
     context: context,
     title: '로그인이 필요해요',
     message: '$message\n게스트 모드의 데이터는 초기화돼요.',
     confirmText: '로그인',
     cancelText: '취소',
   );
-  if (confirmed == true && context.mounted) {
+  if (isConfirmed == true && context.mounted) {
     try {
       await ref.read(authNotifierProvider.notifier).signOut();
     } catch (e) {

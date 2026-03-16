@@ -7,7 +7,7 @@ import '../../../../core/constants/spacing_and_radius.dart';
 /// 지역 국기 아이콘 위젯
 ///
 /// 국가 코드 기반 국기를 표시합니다.
-/// [circular]로 원형 클리핑 적용 여부 선택 (기본: 원본 그대로).
+/// [isCircular]로 원형 클리핑 적용 여부 선택 (기본: 원본 그대로).
 /// 잠긴 상태에서는 잠금 아이콘을 표시합니다.
 class RegionFlagIcon extends StatelessWidget {
   const RegionFlagIcon({
@@ -15,7 +15,7 @@ class RegionFlagIcon extends StatelessWidget {
     required this.icon,
     required this.size,
     this.isLocked = false,
-    this.circular = false,
+    this.isCircular = false,
   });
 
   /// 국가 코드 (예: 'KR', 'JP')
@@ -28,7 +28,7 @@ class RegionFlagIcon extends StatelessWidget {
   final bool isLocked;
 
   /// 원형 클리핑 여부 (false = 원본 그대로)
-  final bool circular;
+  final bool isCircular;
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +51,7 @@ class RegionFlagIcon extends StatelessWidget {
     }
 
     try {
-      if (circular) {
+      if (isCircular) {
         return CountryFlag.fromCountryCode(
           icon,
           theme: ImageTheme(width: size, height: size, shape: const Circle()),

@@ -22,11 +22,12 @@ class SpaceshipNotifier extends _$SpaceshipNotifier {
 
   @override
   String build() {
-    return _cachedInitialId ?? 'default';
+    return _cachedInitialId ?? SpaceshipData.sampleList.first.id;
   }
 
   Future<void> select(String id) async {
     if (id == state) return;
+    if (!SpaceshipData.sampleList.any((s) => s.id == id)) return;
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_prefKey, id);
     state = id;

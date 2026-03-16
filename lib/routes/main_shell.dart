@@ -34,7 +34,7 @@ class MainShell extends ConsumerWidget {
           navigationShell,
 
           // 플로팅 바텀 네비게이션
-          if (ref.watch(showFloatingNavProvider))
+          if (ref.watch(isFloatingNavVisibleProvider))
             Positioned(
               left: FloatingNavMetrics.horizontalMargin,
               right: FloatingNavMetrics.horizontalMargin,

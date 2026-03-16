@@ -8,4 +8,4 @@ final homeReTapProvider = StateProvider<int>((ref) => 0);
 /// 플로팅 네비게이션 바 표시 여부
 ///
 /// 특정 화면(예: 행성 상세)에서 네비 바를 숨기고 싶을 때 false로 설정.
-final showFloatingNavProvider = StateProvider<bool>((ref) => true);
+final isFloatingNavVisibleProvider = StateProvider<bool>((ref) => true);

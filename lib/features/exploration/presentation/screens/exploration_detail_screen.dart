@@ -232,7 +232,7 @@ class _ExplorationDetailScreenState
                   ),
                 ],
 
-                SizedBox(height: AppSpacing.s32),
+                SizedBox(height: AppSpacing.s24),
 
                 // ③ 진행도
                 Padding(

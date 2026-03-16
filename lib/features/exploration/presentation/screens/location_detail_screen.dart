@@ -8,8 +8,10 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/planet_icons.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
+import '../../../../core/constants/toss_design_tokens.dart';
 import '../../../../core/utils/unlock_dialog_helper.dart';
 import '../../../../core/widgets/backgrounds/space_background.dart';
+import '../../../../core/widgets/buttons/app_button.dart';
 import '../../../../core/widgets/feedback/app_snackbar.dart';
 import '../../../../core/widgets/space/circular_progress.dart';
 import '../../../fuel/presentation/providers/fuel_provider.dart';
@@ -44,6 +46,7 @@ class _LocationDetailScreenState extends ConsumerState<LocationDetailScreen> {
   @override
   void initState() {
     super.initState();
+    // regionListNotifierProvider는 동기 StateNotifier로 항상 즉시 데이터 반환
     final regions = ref.read(regionListNotifierProvider(widget.planetId));
     final initialIndex = regions.indexWhere(
       (r) => r.id == widget.initialRegionId,
@@ -61,8 +64,8 @@ class _LocationDetailScreenState extends ConsumerState<LocationDetailScreen> {
   void _goToPrevious() {
     if (_currentPage > 0) {
       _pageController.previousPage(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
+        duration: TossDesignTokens.entranceFast,
+        curve: TossDesignTokens.smoothCurve,
       );
     }
   }
@@ -70,8 +73,8 @@ class _LocationDetailScreenState extends ConsumerState<LocationDetailScreen> {
   void _goToNext(int totalPages) {
     if (_currentPage < totalPages - 1) {
       _pageController.nextPage(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
+        duration: TossDesignTokens.entranceFast,
+        curve: TossDesignTokens.smoothCurve,
       );
     }
   }
@@ -88,7 +91,36 @@ class _LocationDetailScreenState extends ConsumerState<LocationDetailScreen> {
     );
 
     if (planet == null || regions.isEmpty) {
-      return const Scaffold(backgroundColor: AppColors.spaceBackground);
+      return Scaffold(
+        backgroundColor: AppColors.spaceBackground,
+        body: Stack(
+          children: [
+            const Positioned.fill(child: SpaceBackground()),
+            Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(
+                    width: 24.w,
+                    height: 24.w,
+                    child: const CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: AppColors.primary,
+                    ),
+                  ),
+                  SizedBox(height: AppSpacing.s16),
+                  Text(
+                    '지역 정보를 불러오는 중...',
+                    style: AppTextStyles.tag_12.copyWith(
+                      color: AppColors.textTertiary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
     }
 
     return Scaffold(
@@ -124,7 +156,7 @@ class _LocationDetailScreenState extends ConsumerState<LocationDetailScreen> {
                     const Spacer(),
                     Text(
                       '${_currentPage + 1} / ${regions.length}',
-                      style: AppTextStyles.tag_12.copyWith(
+                      style: AppTextStyles.label16Medium.copyWith(
                         color: AppColors.textTertiary,
                       ),
                     ),
@@ -183,7 +215,7 @@ class _LocationDetailScreenState extends ConsumerState<LocationDetailScreen> {
           // 상단: 행성 + 지역 아이콘 + 원형 진행도
           _buildHeroSection(planet, region, progress),
 
-          SizedBox(height: AppSpacing.s24),
+          SizedBox(height: AppSpacing.s32),
 
           // 지역명
           Text(
@@ -191,12 +223,12 @@ class _LocationDetailScreenState extends ConsumerState<LocationDetailScreen> {
             style: AppTextStyles.heading_24.copyWith(color: Colors.white),
           ),
 
-          SizedBox(height: AppSpacing.s24),
+          SizedBox(height: AppSpacing.s32),
 
-          // 2x2 정보 그리드
-          _buildInfoGrid(region),
+          // 2x2 정보 그리드 (남은 공간 채움)
+          Expanded(child: _buildInfoGrid(region)),
 
-          const Spacer(),
+          SizedBox(height: AppSpacing.s16),
 
           // 하단: < 해금하기 >
           _buildBottomBar(region, currentFuel, totalPages),
@@ -216,7 +248,7 @@ class _LocationDetailScreenState extends ConsumerState<LocationDetailScreen> {
     return Row(
       children: [
         // 좌측: 행성 아이콘
-        Expanded(child: PlanetIcons.buildIcon(planet.icon, size: 120.w)),
+        Expanded(child: PlanetIcons.buildIcon(planet.icon, size: 160.w)),
 
         SizedBox(width: AppSpacing.s16),
 
@@ -251,7 +283,7 @@ class _LocationDetailScreenState extends ConsumerState<LocationDetailScreen> {
     );
   }
 
-  /// 2x2 정보 그리드
+  /// 2x2 정보 그리드 (Expanded로 감싸져 남은 공간 채움)
   Widget _buildInfoGrid(ExplorationNodeEntity region) {
     final statusText = region.isCleared
         ? '클리어'
@@ -277,60 +309,67 @@ class _LocationDetailScreenState extends ConsumerState<LocationDetailScreen> {
 
     return Column(
       children: [
-        Row(
-          children: [
-            Expanded(
-              child: _InfoCard(
-                icon: statusIcon,
-                iconColor: statusColor,
-                title: '상태',
-                value: statusText,
+        Expanded(
+          child: Row(
+            children: [
+              Expanded(
+                child: _InfoCard(
+                  icon: statusIcon,
+                  iconColor: statusColor,
+                  title: '상태',
+                  value: statusText,
+                ),
               ),
-            ),
-            SizedBox(width: AppSpacing.s12),
-            Expanded(
-              child: _InfoCard(
-                icon: Icons.local_gas_station_rounded,
-                iconColor: AppColors.accentGold,
-                title: '필요 연료',
-                value: '${region.requiredFuel}통',
+              SizedBox(width: AppSpacing.s12),
+              Expanded(
+                child: _InfoCard(
+                  icon: Icons.local_gas_station_rounded,
+                  iconColor: AppColors.accentGold,
+                  title: '필요 연료',
+                  value: '${region.requiredFuel}통',
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
         SizedBox(height: AppSpacing.s12),
-        Row(
-          children: [
-            Expanded(
-              child: _InfoCard(
-                icon: Icons.calendar_today_rounded,
-                iconColor: AppColors.secondary,
-                title: '해금일',
-                value: dateText,
+        Expanded(
+          child: Row(
+            children: [
+              Expanded(
+                child: _InfoCard(
+                  icon: Icons.calendar_today_rounded,
+                  iconColor: AppColors.secondary,
+                  title: '해금일',
+                  value: dateText,
+                ),
               ),
-            ),
-            SizedBox(width: AppSpacing.s12),
-            Expanded(
-              child: _InfoCard(
-                icon: Icons.description_rounded,
-                iconColor: AppColors.textSecondary,
-                title: '설명',
-                value: region.description.isNotEmpty ? region.description : '-',
+              SizedBox(width: AppSpacing.s12),
+              Expanded(
+                child: _InfoCard(
+                  icon: Icons.description_rounded,
+                  iconColor: AppColors.textSecondary,
+                  title: '설명',
+                  value: region.description.isNotEmpty
+                      ? region.description
+                      : '-',
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ],
     );
   }
 
-  /// 하단: < 해금하기 텍스트 >
+  /// 하단: < AppButton >
   Widget _buildBottomBar(
     ExplorationNodeEntity region,
     int currentFuel,
     int totalPages,
   ) {
     final isLocked = !region.isUnlocked;
+    final hasEnoughFuel = currentFuel >= region.requiredFuel;
 
     return Row(
       children: [
@@ -341,32 +380,34 @@ class _LocationDetailScreenState extends ConsumerState<LocationDetailScreen> {
           onTap: _goToPrevious,
         ),
 
-        const Spacer(),
+        SizedBox(width: AppSpacing.s12),
 
-        // CTA 텍스트
-        if (isLocked)
-          GestureDetector(
-            onTap: () => _handleUnlock(region, currentFuel),
-            child: Text(
-              '해금하기',
-              style: AppTextStyles.label_16.copyWith(
-                color: currentFuel >= region.requiredFuel
-                    ? AppColors.primary
-                    : AppColors.textTertiary,
-              ),
-            ),
-          )
-        else
-          Text(
-            region.isCleared ? '탐험 완료' : '해금됨',
-            style: AppTextStyles.label_16.copyWith(
-              color: region.isCleared
-                  ? AppColors.success
-                  : AppColors.textSecondary,
-            ),
-          ),
+        // CTA 버튼
+        Expanded(
+          child: isLocked
+              ? AppButton(
+                  text: '해금하기',
+                  onPressed: hasEnoughFuel
+                      ? () => _handleUnlock(region, currentFuel)
+                      : null,
+                  width: double.infinity,
+                )
+              : AppButton(
+                  text: region.isCleared ? '탐험 완료' : '해금됨',
+                  onPressed: null,
+                  width: double.infinity,
+                  disabledBackgroundColor: Colors.transparent,
+                  disabledForegroundColor: region.isCleared
+                      ? AppColors.success
+                      : AppColors.textSecondary,
+                  showBorder: true,
+                  borderColor: region.isCleared
+                      ? AppColors.success.withValues(alpha: 0.5)
+                      : AppColors.spaceDivider,
+                ),
+        ),
 
-        const Spacer(),
+        SizedBox(width: AppSpacing.s12),
 
         // > 다음
         _NavArrowButton(
@@ -467,24 +508,29 @@ class _NavArrowButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: enabled ? onTap : null,
-      child: Container(
-        width: 44.w,
-        height: 44.w,
-        decoration: BoxDecoration(
-          borderRadius: AppRadius.medium,
-          border: Border.all(
-            color: enabled
-                ? AppColors.spaceDivider
-                : AppColors.spaceDivider.withValues(alpha: 0.3),
-            width: 1,
+    return Semantics(
+      button: true,
+      enabled: enabled,
+      label: icon == Icons.chevron_left_rounded ? '이전 지역' : '다음 지역',
+      child: GestureDetector(
+        onTap: enabled ? onTap : null,
+        child: Container(
+          width: 48.w,
+          height: 48.w,
+          decoration: BoxDecoration(
+            borderRadius: AppRadius.medium,
+            border: Border.all(
+              color: enabled
+                  ? AppColors.spaceDivider
+                  : AppColors.spaceDivider.withValues(alpha: 0.3),
+              width: 1,
+            ),
           ),
-        ),
-        child: Icon(
-          icon,
-          color: enabled ? Colors.white : AppColors.textTertiary,
-          size: 24.w,
+          child: Icon(
+            icon,
+            color: enabled ? Colors.white : AppColors.textTertiary,
+            size: 24.w,
+          ),
         ),
       ),
     );

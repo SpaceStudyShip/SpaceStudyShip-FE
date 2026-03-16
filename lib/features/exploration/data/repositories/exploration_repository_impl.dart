@@ -24,6 +24,7 @@ class ExplorationLocalRepositoryImpl implements ExplorationRepository {
       return planet.copyWith(
         isUnlocked: state.isUnlocked || planet.isUnlocked,
         isCleared: state.isCleared || planet.isCleared,
+        unlockedAt: state.unlockedAt,
       );
     }).toList();
   }
@@ -37,6 +38,7 @@ class ExplorationLocalRepositoryImpl implements ExplorationRepository {
     return planet.copyWith(
       isUnlocked: state.isUnlocked || planet.isUnlocked,
       isCleared: state.isCleared || planet.isCleared,
+      unlockedAt: state.unlockedAt,
     );
   }
 
@@ -49,6 +51,7 @@ class ExplorationLocalRepositoryImpl implements ExplorationRepository {
       return region.copyWith(
         isUnlocked: state.isUnlocked || region.isUnlocked,
         isCleared: state.isCleared || region.isCleared,
+        unlockedAt: state.unlockedAt,
       );
     }).toList();
   }

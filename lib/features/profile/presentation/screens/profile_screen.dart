@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/app_icons.dart';
+import '../../../../core/widgets/animations/entrance_animations.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../../../core/widgets/atoms/space_stat_item.dart';
@@ -31,21 +33,24 @@ class ProfileScreen extends ConsumerWidget {
         backgroundColor: Colors.transparent,
         scrolledUnderElevation: 0,
         elevation: 0,
+        titleSpacing: AppSpacing.s20,
         title: Text(
           '프로필',
           style: AppTextStyles.heading_20.copyWith(color: Colors.white),
         ),
         actions: [
           IconButton(
-            icon: Icon(
-              Icons.settings_outlined,
-              color: Colors.white,
-              size: 24.w,
+            padding: EdgeInsets.zero,
+            constraints: BoxConstraints(
+              minWidth: AppSpacing.s48,
+              minHeight: AppSpacing.s48,
             ),
+            icon: AppIcons.settings(size: AppSpacing.s40),
             onPressed: () {
               context.push(RoutePaths.settings);
             },
           ),
+          SizedBox(width: AppSpacing.s4),
         ],
       ),
       body: SafeArea(
@@ -59,26 +64,41 @@ class ProfileScreen extends ConsumerWidget {
           child: Column(
             children: [
               // 프로필 정보
-              _buildProfileHeader(ref.watch(authNotifierProvider).valueOrNull),
+              ScaleIn(
+                duration: const Duration(milliseconds: 600),
+                beginScale: 0.8,
+                curve: Curves.easeOutCubic,
+                child: _buildProfileHeader(
+                  ref.watch(authNotifierProvider).valueOrNull,
+                ),
+              ),
               SizedBox(height: AppSpacing.s24),
 
               // 통계 요약
-              Consumer(
-                builder: (context, ref, _) {
-                  final totalMinutes = ref.watch(totalStudyMinutesProvider);
-                  final streak = ref.watch(currentStreakProvider);
-                  final unlockedBadges = ref.watch(unlockedBadgeCountProvider);
-                  return _buildStatsCard(
-                    studyTime: formatMinutes(totalMinutes),
-                    streak: '$streak일',
-                    badgeCount: '$unlockedBadges개',
-                  );
-                },
+              FadeSlideIn(
+                delay: const Duration(milliseconds: 150),
+                child: Consumer(
+                  builder: (context, ref, _) {
+                    final totalMinutes = ref.watch(totalStudyMinutesProvider);
+                    final streak = ref.watch(currentStreakProvider);
+                    final unlockedBadges = ref.watch(
+                      unlockedBadgeCountProvider,
+                    );
+                    return _buildStatsCard(
+                      studyTime: formatMinutes(totalMinutes),
+                      streak: '$streak일',
+                      badgeCount: '$unlockedBadges개',
+                    );
+                  },
+                ),
               ),
               SizedBox(height: AppSpacing.s24),
 
               // 메뉴 리스트
-              _buildMenuList(context, ref),
+              FadeSlideIn(
+                delay: const Duration(milliseconds: 250),
+                child: _buildMenuList(context, ref),
+              ),
             ],
           ),
         ),

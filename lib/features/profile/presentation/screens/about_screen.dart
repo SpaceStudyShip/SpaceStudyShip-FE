@@ -99,6 +99,15 @@ class _AboutScreenState extends State<AboutScreen> {
                     url:
                         'https://www.figma.com/community/file/948550441311747097/20-premium-planet-illustrations',
                   ),
+                  SizedBox(height: AppSpacing.s12),
+                  _buildCreditItem(
+                    title: 'Planetary Travel App',
+                    author: 'Atheeb HM',
+                    source: 'Figma Community',
+                    license: 'CC BY 4.0 — Modified',
+                    url:
+                        'https://www.figma.com/community/file/1363194259317669251/planetary-travel-app',
+                  ),
                   SizedBox(height: AppSpacing.s32),
 
                   // 라이선스 안내

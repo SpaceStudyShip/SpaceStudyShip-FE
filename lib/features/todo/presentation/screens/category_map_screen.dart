@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/app_icons.dart';
 import '../../../../core/constants/category_icons.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
@@ -83,23 +84,31 @@ class _CategoryMapScreenState extends ConsumerState<CategoryMapScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         scrolledUnderElevation: 0,
-        title: Text(
-          '카테고리',
-          style: AppTextStyles.subHeading_18.copyWith(color: Colors.white),
-        ),
+        title: const SizedBox.shrink(),
         iconTheme: const IconThemeData(color: Colors.white),
         actions: [
           IconButton(
-            onPressed: () => setState(() => _isListView = !_isListView),
-            icon: Icon(
-              _isListView ? Icons.grid_view_rounded : Icons.list_rounded,
-              size: 24.w,
+            padding: EdgeInsets.zero,
+            constraints: BoxConstraints(
+              minWidth: AppSpacing.s48,
+              minHeight: AppSpacing.s48,
             ),
+            onPressed: () => setState(() => _isListView = !_isListView),
+            icon: _isListView
+                ? Icon(Icons.grid_view_rounded, size: AppSpacing.s32)
+                : AppIcons.menu(size: AppSpacing.s40),
           ),
+
           IconButton(
+            padding: EdgeInsets.zero,
+            constraints: BoxConstraints(
+              minWidth: AppSpacing.s48,
+              minHeight: AppSpacing.s48,
+            ),
             onPressed: () => _addCategory(context),
-            icon: Icon(Icons.add_rounded, size: 24.w),
+            icon: AppIcons.plus(size: AppSpacing.s40),
           ),
+          SizedBox(width: AppSpacing.s4),
         ],
       ),
       body: Stack(

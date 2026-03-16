@@ -21,6 +21,7 @@ import '../features/home/presentation/screens/home_screen.dart';
 import '../features/timer/presentation/screens/timer_screen.dart';
 import '../features/explore/presentation/screens/explore_screen.dart';
 import '../features/exploration/presentation/screens/exploration_detail_screen.dart';
+import '../features/exploration/presentation/screens/location_detail_screen.dart';
 import '../features/social/presentation/screens/social_screen.dart';
 import '../features/profile/presentation/screens/profile_screen.dart';
 import '../features/profile/presentation/screens/about_screen.dart';
@@ -226,8 +227,16 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                     path: 'location/:id',
                     name: 'locationDetail',
                     builder: (context, state) {
-                      final id = state.pathParameters['id']!;
-                      return PlaceholderScreen(title: '장소: $id');
+                      final regionId = state.pathParameters['id']!;
+                      final planetId =
+                          state.uri.queryParameters['planetId'] ?? '';
+                      if (planetId.isEmpty) {
+                        return const PlaceholderScreen(title: '잘못된 접근입니다');
+                      }
+                      return LocationDetailScreen(
+                        planetId: planetId,
+                        initialRegionId: regionId,
+                      );
                     },
                   ),
                   GoRoute(

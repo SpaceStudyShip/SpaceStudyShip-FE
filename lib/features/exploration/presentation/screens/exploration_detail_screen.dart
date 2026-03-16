@@ -318,18 +318,18 @@ class _ExplorationDetailScreenState
     List<ExplorationNodeEntity> regions,
     int currentFuel,
   ) {
-    return SizedBox.expand(
-      child: ClipPath(
-        clipper: _TicketClipper(notchRadius: 12.w),
-        child: Container(
-          color: AppColors.spaceSurface,
-          child: Column(
-            children: [
-              // 상단: 티켓코드 + 연료 + 시각적 플립 유도 (탭 → 플립 복귀)
-              GestureDetector(
-                onTap: _flipToFront,
-                behavior: HitTestBehavior.opaque,
-                child: Container(
+    return GestureDetector(
+      onTap: _flipToFront,
+      behavior: HitTestBehavior.translucent,
+      child: SizedBox.expand(
+        child: ClipPath(
+          clipper: _TicketClipper(notchRadius: 12.w),
+          child: Container(
+            color: AppColors.spaceSurface,
+            child: Column(
+              children: [
+                // 상단: 티켓코드 + 연료
+                Container(
                   padding: EdgeInsets.fromLTRB(
                     AppSpacing.s20,
                     AppSpacing.s20,
@@ -370,39 +370,40 @@ class _ExplorationDetailScreenState
                     ],
                   ),
                 ),
-              ),
 
-              // 3열 아이콘 그리드
-              Expanded(
-                child: regions.isNotEmpty
-                    ? GridView.builder(
-                        padding: EdgeInsets.fromLTRB(
-                          AppSpacing.s20,
-                          AppSpacing.s20,
-                          AppSpacing.s20,
-                          AppSpacing.s20,
+                // 3열 아이콘 그리드
+                Expanded(
+                  child: regions.isNotEmpty
+                      ? GridView.builder(
+                          padding: EdgeInsets.fromLTRB(
+                            AppSpacing.s20,
+                            AppSpacing.s20,
+                            AppSpacing.s20,
+                            AppSpacing.s20,
+                          ),
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 3,
+                                childAspectRatio: 0.85,
+                                crossAxisSpacing: AppSpacing.s12,
+                                mainAxisSpacing: AppSpacing.s12,
+                              ),
+                          itemCount: regions.length,
+                          itemBuilder: (context, index) {
+                            final region = regions[index];
+                            return _buildGridCell(planet, region);
+                          },
+                        )
+                      : SpaceEmptyState(
+                          icon: Icons.public_rounded,
+                          color: AppColors.secondary,
+                          title: '아직 탐험할 지역이 없습니다',
+                          subtitle: '향후 업데이트에서 추가됩니다!',
+                          iconSize: 64,
                         ),
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 3,
-                          childAspectRatio: 0.85,
-                          crossAxisSpacing: AppSpacing.s12,
-                          mainAxisSpacing: AppSpacing.s12,
-                        ),
-                        itemCount: regions.length,
-                        itemBuilder: (context, index) {
-                          final region = regions[index];
-                          return _buildGridCell(planet, region);
-                        },
-                      )
-                    : SpaceEmptyState(
-                        icon: Icons.public_rounded,
-                        color: AppColors.secondary,
-                        title: '아직 탐험할 지역이 없습니다',
-                        subtitle: '향후 업데이트에서 추가됩니다!',
-                        iconSize: 64,
-                      ),
-              ),
-            ],
+                ),
+              ],
+            ),
           ),
         ),
       ),

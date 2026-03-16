@@ -23,7 +23,9 @@ import 'features/exploration/data/datasources/exploration_local_datasource.dart'
 import 'features/exploration/presentation/providers/exploration_provider.dart';
 import 'features/fuel/data/datasources/fuel_local_datasource.dart';
 import 'features/fuel/presentation/providers/fuel_provider.dart';
+import 'features/home/presentation/providers/spaceship_provider.dart';
 import 'features/timer/data/datasources/timer_session_local_datasource.dart';
+import 'features/timer/presentation/providers/timer_animation_provider.dart';
 import 'features/timer/presentation/providers/timer_session_provider.dart';
 import 'features/todo/data/datasources/local_todo_datasource.dart';
 import 'features/todo/presentation/providers/todo_provider.dart';
@@ -180,40 +182,40 @@ void main() async {
   // ============================================================
   // 7. SharedPreferences 초기화 (Todo 로컬 저장용)
   // ============================================================
-  SharedPreferences? prefs;
+  late final SharedPreferences prefs;
   try {
     prefs = await SharedPreferences.getInstance();
   } catch (e) {
     debugPrint('❌ [SharedPreferences] 초기화 실패: $e');
+    // SharedPreferences는 앱 핵심 의존성 — 실패 시 재시도
+    prefs = await SharedPreferences.getInstance();
   }
+
+  // 앱 시작 시 동기적으로 초기값 캐시 (깜빡임 방지)
+  TimerAnimationNotifier.initFromPrefs(prefs);
+  SpaceshipNotifier.initFromPrefs(prefs);
 
   runApp(
     ProviderScope(
       overrides: [
-        if (prefs != null)
-          localTodoDataSourceProvider.overrideWithValue(
-            LocalTodoDataSource(prefs),
-          ),
-        if (prefs != null)
-          timerSessionLocalDataSourceProvider.overrideWithValue(
-            TimerSessionLocalDataSource(prefs),
-          ),
-        if (prefs != null)
-          fuelLocalDataSourceProvider.overrideWithValue(
-            FuelLocalDataSource(prefs),
-          ),
-        if (prefs != null)
-          explorationLocalDataSourceProvider.overrideWithValue(
-            ExplorationLocalDataSource(prefs),
-          ),
-        if (prefs != null)
-          badgeLocalDataSourceProvider.overrideWithValue(
-            BadgeLocalDataSource(prefs),
-          ),
-        if (prefs != null)
-          settingsLocalDataSourceProvider.overrideWithValue(
-            SettingsLocalDataSource(prefs),
-          ),
+        localTodoDataSourceProvider.overrideWithValue(
+          LocalTodoDataSource(prefs),
+        ),
+        timerSessionLocalDataSourceProvider.overrideWithValue(
+          TimerSessionLocalDataSource(prefs),
+        ),
+        fuelLocalDataSourceProvider.overrideWithValue(
+          FuelLocalDataSource(prefs),
+        ),
+        explorationLocalDataSourceProvider.overrideWithValue(
+          ExplorationLocalDataSource(prefs),
+        ),
+        badgeLocalDataSourceProvider.overrideWithValue(
+          BadgeLocalDataSource(prefs),
+        ),
+        settingsLocalDataSourceProvider.overrideWithValue(
+          SettingsLocalDataSource(prefs),
+        ),
       ],
       child: const MyApp(),
     ),

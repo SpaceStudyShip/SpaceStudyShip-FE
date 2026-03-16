@@ -1,11 +1,39 @@
 {
   "metadata": {
-    "lastUpdated": "2026-03-16T10:09:45Z",
-    "currentVersion": "1.1.42",
+    "lastUpdated": "2026-03-16T15:50:42Z",
+    "currentVersion": "1.1.43",
     "projectType": "flutter",
-    "totalReleases": 29
+    "totalReleases": 30
   },
   "releases": [
+    {
+      "version": "1.1.43",
+      "project_type": "flutter",
+      "date": "2026-03-16",
+      "pr_number": 63,
+      "raw_summary": "## Summary by CodeRabbit\n\n## 개선 사항\n\n* **카테고리 아이콘**\n  * 사용 가능한 행성 아이콘이 20개에서 15개로 업데이트되었습니다.\n\n* **사용자 인터페이스**\n  * 카테고리 추가 화면에서 아이콘 선택 라벨과 아이콘 목록 사이의 시각적 간격이 개선되었습니다.\n\n* **버전**\n  * 애플리케이션 버전이 v1.1.43으로 업데이트되었습니다.",
+      "parsed_changes": {
+        "카테고리_아이콘": {
+          "title": "카테고리 아이콘",
+          "items": [
+            "사용 가능한 행성 아이콘이 20개에서 15개로 업데이트되었습니다."
+          ]
+        },
+        "사용자_인터페이스": {
+          "title": "사용자 인터페이스",
+          "items": [
+            "카테고리 추가 화면에서 아이콘 선택 라벨과 아이콘 목록 사이의 시각적 간격이 개선되었습니다."
+          ]
+        },
+        "버전": {
+          "title": "버전",
+          "items": [
+            "애플리케이션 버전이 v1.1.43으로 업데이트되었습니다."
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "1.1.42",
       "project_type": "flutter",

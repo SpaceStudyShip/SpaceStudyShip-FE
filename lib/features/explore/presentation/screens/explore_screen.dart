@@ -7,15 +7,15 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../../../core/widgets/animations/entrance_animations.dart';
-import '../../../../core/widgets/dialogs/app_dialog.dart';
+import '../../../../core/utils/login_prompt_helper.dart';
 import '../../../../core/widgets/feedback/app_snackbar.dart';
+import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../../../core/widgets/states/space_empty_state.dart';
 import '../../../exploration/domain/entities/exploration_node_entity.dart';
 import '../../../exploration/presentation/providers/exploration_provider.dart';
 import '../../../exploration/presentation/widgets/planet_node.dart';
 import '../../../../core/widgets/backgrounds/space_background.dart';
 import '../../../exploration/presentation/widgets/space_map_painter.dart';
-import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../../fuel/presentation/providers/fuel_provider.dart';
 import '../../../../core/utils/unlock_dialog_helper.dart';
 import '../../../../core/widgets/space/fuel_gauge.dart';
@@ -258,24 +258,12 @@ class ExploreScreen extends ConsumerWidget {
     );
   }
 
-  Future<void> _showLoginPrompt(BuildContext context, WidgetRef ref) async {
-    final confirmed = await AppDialog.confirm(
-      context: context,
-      title: '로그인이 필요해요',
-      message: '다른 행성을 탐험하려면 로그인이 필요해요.\n게스트 모드의 데이터는 초기화돼요.',
-      confirmText: '로그인',
-      cancelText: '취소',
-    );
-    if (confirmed == true) {
-      try {
-        await ref.read(authNotifierProvider.notifier).signOut();
-      } catch (e) {
-        if (context.mounted) {
-          AppSnackBar.error(context, '로그인 화면 전환에 실패했습니다.');
-        }
-      }
-    }
-  }
+  Future<void> _showLoginPrompt(BuildContext context, WidgetRef ref) =>
+      showLoginPrompt(
+        context: context,
+        ref: ref,
+        message: '다른 행성을 탐험하려면 로그인이 필요해요.',
+      );
 
   Widget _buildEmptyState() {
     return SpaceEmptyState(

@@ -21,8 +21,4 @@ class AppIcons {
   /// 설정 아이콘
   static Widget settings({double? size}) =>
       SvgPicture.asset('$_basePath/Settings.svg', width: size, height: size);
-
-  /// 공유 아이콘
-  static Widget share({double? size}) =>
-      SvgPicture.asset('$_basePath/Share.svg', width: size, height: size);
 }

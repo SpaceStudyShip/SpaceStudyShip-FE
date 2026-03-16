@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 
@@ -118,7 +119,7 @@ class _LocationDetailScreenState extends ConsumerState<LocationDetailScreen> {
                         color: Colors.white,
                         size: 20.w,
                       ),
-                      onPressed: () => Navigator.of(context).pop(),
+                      onPressed: () => context.pop(),
                     ),
                     const Spacer(),
                     Text(

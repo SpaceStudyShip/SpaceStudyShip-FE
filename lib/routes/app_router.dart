@@ -228,10 +228,9 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                     name: 'locationDetail',
                     builder: (context, state) {
                       final regionId = state.pathParameters['id']!;
-                      final planetId = state.extra is String
-                          ? state.extra as String
-                          : null;
-                      if (planetId == null || planetId.isEmpty) {
+                      final planetId =
+                          state.uri.queryParameters['planetId'] ?? '';
+                      if (planetId.isEmpty) {
                         return const PlaceholderScreen(title: '잘못된 접근입니다');
                       }
                       return LocationDetailScreen(

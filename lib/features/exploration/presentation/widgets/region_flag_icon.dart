@@ -2,6 +2,7 @@ import 'package:country_flags/country_flags.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/spacing_and_radius.dart';
 
 /// 지역 국기 아이콘 위젯
 ///
@@ -58,7 +59,7 @@ class RegionFlagIcon extends StatelessWidget {
       }
       // 내부 라디우스 4px (외부 컨테이너의 1/2)
       return ClipRRect(
-        borderRadius: BorderRadius.circular(4),
+        borderRadius: AppRadius.small,
         child: CountryFlag.fromCountryCode(
           icon,
           theme: ImageTheme(width: size, height: size * 2 / 3),

@@ -74,7 +74,9 @@ class _ExplorationDetailScreenState
 
   @override
   void dispose() {
-    _navNotifier.state = true;
+    try {
+      _navNotifier.state = true;
+    } catch (_) {}
     _flipController.dispose();
     super.dispose();
   }
@@ -91,7 +93,7 @@ class _ExplorationDetailScreenState
 
   void _goBack() {
     _navNotifier.state = true;
-    Navigator.of(context).pop();
+    context.pop();
   }
 
   @override
@@ -425,7 +427,7 @@ class _ExplorationDetailScreenState
     // 외부 라디우스 = 내부 라디우스(4) x 2 = 8 (AppRadius.medium)
     return GestureDetector(
       onTap: () =>
-          context.push('/explore/location/${region.id}', extra: planet.id),
+          context.push('/explore/location/${region.id}?planetId=${planet.id}'),
       child: Container(
         decoration: BoxDecoration(
           borderRadius: AppRadius.medium,

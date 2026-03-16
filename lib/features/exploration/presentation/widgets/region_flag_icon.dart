@@ -53,16 +53,16 @@ class RegionFlagIcon extends StatelessWidget {
       if (circular) {
         return CountryFlag.fromCountryCode(
           icon,
-          theme: ImageTheme(
-            width: size,
-            height: size,
-            shape: const Circle(),
-          ),
+          theme: ImageTheme(width: size, height: size, shape: const Circle()),
         );
       }
-      return CountryFlag.fromCountryCode(
-        icon,
-        theme: ImageTheme(width: size, height: size * 2 / 3),
+      // 내부 라디우스 4px (외부 컨테이너의 1/2)
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(4),
+        child: CountryFlag.fromCountryCode(
+          icon,
+          theme: ImageTheme(width: size, height: size * 2 / 3),
+        ),
       );
     } catch (_) {
       return Image.asset(

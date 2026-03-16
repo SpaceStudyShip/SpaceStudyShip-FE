@@ -375,15 +375,15 @@ class _ExplorationDetailScreenState
                 child: regions.isNotEmpty
                     ? GridView.builder(
                         padding: EdgeInsets.fromLTRB(
-                          AppSpacing.s16,
-                          0,
-                          AppSpacing.s16,
-                          AppSpacing.s16,
+                          AppSpacing.s20,
+                          AppSpacing.s20,
+                          AppSpacing.s20,
+                          AppSpacing.s20,
                         ),
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 3,
-                          childAspectRatio: 0.8,
-                          crossAxisSpacing: AppSpacing.s8,
+                          childAspectRatio: 0.85,
+                          crossAxisSpacing: AppSpacing.s12,
                           mainAxisSpacing: AppSpacing.s12,
                         ),
                         itemCount: regions.length,
@@ -422,31 +422,48 @@ class _ExplorationDetailScreenState
         ? AppColors.success
         : AppColors.textTertiary;
 
+    // 외부 라디우스 = 내부 라디우스(4) x 2 = 8 (AppRadius.medium)
     return GestureDetector(
       onTap: () =>
           context.push('/explore/location/${region.id}', extra: planet.id),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          RegionFlagIcon(icon: region.icon, size: 40.w, isLocked: isLocked),
-          SizedBox(height: AppSpacing.s4),
-          Text(
-            region.name,
-            style: AppTextStyles.tag_12.copyWith(
-              color: isLocked ? AppColors.textTertiary : Colors.white,
-            ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            textAlign: TextAlign.center,
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: AppRadius.medium,
+          color: Colors.white.withValues(alpha: 0.04),
+          border: Border.all(
+            color: region.isCleared
+                ? AppColors.success.withValues(alpha: 0.2)
+                : AppColors.spaceDivider.withValues(alpha: 0.3),
+            width: 0.5,
           ),
-          if (statusText.isNotEmpty) ...[
-            SizedBox(height: 2),
+        ),
+        padding: EdgeInsets.symmetric(
+          horizontal: AppSpacing.s8,
+          vertical: AppSpacing.s8,
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            RegionFlagIcon(icon: region.icon, size: 40.w, isLocked: isLocked),
+            SizedBox(height: AppSpacing.s8),
             Text(
-              statusText,
-              style: AppTextStyles.tag_10.copyWith(color: statusColor),
+              region.name,
+              style: AppTextStyles.tag_12.copyWith(
+                color: isLocked ? AppColors.textTertiary : Colors.white,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.center,
             ),
+            if (statusText.isNotEmpty) ...[
+              SizedBox(height: AppSpacing.s4),
+              Text(
+                statusText,
+                style: AppTextStyles.tag_10.copyWith(color: statusColor),
+              ),
+            ],
           ],
-        ],
+        ),
       ),
     );
   }

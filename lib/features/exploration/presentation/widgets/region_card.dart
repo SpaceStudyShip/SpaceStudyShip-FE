@@ -1,4 +1,3 @@
-import 'package:country_flags/country_flags.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -7,6 +6,7 @@ import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../../../core/constants/toss_design_tokens.dart';
 import '../../domain/entities/exploration_node_entity.dart';
+import 'region_flag_icon.dart';
 
 /// 지역 카드 위젯
 ///
@@ -17,7 +17,6 @@ class RegionCard extends StatefulWidget {
     super.key,
     required this.node,
     required this.currentFuel,
-    this.onUnlock,
     this.onTap,
   });
 
@@ -27,10 +26,7 @@ class RegionCard extends StatefulWidget {
   /// 현재 보유 연료 (해금 가능 여부 판단용)
   final int currentFuel;
 
-  /// 해금 버튼 콜백 (null이면 해금 불가)
-  final VoidCallback? onUnlock;
-
-  /// 탭 콜백 (클리어된 지역 재방문 등)
+  /// 탭 콜백
   final VoidCallback? onTap;
 
   @override
@@ -39,9 +35,6 @@ class RegionCard extends StatefulWidget {
 
 class _RegionCardState extends State<RegionCard> {
   bool _isPressed = false;
-
-  bool get _canUnlock =>
-      !widget.node.isUnlocked && widget.currentFuel >= widget.node.requiredFuel;
 
   @override
   Widget build(BuildContext context) {
@@ -52,11 +45,7 @@ class _RegionCardState extends State<RegionCard> {
       onTapDown: (_) => setState(() => _isPressed = true),
       onTapUp: (_) {
         setState(() => _isPressed = false);
-        if (isLocked && _canUnlock) {
-          widget.onUnlock?.call();
-        } else if (!isLocked) {
-          widget.onTap?.call();
-        }
+        widget.onTap?.call();
       },
       onTapCancel: () => setState(() => _isPressed = false),
       child: AnimatedScale(
@@ -67,7 +56,7 @@ class _RegionCardState extends State<RegionCard> {
           margin: EdgeInsets.only(bottom: AppSpacing.s12),
           padding: EdgeInsets.symmetric(
             horizontal: AppSpacing.s16,
-            vertical: 14.h,
+            vertical: AppSpacing.s12,
           ),
           decoration: BoxDecoration(
             color: isCleared
@@ -103,9 +92,7 @@ class _RegionCardState extends State<RegionCard> {
                       ),
                     ),
                     SizedBox(height: AppSpacing.s4),
-                    if (isLocked)
-                      _buildLockedInfo()
-                    else if (widget.node.description.isNotEmpty)
+                    if (!isLocked && widget.node.description.isNotEmpty)
                       Text(
                         widget.node.description,
                         style: AppTextStyles.tag_12.copyWith(
@@ -118,10 +105,14 @@ class _RegionCardState extends State<RegionCard> {
                 ),
               ),
 
-              // 해금 버튼 또는 상태 표시
+              // 잠금 아이콘
               if (isLocked) ...[
                 SizedBox(width: AppSpacing.s8),
-                _buildUnlockButton(),
+                Icon(
+                  Icons.lock_rounded,
+                  size: 18.sp,
+                  color: AppColors.textTertiary,
+                ),
               ],
             ],
           ),
@@ -131,26 +122,31 @@ class _RegionCardState extends State<RegionCard> {
   }
 
   Widget _buildRegionIconWithStatus(bool isLocked, bool isCleared) {
-    final icon = _buildRegionIcon(isLocked, isCleared);
-    if (!isCleared) return icon;
-
     final double size = 40.w;
+    final flag = RegionFlagIcon(
+      icon: widget.node.icon,
+      size: size,
+      isLocked: isLocked,
+    );
+
+    if (!isCleared) return flag;
+
     return SizedBox(
       width: size,
       height: size,
       child: Stack(
         clipBehavior: Clip.none,
         children: [
-          icon,
+          flag,
           Positioned(
             right: -2,
             bottom: -2,
             child: Container(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: AppColors.spaceBackground,
                 shape: BoxShape.circle,
               ),
-              padding: EdgeInsets.all(1),
+              padding: const EdgeInsets.all(1),
               child: Icon(
                 Icons.check_circle_rounded,
                 color: AppColors.success,
@@ -159,111 +155,6 @@ class _RegionCardState extends State<RegionCard> {
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildRegionIcon(bool isLocked, bool isCleared) {
-    final double size = 40.w;
-    const double borderWidth = 2;
-
-    if (isLocked) {
-      return Container(
-        width: size,
-        height: size,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: AppColors.spaceDivider.withValues(alpha: 0.2),
-        ),
-        child: Center(
-          child: Icon(
-            Icons.lock_rounded,
-            size: 18.sp,
-            color: AppColors.textTertiary,
-          ),
-        ),
-      );
-    }
-
-    // TODO: 서버 연동 시 유효하지 않은 국가 코드 대응 필요
-    final flagWidget = _buildCountryFlag(
-      isCleared ? size - borderWidth * 2 : size,
-    );
-
-    return Container(
-      width: size,
-      height: size,
-      decoration: isCleared
-          ? BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(color: AppColors.success, width: borderWidth),
-            )
-          : null,
-      child: Center(child: flagWidget),
-    );
-  }
-
-  Widget _buildCountryFlag(double size) {
-    try {
-      return CountryFlag.fromCountryCode(
-        widget.node.icon,
-        theme: ImageTheme(width: size, height: size, shape: const Circle()),
-      );
-    } catch (_) {
-      return ClipOval(
-        child: Image.asset(
-          'assets/app_logo.png',
-          width: size,
-          height: size,
-          fit: BoxFit.cover,
-        ),
-      );
-    }
-  }
-
-  Widget _buildLockedInfo() {
-    final fuelColor = _canUnlock
-        ? AppColors.accentGold
-        : AppColors.textTertiary;
-    return Row(
-      children: [
-        Icon(Icons.local_gas_station_rounded, size: 12.sp, color: fuelColor),
-        SizedBox(width: 2.w),
-        Text(
-          '${widget.node.requiredFuel}통',
-          style: AppTextStyles.tag_12.copyWith(color: fuelColor),
-        ),
-        if (!_canUnlock) ...[
-          SizedBox(width: AppSpacing.s4),
-          Text(
-            '(부족)',
-            style: AppTextStyles.tag_10.copyWith(
-              color: AppColors.error.withValues(alpha: 0.7),
-            ),
-          ),
-        ],
-      ],
-    );
-  }
-
-  Widget _buildUnlockButton() {
-    return AnimatedContainer(
-      duration: TossDesignTokens.animationFast,
-      padding: EdgeInsets.symmetric(
-        horizontal: AppSpacing.s16,
-        vertical: AppSpacing.s8,
-      ),
-      decoration: BoxDecoration(
-        color: _canUnlock
-            ? AppColors.primary
-            : AppColors.spaceDivider.withValues(alpha: 0.3),
-        borderRadius: AppRadius.medium,
-      ),
-      child: Text(
-        '해금',
-        style: AppTextStyles.paragraph14Semibold.copyWith(
-          color: _canUnlock ? Colors.white : AppColors.textTertiary,
-        ),
       ),
     );
   }

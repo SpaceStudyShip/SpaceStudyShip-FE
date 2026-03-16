@@ -21,7 +21,7 @@ Future<void> showLoginPrompt({
     confirmText: '로그인',
     cancelText: '취소',
   );
-  if (confirmed == true) {
+  if (confirmed == true && context.mounted) {
     try {
       await ref.read(authNotifierProvider.notifier).signOut();
     } catch (e) {

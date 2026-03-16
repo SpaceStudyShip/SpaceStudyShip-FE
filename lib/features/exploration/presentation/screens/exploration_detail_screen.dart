@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/planet_icons.dart';
@@ -11,8 +12,6 @@ import '../../../../core/constants/text_styles.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/widgets/animations/entrance_animations.dart';
 import '../../../../core/widgets/backgrounds/space_background.dart';
-import '../../../../core/utils/unlock_dialog_helper.dart';
-import '../../../../core/widgets/feedback/app_snackbar.dart';
 import '../../../../core/widgets/space/fuel_gauge.dart';
 import '../../../../core/widgets/states/space_empty_state.dart';
 import '../../../../routes/navigation_providers.dart';
@@ -72,7 +71,6 @@ class _ExplorationDetailScreenState
         setState(() => _showFront = true);
       }
     });
-
   }
 
   @override
@@ -122,13 +120,7 @@ class _ExplorationDetailScreenState
             left: 0,
             right: 0,
             top: 0,
-            child: SafeArea(
-              bottom: false,
-              child: _buildAppBarRow(
-                title: null,
-                showFlipButton: !_showFront,
-              ),
-            ),
+            child: SafeArea(bottom: false, child: _buildAppBarRow(title: null)),
           ),
 
           // 티켓 카드 (3D 플립)
@@ -184,134 +176,134 @@ class _ExplorationDetailScreenState
                 end: Alignment.bottomCenter,
                 colors: [
                   planetColor.withValues(alpha: 0.15),
-                AppColors.spaceSurface,
-              ],
-              stops: const [0.0, 0.85],
+                  AppColors.spaceSurface,
+                ],
+                stops: const [0.0, 0.85],
+              ),
             ),
-          ),
-          child: Column(
-            children: [
-              // ① Primary / Strong — 티켓 코드
-              Padding(
-                padding: EdgeInsets.fromLTRB(
-                  AppSpacing.s20,
-                  AppSpacing.s20,
-                  AppSpacing.s20,
-                  0,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      ticketCode,
-                      style: AppTextStyles.tag_12.copyWith(
-                        color: AppColors.textTertiary,
-                        letterSpacing: 1.2,
+            child: Column(
+              children: [
+                // ① Primary / Strong — 티켓 코드
+                Padding(
+                  padding: EdgeInsets.fromLTRB(
+                    AppSpacing.s20,
+                    AppSpacing.s20,
+                    AppSpacing.s20,
+                    0,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        ticketCode,
+                        style: AppTextStyles.tag_12.copyWith(
+                          color: AppColors.textTertiary,
+                          letterSpacing: 1.2,
+                        ),
                       ),
-                    ),
-                    Text(
-                      'SPACE PASS',
-                      style: AppTextStyles.tag_12.copyWith(
-                        color: AppColors.textTertiary,
-                        letterSpacing: 1.2,
+                      Text(
+                        'SPACE PASS',
+                        style: AppTextStyles.tag_12.copyWith(
+                          color: AppColors.textTertiary,
+                          letterSpacing: 1.2,
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              ),
-
-              const Spacer(flex: 2),
-
-              // ② 중심 시각 앵커 — 행성 아이콘 + 이름
-              PlanetIcons.buildIcon(planet.icon, size: 220.w),
-              SizedBox(height: AppSpacing.s16),
-              Text(
-                planet.name,
-                style: AppTextStyles.heading_24.copyWith(color: Colors.white),
-              ),
-              if (planet.description.isNotEmpty) ...[
-                SizedBox(height: AppSpacing.s8),
-                Text(
-                  planet.description,
-                  style: AppTextStyles.tag_12.copyWith(
-                    color: AppColors.textSecondary,
+                    ],
                   ),
                 ),
+
+                const Spacer(flex: 2),
+
+                // ② 중심 시각 앵커 — 행성 아이콘 + 이름
+                PlanetIcons.buildIcon(planet.icon, size: 220.w),
+                SizedBox(height: AppSpacing.s16),
+                Text(
+                  planet.name,
+                  style: AppTextStyles.heading_24.copyWith(color: Colors.white),
+                ),
+                if (planet.description.isNotEmpty) ...[
+                  SizedBox(height: AppSpacing.s8),
+                  Text(
+                    planet.description,
+                    style: AppTextStyles.tag_12.copyWith(
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                ],
+
+                SizedBox(height: AppSpacing.s32),
+
+                // ③ 진행도
+                Padding(
+                  padding: AppPadding.horizontal20,
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            '탐험 진행도',
+                            style: AppTextStyles.tag_12.copyWith(
+                              color: AppColors.textSecondary,
+                            ),
+                          ),
+                          Text(
+                            '$percent%',
+                            style: AppTextStyles.tag_12.copyWith(
+                              color: progress.isCompleted
+                                  ? AppColors.success
+                                  : AppColors.primary,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: AppSpacing.s8),
+                      ExplorationProgressBar(progress: progress, height: 4.h),
+                    ],
+                  ),
+                ),
+
+                const Spacer(flex: 1),
+
+                // ── 절취선 + 펀치홀 ──
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: AppSpacing.s4),
+                  child: _buildTearLine(),
+                ),
+
+                const Spacer(flex: 1),
+
+                // ④ Weak Fallow — 바코드
+                Padding(
+                  padding: AppPadding.horizontal20,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Pass',
+                        style: AppTextStyles.tag_12.copyWith(
+                          color: AppColors.textTertiary,
+                        ),
+                      ),
+                      SizedBox(height: AppSpacing.s8),
+                      SizedBox(
+                        height: 48.h,
+                        width: double.infinity,
+                        child: SvgPicture.asset(
+                          progress.isCompleted
+                              ? 'assets/icons/barcode_mint.svg'
+                              : 'assets/icons/barcode_lavender.svg',
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                SizedBox(height: AppSpacing.s20),
               ],
-
-              SizedBox(height: AppSpacing.s32),
-
-              // ③ 진행도
-              Padding(
-                padding: AppPadding.horizontal20,
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          '탐험 진행도',
-                          style: AppTextStyles.tag_12.copyWith(
-                            color: AppColors.textSecondary,
-                          ),
-                        ),
-                        Text(
-                          '$percent%',
-                          style: AppTextStyles.tag_12.copyWith(
-                            color: progress.isCompleted
-                                ? AppColors.success
-                                : AppColors.primary,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: AppSpacing.s8),
-                    ExplorationProgressBar(progress: progress, height: 4.h),
-                  ],
-                ),
-              ),
-
-              const Spacer(flex: 1),
-
-              // ── 절취선 + 펀치홀 ──
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: AppSpacing.s4),
-                child: _buildTearLine(),
-              ),
-
-              const Spacer(flex: 1),
-
-              // ④ Weak Fallow — 바코드
-              Padding(
-                padding: AppPadding.horizontal20,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Pass',
-                      style: AppTextStyles.tag_12.copyWith(
-                        color: AppColors.textTertiary,
-                      ),
-                    ),
-                    SizedBox(height: AppSpacing.s8),
-                    SizedBox(
-                      height: 48.h,
-                      width: double.infinity,
-                      child: SvgPicture.asset(
-                        progress.isCompleted
-                            ? 'assets/icons/barcode_mint.svg'
-                            : 'assets/icons/barcode_lavender.svg',
-                        fit: BoxFit.contain,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              SizedBox(height: AppSpacing.s20),
-            ],
-          ),
+            ),
           ),
         ),
       ),
@@ -325,94 +317,87 @@ class _ExplorationDetailScreenState
     List<ExplorationNodeEntity> regions,
     int currentFuel,
   ) {
-    return SizedBox.expand(
-      child: ClipPath(
-        clipper: _TicketClipper(notchRadius: 12.w),
-        child: Container(
-          color: AppColors.spaceSurface,
-          child: Column(
-            children: [
-              // 티켓코드 + 연료
-              Padding(
-                padding: EdgeInsets.fromLTRB(
-                  AppSpacing.s20,
-                  AppSpacing.s16,
-                  AppSpacing.s20,
-                  0,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      _generateTicketCode(planet.id),
-                      style: AppTextStyles.tag_12.copyWith(
-                        color: AppColors.textTertiary,
-                        letterSpacing: 1.2,
-                      ),
-                    ),
-                    FuelGauge(
-                      currentFuel: currentFuel,
-                      showLabel: true,
-                      size: FuelGaugeSize.medium,
-                    ),
-                  ],
-                ),
-              ),
-
-              // 절취선
-              Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: AppSpacing.s4,
-                  vertical: AppSpacing.s12,
-                ),
-                child: _buildTearLine(),
-              ),
-
-              // 지역 리스트
-              Expanded(
-                child: regions.isNotEmpty
-                    ? ListView.builder(
-                        padding: EdgeInsets.fromLTRB(
-                          AppSpacing.s16,
-                          0,
-                          AppSpacing.s16,
-                          AppSpacing.s16,
+    return GestureDetector(
+      onTap: _flipToFront,
+      child: SizedBox.expand(
+        child: ClipPath(
+          clipper: _TicketClipper(notchRadius: 12.w),
+          child: Container(
+            color: AppColors.spaceSurface,
+            child: Column(
+              children: [
+                // 티켓코드 + 연료
+                Padding(
+                  padding: EdgeInsets.fromLTRB(
+                    AppSpacing.s20,
+                    AppSpacing.s16,
+                    AppSpacing.s20,
+                    0,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        _generateTicketCode(planet.id),
+                        style: AppTextStyles.tag_12.copyWith(
+                          color: AppColors.textTertiary,
+                          letterSpacing: 1.2,
                         ),
-                        itemCount: regions.length,
-                        itemBuilder: (context, index) {
-                          final region = regions[index];
-                          return FadeSlideIn(
-                            delay: Duration(milliseconds: 60 * index),
-                            child: RegionCard(
-                              node: region,
-                              currentFuel: currentFuel,
-                              onUnlock: () => _handleUnlock(
-                                context,
-                                region,
-                                currentFuel,
-                                ref,
-                              ),
-                              onTap: () {
-                                if (region.isCleared) {
-                                  AppSnackBar.info(
-                                    context,
-                                    '${region.name} - 이미 클리어한 지역입니다!',
-                                  );
-                                }
-                              },
-                            ),
-                          );
-                        },
-                      )
-                    : SpaceEmptyState(
-                        icon: Icons.public_rounded,
-                        color: AppColors.secondary,
-                        title: '아직 탐험할 지역이 없습니다',
-                        subtitle: '향후 업데이트에서 추가됩니다!',
-                        iconSize: 64,
                       ),
-              ),
-            ],
+                      FuelGauge(
+                        currentFuel: currentFuel,
+                        showLabel: true,
+                        size: FuelGaugeSize.medium,
+                      ),
+                    ],
+                  ),
+                ),
+
+                // 절취선
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: AppSpacing.s4,
+                    vertical: AppSpacing.s12,
+                  ),
+                  child: _buildTearLine(),
+                ),
+
+                // 지역 리스트
+                Expanded(
+                  child: regions.isNotEmpty
+                      ? ListView.builder(
+                          padding: EdgeInsets.fromLTRB(
+                            AppSpacing.s16,
+                            0,
+                            AppSpacing.s16,
+                            AppSpacing.s16,
+                          ),
+                          itemCount: regions.length,
+                          itemBuilder: (context, index) {
+                            final region = regions[index];
+                            return FadeSlideIn(
+                              delay: Duration(milliseconds: 60 * index),
+                              child: RegionCard(
+                                node: region,
+                                currentFuel: currentFuel,
+                                onTap: () => context.push(
+                                  '/explore/location/${region.id}',
+                                  extra: planet.id,
+                                ),
+                              ),
+                            );
+                          },
+                        )
+                      : SpaceEmptyState(
+                          icon: Icons.public_rounded,
+                          color: AppColors.secondary,
+                          title: '아직 탐험할 지역이 없습니다',
+                          subtitle: '향후 업데이트에서 추가됩니다!',
+                          iconSize: 64,
+                        ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -421,7 +406,7 @@ class _ExplorationDetailScreenState
 
   // ─── 공용 위젯 ─────────────────────────────────────────
 
-  Widget _buildAppBarRow({String? title, bool showFlipButton = false}) {
+  Widget _buildAppBarRow({String? title}) {
     return Padding(
       padding: EdgeInsets.fromLTRB(
         AppSpacing.s4,
@@ -448,13 +433,6 @@ class _ExplorationDetailScreenState
             const Spacer(),
           ] else
             const Spacer(),
-          if (showFlipButton)
-            IconButton(
-              icon: Icon(Icons.flip_rounded, color: Colors.white, size: 22.w),
-              onPressed: _flipToFront,
-            )
-          else
-            SizedBox(width: AppSpacing.s48),
         ],
       ),
     );
@@ -489,27 +467,6 @@ class _ExplorationDetailScreenState
   String _generateTicketCode(String planetId) {
     final code = planetId.toUpperCase().replaceAll('_', '-');
     return 'SP-$code';
-  }
-
-  void _handleUnlock(
-    BuildContext context,
-    ExplorationNodeEntity region,
-    int currentFuel,
-    WidgetRef ref,
-  ) {
-    if (currentFuel < region.requiredFuel) {
-      AppSnackBar.error(context, '연료가 부족합니다! (필요: ${region.requiredFuel}통)');
-      return;
-    }
-
-    showUnlockDialog(
-      context: context,
-      nodeName: region.name,
-      requiredFuel: region.requiredFuel,
-      onUnlock: () => ref
-          .read(regionListNotifierProvider(widget.planetId).notifier)
-          .unlockRegion(region.id, region.requiredFuel),
-    );
   }
 }
 

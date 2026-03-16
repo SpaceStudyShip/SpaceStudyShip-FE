@@ -25,6 +25,7 @@ import '../../../todo/presentation/widgets/dismissible_todo_item.dart';
 import '../../../todo/presentation/widgets/todo_add_bottom_sheet.dart';
 import '../widgets/space_calendar.dart';
 import '../../../../routes/navigation_providers.dart';
+import '../providers/spaceship_provider.dart';
 import '../widgets/spaceship_selector.dart';
 
 /// 홈 스크린
@@ -40,10 +41,6 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
-  // 임시 상태 (나중에 Riverpod Provider로 이동)
-  String _selectedSpaceshipId = 'default';
-  String _selectedSpaceshipIcon = '🚀';
-  String? _selectedLottieAsset = 'assets/lotties/default_rocket.json';
   bool _isSpaceshipPressed = false;
 
   // 캘린더 상태 (모달에서 사용)
@@ -51,21 +48,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   DateTime _selectedDay = DateTime.now();
   CalendarFormat _calendarFormat = CalendarFormat.week;
 
-  // 샘플 우주선 데이터 (SpaceshipData.sampleList 공유)
-  final List<SpaceshipData> _spaceships = SpaceshipData.sampleList;
-
   void _showSpaceshipSelector() {
+    final selectedId = ref.read(spaceshipNotifierProvider);
     showSpaceshipSelector(
       context: context,
-      spaceships: _spaceships,
-      selectedId: _selectedSpaceshipId,
+      spaceships: SpaceshipData.sampleList,
+      selectedId: selectedId,
       onSelect: (id) {
-        final selected = _spaceships.firstWhere((s) => s.id == id);
-        setState(() {
-          _selectedSpaceshipId = id;
-          _selectedSpaceshipIcon = selected.icon;
-          _selectedLottieAsset = selected.lottieAsset;
-        });
+        ref.read(spaceshipNotifierProvider.notifier).select(id);
       },
     );
   }
@@ -148,10 +138,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           duration: TossDesignTokens.animationFast,
           curve: TossDesignTokens.springCurve,
           child: FadeSlideIn(
-            child: SpaceshipAvatar(
-              icon: _selectedSpaceshipIcon,
-              size: 320,
-              lottieAsset: _selectedLottieAsset,
+            child: Consumer(
+              builder: (context, ref, _) {
+                final selectedId = ref.watch(spaceshipNotifierProvider);
+                final spaceship = SpaceshipData.sampleList.firstWhere(
+                  (s) => s.id == selectedId,
+                  orElse: () => SpaceshipData.sampleList.first,
+                );
+                return SpaceshipAvatar(
+                  icon: spaceship.icon,
+                  size: 320,
+                  lottieAsset: spaceship.lottieAsset,
+                );
+              },
             ),
           ),
         ),
@@ -161,79 +160,79 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   /// 컴팩트 카드: 오늘의 할일 요약 + 진행률 바
   Widget _buildCompactCard() {
-    final todayKey = DateTime(
-      DateTime.now().year,
-      DateTime.now().month,
-      DateTime.now().day,
-    );
-    final stats = ref.watch(todoCompletionStatsForDateProvider(todayKey));
-    final hasAnyTodo = stats.total > 0;
-    final progress = hasAnyTodo ? stats.completed / stats.total : 0.0;
-
     return GestureDetector(
       onTap: _openTodoCalendarModal,
       behavior: HitTestBehavior.opaque,
       child: Padding(
         padding: AppPadding.horizontal20,
-        child: AppCard(
-          style: AppCardStyle.outlined,
-          padding: EdgeInsets.symmetric(
-            horizontal: AppSpacing.s16,
-            vertical: AppSpacing.s12,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // 타이틀 행
-              Row(
+        child: Consumer(
+          builder: (context, ref, _) {
+            final todayKey = DateTime(
+              DateTime.now().year,
+              DateTime.now().month,
+              DateTime.now().day,
+            );
+            final stats = ref.watch(
+              todoCompletionStatsForDateProvider(todayKey),
+            );
+            final hasAnyTodo = stats.total > 0;
+            final progress = hasAnyTodo ? stats.completed / stats.total : 0.0;
+
+            return AppCard(
+              style: AppCardStyle.outlined,
+              padding: AppPadding.listItemPadding,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(
-                    Icons.edit_note_rounded,
-                    color: AppColors.primary,
-                    size: 20.w,
-                  ),
-                  SizedBox(width: AppSpacing.s8),
-                  Text(
-                    '오늘의 할 일',
-                    style: AppTextStyles.label_16.copyWith(
-                      color: AppColors.textPrimary,
-                    ),
-                  ),
-                  const Spacer(),
-                  if (hasAnyTodo)
-                    Text(
-                      '${stats.completed}/${stats.total} 완료',
-                      style: AppTextStyles.tag_12.copyWith(
-                        color: AppColors.textTertiary,
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.edit_note_rounded,
+                        color: AppColors.primary,
+                        size: 20.w,
                       ),
-                    )
-                  else
-                    Text(
-                      '할 일을 추가해보세요',
-                      style: AppTextStyles.tag_12.copyWith(
-                        color: AppColors.textTertiary,
+                      SizedBox(width: AppSpacing.s8),
+                      Text(
+                        '오늘의 할 일',
+                        style: AppTextStyles.label_16.copyWith(
+                          color: AppColors.textPrimary,
+                        ),
+                      ),
+                      const Spacer(),
+                      if (hasAnyTodo)
+                        Text(
+                          '${stats.completed}/${stats.total} 완료',
+                          style: AppTextStyles.tag_12.copyWith(
+                            color: AppColors.textTertiary,
+                          ),
+                        )
+                      else
+                        Text(
+                          '할 일을 추가해보세요',
+                          style: AppTextStyles.tag_12.copyWith(
+                            color: AppColors.textTertiary,
+                          ),
+                        ),
+                    ],
+                  ),
+                  if (hasAnyTodo) ...[
+                    SizedBox(height: AppSpacing.s12),
+                    ClipRRect(
+                      borderRadius: AppRadius.small,
+                      child: LinearProgressIndicator(
+                        value: progress,
+                        minHeight: 4.h,
+                        backgroundColor: Colors.white.withValues(alpha: 0.08),
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          AppColors.primary,
+                        ),
                       ),
                     ),
+                  ],
                 ],
               ),
-
-              // 진행률 바 (할일이 있을 때만)
-              if (hasAnyTodo) ...[
-                SizedBox(height: AppSpacing.s12),
-                ClipRRect(
-                  borderRadius: AppRadius.small,
-                  child: LinearProgressIndicator(
-                    value: progress,
-                    minHeight: 4.h,
-                    backgroundColor: Colors.white.withValues(alpha: 0.08),
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                      AppColors.primary,
-                    ),
-                  ),
-                ),
-              ],
-            ],
-          ),
+            );
+          },
         ),
       ),
     );
@@ -249,17 +248,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           selectedDay: _selectedDay,
           calendarFormat: _calendarFormat,
           bottomPadding: bottomPadding,
-          onDaySelected: (selectedDay, focusedDay) {
-            setState(() {
-              _selectedDay = selectedDay;
-              _focusedDay = focusedDay;
-            });
-          },
-          onFormatChanged: (format) {
-            setState(() => _calendarFormat = format);
-          },
-          onPageChanged: (focusedDay) {
-            setState(() => _focusedDay = focusedDay);
+          onStateChanged: (selectedDay, focusedDay, format) {
+            _selectedDay = selectedDay;
+            _focusedDay = focusedDay;
+            _calendarFormat = format;
           },
         );
       },
@@ -274,18 +266,21 @@ class _TodoCalendarModal extends ConsumerStatefulWidget {
     required this.selectedDay,
     required this.calendarFormat,
     required this.bottomPadding,
-    required this.onDaySelected,
-    required this.onFormatChanged,
-    required this.onPageChanged,
+    required this.onStateChanged,
   });
 
   final DateTime focusedDay;
   final DateTime selectedDay;
   final CalendarFormat calendarFormat;
   final double bottomPadding;
-  final void Function(DateTime, DateTime) onDaySelected;
-  final void Function(CalendarFormat) onFormatChanged;
-  final void Function(DateTime) onPageChanged;
+
+  /// 모달 내 상태 변경 시 부모에 동기화 (setState 없이 값만 저장)
+  final void Function(
+    DateTime selectedDay,
+    DateTime focusedDay,
+    CalendarFormat format,
+  )
+  onStateChanged;
 
   @override
   ConsumerState<_TodoCalendarModal> createState() => _TodoCalendarModalState();
@@ -344,15 +339,27 @@ class _TodoCalendarModalState extends ConsumerState<_TodoCalendarModal> {
                   _selectedDay = selectedDay;
                   _focusedDay = focusedDay;
                 });
-                widget.onDaySelected(selectedDay, focusedDay);
+                widget.onStateChanged(
+                  _selectedDay,
+                  _focusedDay,
+                  _calendarFormat,
+                );
               },
               onFormatChanged: (format) {
                 setState(() => _calendarFormat = format);
-                widget.onFormatChanged(format);
+                widget.onStateChanged(
+                  _selectedDay,
+                  _focusedDay,
+                  _calendarFormat,
+                );
               },
               onPageChanged: (focusedDay) {
                 setState(() => _focusedDay = focusedDay);
-                widget.onPageChanged(focusedDay);
+                widget.onStateChanged(
+                  _selectedDay,
+                  _focusedDay,
+                  _calendarFormat,
+                );
               },
               eventLoader: (day) {
                 final key = DateTime(day.year, day.month, day.day);
@@ -438,10 +445,11 @@ class _TodoCalendarModalState extends ConsumerState<_TodoCalendarModal> {
             padding: AppPadding.horizontal20,
             child: TextButton(
               onPressed: () {
+                // pop 전에 GoRouter 참조를 캡처 (모달 context는 pop 후 unmounted)
+                final router = GoRouter.of(context);
                 Navigator.of(context).pop();
-                // GoRouter push는 모달 닫힌 뒤 실행
                 WidgetsBinding.instance.addPostFrameCallback((_) {
-                  if (context.mounted) context.push(RoutePaths.todoList);
+                  router.push(RoutePaths.todoList);
                 });
               },
               child: Row(

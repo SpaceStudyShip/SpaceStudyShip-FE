@@ -14,4 +14,7 @@ Assets used in this app:
 - "20+ Premium Planet Illustrations" by Simple Studio / CC BY 4.0 — Modified
   https://www.figma.com/community/file/948550441311747097/20-premium-planet-illustrations
 
+- "Planetary Travel App" by Atheeb HM / CC BY 4.0 — Modified
+  https://www.figma.com/community/file/1363194259317669251/planetary-travel-app
+
 License: https://creativecommons.org/licenses/by/4.0/

@@ -1,11 +1,46 @@
 {
   "metadata": {
-    "lastUpdated": "2026-03-10T01:11:59Z",
-    "currentVersion": "1.1.36",
+    "lastUpdated": "2026-03-16T08:05:29Z",
+    "currentVersion": "1.1.41",
     "projectType": "flutter",
-    "totalReleases": 27
+    "totalReleases": 28
   },
   "releases": [
+    {
+      "version": "1.1.41",
+      "project_type": "flutter",
+      "date": "2026-03-16",
+      "pr_number": 59,
+      "raw_summary": "## Summary by CodeRabbit\n\n## 릴리스 노트\n\n* **새로운 기능**\n  * 카테고리를 행성처럼 배치하고 상호작용할 수 있는 지도 화면 추가\n  * 우주선 선택 기능 및 저장 기능 추가\n  * 행성 지역 탐험 및 잠금 해제 시스템 추가\n  * SVG 기반 아이콘 시스템으로 이모지 대체\n\n* **UI/UX 개선**\n  * 홈 화면 하단 시트 리디자인 (콤팩트 카드 뷰)\n  * 부동 내비게이션 바 추가\n  * 화면 진입 애니메이션 적용\n  * 타이머 및 탐험 화면 시각적 개선\n\n* **문서**\n  * 타이머 아키텍처 참고 문서 추가\n  * 디자인 사양 및 구현 계획 문서 추가",
+      "parsed_changes": {
+        "새로운_기능": {
+          "title": "새로운 기능",
+          "items": [
+            "카테고리를 행성처럼 배치하고 상호작용할 수 있는 지도 화면 추가",
+            "우주선 선택 기능 및 저장 기능 추가",
+            "행성 지역 탐험 및 잠금 해제 시스템 추가",
+            "SVG 기반 아이콘 시스템으로 이모지 대체"
+          ]
+        },
+        "ui_ux_개선": {
+          "title": "UI/UX 개선",
+          "items": [
+            "홈 화면 하단 시트 리디자인 (콤팩트 카드 뷰)",
+            "부동 내비게이션 바 추가",
+            "화면 진입 애니메이션 적용",
+            "타이머 및 탐험 화면 시각적 개선"
+          ]
+        },
+        "문서": {
+          "title": "문서",
+          "items": [
+            "타이머 아키텍처 참고 문서 추가",
+            "디자인 사양 및 구현 계획 문서 추가"
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "1.1.36",
       "project_type": "flutter",

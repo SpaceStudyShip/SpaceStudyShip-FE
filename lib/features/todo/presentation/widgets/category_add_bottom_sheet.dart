@@ -116,7 +116,7 @@ class _CategoryAddBottomSheetState extends State<CategoryAddBottomSheet> {
                   ),
                 ),
               ),
-              SizedBox(height: AppSpacing.s8),
+              SizedBox(height: AppSpacing.s16),
               SizedBox(
                 height: 48.h,
                 child: ListView.builder(

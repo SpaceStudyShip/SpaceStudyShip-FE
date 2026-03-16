@@ -10,7 +10,6 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/planet_icons.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
-import '../../../../core/widgets/animations/entrance_animations.dart';
 import '../../../../core/widgets/backgrounds/space_background.dart';
 import '../../../../core/widgets/space/fuel_gauge.dart';
 import '../../../../core/widgets/states/space_empty_state.dart';
@@ -20,7 +19,7 @@ import '../../domain/entities/exploration_node_entity.dart';
 import '../../domain/entities/exploration_progress_entity.dart';
 import '../providers/exploration_provider.dart';
 import '../widgets/exploration_progress_bar.dart';
-import '../widgets/region_card.dart';
+import '../widgets/region_flag_icon.dart';
 
 /// 탐험 상세 스크린 - 우주 티켓 3D 플립
 ///
@@ -301,7 +300,7 @@ class _ExplorationDetailScreenState
                   ),
                 ),
 
-                SizedBox(height: AppSpacing.s20),
+                SizedBox(height: AppSpacing.s64),
               ],
             ),
           ),
@@ -317,89 +316,137 @@ class _ExplorationDetailScreenState
     List<ExplorationNodeEntity> regions,
     int currentFuel,
   ) {
-    return GestureDetector(
-      onTap: _flipToFront,
-      child: SizedBox.expand(
-        child: ClipPath(
-          clipper: _TicketClipper(notchRadius: 12.w),
-          child: Container(
-            color: AppColors.spaceSurface,
-            child: Column(
-              children: [
-                // 티켓코드 + 연료
-                Padding(
+    return SizedBox.expand(
+      child: ClipPath(
+        clipper: _TicketClipper(notchRadius: 12.w),
+        child: Container(
+          color: AppColors.spaceSurface,
+          child: Column(
+            children: [
+              // 상단: 티켓코드 + 연료 + 시각적 플립 유도 (탭 → 플립 복귀)
+              GestureDetector(
+                onTap: _flipToFront,
+                behavior: HitTestBehavior.opaque,
+                child: Container(
                   padding: EdgeInsets.fromLTRB(
                     AppSpacing.s20,
-                    AppSpacing.s16,
+                    AppSpacing.s20,
                     AppSpacing.s20,
                     0,
                   ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.03),
+                  ),
+                  child: Column(
                     children: [
-                      Text(
-                        _generateTicketCode(planet.id),
-                        style: AppTextStyles.tag_12.copyWith(
-                          color: AppColors.textTertiary,
-                          letterSpacing: 1.2,
-                        ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            _generateTicketCode(planet.id),
+                            style: AppTextStyles.tag_12.copyWith(
+                              color: AppColors.textTertiary,
+                              letterSpacing: 1.2,
+                            ),
+                          ),
+                          FuelGauge(
+                            currentFuel: currentFuel,
+                            showLabel: true,
+                            size: FuelGaugeSize.medium,
+                          ),
+                        ],
                       ),
-                      FuelGauge(
-                        currentFuel: currentFuel,
-                        showLabel: true,
-                        size: FuelGaugeSize.medium,
+                      SizedBox(height: AppSpacing.s12),
+                      Icon(
+                        Icons.keyboard_arrow_up_rounded,
+                        size: 20.w,
+                        color: AppColors.textTertiary.withValues(alpha: 0.5),
                       ),
+                      SizedBox(height: AppSpacing.s4),
+                      _buildTearLine(),
+                      SizedBox(height: AppSpacing.s12),
                     ],
                   ),
                 ),
+              ),
 
-                // 절취선
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: AppSpacing.s4,
-                    vertical: AppSpacing.s12,
-                  ),
-                  child: _buildTearLine(),
-                ),
-
-                // 지역 리스트
-                Expanded(
-                  child: regions.isNotEmpty
-                      ? ListView.builder(
-                          padding: EdgeInsets.fromLTRB(
-                            AppSpacing.s16,
-                            0,
-                            AppSpacing.s16,
-                            AppSpacing.s16,
-                          ),
-                          itemCount: regions.length,
-                          itemBuilder: (context, index) {
-                            final region = regions[index];
-                            return FadeSlideIn(
-                              delay: Duration(milliseconds: 60 * index),
-                              child: RegionCard(
-                                node: region,
-                                currentFuel: currentFuel,
-                                onTap: () => context.push(
-                                  '/explore/location/${region.id}',
-                                  extra: planet.id,
-                                ),
-                              ),
-                            );
-                          },
-                        )
-                      : SpaceEmptyState(
-                          icon: Icons.public_rounded,
-                          color: AppColors.secondary,
-                          title: '아직 탐험할 지역이 없습니다',
-                          subtitle: '향후 업데이트에서 추가됩니다!',
-                          iconSize: 64,
+              // 3열 아이콘 그리드
+              Expanded(
+                child: regions.isNotEmpty
+                    ? GridView.builder(
+                        padding: EdgeInsets.fromLTRB(
+                          AppSpacing.s16,
+                          0,
+                          AppSpacing.s16,
+                          AppSpacing.s16,
                         ),
-                ),
-              ],
-            ),
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 3,
+                          childAspectRatio: 0.8,
+                          crossAxisSpacing: AppSpacing.s8,
+                          mainAxisSpacing: AppSpacing.s12,
+                        ),
+                        itemCount: regions.length,
+                        itemBuilder: (context, index) {
+                          final region = regions[index];
+                          return _buildGridCell(planet, region);
+                        },
+                      )
+                    : SpaceEmptyState(
+                        icon: Icons.public_rounded,
+                        color: AppColors.secondary,
+                        title: '아직 탐험할 지역이 없습니다',
+                        subtitle: '향후 업데이트에서 추가됩니다!',
+                        iconSize: 64,
+                      ),
+              ),
+            ],
           ),
         ),
+      ),
+    );
+  }
+
+  /// 그리드 셀: 국기 + 이름 + 상태 텍스트
+  Widget _buildGridCell(
+    ExplorationNodeEntity planet,
+    ExplorationNodeEntity region,
+  ) {
+    final isLocked = !region.isUnlocked;
+    final statusText = region.isCleared
+        ? '클리어'
+        : isLocked
+        ? '잠김'
+        : '';
+    final statusColor = region.isCleared
+        ? AppColors.success
+        : AppColors.textTertiary;
+
+    return GestureDetector(
+      onTap: () =>
+          context.push('/explore/location/${region.id}', extra: planet.id),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          RegionFlagIcon(icon: region.icon, size: 40.w, isLocked: isLocked),
+          SizedBox(height: AppSpacing.s4),
+          Text(
+            region.name,
+            style: AppTextStyles.tag_12.copyWith(
+              color: isLocked ? AppColors.textTertiary : Colors.white,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
+          ),
+          if (statusText.isNotEmpty) ...[
+            SizedBox(height: 2),
+            Text(
+              statusText,
+              style: AppTextStyles.tag_10.copyWith(color: statusColor),
+            ),
+          ],
+        ],
       ),
     );
   }

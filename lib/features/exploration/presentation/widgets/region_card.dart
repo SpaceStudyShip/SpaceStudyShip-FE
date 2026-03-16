@@ -127,6 +127,7 @@ class _RegionCardState extends State<RegionCard> {
       icon: widget.node.icon,
       size: size,
       isLocked: isLocked,
+      circular: true,
     );
 
     if (!isCleared) return flag;

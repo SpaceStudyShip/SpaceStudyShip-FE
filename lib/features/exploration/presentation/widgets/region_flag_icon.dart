@@ -5,14 +5,16 @@ import '../../../../core/constants/app_colors.dart';
 
 /// 지역 국기 아이콘 위젯
 ///
-/// 국가 코드 기반 국기를 원형으로 표시합니다.
-/// 잠긴 상태에서는 잠금 아이콘을, 유효하지 않은 코드에는 앱 로고를 표시합니다.
+/// 국가 코드 기반 국기를 표시합니다.
+/// [circular]로 원형 클리핑 적용 여부 선택 (기본: 원본 그대로).
+/// 잠긴 상태에서는 잠금 아이콘을 표시합니다.
 class RegionFlagIcon extends StatelessWidget {
   const RegionFlagIcon({
     super.key,
     required this.icon,
     required this.size,
     this.isLocked = false,
+    this.circular = false,
   });
 
   /// 국가 코드 (예: 'KR', 'JP')
@@ -23,6 +25,9 @@ class RegionFlagIcon extends StatelessWidget {
 
   /// 잠금 상태
   final bool isLocked;
+
+  /// 원형 클리핑 여부 (false = 원본 그대로)
+  final bool circular;
 
   @override
   Widget build(BuildContext context) {
@@ -45,18 +50,26 @@ class RegionFlagIcon extends StatelessWidget {
     }
 
     try {
+      if (circular) {
+        return CountryFlag.fromCountryCode(
+          icon,
+          theme: ImageTheme(
+            width: size,
+            height: size,
+            shape: const Circle(),
+          ),
+        );
+      }
       return CountryFlag.fromCountryCode(
         icon,
-        theme: ImageTheme(width: size, height: size, shape: const Circle()),
+        theme: ImageTheme(width: size, height: size * 2 / 3),
       );
     } catch (_) {
-      return ClipOval(
-        child: Image.asset(
-          'assets/app_logo.png',
-          width: size,
-          height: size,
-          fit: BoxFit.cover,
-        ),
+      return Image.asset(
+        'assets/app_logo.png',
+        width: size,
+        height: size,
+        fit: BoxFit.contain,
       );
     }
   }

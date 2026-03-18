@@ -10,6 +10,7 @@ import '../../domain/repositories/ranking_repository.dart';
 
 part 'social_providers.g.dart';
 
+// TODO: 실제 API 전환 시 @Riverpod(keepAlive: true) 변경 + AsyncValue 패턴 적용
 @riverpod
 FriendRepository friendRepository(Ref ref) => MockFriendRepository();
 

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../core/constants/app_colors.dart';
@@ -32,5 +33,5 @@ class ConstellationPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(ConstellationPainter oldDelegate) =>
-      oldDelegate.friends != friends;
+      !listEquals(oldDelegate.friends, friends);
 }

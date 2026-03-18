@@ -54,16 +54,9 @@ class _AboutScreenState extends State<AboutScreen> {
                   _buildAppInfoSection(),
                   SizedBox(height: AppSpacing.s32),
 
-                  // 크레딧 섹션
-                  _buildSectionTitle('Credits'),
+                  // Figma Design Assets 섹션
+                  _buildSectionTitle('Figma Design Assets'),
                   SizedBox(height: AppSpacing.s16),
-                  _buildCreditItem(
-                    title: 'Rocket Animation',
-                    author: 'Sokol Laliçi',
-                    source: 'LottieFiles',
-                    license: 'Lottie Simple License',
-                  ),
-                  SizedBox(height: AppSpacing.s12),
                   _buildCreditItem(
                     title: 'Planets',
                     author: 'Seda',
@@ -107,6 +100,31 @@ class _AboutScreenState extends State<AboutScreen> {
                     license: 'CC BY 4.0 — Modified',
                     url:
                         'https://www.figma.com/community/file/1363194259317669251/planetary-travel-app',
+                  ),
+                  SizedBox(height: AppSpacing.s32),
+
+                  // Lottie Animations 섹션
+                  _buildSectionTitle('Lottie Animations'),
+                  SizedBox(height: AppSpacing.s16),
+                  _buildCreditItem(
+                    title: 'Free Earth and Connections Animation',
+                    author: 'Jam Visuals',
+                    source: 'LottieFiles',
+                    license: 'Lottie Simple License',
+                  ),
+                  SizedBox(height: AppSpacing.s12),
+                  _buildCreditItem(
+                    title: 'Free Travel the World Animation',
+                    author: 'Neus Vich',
+                    source: 'LottieFiles',
+                    license: 'Lottie Simple License',
+                  ),
+                  SizedBox(height: AppSpacing.s12),
+                  _buildCreditItem(
+                    title: 'Free Rocket Lunch Animation',
+                    author: 'Sokol Laliçi',
+                    source: 'LottieFiles',
+                    license: 'Lottie Simple License',
                   ),
                   SizedBox(height: AppSpacing.s32),
 

@@ -23,6 +23,7 @@ import '../features/explore/presentation/screens/explore_screen.dart';
 import '../features/exploration/presentation/screens/exploration_detail_screen.dart';
 import '../features/exploration/presentation/screens/location_detail_screen.dart';
 import '../features/social/presentation/screens/social_screen.dart';
+import '../features/social/presentation/screens/group_detail_screen.dart';
 import '../features/profile/presentation/screens/profile_screen.dart';
 import '../features/profile/presentation/screens/about_screen.dart';
 import '../features/profile/presentation/screens/spaceship_collection_screen.dart';
@@ -287,7 +288,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                         name: 'groupDetail',
                         builder: (context, state) {
                           final id = state.pathParameters['id']!;
-                          return PlaceholderScreen(title: '그룹: $id');
+                          return GroupDetailScreen(groupId: id);
                         },
                       ),
                     ],

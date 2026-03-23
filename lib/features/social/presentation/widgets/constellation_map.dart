@@ -43,15 +43,16 @@ class ConstellationMap extends ConsumerWidget {
             ),
 
             // 친구 별 / 빈 별
-            for (int i = 0;
-                i < ConstellationPatterns.bigDipperSlots.length;
-                i++)
+            for (
+              int i = 0;
+              i < ConstellationPatterns.bigDipperSlots.length;
+              i++
+            )
               _buildSlot(
                 context: context,
                 index: i,
                 size: size,
-                friend:
-                    friends.where((f) => f.slotIndex == i).firstOrNull,
+                friend: friends.where((f) => f.slotIndex == i).firstOrNull,
               ),
 
             // 빈 상태 안내 텍스트
@@ -62,8 +63,9 @@ class ConstellationMap extends ConsumerWidget {
                 bottom: AppSpacing.s64 + AppSpacing.s20,
                 child: Text(
                   '친구를 추가해서 별자리를 완성해요',
-                  style: AppTextStyles.paragraph_14
-                      .copyWith(color: AppColors.textTertiary),
+                  style: AppTextStyles.paragraph_14.copyWith(
+                    color: AppColors.textTertiary,
+                  ),
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -74,11 +76,7 @@ class ConstellationMap extends ConsumerWidget {
               right: 0,
               bottom: AppSpacing.s20,
               child: Center(
-                child: AppButton(
-                  text: '친구 추가',
-                  onPressed: () {},
-                  width: 140,
-                ),
+                child: AppButton(text: '친구 추가', onPressed: () {}, width: 140),
               ),
             ),
           ],
@@ -181,8 +179,8 @@ class ConstellationMap extends ConsumerWidget {
   }
 
   Color _statusColor(OnlineStatus status) => switch (status) {
-        OnlineStatus.online => AppColors.online,
-        OnlineStatus.away => AppColors.away,
-        OnlineStatus.offline => AppColors.offline,
-      };
+    OnlineStatus.online => AppColors.online,
+    OnlineStatus.away => AppColors.away,
+    OnlineStatus.offline => AppColors.offline,
+  };
 }

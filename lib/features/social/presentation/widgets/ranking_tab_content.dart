@@ -61,7 +61,10 @@ class _RankingTabContentState extends ConsumerState<RankingTabContent>
             unselectedLabelColor: AppColors.textTertiary,
             labelStyle: AppTextStyles.paragraph14Semibold,
             unselectedLabelStyle: AppTextStyles.paragraph_14_100,
-            tabs: const [Tab(text: '전체'), Tab(text: '친구')],
+            tabs: const [
+              Tab(text: '전체'),
+              Tab(text: '친구'),
+            ],
           ),
         ),
 
@@ -83,18 +86,14 @@ class _RankingTabContentState extends ConsumerState<RankingTabContent>
                 child: ChoiceChip(
                   label: Text(label),
                   selected: isSelected,
-                  onSelected: (_) =>
-                      setState(() => _selectedPeriod = period),
+                  onSelected: (_) => setState(() => _selectedPeriod = period),
                   selectedColor: AppColors.primary,
                   backgroundColor: AppColors.spaceSurface,
                   labelStyle: AppTextStyles.tag_12.copyWith(
-                    color:
-                        isSelected ? Colors.white : AppColors.textSecondary,
+                    color: isSelected ? Colors.white : AppColors.textSecondary,
                   ),
                   side: BorderSide.none,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: AppRadius.medium,
-                  ),
+                  shape: RoundedRectangleBorder(borderRadius: AppRadius.medium),
                   padding: EdgeInsets.symmetric(
                     horizontal: AppSpacing.s8,
                     vertical: 0,
@@ -119,15 +118,13 @@ class _RankingTabContentState extends ConsumerState<RankingTabContent>
               : ListView.separated(
                   padding: AppPadding.horizontal20,
                   itemCount: listEntries.length,
-                  separatorBuilder: (_, _) =>
-                      SizedBox(height: AppSpacing.s8),
+                  separatorBuilder: (_, _) => SizedBox(height: AppSpacing.s8),
                   itemBuilder: (context, index) {
                     final entry = listEntries[index];
                     return RankingItem(
                       rank: entry.rank,
                       userName: entry.name,
-                      studyTime:
-                          Duration(minutes: entry.studyTimeMinutes),
+                      studyTime: Duration(minutes: entry.studyTimeMinutes),
                       isCurrentUser: false,
                     );
                   },

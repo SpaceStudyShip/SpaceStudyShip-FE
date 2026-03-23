@@ -63,8 +63,7 @@ class GroupDetailScreen extends ConsumerWidget {
                 // 그룹명
                 Text(
                   group.name,
-                  style:
-                      AppTextStyles.heading_20.copyWith(color: Colors.white),
+                  style: AppTextStyles.heading_20.copyWith(color: Colors.white),
                 ),
 
                 SizedBox(height: AppSpacing.s32),
@@ -133,9 +132,11 @@ class GroupDetailScreen extends ConsumerWidget {
                               Expanded(
                                 child: Column(
                                   children: [
-                                    for (int i = halfSeats;
-                                        i < group.maxSeats;
-                                        i++) ...[
+                                    for (
+                                      int i = halfSeats;
+                                      i < group.maxSeats;
+                                      i++
+                                    ) ...[
                                       if (i > halfSeats)
                                         SizedBox(height: AppSpacing.s12),
                                       _buildSeat(
@@ -167,8 +168,9 @@ class GroupDetailScreen extends ConsumerWidget {
                               color: AppColors.spaceElevated,
                               borderRadius: AppRadius.xlarge,
                               border: Border.all(
-                                color: AppColors.secondary
-                                    .withValues(alpha: 0.3),
+                                color: AppColors.secondary.withValues(
+                                  alpha: 0.3,
+                                ),
                                 width: 1,
                               ),
                             ),
@@ -187,8 +189,7 @@ class GroupDetailScreen extends ConsumerWidget {
                                   children: [
                                     Text(
                                       group.inviteCode,
-                                      style:
-                                          AppTextStyles.heading_24.copyWith(
+                                      style: AppTextStyles.heading_24.copyWith(
                                         color: AppColors.secondaryLight,
                                         letterSpacing: 4,
                                       ),
@@ -260,7 +261,8 @@ class GroupDetailScreen extends ConsumerWidget {
                   ? Border.all(color: statusColor!, width: 2)
                   : Border.all(
                       color: AppColors.spaceDivider.withValues(alpha: 0.3),
-                      width: 1.5),
+                      width: 1.5,
+                    ),
               boxShadow: isFilled && captain.status == OnlineStatus.online
                   ? [
                       BoxShadow(
@@ -399,10 +401,10 @@ class GroupDetailScreen extends ConsumerWidget {
   }
 
   Color _statusColor(OnlineStatus status) => switch (status) {
-        OnlineStatus.online => AppColors.online,
-        OnlineStatus.away => AppColors.away,
-        OnlineStatus.offline => AppColors.offline,
-      };
+    OnlineStatus.online => AppColors.online,
+    OnlineStatus.away => AppColors.away,
+    OnlineStatus.offline => AppColors.offline,
+  };
 
   void _copyInviteCode(BuildContext context, String code) {
     Clipboard.setData(ClipboardData(text: code));

@@ -48,16 +48,12 @@ class GroupsTabContent extends ConsumerWidget {
               final group = groups[index];
               return _ShipCard(
                 group: group,
-                onTap: () =>
-                    context.push(RoutePaths.groupDetailPath(group.id)),
+                onTap: () => context.push(RoutePaths.groupDetailPath(group.id)),
               );
             },
           ),
         ),
-        Padding(
-          padding: AppPadding.all20,
-          child: _buildActionButtons(),
-        ),
+        Padding(padding: AppPadding.all20, child: _buildActionButtons()),
       ],
     );
   }
@@ -66,11 +62,7 @@ class GroupsTabContent extends ConsumerWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        AppButton(
-          text: '우주선 만들기',
-          onPressed: () {},
-          width: 140,
-        ),
+        AppButton(text: '우주선 만들기', onPressed: () {}, width: 140),
         SizedBox(width: AppSpacing.s12),
         AppButton(
           text: '초대코드 입력',
@@ -97,9 +89,8 @@ class _ShipCard extends StatefulWidget {
 class _ShipCardState extends State<_ShipCard> {
   bool _isPressed = false;
 
-  int get _onlineCount => widget.group.members
-      .where((m) => m.status == OnlineStatus.online)
-      .length;
+  int get _onlineCount =>
+      widget.group.members.where((m) => m.status == OnlineStatus.online).length;
 
   @override
   Widget build(BuildContext context) {
@@ -149,8 +140,9 @@ class _ShipCardState extends State<_ShipCard> {
                   children: [
                     Text(
                       widget.group.name,
-                      style: AppTextStyles.label_16
-                          .copyWith(color: Colors.white),
+                      style: AppTextStyles.label_16.copyWith(
+                        color: Colors.white,
+                      ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -166,8 +158,9 @@ class _ShipCardState extends State<_ShipCard> {
                         SizedBox(width: AppSpacing.s4),
                         Text(
                           '${widget.group.members.length}/${widget.group.maxSeats}',
-                          style: AppTextStyles.tag_12
-                              .copyWith(color: AppColors.textTertiary),
+                          style: AppTextStyles.tag_12.copyWith(
+                            color: AppColors.textTertiary,
+                          ),
                         ),
                         SizedBox(width: AppSpacing.s12),
                         // 온라인
@@ -182,8 +175,9 @@ class _ShipCardState extends State<_ShipCard> {
                         SizedBox(width: AppSpacing.s4),
                         Text(
                           '$_onlineCount명 활동 중',
-                          style: AppTextStyles.tag_12
-                              .copyWith(color: AppColors.online),
+                          style: AppTextStyles.tag_12.copyWith(
+                            color: AppColors.online,
+                          ),
                         ),
                       ],
                     ),

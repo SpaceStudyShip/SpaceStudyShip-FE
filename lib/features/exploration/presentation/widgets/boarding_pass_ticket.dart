@@ -40,6 +40,7 @@ class BoardingPassTicket extends StatefulWidget {
 class _BoardingPassTicketState extends State<BoardingPassTicket>
     with SingleTickerProviderStateMixin {
   late final AnimationController _punchController;
+  late final CurvedAnimation _punchAnimation;
   bool _wasPunched = false;
 
   @override
@@ -48,6 +49,10 @@ class _BoardingPassTicketState extends State<BoardingPassTicket>
     _punchController = AnimationController(
       vsync: this,
       duration: TossDesignTokens.entranceNormal,
+    );
+    _punchAnimation = CurvedAnimation(
+      parent: _punchController,
+      curve: TossDesignTokens.springCurve,
     );
     _wasPunched = widget.region.isUnlocked;
     if (_wasPunched) {
@@ -67,6 +72,7 @@ class _BoardingPassTicketState extends State<BoardingPassTicket>
 
   @override
   void dispose() {
+    _punchAnimation.dispose();
     _punchController.dispose();
     super.dispose();
   }
@@ -78,12 +84,9 @@ class _BoardingPassTicketState extends State<BoardingPassTicket>
         // 상단 본체 (펀치 클리핑 — 애니메이션)
         Expanded(
           child: AnimatedBuilder(
-            animation: _punchController,
+            animation: _punchAnimation,
             builder: (context, child) {
-              final punchProgress = CurvedAnimation(
-                parent: _punchController,
-                curve: TossDesignTokens.springCurve,
-              ).value;
+              final punchProgress = _punchAnimation.value;
 
               return ClipPath(
                 clipper: TicketPunchClipper(

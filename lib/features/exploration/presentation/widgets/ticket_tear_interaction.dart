@@ -37,6 +37,20 @@ class TicketTearInteraction extends StatefulWidget {
 
 class _TicketTearInteractionState extends State<TicketTearInteraction>
     with TickerProviderStateMixin {
+  // ─── 찢기 물리 상수 ───
+  /// stub이 화면 너비의 몇 %까지 밀려나는지
+  static const _maxSlideRatio = 0.6;
+  /// 드래그 시 최대 회전 각도 (라디안, ~8도)
+  static const _maxDragRotation = 0.14;
+  /// fly-away 시 추가 회전 (라디안, ~17도)
+  static const _flyAwayExtraRotation = 0.3;
+  /// fly-away 시 화면 밖 목표 비율
+  static const _flyAwayTargetRatio = 1.2;
+  /// fly-away 시 아래로 처지는 픽셀
+  static const _flyAwayDropPx = 20.0;
+  /// 드래그 시 최소 불투명도
+  static const _minDragOpacity = 0.4;
+
   double _dragProgress = 0.0;
   bool _isTearing = false;
   double _dragDirection = 1.0;
@@ -55,6 +69,7 @@ class _TicketTearInteractionState extends State<TicketTearInteraction>
   late final AnimationController _flyAwayController;
   // 해금 후: torn stub 등장
   late final AnimationController _tornEntryController;
+  late final CurvedAnimation _tornEntryAnimation;
 
   @override
   void initState() {
@@ -83,6 +98,10 @@ class _TicketTearInteractionState extends State<TicketTearInteraction>
       vsync: this,
       duration: TossDesignTokens.entranceNormal,
     );
+    _tornEntryAnimation = CurvedAnimation(
+      parent: _tornEntryController,
+      curve: TossDesignTokens.springCurve,
+    );
 
     if (widget.isLocked && widget.hasEnoughFuel) {
       _shimmerController.repeat();
@@ -110,6 +129,7 @@ class _TicketTearInteractionState extends State<TicketTearInteraction>
 
   @override
   void dispose() {
+    _tornEntryAnimation.dispose();
     _resetController.dispose();
     _shimmerController.dispose();
     _glowController.dispose();
@@ -225,16 +245,16 @@ class _TicketTearInteractionState extends State<TicketTearInteraction>
         final t = _flyAwayController.value;
         final screenWidth = MediaQuery.of(context).size.width;
         // 현재 위치에서 화면 밖까지 날아감
-        final startX = _dragProgress * screenWidth * 0.6 * _dragDirection;
-        final endX = screenWidth * 1.2 * _dragDirection;
+        final startX =
+            _dragProgress * screenWidth * _maxSlideRatio * _dragDirection;
+        final endX = screenWidth * _flyAwayTargetRatio * _dragDirection;
         final slideX = startX + (endX - startX) * t;
-        // 회전 증가
-        final rotation = (0.14 + t * 0.3) * _dragDirection;
-        // 투명해짐
+        final rotation =
+            (_maxDragRotation + t * _flyAwayExtraRotation) * _dragDirection;
         final opacity = (1.0 - t).clamp(0.0, 1.0);
 
         return Transform.translate(
-          offset: Offset(slideX, t * 20), // 약간 아래로
+          offset: Offset(slideX, t * _flyAwayDropPx),
           child: Transform.rotate(
             angle: rotation,
             alignment: _dragDirection > 0
@@ -247,55 +267,18 @@ class _TicketTearInteractionState extends State<TicketTearInteraction>
     );
   }
 
-  /// torn stub이 fade-in + slide-up으로 등장
+  /// torn stub이 fade-in + slide-up + scale-in으로 등장
   Widget _buildTornStubEntry() {
-    final isCleared = widget.isCleared;
-    final stampColor = isCleared ? AppColors.accentGold : AppColors.success;
-
     return AnimatedBuilder(
-      animation: _tornEntryController,
+      animation: _tornEntryAnimation,
       builder: (context, _) {
-        final t = CurvedAnimation(
-          parent: _tornEntryController,
-          curve: TossDesignTokens.springCurve,
-        ).value;
+        final t = _tornEntryAnimation.value;
 
         return Transform.translate(
           offset: Offset(0, 10.h * (1 - t)),
           child: Opacity(
             opacity: t,
-            child: Container(
-              width: double.infinity,
-              padding: EdgeInsets.symmetric(vertical: AppSpacing.s12),
-              decoration: BoxDecoration(
-                color: AppColors.spaceSurface,
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(12.r),
-                  bottomRight: Radius.circular(12.r),
-                ),
-              ),
-              child: Column(
-                children: [
-                  CustomPaint(
-                    size: Size(double.infinity, 6.h),
-                    painter: _TornEdgePainter(color: AppColors.spaceDivider),
-                  ),
-                  SizedBox(height: AppSpacing.s8),
-                  // 스탬프 scale-in
-                  Transform.scale(
-                    scale: 0.5 + t * 0.5,
-                    child: Text(
-                      isCleared ? 'COMPLETED' : 'BOARDED',
-                      style: AppTextStyles.tag_12.copyWith(
-                        color: stampColor,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 2.0,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            child: _buildTornStub(stampScale: 0.5 + t * 0.5),
           ),
         );
       },
@@ -303,13 +286,15 @@ class _TicketTearInteractionState extends State<TicketTearInteraction>
   }
 
   Widget _buildSwipeableStub() {
-    final maxSlide = MediaQuery.of(context).size.width * 0.6;
+    final maxSlide = MediaQuery.of(context).size.width * _maxSlideRatio;
     final slideX = _dragProgress * maxSlide * _dragDirection;
-    final rotation = _dragProgress * 0.14 * _dragDirection;
-    final opacity = (1.0 - _dragProgress * 0.6).clamp(0.4, 1.0);
+    final rotation = _dragProgress * _maxDragRotation * _dragDirection;
+    final opacity = (1.0 - _dragProgress * _maxSlideRatio).clamp(_minDragOpacity, 1.0);
     final isDragging = _dragProgress > 0;
 
     return GestureDetector(
+      // PageView 수평 스크롤과의 충돌 방지: stub 영역 터치 우선 처리
+      behavior: HitTestBehavior.opaque,
       onHorizontalDragUpdate: _onHorizontalDragUpdate,
       onHorizontalDragEnd: _onHorizontalDragEnd,
       child: Transform.translate(
@@ -405,7 +390,7 @@ class _TicketTearInteractionState extends State<TicketTearInteraction>
     );
   }
 
-  Widget _buildTornStub() {
+  Widget _buildTornStub({double stampScale = 1.0}) {
     final isCleared = widget.isCleared;
     final stampColor = isCleared ? AppColors.accentGold : AppColors.success;
 
@@ -426,12 +411,15 @@ class _TicketTearInteractionState extends State<TicketTearInteraction>
             painter: _TornEdgePainter(color: AppColors.spaceDivider),
           ),
           SizedBox(height: AppSpacing.s8),
-          Text(
-            isCleared ? 'COMPLETED' : 'BOARDED',
-            style: AppTextStyles.tag_12.copyWith(
-              color: stampColor,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 2.0,
+          Transform.scale(
+            scale: stampScale,
+            child: Text(
+              isCleared ? 'COMPLETED' : 'BOARDED',
+              style: AppTextStyles.tag_12.copyWith(
+                color: stampColor,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 2.0,
+              ),
             ),
           ),
         ],

@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:intl/intl.dart';
-
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/planet_icons.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
@@ -11,13 +9,13 @@ import '../../../../core/constants/text_styles.dart';
 import '../../../../core/constants/toss_design_tokens.dart';
 import '../../../../core/utils/unlock_dialog_helper.dart';
 import '../../../../core/widgets/backgrounds/space_background.dart';
-import '../../../../core/widgets/buttons/app_button.dart';
 import '../../../../core/widgets/feedback/app_snackbar.dart';
 import '../../../../core/widgets/space/circular_progress.dart';
 import '../../../fuel/presentation/providers/fuel_provider.dart';
 import '../../domain/entities/exploration_node_entity.dart';
 import '../../domain/entities/exploration_progress_entity.dart';
 import '../providers/exploration_provider.dart';
+import '../widgets/boarding_pass_ticket.dart';
 import '../widgets/region_flag_icon.dart';
 
 /// 지역 상세 스크린 - PageView 좌우 스와이프
@@ -215,7 +213,7 @@ class _LocationDetailScreenState extends ConsumerState<LocationDetailScreen> {
           // 상단: 행성 + 지역 아이콘 + 원형 진행도
           _buildHeroSection(planet, region, progress),
 
-          SizedBox(height: AppSpacing.s32),
+          SizedBox(height: AppSpacing.s24),
 
           // 지역명
           Text(
@@ -223,15 +221,22 @@ class _LocationDetailScreenState extends ConsumerState<LocationDetailScreen> {
             style: AppTextStyles.heading_24.copyWith(color: Colors.white),
           ),
 
-          SizedBox(height: AppSpacing.s32),
+          SizedBox(height: AppSpacing.s24),
 
-          // 2x2 정보 그리드 (남은 공간 채움)
-          Expanded(child: _buildInfoGrid(region)),
+          // 탑승권 티켓 (정보 + 해금 인터랙션)
+          Expanded(
+            child: BoardingPassTicket(
+              planet: planet,
+              region: region,
+              progress: progress,
+              currentFuel: currentFuel,
+              onTear: () => _handleUnlock(region, currentFuel),
+            ),
+          ),
 
-          SizedBox(height: AppSpacing.s16),
-
-          // 하단: < 해금하기 >
-          _buildBottomBar(region, currentFuel, totalPages),
+          // 좌우 네비게이션 화살표
+          SizedBox(height: AppSpacing.s12),
+          _buildNavigationArrows(totalPages),
 
           SizedBox(height: AppSpacing.s16),
         ],
@@ -283,133 +288,17 @@ class _LocationDetailScreenState extends ConsumerState<LocationDetailScreen> {
     );
   }
 
-  /// 2x2 정보 그리드 (Expanded로 감싸져 남은 공간 채움)
-  Widget _buildInfoGrid(ExplorationNodeEntity region) {
-    final statusText = region.isCleared
-        ? '클리어'
-        : region.isUnlocked
-        ? '해금됨'
-        : '잠김';
-    final statusIcon = region.isCleared
-        ? Icons.check_circle_rounded
-        : region.isUnlocked
-        ? Icons.lock_open_rounded
-        : Icons.lock_rounded;
-    final statusColor = region.isCleared
-        ? AppColors.success
-        : region.isUnlocked
-        ? AppColors.primary
-        : AppColors.textTertiary;
-
-    final dateText = region.unlockedAt != null
-        ? DateFormat('yyyy.MM.dd').format(region.unlockedAt!)
-        : region.isUnlocked
-        ? '기본 해금'
-        : '-';
-
-    return Column(
-      children: [
-        Expanded(
-          child: Row(
-            children: [
-              Expanded(
-                child: _InfoCard(
-                  icon: statusIcon,
-                  iconColor: statusColor,
-                  title: '상태',
-                  value: statusText,
-                ),
-              ),
-              SizedBox(width: AppSpacing.s12),
-              Expanded(
-                child: _InfoCard(
-                  icon: Icons.local_gas_station_rounded,
-                  iconColor: AppColors.accentGold,
-                  title: '필요 연료',
-                  value: '${region.requiredFuel}통',
-                ),
-              ),
-            ],
-          ),
-        ),
-        SizedBox(height: AppSpacing.s12),
-        Expanded(
-          child: Row(
-            children: [
-              Expanded(
-                child: _InfoCard(
-                  icon: Icons.calendar_today_rounded,
-                  iconColor: AppColors.secondary,
-                  title: '해금일',
-                  value: dateText,
-                ),
-              ),
-              SizedBox(width: AppSpacing.s12),
-              Expanded(
-                child: _InfoCard(
-                  icon: Icons.description_rounded,
-                  iconColor: AppColors.textSecondary,
-                  title: '설명',
-                  value: region.description.isNotEmpty
-                      ? region.description
-                      : '-',
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  /// 하단: < AppButton >
-  Widget _buildBottomBar(
-    ExplorationNodeEntity region,
-    int currentFuel,
-    int totalPages,
-  ) {
-    final isLocked = !region.isUnlocked;
-    final hasEnoughFuel = currentFuel >= region.requiredFuel;
-
+  /// 좌우 네비게이션 화살표
+  Widget _buildNavigationArrows(int totalPages) {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        // < 이전
         _NavArrowButton(
           icon: Icons.chevron_left_rounded,
           enabled: _currentPage > 0,
           onTap: _goToPrevious,
         ),
-
-        SizedBox(width: AppSpacing.s12),
-
-        // CTA 버튼
-        Expanded(
-          child: isLocked
-              ? AppButton(
-                  text: '해금하기',
-                  onPressed: hasEnoughFuel
-                      ? () => _handleUnlock(region, currentFuel)
-                      : null,
-                  width: double.infinity,
-                )
-              : AppButton(
-                  text: region.isCleared ? '탐험 완료' : '해금됨',
-                  onPressed: null,
-                  width: double.infinity,
-                  disabledBackgroundColor: Colors.transparent,
-                  disabledForegroundColor: region.isCleared
-                      ? AppColors.success
-                      : AppColors.textSecondary,
-                  showBorder: true,
-                  borderColor: region.isCleared
-                      ? AppColors.success.withValues(alpha: 0.5)
-                      : AppColors.spaceDivider,
-                ),
-        ),
-
-        SizedBox(width: AppSpacing.s12),
-
-        // > 다음
+        SizedBox(width: AppSpacing.s24),
         _NavArrowButton(
           icon: Icons.chevron_right_rounded,
           enabled: _currentPage < totalPages - 1,
@@ -419,77 +308,30 @@ class _LocationDetailScreenState extends ConsumerState<LocationDetailScreen> {
     );
   }
 
-  void _handleUnlock(ExplorationNodeEntity region, int currentFuel) {
+  Future<bool> _handleUnlock(
+    ExplorationNodeEntity region,
+    int currentFuel,
+  ) async {
     if (currentFuel < region.requiredFuel) {
       AppSnackBar.error(context, '연료가 부족합니다! (필요: ${region.requiredFuel}통)');
-      return;
+      return false;
     }
 
-    showUnlockDialog(
+    var unlocked = false;
+
+    await showUnlockDialog(
       context: context,
       nodeName: region.name,
       requiredFuel: region.requiredFuel,
-      onUnlock: () => ref
-          .read(regionListNotifierProvider(widget.planetId).notifier)
-          .unlockRegion(region.id, region.requiredFuel),
+      onUnlock: () async {
+        await ref
+            .read(regionListNotifierProvider(widget.planetId).notifier)
+            .unlockRegion(region.id, region.requiredFuel);
+        unlocked = true;
+      },
     );
-  }
-}
 
-// ─── 정보 카드 ──────────────────────────────────────────
-
-class _InfoCard extends StatelessWidget {
-  const _InfoCard({
-    required this.icon,
-    required this.iconColor,
-    required this.title,
-    required this.value,
-  });
-
-  final IconData icon;
-  final Color iconColor;
-  final String title;
-  final String value;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(AppSpacing.s12),
-      decoration: BoxDecoration(
-        color: AppColors.spaceSurface,
-        borderRadius: AppRadius.large,
-        border: Border.all(
-          color: AppColors.spaceDivider.withValues(alpha: 0.5),
-          width: 1,
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Text(
-                title,
-                style: AppTextStyles.tag_12.copyWith(
-                  color: AppColors.textTertiary,
-                ),
-              ),
-              const Spacer(),
-              Icon(icon, size: 16.w, color: iconColor),
-            ],
-          ),
-          SizedBox(height: AppSpacing.s8),
-          Text(
-            value,
-            style: AppTextStyles.paragraph14Semibold.copyWith(
-              color: Colors.white,
-            ),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ],
-      ),
-    );
+    return unlocked;
   }
 }
 

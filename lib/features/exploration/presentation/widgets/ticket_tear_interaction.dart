@@ -40,14 +40,19 @@ class _TicketTearInteractionState extends State<TicketTearInteraction>
   // ─── 찢기 물리 상수 ───
   /// stub이 화면 너비의 몇 %까지 밀려나는지
   static const _maxSlideRatio = 0.6;
+
   /// 드래그 시 최대 회전 각도 (라디안, ~8도)
   static const _maxDragRotation = 0.14;
+
   /// fly-away 시 추가 회전 (라디안, ~17도)
   static const _flyAwayExtraRotation = 0.3;
+
   /// fly-away 시 화면 밖 목표 비율
   static const _flyAwayTargetRatio = 1.2;
+
   /// fly-away 시 아래로 처지는 픽셀
   static const _flyAwayDropPx = 20.0;
+
   /// 드래그 시 최소 불투명도
   static const _minDragOpacity = 0.4;
 
@@ -289,7 +294,10 @@ class _TicketTearInteractionState extends State<TicketTearInteraction>
     final maxSlide = MediaQuery.of(context).size.width * _maxSlideRatio;
     final slideX = _dragProgress * maxSlide * _dragDirection;
     final rotation = _dragProgress * _maxDragRotation * _dragDirection;
-    final opacity = (1.0 - _dragProgress * _maxSlideRatio).clamp(_minDragOpacity, 1.0);
+    final opacity = (1.0 - _dragProgress * _maxSlideRatio).clamp(
+      _minDragOpacity,
+      1.0,
+    );
     final isDragging = _dragProgress > 0;
 
     return GestureDetector(

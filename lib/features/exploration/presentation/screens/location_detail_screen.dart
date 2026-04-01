@@ -265,11 +265,8 @@ class _LocationDetailScreenState extends ConsumerState<LocationDetailScreen> {
                 icon: region.icon,
                 size: 64.w,
                 isLocked: !region.isUnlocked,
-                isCircular: true,
               ),
               SizedBox(height: AppSpacing.s12),
-              SpaceCircularProgress(progress: progress.progressRatio, size: 56),
-              SizedBox(height: AppSpacing.s8),
               Text(
                 region.description.isNotEmpty
                     ? region.description

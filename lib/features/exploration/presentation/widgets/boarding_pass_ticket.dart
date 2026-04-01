@@ -253,9 +253,7 @@ class _BoardingPassTicketState extends State<BoardingPassTicket>
             Expanded(
               child: Text(
                 widget.region.name,
-                style: AppTextStyles.heading_24.copyWith(
-                  color: Colors.white,
-                ),
+                style: AppTextStyles.heading_24.copyWith(color: Colors.white),
                 textAlign: TextAlign.end,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,

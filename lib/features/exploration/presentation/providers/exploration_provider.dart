@@ -63,7 +63,7 @@ class ExplorationNotifier extends _$ExplorationNotifier {
     final targetIndex = planets.indexWhere((p) => p.id == planetId);
     if (targetIndex < 0) return false;
     if (targetIndex == 0) return true;
-    return planets[targetIndex - 1].isUnlocked;
+    return planets[targetIndex - 1].isCleared;
   }
 
   bool _isUnlocking = false;

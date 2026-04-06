@@ -24,9 +24,6 @@ Future<void> showBadgeDetailDialog(
         : badge.category == BadgeCategory.hidden
         ? '???'
         : badge.name,
-    emotion: isUnlockCelebration
-        ? AppDialogEmotion.success
-        : AppDialogEmotion.none,
     customContent: Column(
       mainAxisSize: MainAxisSize.min,
       children: [

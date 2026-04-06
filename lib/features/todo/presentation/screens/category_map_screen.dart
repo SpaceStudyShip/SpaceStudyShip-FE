@@ -417,7 +417,6 @@ class _CategoryMapScreenState extends ConsumerState<CategoryMapScreen> {
       context: context,
       title: '카테고리 삭제',
       message: '"${cat.name}" 카테고리를 삭제하시겠습니까?\n할일은 미분류로 이동됩니다.',
-      emotion: AppDialogEmotion.warning,
       confirmText: '삭제',
       cancelText: '취소',
       isDestructive: true,

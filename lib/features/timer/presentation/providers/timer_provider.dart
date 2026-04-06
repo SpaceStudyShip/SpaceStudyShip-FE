@@ -151,6 +151,14 @@ class TimerNotifier extends _$TimerNotifier with WidgetsBindingObserver {
         : null;
   }
 
+  /// 강제 리셋 (세션 저장 없이 초기 상태로 복원)
+  ///
+  /// 로그아웃 시 호출. 진행 중인 타이머를 즉시 중단합니다.
+  void forceReset() {
+    _timer?.cancel();
+    state = const TimerState();
+  }
+
   /// UI 갱신용 periodic timer (시간 계산에는 사용하지 않음)
   void _startPeriodicUiUpdate() {
     _timer?.cancel();

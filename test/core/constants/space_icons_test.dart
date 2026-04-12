@@ -39,7 +39,7 @@ void main() {
     test('행성 ID 로 2색 그라데이션 반환', () {
       final gradient = SpaceIcons.gradientOf(SpaceIcons.rocket);
       expect(gradient, hasLength(2));
-      expect(gradient.every((c) => c is Color), isTrue);
+      expect(gradient, everyElement(isA<Color>()));
     });
 
     test('레거시 이모지로도 그라데이션 반환', () {

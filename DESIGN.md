@@ -500,5 +500,3 @@ DESIGN.md 는 살아있는 문서다. 다음 상황에서 업데이트:
 ---
 
 **End of DESIGN.md**
-</content>
-</invoke>

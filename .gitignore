@@ -58,6 +58,11 @@ app.*.map.json
 # ====================================================================
 /.claude/*
 !/.claude/rules/
+!/.claude/agents/
+!/.claude/commands/
+!/.claude/scripts/
+!/.claude/settings.json
+/.claude/settings.local.json
 /.report
 .env
 /env.*

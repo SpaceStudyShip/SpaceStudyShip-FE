@@ -137,5 +137,3 @@
 ## Open Questions
 
 없음 (모든 결정사항이 브레인스토밍 중 확정됨).
-</content>
-</invoke>

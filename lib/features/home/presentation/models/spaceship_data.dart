@@ -1,6 +1,7 @@
+import '../../../../core/constants/space_icons.dart';
 import '../../../../core/widgets/space/spaceship_card.dart';
 
-/// 우주선 데이터 모델 (임시 — 서버 연동 시 domain entity로 전환)
+/// 우주선 데이터 모델 (임시 — 서버 연동 시 domain entity 로 전환)
 class SpaceshipData {
   const SpaceshipData({
     required this.id,
@@ -20,11 +21,11 @@ class SpaceshipData {
   final SpaceshipRarity rarity;
   final String? lottieAsset;
 
-  /// 임시 샘플 데이터 (나중에 Riverpod Provider로 이동)
+  /// 임시 샘플 데이터 (나중에 Riverpod Provider 로 이동)
   static const sampleList = [
     SpaceshipData(
       id: 'default',
-      icon: '🚀',
+      icon: SpaceIcons.rocket,
       name: '우주공부선',
       isUnlocked: true,
       rarity: SpaceshipRarity.normal,
@@ -32,14 +33,14 @@ class SpaceshipData {
     ),
     SpaceshipData(
       id: 'ufo',
-      icon: '🛸',
+      icon: SpaceIcons.ufo,
       name: 'UFO',
       isUnlocked: true,
       rarity: SpaceshipRarity.rare,
     ),
     SpaceshipData(
       id: 'satellite',
-      icon: '🛰️',
+      icon: SpaceIcons.satellite,
       name: '인공위성',
       isUnlocked: true,
       isAnimated: true,
@@ -47,21 +48,21 @@ class SpaceshipData {
     ),
     SpaceshipData(
       id: 'star',
-      icon: '🌟',
+      icon: SpaceIcons.sparkleStar,
       name: '스타쉽',
       isUnlocked: false,
       rarity: SpaceshipRarity.legendary,
     ),
     SpaceshipData(
       id: 'shuttle',
-      icon: '🚁',
+      icon: SpaceIcons.helicopter,
       name: '셔틀',
       isUnlocked: false,
       rarity: SpaceshipRarity.normal,
     ),
     SpaceshipData(
       id: 'moon',
-      icon: '🌙',
+      icon: SpaceIcons.moon,
       name: '달 탐사선',
       isUnlocked: false,
       rarity: SpaceshipRarity.rare,

@@ -13,7 +13,7 @@
 - **새 위젯 만들기 전** — `.claude/rules/05_WIDGETS_GUIDE.md` 먼저 확인
 - **UI 작업 전** — `DESIGN.md` + `.claude/rules/07_DESIGN_SYSTEM_CONSTANTS.md` 로드
 - **이모지 전면 금지** — 🚀✅❌⭐ 등 모든 이모지 사용 불가. 아이콘은 `font_awesome_flutter` (`FaIcon(FontAwesomeIcons.xxx)`) 또는 Material `Icons.xxx` 사용
-- **Co-Authored-By 태그 금지**
+- **커밋 메시지에 Claude 태그 절대 금지** — `Co-Authored-By: Claude`, `🤖 Generated with Claude Code`, `Claude Sonnet` 등 AI 관련 메타 태그·푸터 전면 금지
 
 ---
 

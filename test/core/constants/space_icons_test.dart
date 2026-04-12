@@ -11,16 +11,14 @@ void main() {
       expect(SpaceIcons.resolve(SpaceIcons.fuel), Icons.local_gas_station_rounded);
     });
 
-    test('레거시 이모지 키도 IconData 로 변환 (하위 호환)', () {
-      expect(SpaceIcons.resolve('\u{1F680}'), Icons.rocket_launch_rounded);
-      expect(SpaceIcons.resolve('\u{1F512}'), Icons.lock_rounded);
-      expect(SpaceIcons.resolve('\u{1F463}'), Icons.directions_walk_rounded);
-      expect(SpaceIcons.resolve('\u{2600}\u{FE0F}'), Icons.wb_sunny_rounded);
-    });
-
     test('알 수 없는 키는 기본 placeholder 반환', () {
       expect(SpaceIcons.resolve('not_a_real_id'), Icons.help_outline_rounded);
       expect(SpaceIcons.resolve(''), Icons.help_outline_rounded);
+    });
+
+    test('레거시 이모지 키는 더 이상 매핑되지 않고 placeholder 반환', () {
+      expect(SpaceIcons.resolve('\u{1F680}'), Icons.help_outline_rounded);
+      expect(SpaceIcons.resolve('\u{1F512}'), Icons.help_outline_rounded);
     });
   });
 
@@ -29,10 +27,6 @@ void main() {
       expect(SpaceIcons.colorOf(SpaceIcons.rocket), isA<Color>());
       expect(SpaceIcons.colorOf(SpaceIcons.star), isA<Color>());
     });
-
-    test('레거시 이모지로도 색상 반환 (하위 호환)', () {
-      expect(SpaceIcons.colorOf('\u{1F680}'), isA<Color>());
-    });
   });
 
   group('SpaceIcons.gradientOf', () {
@@ -40,11 +34,6 @@ void main() {
       final gradient = SpaceIcons.gradientOf(SpaceIcons.rocket);
       expect(gradient, hasLength(2));
       expect(gradient, everyElement(isA<Color>()));
-    });
-
-    test('레거시 이모지로도 그라데이션 반환', () {
-      final gradient = SpaceIcons.gradientOf('\u{1F680}');
-      expect(gradient, hasLength(2));
     });
   });
 

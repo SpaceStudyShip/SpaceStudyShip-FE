@@ -12,9 +12,6 @@ import 'app_colors.dart';
 /// final iconData = SpaceIcons.resolve(SpaceIcons.rocket);
 /// SpaceIcons.buildIcon(SpaceIcons.earth, size: 32);
 /// ```
-///
-/// **레거시 이모지 호환:** Phase 4 마이그레이션 완료 전까지 기존 이모지 키
-/// (`\u{1F680}` 등) 도 `resolve()` 를 통해 동일한 IconData 로 변환된다.
 class SpaceIcons {
   SpaceIcons._();
 
@@ -131,87 +128,23 @@ class SpaceIcons {
   };
 
   // ============================================
-  // [DEPRECATED — Phase 4 에서 제거]
-  // 레거시 이모지 → String ID 변환 테이블
-  // ============================================
-
-  static const Map<String, String> _legacyEmojiToId = {
-    '\u{1F680}': rocket,
-    '\u{1F6F8}': ufo,
-    '\u{1F6F0}\u{FE0F}': satellite,
-    '\u{1F681}': helicopter,
-    '\u{2B50}': star,
-    '\u{1F31F}': sparkleStar,
-    '\u{2600}\u{FE0F}': sun,
-    '\u{1F319}': moon,
-    '\u{1F30C}': galaxy,
-    '\u{1F30D}': earth,
-    '\u{1FA90}': planet,
-    '\u{26FD}': fuel,
-    '\u{1F525}': fire,
-    '\u{1F512}': lock,
-    '\u{2705}': check,
-    '\u{2728}': sparkle,
-    '\u{1F3C6}': trophy,
-    '\u{1F468}\u{200D}\u{1F680}': astronaut,
-    '\u{1F9D1}\u{200D}\u{1F680}': astronaut,
-    '\u{1F465}': group,
-    '\u{1F4DD}': note,
-    '\u{1F3E0}': home,
-    '\u{1F6E0}\u{FE0F}': tool,
-    '\u{1F463}': footstep,
-    '\u{1F4D6}': book,
-    '\u{1F52D}': telescope,
-    '\u{26F5}': sailboat,
-    '\u{1F4AB}': dizzy,
-    '\u{1F3AF}': target,
-    '\u{2708}\u{FE0F}': airplane,
-    '\u{1F947}': goldMedal,
-    '\u{1F3C5}': medal,
-    '\u{1F5FA}\u{FE0F}': map,
-    '\u{1F6E2}\u{FE0F}': oilDrum,
-    '\u{26A1}': bolt,
-    '\u{1F989}': owl,
-    '\u{1F426}': bird,
-  };
-
-  // ============================================
   // Public API
   // ============================================
 
-  /// ID (또는 레거시 이모지) 로 IconData 반환.
-  /// 매핑이 없으면 `Icons.help_outline_rounded` placeholder 반환.
-  static IconData resolve(String key) {
-    final direct = _idToIcon[key];
-    if (direct != null) return direct;
-    final legacyId = _legacyEmojiToId[key];
-    if (legacyId != null) {
-      return _idToIcon[legacyId] ?? Icons.help_outline_rounded;
-    }
-    return Icons.help_outline_rounded;
+  /// ID 로 IconData 반환. 매핑이 없으면 placeholder.
+  static IconData resolve(String id) {
+    return _idToIcon[id] ?? Icons.help_outline_rounded;
   }
 
-  /// ID (또는 레거시 이모지) 로 고유 색상 반환.
-  static Color colorOf(String key) {
-    final direct = _idToColor[key];
-    if (direct != null) return direct;
-    final legacyId = _legacyEmojiToId[key];
-    if (legacyId != null) {
-      return _idToColor[legacyId] ?? AppColors.textTertiary;
-    }
-    return AppColors.textTertiary;
+  /// ID 로 고유 색상 반환.
+  static Color colorOf(String id) {
+    return _idToColor[id] ?? AppColors.textTertiary;
   }
 
-  /// ID (또는 레거시 이모지) 로 그라데이션 2색 반환.
-  static List<Color> gradientOf(String key) {
-    final direct = _idToGradient[key];
-    if (direct != null) return direct;
-    final legacyId = _legacyEmojiToId[key];
-    if (legacyId != null) {
-      return _idToGradient[legacyId] ??
-          [AppColors.textTertiary, AppColors.spaceDivider];
-    }
-    return [AppColors.textTertiary, AppColors.spaceDivider];
+  /// ID 로 그라데이션 2색 반환.
+  static List<Color> gradientOf(String id) {
+    return _idToGradient[id] ??
+        [AppColors.textTertiary, AppColors.spaceDivider];
   }
 
   /// ID 를 그라데이션 원형 아이콘 위젯으로 변환

@@ -68,6 +68,7 @@ app.*.map.json
 /env.*
 /local.properties
 /secrets.json
+.superpowers
 
 # ====================================================================
 # SUH-DEVOPS-TEMPLATE: Auto-added entries

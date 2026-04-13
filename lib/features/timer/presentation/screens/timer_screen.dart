@@ -256,7 +256,6 @@ class _TimerScreenState extends ConsumerState<TimerScreen> {
     await AppDialog.show(
       context: context,
       title: '수고했어요!',
-      emotion: AppDialogEmotion.success,
       customContent: Column(
         children: [
           _buildResultRow('이번 세션', sessionText),

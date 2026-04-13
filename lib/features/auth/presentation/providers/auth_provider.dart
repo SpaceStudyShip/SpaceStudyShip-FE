@@ -20,6 +20,7 @@ import '../../data/utils/firebase_auth_error_handler.dart';
 import '../../../badge/presentation/providers/badge_provider.dart';
 import '../../../exploration/presentation/providers/exploration_provider.dart';
 import '../../../fuel/presentation/providers/fuel_provider.dart';
+import '../../../timer/presentation/providers/timer_provider.dart';
 import '../../../timer/presentation/providers/timer_session_provider.dart';
 import '../../../todo/presentation/providers/todo_provider.dart';
 
@@ -289,6 +290,9 @@ class AuthNotifier extends _$AuthNotifier {
   /// 백엔드 + Firebase + 토큰 삭제를 모두 수행합니다.
   /// 게스트 모드인 경우 SharedPreferences만 정리합니다.
   Future<void> signOut() async {
+    // 타이머 강제 리셋 (세션 저장 없이)
+    ref.read(timerNotifierProvider.notifier).forceReset();
+
     // 게스트 모드 → SharedPreferences 정리만
     final currentUser = state.valueOrNull;
     if (currentUser?.isGuest == true) {

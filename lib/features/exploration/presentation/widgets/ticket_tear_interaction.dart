@@ -22,7 +22,7 @@ class TicketTearInteraction extends StatefulWidget {
     required this.isCleared,
     required this.hasEnoughFuel,
     required this.onTear,
-    this.tearThreshold = 0.7,
+    this.tearThreshold = 0.5,
   });
 
   final bool isLocked;
@@ -282,7 +282,7 @@ class _TicketTearInteractionState extends State<TicketTearInteraction>
         return Transform.translate(
           offset: Offset(0, 10.h * (1 - t)),
           child: Opacity(
-            opacity: t,
+            opacity: t.clamp(0.0, 1.0),
             child: _buildTornStub(stampScale: 0.5 + t * 0.5),
           ),
         );

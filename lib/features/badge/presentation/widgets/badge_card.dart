@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/space_icons.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../../../core/constants/toss_design_tokens.dart';
@@ -68,6 +69,21 @@ class _BadgeCardState extends State<BadgeCard> {
     }
   }
 
+  Color get _iconColor {
+    switch (widget.rarity) {
+      case BadgeRarity.normal:
+        return Colors.white;
+      case BadgeRarity.rare:
+        return AppColors.primary;
+      case BadgeRarity.epic:
+        return AppColors.secondary;
+      case BadgeRarity.legendary:
+        return AppColors.accentGold;
+      case BadgeRarity.hidden:
+        return AppColors.accentPink;
+    }
+  }
+
   double get _borderWidth {
     switch (widget.rarity) {
       case BadgeRarity.normal:
@@ -115,13 +131,18 @@ class _BadgeCardState extends State<BadgeCard> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // 아이콘 (이모지 직접 렌더링)
+              // 아이콘 (Icon 위젯 렌더링)
               Semantics(
                 label: widget.isUnlocked ? '${widget.name} 배지 아이콘' : '잠긴 배지',
                 child: ExcludeSemantics(
-                  child: Text(
-                    widget.isUnlocked ? widget.icon : '🔒',
-                    style: TextStyle(fontSize: 28.sp),
+                  child: Icon(
+                    SpaceIcons.resolve(
+                      widget.isUnlocked ? widget.icon : SpaceIcons.lock,
+                    ),
+                    size: 28.sp,
+                    color: widget.isUnlocked
+                        ? _iconColor
+                        : AppColors.textTertiary,
                   ),
                 ),
               ),

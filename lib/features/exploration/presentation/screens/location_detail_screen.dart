@@ -10,7 +10,6 @@ import '../../../../core/constants/toss_design_tokens.dart';
 import '../../../../core/utils/unlock_dialog_helper.dart';
 import '../../../../core/widgets/backgrounds/space_background.dart';
 import '../../../../core/widgets/feedback/app_snackbar.dart';
-import '../../../../core/widgets/space/circular_progress.dart';
 import '../../../fuel/presentation/providers/fuel_provider.dart';
 import '../../domain/entities/exploration_node_entity.dart';
 import '../../domain/entities/exploration_progress_entity.dart';
@@ -265,11 +264,8 @@ class _LocationDetailScreenState extends ConsumerState<LocationDetailScreen> {
                 icon: region.icon,
                 size: 64.w,
                 isLocked: !region.isUnlocked,
-                isCircular: true,
               ),
               SizedBox(height: AppSpacing.s12),
-              SpaceCircularProgress(progress: progress.progressRatio, size: 56),
-              SizedBox(height: AppSpacing.s8),
               Text(
                 region.description.isNotEmpty
                     ? region.description

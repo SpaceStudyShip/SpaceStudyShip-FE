@@ -17,7 +17,6 @@ Future<void> showUnlockDialog({
     context: context,
     title: '$nodeName 해금',
     message: '연료 $requiredFuel통을 소비하여\n$nodeName을(를) 해금하시겠습니까?',
-    emotion: AppDialogEmotion.info,
     confirmText: '해금하기',
     cancelText: '취소',
     onConfirm: () async {

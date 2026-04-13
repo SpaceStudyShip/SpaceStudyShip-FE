@@ -8,7 +8,6 @@ import '../../../../core/constants/text_styles.dart';
 import '../../../../core/constants/toss_design_tokens.dart';
 import '../../domain/entities/exploration_node_entity.dart';
 import '../../domain/entities/exploration_progress_entity.dart';
-import 'region_flag_icon.dart';
 import 'ticket_dashed_line.dart';
 import 'ticket_punch_clipper.dart';
 import 'ticket_tear_interaction.dart';
@@ -139,22 +138,23 @@ class _BoardingPassTicketState extends State<BoardingPassTicket>
 
         SizedBox(height: AppSpacing.s16),
 
-        // FROM → TO 섹션
+        // FROM → TO 메인 영역 (크게)
         _buildRoute(),
 
-        SizedBox(height: AppSpacing.s16),
-
-        // 정보 행: FUEL | DIFFICULTY | DATE
-        _buildInfoRow(),
-
-        SizedBox(height: AppSpacing.s16),
-
-        // 진행도 (해금된 경우)
-        if (widget.region.isUnlocked) _buildProgressSection(),
+        // 진행도 (해금 시만)
+        if (widget.region.isUnlocked) ...[
+          SizedBox(height: AppSpacing.s32),
+          _buildProgressSection(),
+        ],
 
         const Spacer(),
 
-        // 하단: 티켓 번호 / 부가 정보
+        // 하단 정보 행: FUEL | DIFFICULTY | DATE
+        _buildInfoRow(),
+
+        SizedBox(height: AppSpacing.s24),
+
+        // 티켓 번호
         _buildFooter(),
       ],
     );
@@ -194,124 +194,85 @@ class _BoardingPassTicketState extends State<BoardingPassTicket>
   }
 
   Widget _buildRoute() {
-    return Row(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // FROM: 행성
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
+        // FROM / TO 라벨 행
+        Row(
+          children: [
+            Expanded(
+              child: Text(
                 'FROM',
                 style: AppTextStyles.tag_10.copyWith(
                   color: AppColors.textTertiary,
                   letterSpacing: 1.0,
                 ),
               ),
-              SizedBox(height: AppSpacing.s4),
-              Text(
-                widget.planet.name,
-                style: AppTextStyles.label_16.copyWith(color: Colors.white),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
-          ),
-        ),
-
-        // 화살표
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: AppSpacing.s8),
-          child: Icon(
-            Icons.arrow_forward_rounded,
-            color: AppColors.textTertiary,
-            size: 20.w,
-          ),
-        ),
-
-        // TO: 지역
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
+            ),
+            SizedBox(width: AppSpacing.s32),
+            Expanded(
+              child: Text(
                 'TO',
+                textAlign: TextAlign.end,
                 style: AppTextStyles.tag_10.copyWith(
                   color: AppColors.textTertiary,
                   letterSpacing: 1.0,
                 ),
               ),
-              SizedBox(height: AppSpacing.s4),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  RegionFlagIcon(
-                    icon: widget.region.icon,
-                    size: 20.w,
-                    isLocked: !widget.region.isUnlocked,
-                  ),
-                  SizedBox(width: AppSpacing.s4),
-                  Flexible(
-                    child: Text(
-                      widget.region.name,
-                      style: AppTextStyles.label_16.copyWith(
-                        color: Colors.white,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                ],
+            ),
+          ],
+        ),
+
+        SizedBox(height: AppSpacing.s8),
+
+        // 이름 행 (크게)
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            // FROM: 행성 이름
+            Expanded(
+              child: Text(
+                widget.planet.name,
+                style: AppTextStyles.heading_24.copyWith(color: Colors.white),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
-            ],
+            ),
+
+            // 점선 경로 + 화살표
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: AppSpacing.s12),
+              child: Icon(
+                Icons.rocket_launch_rounded,
+                color: AppColors.textTertiary,
+                size: 20.w,
+              ),
+            ),
+
+            // TO: 지역 이름
+            Expanded(
+              child: Text(
+                widget.region.name,
+                style: AppTextStyles.heading_24.copyWith(color: Colors.white),
+                textAlign: TextAlign.end,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
+
+        // description (있으면 표시)
+        if (widget.region.description.isNotEmpty) ...[
+          SizedBox(height: AppSpacing.s4),
+          Text(
+            widget.region.description,
+            style: AppTextStyles.tag_12.copyWith(color: AppColors.textTertiary),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
-        ),
+        ],
       ],
-    );
-  }
-
-  Widget _buildInfoRow() {
-    final dateText = widget.region.unlockedAt != null
-        ? DateFormat('yyyy.MM.dd').format(widget.region.unlockedAt!)
-        : '-';
-    final difficultyText = _getDifficultyText(widget.region.requiredFuel);
-    final difficultyColor = _getDifficultyColor(widget.region.requiredFuel);
-
-    return Row(
-      children: [
-        _TicketInfoCell(
-          label: 'FUEL',
-          value: '${widget.region.requiredFuel}',
-          valueColor: AppColors.accentGold,
-          icon: Icons.local_gas_station_rounded,
-        ),
-
-        _buildVerticalDivider(),
-
-        _TicketInfoCell(
-          label: 'DIFFICULTY',
-          value: difficultyText,
-          valueColor: difficultyColor,
-        ),
-
-        _buildVerticalDivider(),
-
-        _TicketInfoCell(
-          label: 'DATE',
-          value: dateText,
-          valueColor: AppColors.textSecondary,
-          icon: Icons.calendar_today_rounded,
-        ),
-      ],
-    );
-  }
-
-  Widget _buildVerticalDivider() {
-    return Container(
-      width: 1,
-      height: 32.h,
-      margin: EdgeInsets.symmetric(horizontal: AppSpacing.s8),
-      color: AppColors.spaceDivider.withValues(alpha: 0.5),
     );
   }
 
@@ -359,30 +320,75 @@ class _BoardingPassTicketState extends State<BoardingPassTicket>
     );
   }
 
-  Widget _buildFooter() {
+  Widget _buildInfoRow() {
+    final dateText = widget.region.unlockedAt != null
+        ? DateFormat('yyyy.MM.dd').format(widget.region.unlockedAt!)
+        : '-';
+    final difficultyText = _getDifficultyText(widget.region.requiredFuel);
+    final difficultyColor = _getDifficultyColor(widget.region.requiredFuel);
+
     return Row(
       children: [
+        Expanded(
+          child: _buildInfoCell(
+            label: 'FUEL',
+            value: '${widget.region.requiredFuel}',
+            valueColor: AppColors.accentGold,
+          ),
+        ),
+        Expanded(
+          child: _buildInfoCell(
+            label: 'DIFFICULTY',
+            value: difficultyText,
+            valueColor: difficultyColor,
+          ),
+        ),
+        Expanded(
+          child: _buildInfoCell(
+            label: 'DATE',
+            value: dateText,
+            valueColor: AppColors.textSecondary,
+            alignment: CrossAxisAlignment.end,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildInfoCell({
+    required String label,
+    required String value,
+    required Color valueColor,
+    CrossAxisAlignment alignment = CrossAxisAlignment.start,
+  }) {
+    return Column(
+      crossAxisAlignment: alignment,
+      children: [
         Text(
-          '#${(widget.region.id.hashCode.abs() % 10000).toString().padLeft(4, '0')}',
+          label,
           style: AppTextStyles.tag_10.copyWith(
-            color: AppColors.textDisabled,
+            color: AppColors.textTertiary,
             letterSpacing: 1.0,
           ),
         ),
-        const Spacer(),
-        if (widget.region.description.isNotEmpty)
-          Flexible(
-            child: Text(
-              widget.region.description,
-              style: AppTextStyles.tag_10.copyWith(
-                color: AppColors.textDisabled,
-              ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              textAlign: TextAlign.end,
-            ),
-          ),
+        SizedBox(height: AppSpacing.s4),
+        Text(
+          value,
+          style: AppTextStyles.paragraph14Semibold.copyWith(color: valueColor),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
       ],
+    );
+  }
+
+  Widget _buildFooter() {
+    return Text(
+      '#${(widget.region.id.hashCode.abs() % 10000).toString().padLeft(4, '0')}',
+      style: AppTextStyles.tag_10.copyWith(
+        color: AppColors.textDisabled,
+        letterSpacing: 1.0,
+      ),
     );
   }
 
@@ -410,59 +416,5 @@ class _BoardingPassTicketState extends State<BoardingPassTicket>
     if (fuel <= 2) return AppColors.success;
     if (fuel <= 4) return AppColors.warning;
     return AppColors.error;
-  }
-}
-
-// ─── 티켓 정보 셀 ───
-
-class _TicketInfoCell extends StatelessWidget {
-  const _TicketInfoCell({
-    required this.label,
-    required this.value,
-    required this.valueColor,
-    this.icon,
-  });
-
-  final String label;
-  final String value;
-  final Color valueColor;
-  final IconData? icon;
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: Column(
-        children: [
-          Text(
-            label,
-            style: AppTextStyles.tag_10.copyWith(
-              color: AppColors.textTertiary,
-              letterSpacing: 1.0,
-            ),
-          ),
-          SizedBox(height: AppSpacing.s4),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (icon != null) ...[
-                Icon(icon, size: 12.w, color: valueColor),
-                SizedBox(width: 2.w),
-              ],
-              Flexible(
-                child: Text(
-                  value,
-                  style: AppTextStyles.paragraph14Semibold.copyWith(
-                    color: valueColor,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
   }
 }

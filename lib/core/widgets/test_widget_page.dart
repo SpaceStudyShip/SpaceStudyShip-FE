@@ -375,7 +375,6 @@ class _TestWidgetPageState extends State<TestWidgetPage> {
             context: context,
             title: '완료!',
             message: '성공적으로 처리됐어요',
-            emotion: AppDialogEmotion.success,
           );
         }),
         _dialogButton('경고', () {
@@ -383,7 +382,6 @@ class _TestWidgetPageState extends State<TestWidgetPage> {
             context: context,
             title: '주의',
             message: '이 작업은 되돌릴 수 없어요',
-            emotion: AppDialogEmotion.warning,
             cancelText: '취소',
           );
         }),
@@ -392,7 +390,6 @@ class _TestWidgetPageState extends State<TestWidgetPage> {
             context: context,
             title: '삭제할까요?',
             message: '삭제하면 복구할 수 없어요',
-            emotion: AppDialogEmotion.error,
             confirmText: '삭제',
             isDestructive: true,
           );

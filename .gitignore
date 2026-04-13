@@ -56,12 +56,19 @@ app.*.map.json
 # ====================================================================
 # TEMPLATE: Auto-added entries
 # ====================================================================
-/.claude
+/.claude/*
+!/.claude/rules/
+!/.claude/agents/
+!/.claude/commands/
+!/.claude/scripts/
+!/.claude/settings.json
+/.claude/settings.local.json
 /.report
 .env
 /env.*
 /local.properties
 /secrets.json
+.superpowers
 
 # ====================================================================
 # SUH-DEVOPS-TEMPLATE: Auto-added entries

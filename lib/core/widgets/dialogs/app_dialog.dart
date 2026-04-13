@@ -7,24 +7,6 @@ import '../../constants/text_styles.dart';
 import '../../constants/toss_design_tokens.dart';
 import '../buttons/app_button.dart';
 
-/// 다이얼로그 감정 타입 (피크엔드 법칙)
-enum AppDialogEmotion {
-  /// 성공 (초록 체크)
-  success,
-
-  /// 경고 (주황 경고)
-  warning,
-
-  /// 에러 (빨강 에러)
-  error,
-
-  /// 정보 (파랑 정보)
-  info,
-
-  /// 기본 (아이콘 없음)
-  none,
-}
-
 /// 앱 전역에서 사용하는 다이얼로그 컴포넌트 - 토스 스타일
 ///
 /// **기본 스펙**:
@@ -47,7 +29,6 @@ enum AppDialogEmotion {
 ///   context: context,
 ///   title: '삭제할까요?',
 ///   message: '삭제하면 되돌릴 수 없어요',
-///   emotion: AppDialogEmotion.warning,
 ///   confirmText: '삭제',
 ///   cancelText: '취소',
 ///   isDestructive: true,
@@ -66,7 +47,6 @@ class AppDialog extends StatelessWidget {
     super.key,
     required this.title,
     this.message,
-    this.emotion = AppDialogEmotion.none,
     this.confirmText = '확인',
     this.cancelText,
     this.onConfirm,
@@ -80,9 +60,6 @@ class AppDialog extends StatelessWidget {
 
   /// 메시지 (선택)
   final String? message;
-
-  /// 감정 타입 (아이콘 결정)
-  final AppDialogEmotion emotion;
 
   /// 확인 버튼 텍스트
   final String confirmText;
@@ -111,7 +88,6 @@ class AppDialog extends StatelessWidget {
     required BuildContext context,
     required String title,
     String? message,
-    AppDialogEmotion emotion = AppDialogEmotion.none,
     String confirmText = '확인',
     String? cancelText,
     VoidCallback? onConfirm,
@@ -130,7 +106,6 @@ class AppDialog extends StatelessWidget {
         return AppDialog(
           title: title,
           message: message,
-          emotion: emotion,
           confirmText: confirmText,
           cancelText: cancelText,
           isDestructive: isDestructive,
@@ -162,7 +137,6 @@ class AppDialog extends StatelessWidget {
     required BuildContext context,
     required String title,
     String? message,
-    AppDialogEmotion emotion = AppDialogEmotion.none,
     String confirmText = '확인',
     String cancelText = '취소',
     bool isDestructive = false,
@@ -177,7 +151,6 @@ class AppDialog extends StatelessWidget {
         return AppDialog(
           title: title,
           message: message,
-          emotion: emotion,
           confirmText: confirmText,
           cancelText: cancelText,
           isDestructive: isDestructive,
@@ -224,12 +197,6 @@ class AppDialog extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // 감정 아이콘
-              if (emotion != AppDialogEmotion.none) ...[
-                _buildEmotionIcon(),
-                SizedBox(height: AppSpacing.s16),
-              ],
-
               // 제목
               Text(
                 title,
@@ -239,7 +206,7 @@ class AppDialog extends StatelessWidget {
 
               // 메시지 또는 커스텀 콘텐츠
               if (message != null || customContent != null) ...[
-                SizedBox(height: AppSpacing.s12),
+                SizedBox(height: AppSpacing.s24),
                 customContent ??
                     Text(
                       message!,
@@ -258,38 +225,6 @@ class AppDialog extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildEmotionIcon() {
-    final IconData icon;
-    final Color color;
-
-    switch (emotion) {
-      case AppDialogEmotion.success:
-        icon = Icons.check_circle;
-        color = AppColors.success;
-      case AppDialogEmotion.warning:
-        icon = Icons.warning;
-        color = AppColors.warning;
-      case AppDialogEmotion.error:
-        icon = Icons.error;
-        color = AppColors.error;
-      case AppDialogEmotion.info:
-        icon = Icons.info;
-        color = AppColors.info;
-      case AppDialogEmotion.none:
-        return const SizedBox.shrink();
-    }
-
-    return Container(
-      width: 56.w,
-      height: 56.w,
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.15),
-        shape: BoxShape.circle,
-      ),
-      child: Icon(icon, size: 32.w, color: color),
     );
   }
 

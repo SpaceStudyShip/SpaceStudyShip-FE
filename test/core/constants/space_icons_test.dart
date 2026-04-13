@@ -5,10 +5,16 @@ import 'package:space_study_ship/core/constants/space_icons.dart';
 void main() {
   group('SpaceIcons.resolve', () {
     test('String ID 로 IconData 반환', () {
-      expect(SpaceIcons.resolve(SpaceIcons.rocket), Icons.rocket_launch_rounded);
+      expect(
+        SpaceIcons.resolve(SpaceIcons.rocket),
+        Icons.rocket_launch_rounded,
+      );
       expect(SpaceIcons.resolve(SpaceIcons.lock), Icons.lock_rounded);
       expect(SpaceIcons.resolve(SpaceIcons.trophy), Icons.emoji_events_rounded);
-      expect(SpaceIcons.resolve(SpaceIcons.fuel), Icons.local_gas_station_rounded);
+      expect(
+        SpaceIcons.resolve(SpaceIcons.fuel),
+        Icons.local_gas_station_rounded,
+      );
     });
 
     test('알 수 없는 키는 기본 placeholder 반환', () {

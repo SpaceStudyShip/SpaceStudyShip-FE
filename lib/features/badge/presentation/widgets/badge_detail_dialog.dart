@@ -34,11 +34,7 @@ Future<void> showBadgeDetailDialog(
     customContent: Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(
-          SpaceIcons.resolve(iconId),
-          size: 48.sp,
-          color: iconColor,
-        ),
+        Icon(SpaceIcons.resolve(iconId), size: 48.sp, color: iconColor),
         SizedBox(height: AppSpacing.s12),
         if (isUnlockCelebration) ...[
           Text(

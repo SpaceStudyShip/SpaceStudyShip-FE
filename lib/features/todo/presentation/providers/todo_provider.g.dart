@@ -868,7 +868,7 @@ class _TodoCompletionStatsForDateProviderElement
   DateTime get date => (origin as TodoCompletionStatsForDateProvider).date;
 }
 
-String _$todoListNotifierHash() => r'e99daf0e2ed00625142ea1caa630a70c8fdecd26';
+String _$todoListNotifierHash() => r'bd7c529068ef21d9dd0d8a9c16c0caf458100826';
 
 /// See also [TodoListNotifier].
 @ProviderFor(TodoListNotifier)
@@ -888,7 +888,7 @@ final todoListNotifierProvider =
 
 typedef _$TodoListNotifier = AutoDisposeAsyncNotifier<List<TodoEntity>>;
 String _$categoryListNotifierHash() =>
-    r'321247effcf4f5f25802cba4b81ccdc58ec6d22d';
+    r'719e9116f20ec62c090cea3503ea57e74eefd84e';
 
 /// See also [CategoryListNotifier].
 @ProviderFor(CategoryListNotifier)

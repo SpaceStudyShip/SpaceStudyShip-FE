@@ -1,0 +1,219 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/spacing_and_radius.dart';
+import '../../../../core/constants/text_styles.dart';
+import '../models/seat_slot.dart';
+import '../providers/friends_provider.dart';
+import '../screens/friend_detail_screen.dart';
+import 'boarding_pass_bar.dart';
+import 'seat_grid.dart';
+import 'seat_legend.dart';
+
+/// 소셜 좌석 배치 뷰
+///
+/// 구성: 헤더 → 범례 → 탭 → SeatGrid → BoardingPassBar
+class SocialSeatView extends ConsumerWidget {
+  const SocialSeatView({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final slots = ref.watch(seatAssignmentProvider);
+    final boardedCount = ref.watch(boardedCountProvider);
+    final filter = ref.watch(seatFilterProvider);
+
+    return SafeArea(
+      bottom: false,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _Header(boardedCount: boardedCount),
+          SizedBox(height: AppSpacing.s8),
+          const SeatLegend(),
+          SizedBox(height: AppSpacing.s12),
+          _FilterTabs(
+            selected: filter,
+            onChanged: (f) =>
+                ref.read(seatFilterProvider.notifier).state = f,
+          ),
+          SizedBox(height: AppSpacing.s12),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: AppSpacing.s20),
+            child: SeatGrid(
+              slots: slots,
+              muteOthers: (slot) => _shouldMute(slot, filter),
+              onSeatTap: (slot) => _onSeatTap(context, slot),
+            ),
+          ),
+          const Spacer(),
+          BoardingPassBar(
+            shipName: '우주선 1호',
+            boardedCount: boardedCount,
+            totalSeats: 12,
+            onAddFriend: () {}, // TODO(#67): 친구 추가 플로우 연결
+          ),
+          SizedBox(
+            height: MediaQuery.of(context).padding.bottom +
+                FloatingNavMetrics.totalHeight +
+                AppSpacing.s12,
+          ),
+        ],
+      ),
+    );
+  }
+
+  bool _shouldMute(SeatSlot slot, SeatFilter filter) {
+    if (filter == SeatFilter.all) return false;
+    if (slot.status == SeatStatus.empty) return false;
+    if (filter == SeatFilter.studying) {
+      return slot.status != SeatStatus.me &&
+          slot.status != SeatStatus.studying;
+    }
+    return slot.status != SeatStatus.docked;
+  }
+
+  void _onSeatTap(BuildContext context, SeatSlot slot) {
+    if (slot.friend == null || slot.status == SeatStatus.me) return;
+    Navigator.push(
+      context,
+      MaterialPageRoute<void>(
+        builder: (_) => FriendDetailScreen(friend: slot.friend!),
+      ),
+    );
+  }
+}
+
+class _Header extends StatelessWidget {
+  const _Header({required this.boardedCount});
+
+  final int boardedCount;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(
+        AppSpacing.s20,
+        AppSpacing.s12,
+        AppSpacing.s20,
+        0,
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '소셜',
+                  style: AppTextStyles.heading_20.copyWith(
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+                SizedBox(height: 1.h),
+                Text(
+                  '우주선 1호 · $boardedCount명 탑승 중',
+                  style: AppTextStyles.tag_10.copyWith(
+                    fontSize: 10.sp,
+                    color: AppColors.textTertiary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Container(
+            width: 30.w,
+            height: 30.w,
+            decoration: BoxDecoration(
+              color: AppColors.spaceSurface,
+              borderRadius: BorderRadius.circular(9.r),
+              border: Border.all(color: AppColors.spaceDivider),
+            ),
+            alignment: Alignment.center,
+            child: Icon(
+              Icons.add,
+              size: 15.sp,
+              color: AppColors.textTertiary,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _FilterTabs extends StatelessWidget {
+  const _FilterTabs({required this.selected, required this.onChanged});
+
+  final SeatFilter selected;
+  final ValueChanged<SeatFilter> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: AppSpacing.s20),
+      child: Row(
+        children: [
+          _Tab(
+            label: '공부 중',
+            active: selected == SeatFilter.studying,
+            onTap: () => onChanged(SeatFilter.studying),
+          ),
+          SizedBox(width: AppSpacing.s8),
+          _Tab(
+            label: '충전 중',
+            active: selected == SeatFilter.docked,
+            onTap: () => onChanged(SeatFilter.docked),
+          ),
+          SizedBox(width: AppSpacing.s8),
+          _Tab(
+            label: '전체',
+            active: selected == SeatFilter.all,
+            onTap: () => onChanged(SeatFilter.all),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _Tab extends StatelessWidget {
+  const _Tab({
+    required this.label,
+    required this.active,
+    required this.onTap,
+  });
+
+  final String label;
+  final bool active;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.symmetric(
+          horizontal: AppSpacing.s12,
+          vertical: AppSpacing.s4,
+        ),
+        decoration: BoxDecoration(
+          color: active ? AppColors.primary : Colors.transparent,
+          borderRadius: AppRadius.chip,
+          border: Border.all(
+            color: active ? AppColors.primary : AppColors.spaceDivider,
+          ),
+        ),
+        child: Text(
+          label,
+          style: AppTextStyles.tag_12.copyWith(
+            fontSize: 11.sp,
+            fontWeight: FontWeight.w700,
+            color: active ? Colors.white : AppColors.textTertiary,
+          ),
+        ),
+      ),
+    );
+  }
+}

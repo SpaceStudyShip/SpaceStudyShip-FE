@@ -7,7 +7,7 @@ part of 'timer_animation_provider.dart';
 // **************************************************************************
 
 String _$timerAnimationNotifierHash() =>
-    r'eb56cd9570ab7ff46937b831d9d9efd9501a8918';
+    r'47136bfebae0d58ff36d903c0116476f85bd4b4b';
 
 /// See also [TimerAnimationNotifier].
 @ProviderFor(TimerAnimationNotifier)

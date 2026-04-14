@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
+import '../../../../routes/route_paths.dart';
 import '../models/seat_slot.dart';
 import '../providers/friends_provider.dart';
 import '../screens/friend_detail_screen.dart';
@@ -33,6 +35,7 @@ class SocialSeatView extends ConsumerWidget {
           _Header(
             boardedCount: boardedCount,
             onAddTap: () => AddFriendSheet.show(context),
+            onRankingTap: () => context.push(RoutePaths.ranking),
           ),
           SizedBox(height: AppSpacing.s8),
           const SeatLegend(),
@@ -94,10 +97,15 @@ class SocialSeatView extends ConsumerWidget {
 }
 
 class _Header extends StatelessWidget {
-  const _Header({required this.boardedCount, required this.onAddTap});
+  const _Header({
+    required this.boardedCount,
+    required this.onAddTap,
+    required this.onRankingTap,
+  });
 
   final int boardedCount;
   final VoidCallback onAddTap;
+  final VoidCallback onRankingTap;
 
   @override
   Widget build(BuildContext context) {
@@ -130,6 +138,25 @@ class _Header extends StatelessWidget {
               ],
             ),
           ),
+          GestureDetector(
+            onTap: onRankingTap,
+            child: Container(
+              width: 36.w,
+              height: 36.w,
+              decoration: BoxDecoration(
+                color: AppColors.spaceSurface,
+                borderRadius: BorderRadius.circular(10.r),
+                border: Border.all(color: AppColors.spaceDivider),
+              ),
+              alignment: Alignment.center,
+              child: Icon(
+                Icons.emoji_events_outlined,
+                size: 18.w,
+                color: AppColors.textSecondary,
+              ),
+            ),
+          ),
+          SizedBox(width: AppSpacing.s8),
           GestureDetector(
             onTap: onAddTap,
             child: Container(

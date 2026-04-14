@@ -23,6 +23,7 @@ import '../features/explore/presentation/screens/explore_screen.dart';
 import '../features/exploration/presentation/screens/exploration_detail_screen.dart';
 import '../features/exploration/presentation/screens/location_detail_screen.dart';
 import '../features/social/presentation/screens/social_screen.dart';
+import '../features/ranking/presentation/screens/ranking_screen.dart';
 import '../features/profile/presentation/screens/profile_screen.dart';
 import '../features/profile/presentation/screens/about_screen.dart';
 import '../features/profile/presentation/screens/spaceship_collection_screen.dart';
@@ -295,8 +296,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                   GoRoute(
                     path: 'ranking',
                     name: 'ranking',
-                    builder: (context, state) =>
-                        const PlaceholderScreen(title: '랭킹'),
+                    builder: (context, state) => const RankingScreen(),
                   ),
                 ],
               ),

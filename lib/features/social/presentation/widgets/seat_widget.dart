@@ -70,10 +70,26 @@ class SeatWidget extends StatelessWidget {
             opacity: muted ? 0.3 : 0.5,
             child: ColorFiltered(
               colorFilter: const ColorFilter.matrix(<double>[
-                0.33, 0.33, 0.33, 0, 0,
-                0.33, 0.33, 0.33, 0, 0,
-                0.33, 0.33, 0.33, 0, 0,
-                0, 0, 0, 1, 0,
+                0.33,
+                0.33,
+                0.33,
+                0,
+                0,
+                0.33,
+                0.33,
+                0.33,
+                0,
+                0,
+                0.33,
+                0.33,
+                0.33,
+                0,
+                0,
+                0,
+                0,
+                0,
+                1,
+                0,
               ]),
               child: body,
             ),
@@ -135,9 +151,7 @@ class SeatWidget extends StatelessWidget {
         friend.name,
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
-        style: AppTextStyles.tag_12.copyWith(
-          color: AppColors.textPrimary,
-        ),
+        style: AppTextStyles.tag_12.copyWith(color: AppColors.textPrimary),
       ),
       Text(
         timeLabel,
@@ -204,13 +218,13 @@ class _SeatFrame extends StatelessWidget {
     final isEmpty = status == SeatStatus.empty;
     final borderColor =
         (status == SeatStatus.me || status == SeatStatus.studying)
-            ? accentColor
-            : AppColors.spaceDivider;
+        ? accentColor
+        : AppColors.spaceDivider;
     final fillColor = (status == SeatStatus.me)
         ? AppColors.primary.withValues(alpha: 0.10)
         : (status == SeatStatus.studying)
-            ? AppColors.success.withValues(alpha: 0.08)
-            : AppColors.spaceSurface;
+        ? AppColors.success.withValues(alpha: 0.08)
+        : AppColors.spaceSurface;
 
     return Stack(
       clipBehavior: Clip.none,

@@ -148,20 +148,14 @@ class _StatusBadge extends StatelessWidget {
           decoration: BoxDecoration(shape: BoxShape.circle, color: color),
         ),
         const SizedBox(width: 6),
-        Text(
-          label,
-          style: AppTextStyles.tag_12.copyWith(color: color),
-        ),
+        Text(label, style: AppTextStyles.tag_12.copyWith(color: color)),
       ],
     );
   }
 }
 
 class _SubjectCard extends StatelessWidget {
-  const _SubjectCard({
-    required this.subject,
-    required this.studyDuration,
-  });
+  const _SubjectCard({required this.subject, required this.studyDuration});
 
   final String subject;
   final Duration studyDuration;
@@ -257,9 +251,7 @@ class _StatCard extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             label,
-            style: AppTextStyles.tag_10.copyWith(
-              color: AppColors.textTertiary,
-            ),
+            style: AppTextStyles.tag_10.copyWith(color: AppColors.textTertiary),
           ),
         ],
       ),

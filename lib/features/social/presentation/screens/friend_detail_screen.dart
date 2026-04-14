@@ -22,6 +22,7 @@ class FriendDetailScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.spaceBackground,
       extendBodyBehindAppBar: true,
+      extendBody: true,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -33,8 +34,9 @@ class FriendDetailScreen extends StatelessWidget {
         ),
       ),
       body: Stack(
+        fit: StackFit.expand,
         children: [
-          const Positioned.fill(child: SpaceBackground()),
+          const SpaceBackground(),
           SafeArea(
             child: SingleChildScrollView(
               padding: AppPadding.screenPadding,

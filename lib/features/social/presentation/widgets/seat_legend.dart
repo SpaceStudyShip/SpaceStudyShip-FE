@@ -40,21 +40,19 @@ class _LegendItem extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Container(
-          width: 8.w,
-          height: 8.w,
+          width: 12.w,
+          height: 12.w,
           decoration: BoxDecoration(
             color: color.withValues(alpha: 0.15),
-            border: Border.all(color: color, width: 1.2),
-            borderRadius: BorderRadius.circular(2.r),
+            border: Border.all(color: color, width: 1.5),
+            borderRadius: BorderRadius.circular(3.r),
           ),
         ),
-        SizedBox(width: AppSpacing.s4),
+        SizedBox(width: AppSpacing.s8),
         Text(
           label,
-          style: AppTextStyles.tag_10.copyWith(
-            fontSize: 9.sp,
-            fontWeight: FontWeight.w600,
-            color: AppColors.textTertiary,
+          style: AppTextStyles.tag_12.copyWith(
+            color: AppColors.textSecondary,
           ),
         ),
       ],

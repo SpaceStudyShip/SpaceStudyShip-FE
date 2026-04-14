@@ -64,9 +64,7 @@ class BoardingPassBar extends StatelessWidget {
                     ),
                     child: Text(
                       '+ 친구',
-                      style: AppTextStyles.tag_12.copyWith(
-                        fontSize: 11.sp,
-                        fontWeight: FontWeight.w800,
+                      style: AppTextStyles.paragraph14Semibold.copyWith(
                         color: Colors.white,
                       ),
                     ),
@@ -112,19 +110,14 @@ class _PassColumn extends StatelessWidget {
       children: [
         Text(
           label,
-          style: AppTextStyles.tag_10.copyWith(
-            fontSize: 8.sp,
-            fontWeight: FontWeight.w800,
-            letterSpacing: 0.7,
+          style: AppTextStyles.tag10Semibold.copyWith(
             color: AppColors.textDisabled,
           ),
         ),
-        SizedBox(height: 1.h),
+        SizedBox(height: AppSpacing.s4),
         Text(
           value,
-          style: AppTextStyles.tag_12.copyWith(
-            fontSize: 12.sp,
-            fontWeight: FontWeight.w800,
+          style: AppTextStyles.label_16.copyWith(
             color: valueColor ?? AppColors.textPrimary,
           ),
         ),

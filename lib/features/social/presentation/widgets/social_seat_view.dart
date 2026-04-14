@@ -107,15 +107,14 @@ class _Header extends StatelessWidget {
               children: [
                 Text(
                   '소셜',
-                  style: AppTextStyles.heading_20.copyWith(
+                  style: AppTextStyles.heading_24.copyWith(
                     color: AppColors.textPrimary,
                   ),
                 ),
-                SizedBox(height: 1.h),
+                SizedBox(height: AppSpacing.s4),
                 Text(
                   '우주선 1호 · $boardedCount명 탑승 중',
-                  style: AppTextStyles.tag_10.copyWith(
-                    fontSize: 10.sp,
+                  style: AppTextStyles.tag_12.copyWith(
                     color: AppColors.textTertiary,
                   ),
                 ),
@@ -123,18 +122,18 @@ class _Header extends StatelessWidget {
             ),
           ),
           Container(
-            width: 30.w,
-            height: 30.w,
+            width: 36.w,
+            height: 36.w,
             decoration: BoxDecoration(
               color: AppColors.spaceSurface,
-              borderRadius: BorderRadius.circular(9.r),
+              borderRadius: BorderRadius.circular(10.r),
               border: Border.all(color: AppColors.spaceDivider),
             ),
             alignment: Alignment.center,
             child: Icon(
               Icons.add,
-              size: 15.sp,
-              color: AppColors.textTertiary,
+              size: 18.w,
+              color: AppColors.textSecondary,
             ),
           ),
         ],
@@ -195,8 +194,8 @@ class _Tab extends StatelessWidget {
       onTap: onTap,
       child: Container(
         padding: EdgeInsets.symmetric(
-          horizontal: AppSpacing.s12,
-          vertical: AppSpacing.s4,
+          horizontal: AppSpacing.s16,
+          vertical: AppSpacing.s8,
         ),
         decoration: BoxDecoration(
           color: active ? AppColors.primary : Colors.transparent,
@@ -207,11 +206,13 @@ class _Tab extends StatelessWidget {
         ),
         child: Text(
           label,
-          style: AppTextStyles.tag_12.copyWith(
-            fontSize: 11.sp,
-            fontWeight: FontWeight.w700,
-            color: active ? Colors.white : AppColors.textTertiary,
-          ),
+          style: active
+              ? AppTextStyles.paragraph14Semibold.copyWith(
+                  color: Colors.white,
+                )
+              : AppTextStyles.paragraph_14_100.copyWith(
+                  color: AppColors.textSecondary,
+                ),
         ),
       ),
     );

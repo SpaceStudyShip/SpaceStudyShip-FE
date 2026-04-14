@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../domain/entities/friend_entity.dart';
 import '../models/seat_slot.dart';
@@ -43,11 +44,8 @@ class SeatWidget extends StatelessWidget {
             left: 5.w,
             child: Text(
               slot.seatNumber,
-              style: AppTextStyles.tag_10.copyWith(
-                fontSize: 9.sp,
-                fontWeight: FontWeight.w800,
+              style: AppTextStyles.tag10Semibold.copyWith(
                 color: _numberColor(slot.status),
-                letterSpacing: 0.3,
               ),
             ),
           ),
@@ -103,7 +101,7 @@ class SeatWidget extends StatelessWidget {
             ),
           ),
           alignment: Alignment.center,
-          child: Icon(Icons.add, size: 14.sp, color: AppColors.textDisabled),
+          child: Icon(Icons.add, size: 16.w, color: AppColors.textDisabled),
         ),
       ];
     }
@@ -114,8 +112,8 @@ class SeatWidget extends StatelessWidget {
 
     return [
       Container(
-        width: 24.w,
-        height: 24.w,
+        width: 32.w,
+        height: 32.w,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           color: slot.status == SeatStatus.docked
@@ -125,31 +123,25 @@ class SeatWidget extends StatelessWidget {
         alignment: Alignment.center,
         child: Text(
           initial,
-          style: AppTextStyles.tag_12.copyWith(
-            fontSize: 11.sp,
-            fontWeight: FontWeight.w800,
+          style: AppTextStyles.paragraph14Semibold.copyWith(
             color: slot.status == SeatStatus.docked
                 ? AppColors.textTertiary
                 : Colors.white,
           ),
         ),
       ),
-      SizedBox(height: 2.h),
+      SizedBox(height: AppSpacing.s4),
       Text(
         friend.name,
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
-        style: AppTextStyles.tag_10.copyWith(
-          fontSize: 9.sp,
-          fontWeight: FontWeight.w800,
+        style: AppTextStyles.tag_12.copyWith(
           color: AppColors.textPrimary,
         ),
       ),
       Text(
         timeLabel,
-        style: AppTextStyles.tag_10.copyWith(
-          fontSize: 8.sp,
-          fontWeight: FontWeight.w800,
+        style: AppTextStyles.tag10Semibold.copyWith(
           color: slot.status == SeatStatus.docked
               ? AppColors.textDisabled
               : accent,

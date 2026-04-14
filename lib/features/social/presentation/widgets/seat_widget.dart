@@ -30,7 +30,6 @@ class SeatWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isEmpty = slot.status == SeatStatus.empty;
     final isDocked = slot.status == SeatStatus.docked;
     final accent = _accentColor(slot.status);
 
@@ -97,7 +96,7 @@ class SeatWidget extends StatelessWidget {
         : body;
 
     return GestureDetector(
-      onTap: isEmpty ? null : onTap,
+      onTap: onTap,
       behavior: HitTestBehavior.opaque,
       child: AspectRatio(aspectRatio: 1, child: rendered),
     );

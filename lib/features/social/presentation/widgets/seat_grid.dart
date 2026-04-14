@@ -64,9 +64,7 @@ class SeatGrid extends StatelessWidget {
     return SeatWidget(
       slot: slot,
       muted: muteOthers(slot),
-      onTap: slot.status == SeatStatus.empty
-          ? null
-          : () => onSeatTap?.call(slot),
+      onTap: () => onSeatTap?.call(slot),
     );
   }
 }

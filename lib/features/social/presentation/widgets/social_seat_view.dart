@@ -8,6 +8,7 @@ import '../../../../core/constants/text_styles.dart';
 import '../models/seat_slot.dart';
 import '../providers/friends_provider.dart';
 import '../screens/friend_detail_screen.dart';
+import 'add_friend_sheet.dart';
 import 'boarding_pass_bar.dart';
 import 'seat_grid.dart';
 import 'seat_legend.dart';
@@ -29,7 +30,10 @@ class SocialSeatView extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          _Header(boardedCount: boardedCount),
+          _Header(
+            boardedCount: boardedCount,
+            onAddTap: () => AddFriendSheet.show(context),
+          ),
           SizedBox(height: AppSpacing.s8),
           const SeatLegend(),
           SizedBox(height: AppSpacing.s12),
@@ -52,7 +56,7 @@ class SocialSeatView extends ConsumerWidget {
             shipName: '우주선 1호',
             boardedCount: boardedCount,
             totalSeats: 12,
-            onAddFriend: () {}, // TODO(#67): 친구 추가 플로우 연결
+            onAddFriend: () => AddFriendSheet.show(context),
           ),
           SizedBox(
             height: MediaQuery.of(context).padding.bottom +
@@ -75,6 +79,10 @@ class SocialSeatView extends ConsumerWidget {
   }
 
   void _onSeatTap(BuildContext context, SeatSlot slot) {
+    if (slot.status == SeatStatus.empty) {
+      AddFriendSheet.show(context);
+      return;
+    }
     if (slot.friend == null || slot.status == SeatStatus.me) return;
     Navigator.push(
       context,
@@ -86,9 +94,10 @@ class SocialSeatView extends ConsumerWidget {
 }
 
 class _Header extends StatelessWidget {
-  const _Header({required this.boardedCount});
+  const _Header({required this.boardedCount, required this.onAddTap});
 
   final int boardedCount;
+  final VoidCallback onAddTap;
 
   @override
   Widget build(BuildContext context) {
@@ -121,19 +130,22 @@ class _Header extends StatelessWidget {
               ],
             ),
           ),
-          Container(
-            width: 36.w,
-            height: 36.w,
-            decoration: BoxDecoration(
-              color: AppColors.spaceSurface,
-              borderRadius: BorderRadius.circular(10.r),
-              border: Border.all(color: AppColors.spaceDivider),
-            ),
-            alignment: Alignment.center,
-            child: Icon(
-              Icons.add,
-              size: 18.w,
-              color: AppColors.textSecondary,
+          GestureDetector(
+            onTap: onAddTap,
+            child: Container(
+              width: 36.w,
+              height: 36.w,
+              decoration: BoxDecoration(
+                color: AppColors.spaceSurface,
+                borderRadius: BorderRadius.circular(10.r),
+                border: Border.all(color: AppColors.spaceDivider),
+              ),
+              alignment: Alignment.center,
+              child: Icon(
+                Icons.add,
+                size: 18.w,
+                color: AppColors.textSecondary,
+              ),
             ),
           ),
         ],

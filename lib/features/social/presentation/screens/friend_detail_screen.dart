@@ -4,6 +4,8 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../../../core/widgets/backgrounds/space_background.dart';
+import '../../../../core/widgets/dialogs/app_dialog.dart';
+import '../../../../core/widgets/feedback/app_snackbar.dart';
 import '../../domain/entities/friend_entity.dart';
 
 /// 친구 상세 화면
@@ -32,6 +34,14 @@ class FriendDetailScreen extends StatelessWidget {
           color: AppColors.textSecondary,
           onPressed: () => Navigator.pop(context),
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.more_horiz),
+            color: AppColors.textSecondary,
+            onPressed: () => _showActionsSheet(context),
+          ),
+          SizedBox(width: AppSpacing.s4),
+        ],
       ),
       body: Stack(
         fit: StackFit.expand,
@@ -125,7 +135,72 @@ class FriendDetailScreen extends StatelessWidget {
     if (h > 0) return '${h}h ${m}m';
     return '${m}m';
   }
+
+  Future<void> _showActionsSheet(BuildContext context) async {
+    final action = await showModalBottomSheet<_FriendAction>(
+      context: context,
+      backgroundColor: AppColors.spaceSurface,
+      shape: RoundedRectangleBorder(borderRadius: AppRadius.modal),
+      builder: (ctx) => SafeArea(
+        top: false,
+        child: Padding(
+          padding: EdgeInsets.symmetric(vertical: AppSpacing.s12),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 36,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: AppColors.spaceDivider,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              SizedBox(height: AppSpacing.s12),
+              ListTile(
+                leading: Icon(
+                  Icons.person_remove_outlined,
+                  color: AppColors.error,
+                ),
+                title: Text(
+                  '친구 삭제',
+                  style: AppTextStyles.label_16.copyWith(
+                    color: AppColors.error,
+                  ),
+                ),
+                onTap: () => Navigator.pop(ctx, _FriendAction.delete),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    if (!context.mounted) return;
+    if (action == _FriendAction.delete) {
+      await _confirmDelete(context);
+    }
+  }
+
+  Future<void> _confirmDelete(BuildContext context) async {
+    final ok = await AppDialog.confirm(
+      context: context,
+      title: '${friend.name}님을 친구에서 삭제할까요?',
+      message: '삭제하면 우주선에서 내려요. 다시 추가하려면 친구 요청을 보내야 해요.',
+      confirmText: '삭제',
+      cancelText: '취소',
+      isDestructive: true,
+    );
+
+    if (!context.mounted) return;
+    if (ok == true) {
+      Navigator.pop(context);
+      AppSnackBar.success(context, '${friend.name}님을 삭제했어요');
+    }
+  }
 }
+
+enum _FriendAction { delete }
 
 class _StatusBadge extends StatelessWidget {
   const _StatusBadge({required this.status});

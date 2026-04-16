@@ -20,6 +20,7 @@ class AddFriendSheet extends StatefulWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: AppColors.spaceSurface,
+      barrierColor: Colors.black.withValues(alpha: 0.72),
       shape: RoundedRectangleBorder(
         borderRadius: AppRadius.modal,
       ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
@@ -35,7 +36,7 @@ class FriendDetailScreen extends StatelessWidget {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new_rounded),
           color: AppColors.textSecondary,
-          onPressed: () => Navigator.pop(context),
+          onPressed: () => context.pop(),
         ),
         actions: [
           IconButton(
@@ -172,7 +173,7 @@ class FriendDetailScreen extends StatelessWidget {
 
     if (!context.mounted) return;
     if (ok == true) {
-      Navigator.pop(context);
+      context.pop();
       AppSnackBar.success(context, '${friend.name}님을 삭제했어요');
     }
   }

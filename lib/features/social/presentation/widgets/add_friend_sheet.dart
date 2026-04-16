@@ -77,7 +77,7 @@ class _AddFriendSheetState extends State<AddFriendSheet> {
           AppSpacing.s20,
           AppSpacing.s12,
           AppSpacing.s20,
-          AppSpacing.s20,
+          AppSpacing.s20 + FloatingNavMetrics.totalHeight,
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,

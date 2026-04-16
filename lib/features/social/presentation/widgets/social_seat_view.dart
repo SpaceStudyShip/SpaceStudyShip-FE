@@ -9,7 +9,6 @@ import '../../../../core/constants/text_styles.dart';
 import '../../../../routes/route_paths.dart';
 import '../models/seat_slot.dart';
 import '../providers/friends_provider.dart';
-import '../screens/friend_detail_screen.dart';
 import 'add_friend_sheet.dart';
 import 'boarding_pass_bar.dart';
 import 'seat_grid.dart';
@@ -87,12 +86,7 @@ class SocialSeatView extends ConsumerWidget {
       return;
     }
     if (slot.friend == null || slot.status == SeatStatus.me) return;
-    Navigator.push(
-      context,
-      MaterialPageRoute<void>(
-        builder: (_) => FriendDetailScreen(friend: slot.friend!),
-      ),
-    );
+    context.push(RoutePaths.friendDetail, extra: slot.friend);
   }
 }
 

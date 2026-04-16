@@ -44,17 +44,10 @@ abstract class RoutePaths {
   static String missionDetailPath(String id) => '/explore/mission/$id';
 
   // ═══════════════════════════════════════════════════
-  // Social 하위 화면
+  // Social 하위 화면 (Shell 밖 top-level, 플로팅 네비 숨김)
   // ═══════════════════════════════════════════════════
-  static const friends = '/social/friends';
-  static const groups = '/social/groups';
-  static const ranking = '/social/ranking';
-
-  static const friendDetail = '/social/friends/:id';
-  static String friendDetailPath(String id) => '/social/friends/$id';
-
-  static const groupDetail = '/social/groups/:id';
-  static String groupDetailPath(String id) => '/social/groups/$id';
+  static const ranking = '/ranking';
+  static const friendDetail = '/friend-detail';
 
   // ═══════════════════════════════════════════════════
   // Profile 하위 화면

@@ -189,8 +189,7 @@ class _HeaderRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isStudying = friend.status == FriendStatus.studying;
-    final borderColor =
-        isStudying ? AppColors.success : AppColors.spaceDivider;
+    final borderColor = isStudying ? AppColors.success : AppColors.spaceDivider;
 
     return Row(
       children: [
@@ -236,9 +235,7 @@ class _FriendAvatar extends StatelessWidget {
       alignment: Alignment.center,
       child: Text(
         initial,
-        style: AppTextStyles.heading_24.copyWith(
-          color: AppColors.textPrimary,
-        ),
+        style: AppTextStyles.heading_24.copyWith(color: AppColors.textPrimary),
       ),
     );
   }
@@ -302,11 +299,7 @@ class _StatBox extends StatelessWidget {
         borderRadius: AppRadius.card,
         border: Border.all(color: AppColors.spaceDivider),
       ),
-      child: SpaceStatItem(
-        value: value,
-        label: label,
-        valueFirst: true,
-      ),
+      child: SpaceStatItem(value: value, label: label, valueFirst: true),
     );
   }
 }

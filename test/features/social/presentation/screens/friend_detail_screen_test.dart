@@ -28,14 +28,14 @@ const _offline = FriendEntity(
 late SettingsLocalDataSource _settingsDataSource;
 
 Widget _wrap(Widget child) => ProviderScope(
-      overrides: [
-        settingsLocalDataSourceProvider.overrideWithValue(_settingsDataSource),
-      ],
-      child: ScreenUtilInit(
-        designSize: const Size(390, 844),
-        child: MaterialApp(home: child),
-      ),
-    );
+  overrides: [
+    settingsLocalDataSourceProvider.overrideWithValue(_settingsDataSource),
+  ],
+  child: ScreenUtilInit(
+    designSize: const Size(390, 844),
+    child: MaterialApp(home: child),
+  ),
+);
 
 void main() {
   setUp(() async {

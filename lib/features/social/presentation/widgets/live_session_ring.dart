@@ -33,8 +33,7 @@ class LiveSessionRing extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final color = active ? AppColors.success : AppColors.spaceDivider;
-    final progress =
-        active ? (duration.inSeconds % 3600) / 3600 : 0.0;
+    final progress = active ? (duration.inSeconds % 3600) / 3600 : 0.0;
     final widgetSize = size.w;
 
     return SizedBox(

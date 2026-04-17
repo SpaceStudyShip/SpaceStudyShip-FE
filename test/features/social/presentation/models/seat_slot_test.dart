@@ -33,10 +33,7 @@ void main() {
     });
 
     test('empty 슬롯은 friend가 null', () {
-      const slot = SeatSlot(
-        seatNumber: '3D',
-        status: SeatStatus.empty,
-      );
+      const slot = SeatSlot(seatNumber: '3D', status: SeatStatus.empty);
       expect(slot.friend, isNull);
     });
 

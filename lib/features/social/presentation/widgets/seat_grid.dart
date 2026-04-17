@@ -32,9 +32,7 @@ class SeatGrid extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: List.generate(3, (rowIndex) {
         return Padding(
-          padding: EdgeInsets.only(
-            bottom: rowIndex < 2 ? AppSpacing.s8 : 0,
-          ),
+          padding: EdgeInsets.only(bottom: rowIndex < 2 ? AppSpacing.s8 : 0),
           child: _buildRow(rowIndex),
         );
       }),

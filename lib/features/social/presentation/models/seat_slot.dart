@@ -12,11 +12,7 @@ enum SeatStatus { me, studying, docked, empty }
 ///
 /// [SeatStatus.empty]인 경우 [friend]는 null이다.
 class SeatSlot {
-  const SeatSlot({
-    required this.seatNumber,
-    required this.status,
-    this.friend,
-  });
+  const SeatSlot({required this.seatNumber, required this.status, this.friend});
 
   final String seatNumber;
   final SeatStatus status;

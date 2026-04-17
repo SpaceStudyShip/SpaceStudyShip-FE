@@ -21,13 +21,9 @@ class AddFriendSheet extends StatefulWidget {
       isScrollControlled: true,
       backgroundColor: AppColors.spaceSurface,
       barrierColor: Colors.black.withValues(alpha: 0.72),
-      shape: RoundedRectangleBorder(
-        borderRadius: AppRadius.modal,
-      ),
+      shape: RoundedRectangleBorder(borderRadius: AppRadius.modal),
       builder: (ctx) => Padding(
-        padding: EdgeInsets.only(
-          bottom: MediaQuery.of(ctx).viewInsets.bottom,
-        ),
+        padding: EdgeInsets.only(bottom: MediaQuery.of(ctx).viewInsets.bottom),
         child: const AddFriendSheet(),
       ),
     );
@@ -160,9 +156,7 @@ class _EmptyResult extends StatelessWidget {
       child: Center(
         child: Text(
           '검색 결과가 없어요',
-          style: AppTextStyles.tag_12.copyWith(
-            color: AppColors.textTertiary,
-          ),
+          style: AppTextStyles.tag_12.copyWith(color: AppColors.textTertiary),
         ),
       ),
     );

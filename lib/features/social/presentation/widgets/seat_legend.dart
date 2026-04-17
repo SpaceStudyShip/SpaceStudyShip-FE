@@ -51,9 +51,7 @@ class _LegendItem extends StatelessWidget {
         SizedBox(width: AppSpacing.s8),
         Text(
           label,
-          style: AppTextStyles.tag_12.copyWith(
-            color: AppColors.textSecondary,
-          ),
+          style: AppTextStyles.tag_12.copyWith(color: AppColors.textSecondary),
         ),
       ],
     );

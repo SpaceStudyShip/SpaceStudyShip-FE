@@ -15,28 +15,35 @@ class SeatAssignment {
   const SeatAssignment._();
 
   static const List<String> seatNumbers = [
-    '1A', '1B', '1C', '1D',
-    '2A', '2B', '2C', '2D',
-    '3A', '3B', '3C', '3D',
+    '1A',
+    '1B',
+    '1C',
+    '1D',
+    '2A',
+    '2B',
+    '2C',
+    '2D',
+    '3A',
+    '3B',
+    '3C',
+    '3D',
   ];
 
   static List<SeatSlot> from({
     required FriendEntity me,
     required List<FriendEntity> friends,
   }) {
-    final studying = friends
-        .where((f) => f.status == FriendStatus.studying)
-        .toList()
-      ..sort((a, b) {
-        final da = a.studyDuration ?? Duration.zero;
-        final db = b.studyDuration ?? Duration.zero;
-        return db.compareTo(da);
-      });
+    final studying =
+        friends.where((f) => f.status == FriendStatus.studying).toList()
+          ..sort((a, b) {
+            final da = a.studyDuration ?? Duration.zero;
+            final db = b.studyDuration ?? Duration.zero;
+            return db.compareTo(da);
+          });
 
-    final docked = friends
-        .where((f) => f.status != FriendStatus.studying)
-        .toList()
-      ..sort((a, b) => a.name.compareTo(b.name));
+    final docked =
+        friends.where((f) => f.status != FriendStatus.studying).toList()
+          ..sort((a, b) => a.name.compareTo(b.name));
 
     // 나 + studying + docked (최대 11명까지)
     final ordered = <_SeatEntry>[

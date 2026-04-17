@@ -41,8 +41,7 @@ class SocialSeatView extends ConsumerWidget {
           SizedBox(height: AppSpacing.s12),
           _FilterTabs(
             selected: filter,
-            onChanged: (f) =>
-                ref.read(seatFilterProvider.notifier).state = f,
+            onChanged: (f) => ref.read(seatFilterProvider.notifier).state = f,
           ),
           SizedBox(height: AppSpacing.s12),
           Padding(
@@ -61,7 +60,8 @@ class SocialSeatView extends ConsumerWidget {
             onAddFriend: () => AddFriendSheet.show(context),
           ),
           SizedBox(
-            height: MediaQuery.of(context).padding.bottom +
+            height:
+                MediaQuery.of(context).padding.bottom +
                 FloatingNavMetrics.totalHeight +
                 AppSpacing.s12,
           ),
@@ -74,8 +74,7 @@ class SocialSeatView extends ConsumerWidget {
     if (filter == SeatFilter.all) return false;
     if (slot.status == SeatStatus.empty) return false;
     if (filter == SeatFilter.studying) {
-      return slot.status != SeatStatus.me &&
-          slot.status != SeatStatus.studying;
+      return slot.status != SeatStatus.me && slot.status != SeatStatus.studying;
     }
     return slot.status != SeatStatus.docked;
   }
@@ -211,11 +210,7 @@ class _FilterTabs extends StatelessWidget {
 }
 
 class _Tab extends StatelessWidget {
-  const _Tab({
-    required this.label,
-    required this.active,
-    required this.onTap,
-  });
+  const _Tab({required this.label, required this.active, required this.onTap});
 
   final String label;
   final bool active;
@@ -240,9 +235,7 @@ class _Tab extends StatelessWidget {
         child: Text(
           label,
           style: active
-              ? AppTextStyles.paragraph14Semibold.copyWith(
-                  color: Colors.white,
-                )
+              ? AppTextStyles.paragraph14Semibold.copyWith(color: Colors.white)
               : AppTextStyles.paragraph_14_100.copyWith(
                   color: AppColors.textSecondary,
                 ),

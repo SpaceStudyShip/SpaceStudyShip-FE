@@ -19,10 +19,20 @@ void main() {
 
     test('좌석 번호는 1A, 1B, 1C, 1D, 2A, ..., 3D 순서', () {
       final slots = SeatAssignment.from(me: me, friends: const []);
-      expect(
-        slots.map((s) => s.seatNumber).toList(),
-        ['1A', '1B', '1C', '1D', '2A', '2B', '2C', '2D', '3A', '3B', '3C', '3D'],
-      );
+      expect(slots.map((s) => s.seatNumber).toList(), [
+        '1A',
+        '1B',
+        '1C',
+        '1D',
+        '2A',
+        '2B',
+        '2C',
+        '2D',
+        '3A',
+        '3B',
+        '3C',
+        '3D',
+      ]);
     });
 
     test('나는 항상 1A 좌석에 배치되고 status는 me', () {
@@ -75,11 +85,7 @@ void main() {
         status: FriendStatus.studying,
         studyDuration: Duration(hours: 1),
       );
-      const idle = FriendEntity(
-        id: 'i1',
-        name: '최',
-        status: FriendStatus.idle,
-      );
+      const idle = FriendEntity(id: 'i1', name: '최', status: FriendStatus.idle);
       const offline = FriendEntity(
         id: 'o1',
         name: '한',
@@ -114,8 +120,7 @@ void main() {
 
       expect(slots.length, 12);
       expect(slots.first.friend?.id, 'me');
-      final assigned =
-          slots.skip(1).where((s) => s.friend != null).length;
+      final assigned = slots.skip(1).where((s) => s.friend != null).length;
       expect(assigned, 11);
     });
 
@@ -126,11 +131,7 @@ void main() {
         status: FriendStatus.studying,
         studyDuration: Duration(hours: 1),
       );
-      const f2 = FriendEntity(
-        id: 'u2',
-        name: '박',
-        status: FriendStatus.idle,
-      );
+      const f2 = FriendEntity(id: 'u2', name: '박', status: FriendStatus.idle);
 
       final slots1 = SeatAssignment.from(me: me, friends: const [f1, f2]);
       final slots2 = SeatAssignment.from(me: me, friends: const [f1, f2]);

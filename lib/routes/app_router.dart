@@ -153,16 +153,17 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             child: FriendDetailScreen(friend: friend),
             transitionDuration: const Duration(milliseconds: 300),
             reverseTransitionDuration: const Duration(milliseconds: 250),
-            transitionsBuilder: (context, animation, secondaryAnimation, child) {
-              final tween = Tween(
-                begin: const Offset(1, 0),
-                end: Offset.zero,
-              ).chain(CurveTween(curve: Curves.easeOutCubic));
-              return SlideTransition(
-                position: animation.drive(tween),
-                child: child,
-              );
-            },
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+                  final tween = Tween(
+                    begin: const Offset(1, 0),
+                    end: Offset.zero,
+                  ).chain(CurveTween(curve: Curves.easeOutCubic));
+                  return SlideTransition(
+                    position: animation.drive(tween),
+                    child: child,
+                  );
+                },
           );
         },
       ),

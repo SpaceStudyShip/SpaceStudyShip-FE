@@ -3,8 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/entities/ranking_entry.dart';
 
 /// 현재 선택된 기간 (기본: 주간)
-final rankingPeriodProvider =
-    StateProvider<RankingPeriod>((ref) => RankingPeriod.weekly);
+final rankingPeriodProvider = StateProvider<RankingPeriod>(
+  (ref) => RankingPeriod.weekly,
+);
 
 /// 더미 랭킹 데이터 — API 연결 시 Repository로 교체
 ///

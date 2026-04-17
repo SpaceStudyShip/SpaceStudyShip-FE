@@ -59,9 +59,7 @@ class MyRankCard extends StatelessWidget {
                 ),
                 SizedBox(height: AppSpacing.s4),
                 Text(
-                  rank == null
-                      ? '랭킹에 들지 못했어요'
-                      : '$totalCount명 중 $rank위',
+                  rank == null ? '랭킹에 들지 못했어요' : '$totalCount명 중 $rank위',
                   style: AppTextStyles.label_16.copyWith(
                     color: AppColors.textPrimary,
                   ),

@@ -79,8 +79,7 @@ class RankingScreen extends ConsumerWidget {
                       AppSpacing.s24,
                     ),
                     itemCount: entries.length,
-                    separatorBuilder: (_, _) =>
-                        SizedBox(height: AppSpacing.s8),
+                    separatorBuilder: (_, _) => SizedBox(height: AppSpacing.s8),
                     itemBuilder: (_, i) {
                       final e = entries[i];
                       return RankingItem(

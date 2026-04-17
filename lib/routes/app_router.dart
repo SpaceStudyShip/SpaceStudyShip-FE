@@ -22,7 +22,10 @@ import '../features/timer/presentation/screens/timer_screen.dart';
 import '../features/explore/presentation/screens/explore_screen.dart';
 import '../features/exploration/presentation/screens/exploration_detail_screen.dart';
 import '../features/exploration/presentation/screens/location_detail_screen.dart';
+import '../features/social/domain/entities/friend_entity.dart';
+import '../features/social/presentation/screens/friend_detail_screen.dart';
 import '../features/social/presentation/screens/social_screen.dart';
+import '../features/ranking/presentation/screens/ranking_screen.dart';
 import '../features/profile/presentation/screens/profile_screen.dart';
 import '../features/profile/presentation/screens/about_screen.dart';
 import '../features/profile/presentation/screens/spaceship_collection_screen.dart';
@@ -133,6 +136,54 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           reverseTransitionDuration: const Duration(milliseconds: 300),
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
             return FadeTransition(opacity: animation, child: child);
+          },
+        ),
+      ),
+
+      // ═══════════════════════════════════════════════════
+      // 소셜 상세 플로우 (Shell 외부 — 플로팅 네비 숨김)
+      // ═══════════════════════════════════════════════════
+      GoRoute(
+        path: RoutePaths.friendDetail,
+        name: 'friendDetail',
+        pageBuilder: (context, state) {
+          final friend = state.extra as FriendEntity;
+          return CustomTransitionPage(
+            key: state.pageKey,
+            child: FriendDetailScreen(friend: friend),
+            transitionDuration: const Duration(milliseconds: 300),
+            reverseTransitionDuration: const Duration(milliseconds: 250),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+                  final tween = Tween(
+                    begin: const Offset(1, 0),
+                    end: Offset.zero,
+                  ).chain(CurveTween(curve: Curves.easeOutCubic));
+                  return SlideTransition(
+                    position: animation.drive(tween),
+                    child: child,
+                  );
+                },
+          );
+        },
+      ),
+      GoRoute(
+        path: RoutePaths.ranking,
+        name: 'ranking',
+        pageBuilder: (context, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const RankingScreen(),
+          transitionDuration: const Duration(milliseconds: 300),
+          reverseTransitionDuration: const Duration(milliseconds: 250),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            final tween = Tween(
+              begin: const Offset(1, 0),
+              end: Offset.zero,
+            ).chain(CurveTween(curve: Curves.easeOutCubic));
+            return SlideTransition(
+              position: animation.drive(tween),
+              child: child,
+            );
           },
         ),
       ),
@@ -259,46 +310,6 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                 path: RoutePaths.social,
                 name: 'social',
                 builder: (context, state) => const SocialScreen(),
-                routes: [
-                  GoRoute(
-                    path: 'friends',
-                    name: 'friends',
-                    builder: (context, state) =>
-                        const PlaceholderScreen(title: '친구 목록'),
-                    routes: [
-                      GoRoute(
-                        path: ':id',
-                        name: 'friendDetail',
-                        builder: (context, state) {
-                          final id = state.pathParameters['id']!;
-                          return PlaceholderScreen(title: '친구: $id');
-                        },
-                      ),
-                    ],
-                  ),
-                  GoRoute(
-                    path: 'groups',
-                    name: 'groups',
-                    builder: (context, state) =>
-                        const PlaceholderScreen(title: '그룹 목록'),
-                    routes: [
-                      GoRoute(
-                        path: ':id',
-                        name: 'groupDetail',
-                        builder: (context, state) {
-                          final id = state.pathParameters['id']!;
-                          return PlaceholderScreen(title: '그룹: $id');
-                        },
-                      ),
-                    ],
-                  ),
-                  GoRoute(
-                    path: 'ranking',
-                    name: 'ranking',
-                    builder: (context, state) =>
-                        const PlaceholderScreen(title: '랭킹'),
-                  ),
-                ],
               ),
             ],
           ),

@@ -6,7 +6,7 @@ part of 'spaceship_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$spaceshipNotifierHash() => r'77455a42796fa2d46761d8687ee993debafff7f7';
+String _$spaceshipNotifierHash() => r'9e87170bad4e31853deffb456de4dee8bc8e7c88';
 
 /// See also [SpaceshipNotifier].
 @ProviderFor(SpaceshipNotifier)

@@ -6,7 +6,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
-import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'firebase_options.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -113,33 +112,8 @@ void main() async {
       debugPrint('❌ [Crashlytics] 초기화 실패: $e');
       debugPrint('Stack trace: $stackTrace');
     }
-
-    // ============================================================
-    // 4-1. Firebase Analytics 초기화
-    // ============================================================
-    try {
-      debugPrint('📊 [Analytics] 초기화 시작...');
-
-      final analytics = FirebaseAnalytics.instance;
-
-      // 개발 모드에서는 Analytics 비활성화
-      if (kDebugMode) {
-        await analytics.setAnalyticsCollectionEnabled(false);
-        debugPrint('📊 [Analytics] Debug 모드에서 비활성화되었습니다.');
-      } else {
-        await analytics.setAnalyticsCollectionEnabled(true);
-        await analytics.logAppOpen();
-        debugPrint('📊 [Analytics] 앱 시작 이벤트가 기록되었습니다.');
-      }
-
-      debugPrint('✅ [Analytics] 초기화 완료!');
-    } catch (e, stackTrace) {
-      debugPrint('❌ [Analytics] 초기화 실패: $e');
-      debugPrint('Stack trace: $stackTrace');
-    }
   } else {
     debugPrint('⚠️ [Crashlytics] Firebase 초기화 실패로 건너뜁니다.');
-    debugPrint('⚠️ [Analytics] Firebase 초기화 실패로 건너뜁니다.');
   }
 
   // ============================================================

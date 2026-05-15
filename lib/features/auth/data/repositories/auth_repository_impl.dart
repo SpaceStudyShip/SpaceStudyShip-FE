@@ -79,13 +79,26 @@ class AuthRepositoryImpl implements AuthRepository {
         LoginRequestModel(socialType: socialType, idToken: idToken),
       );
 
-      // 4. JWT 토큰 + 메타정보 저장
-      await _tokenStorage.saveTokens(
-        accessToken: response.tokens.accessToken,
-        refreshToken: response.tokens.refreshToken,
-      );
-      await _tokenStorage.saveMemberId(response.memberId);
-      await _tokenStorage.saveIsNewMember(response.isNewMember);
+      // 4. JWT 토큰 + 메타정보 저장 (부분 실패 시 전체 롤백)
+      try {
+        await _tokenStorage.saveTokens(
+          accessToken: response.tokens.accessToken,
+          refreshToken: response.tokens.refreshToken,
+        );
+        await _tokenStorage.saveMemberId(response.memberId);
+        await _tokenStorage.saveIsNewMember(response.isNewMember);
+      } catch (e) {
+        // 저장 도중 실패 → 로컬 토큰/Firebase 세션 함께 정리 (반쯤 인증 상태 방지)
+        debugPrint('❌ 토큰 저장 실패 - 롤백 진행: $e');
+        try {
+          await _tokenStorage.clearTokens();
+        } catch (_) {}
+        await _cleanupFirebaseSession(socialType);
+        throw AuthException(
+          message: '로그인 정보 저장에 실패했습니다.',
+          originalException: e,
+        );
+      }
 
       if (kDebugMode) {
         debugPrint('✅ 백엔드 로그인 성공 ($socialType)');

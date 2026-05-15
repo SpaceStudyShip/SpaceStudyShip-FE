@@ -161,7 +161,14 @@ class AuthNotifier extends _$AuthNotifier {
 
     if (currentUser != null) {
       final hasTokens = await tokenStorage.hasTokens();
-      if (!hasTokens) return null;
+      if (!hasTokens) {
+        debugPrint('[AuthNotifier] JWT 없음 → Firebase 세션 초기화');
+        try {
+          await dataSource.signOut();
+        } catch (_) {}
+        await tokenStorage.clearTokens();
+        return null;
+      }
 
       final memberId = await tokenStorage.getMemberId();
       if (memberId == null) {

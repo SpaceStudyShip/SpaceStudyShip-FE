@@ -9,7 +9,7 @@ import '../repositories/auth_repository.dart';
 /// **사용 예시**:
 /// ```dart
 /// final result = await signInWithGoogleUseCase.execute();
-/// if (result.isNewUser) {
+/// if (result.isNewMember) {
 ///   // 닉네임 설정 페이지로 이동
 /// }
 /// ```
@@ -21,7 +21,7 @@ class SignInWithGoogleUseCase {
 
   /// Google 로그인 실행
   ///
-  /// Returns: [AuthResultEntity] (userId, nickname, isNewUser)
+  /// Returns: [AuthResultEntity] (memberId, nickname, isNewMember)
   /// Throws: [AuthException], [NetworkException]
   Future<AuthResultEntity> execute() async {
     return await _repository.signInWithGoogle();

@@ -10,20 +10,20 @@ part 'login_response_model.g.dart';
 /// **응답 예시**:
 /// ```json
 /// {
-///   "userId": 1,
+///   "memberId": 1,
 ///   "nickname": "민첩한괴도5308",
 ///   "tokens": {
 ///     "accessToken": "eyJhbG...",
 ///     "refreshToken": "eyJhbG..."
 ///   },
-///   "isNewUser": false
+///   "isNewMember": false
 /// }
 /// ```
 @freezed
 class LoginResponseModel with _$LoginResponseModel {
   const factory LoginResponseModel({
-    /// 사용자 ID
-    required int userId,
+    /// 회원 ID (백엔드 식별자, int64)
+    required int memberId,
 
     /// 닉네임 (서버에서 자동 생성)
     required String nickname,
@@ -31,8 +31,8 @@ class LoginResponseModel with _$LoginResponseModel {
     /// JWT 토큰 (Access + Refresh)
     required TokensModel tokens,
 
-    /// 신규 회원 여부
-    required bool isNewUser,
+    /// 신규 회원 여부 (true 시 닉네임 설정 화면 이동)
+    required bool isNewMember,
   }) = _LoginResponseModel;
 
   factory LoginResponseModel.fromJson(Map<String, dynamic> json) =>

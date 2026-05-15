@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -11,12 +10,12 @@ import '../../../../core/storage/secure_token_storage.dart';
 import '../../data/datasources/auth_remote_datasource.dart';
 import '../../data/datasources/firebase_auth_datasource.dart';
 import '../../data/repositories/auth_repository_impl.dart';
+import '../../data/utils/firebase_auth_error_handler.dart';
 import '../../domain/entities/auth_result_entity.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../../domain/usecases/sign_in_with_apple_usecase.dart';
 import '../../domain/usecases/sign_in_with_google_usecase.dart';
 import '../../domain/usecases/sign_out_usecase.dart';
-import '../../data/utils/firebase_auth_error_handler.dart';
 import '../../../badge/presentation/providers/badge_provider.dart';
 import '../../../exploration/presentation/providers/exploration_provider.dart';
 import '../../../fuel/presentation/providers/fuel_provider.dart';
@@ -33,17 +32,15 @@ part 'auth_provider.g.dart';
 /// 게스트 모드 여부 키
 const kIsGuestKey = 'is_guest';
 
+/// 게스트 모드 식별 sentinel memberId
+const int kGuestMemberId = -1;
+
 // ============================================================================
 // Core Infrastructure Providers
 // ============================================================================
-
-/// SecureTokenStorage Provider
-///
-/// 앱 생애주기 동안 유지 (keepAlive) — 인터셉터 콜백에서 안전하게 접근 가능
-@Riverpod(keepAlive: true)
-SecureTokenStorage secureTokenStorage(Ref ref) {
-  return SecureTokenStorage();
-}
+//
+// secureTokenStorageProvider 는 lib/core/storage/secure_token_storage.dart 에서 정의.
+// dioProvider / forceLogoutCallbackNotifierProvider 는 lib/core/network/dio_client.dart 에서 정의.
 
 /// FirebaseAuthDataSource Provider
 ///
@@ -51,29 +48,6 @@ SecureTokenStorage secureTokenStorage(Ref ref) {
 @Riverpod(keepAlive: true)
 FirebaseAuthDataSource firebaseAuthDataSource(Ref ref) {
   return FirebaseAuthDataSource();
-}
-
-/// Dio Provider (AuthInterceptor 포함)
-///
-/// 앱 생애주기 동안 유지 (keepAlive) — HTTP 클라이언트는 dispose되면 안 됨
-@Riverpod(keepAlive: true)
-Dio dio(Ref ref) {
-  final tokenStorage = ref.watch(secureTokenStorageProvider);
-
-  return DioClient.create(
-    tokenStorage: tokenStorage,
-    onForceLogout: () async {
-      // 강제 로그아웃: Firebase 로그아웃 + 토큰 삭제 + 상태 초기화
-      final firebaseDataSource = ref.read(firebaseAuthDataSourceProvider);
-      await firebaseDataSource.signOut();
-      await tokenStorage.clearTokens();
-
-      // AuthNotifier 상태를 null로 초기화하여 GoRouter 리다이렉트 트리거
-      ref.read(authNotifierProvider.notifier).forceLogout();
-
-      debugPrint('🚨 강제 로그아웃 완료 (토큰 만료/재발급 실패)');
-    },
-  );
 }
 
 // ============================================================================
@@ -127,10 +101,6 @@ SignOutUseCase signOutUseCase(Ref ref) {
 enum SocialLoginProvider { google, apple }
 
 /// 현재 진행 중인 소셜 로그인 프로바이더를 추적하는 Notifier
-///
-/// Google/Apple 로그인 시작 시 해당 프로바이더로 설정,
-/// 로그인 완료/실패 시 null로 초기화.
-/// LoginScreen에서 버튼별 로딩/비활성화 상태를 결정하는 데 사용.
 @riverpod
 class ActiveLoginNotifier extends _$ActiveLoginNotifier {
   @override
@@ -142,10 +112,7 @@ class ActiveLoginNotifier extends _$ActiveLoginNotifier {
 
 /// Firebase Auth State를 실시간으로 제공하는 StreamProvider
 ///
-/// 현재는 미사용. 소셜 로그인 도입 시 Firebase 외부 로그아웃
-/// (토큰 만료, 계정 삭제 등)을 감지하기 위해 RouterNotifier에
-/// listen 추가 예정. AuthInterceptor의 401 → forceLogout() 경로만으로는
-/// Firebase 레벨 상태 변경을 감지할 수 없으므로 보존.
+/// GoRouter refreshListenable 또는 외부 로그아웃(토큰 만료, 계정 삭제 등) 감지에 사용.
 @riverpod
 Stream<User?> authState(Ref ref) {
   final dataSource = ref.watch(firebaseAuthDataSourceProvider);
@@ -154,24 +121,64 @@ Stream<User?> authState(Ref ref) {
 
 /// 인증 상태를 관리하는 Notifier
 ///
-/// UseCase를 통해 로그인/로그아웃을 수행하며
-/// 로딩/에러 상태를 관리합니다.
-///
 /// **State**: `AsyncValue<AuthResultEntity?>` - 로그인 결과 (null = 미로그인)
 @riverpod
 class AuthNotifier extends _$AuthNotifier {
   @override
   FutureOr<AuthResultEntity?> build() async {
-    // ── Firebase-only 모드 ──
-    // 백엔드 API 연동 전까지 Firebase Auth 상태만으로 인증 판단
+    // ============================================
+    // 강제 로그아웃 콜백 등록 (core → auth 역전 패턴)
+    // ============================================
+    // Future.microtask로 지연: build() 중 다른 provider 수정 금지 (Riverpod 제약)
+    Future.microtask(() {
+      ref.read(forceLogoutCallbackNotifierProvider.notifier).register(({
+        String? message,
+      }) async {
+        await ref.read(firebaseAuthDataSourceProvider).signOut();
+        await ref.read(secureTokenStorageProvider).clearTokens();
+        if (message != null) {
+          ref.read(forceLogoutMessageProvider.notifier).state = message;
+        }
+        forceLogout();
+        debugPrint(
+          '🚨 강제 로그아웃 완료 (토큰 만료/재발급 실패)'
+          '${message != null ? ' 사유: $message' : ''}',
+        );
+      });
+    });
+
+    // auto-dispose 시 콜백 해제 — 죽은 ref 접근 방지
+    ref.onDispose(() {
+      ref.read(forceLogoutCallbackNotifierProvider.notifier).unregister();
+    });
+
+    // ============================================
+    // Cold-start 복원: Firebase + JWT 모두 있어야 인증
+    // ============================================
     final dataSource = ref.watch(firebaseAuthDataSourceProvider);
+    final tokenStorage = ref.watch(secureTokenStorageProvider);
     final currentUser = dataSource.currentUser;
 
     if (currentUser != null) {
+      final hasTokens = await tokenStorage.hasTokens();
+      if (!hasTokens) return null;
+
+      final memberId = await tokenStorage.getMemberId();
+      if (memberId == null) {
+        debugPrint('[AuthNotifier] memberId 없음 → 세션 초기화');
+        try {
+          await dataSource.signOut();
+        } catch (_) {}
+        await tokenStorage.clearTokens();
+        return null;
+      }
+
+      final isNewMember = await tokenStorage.getIsNewMember();
+
       return AuthResultEntity(
-        userId: 0, // 백엔드 연동 전 임시값
+        memberId: memberId,
         nickname: currentUser.displayName ?? '',
-        isNewUser: false,
+        isNewMember: isNewMember,
       );
     }
 
@@ -179,32 +186,14 @@ class AuthNotifier extends _$AuthNotifier {
     final prefs = await SharedPreferences.getInstance();
     if (prefs.getBool(kIsGuestKey) == true) {
       return const AuthResultEntity(
-        userId: -1,
+        memberId: kGuestMemberId,
         nickname: '게스트',
-        isNewUser: false,
+        isNewMember: false,
         isGuest: true,
       );
     }
 
     return null;
-
-    // TODO: 백엔드 API 연동 시 위 블록 삭제 후 아래 주석 해제
-    // ──────────────────────────────────────────────
-    // final tokenStorage = ref.watch(secureTokenStorageProvider);
-    //
-    // if (currentUser != null) {
-    //   final hasTokens = await tokenStorage.hasTokens();
-    //   if (!hasTokens) return null;
-    //
-    //   return AuthResultEntity(
-    //     userId: await tokenStorage.getUserId() ?? 0,
-    //     nickname: currentUser.displayName ?? '',
-    //     isNewUser: false,
-    //   );
-    // }
-    //
-    // return null;
-    // ──────────────────────────────────────────────
   }
 
   /// 소셜 로그인 공통 처리
@@ -241,9 +230,6 @@ class AuthNotifier extends _$AuthNotifier {
   }
 
   /// Google 로그인 수행
-  ///
-  /// UseCase를 통해 Firebase 로그인 → 백엔드 로그인 → 토큰 저장을 수행합니다.
-  /// 성공 시 [AuthResultEntity]를 state에 설정합니다.
   Future<void> signInWithGoogle() async {
     await _signInWithSocial(
       provider: SocialLoginProvider.google,
@@ -253,9 +239,6 @@ class AuthNotifier extends _$AuthNotifier {
   }
 
   /// Apple 로그인 수행
-  ///
-  /// UseCase를 통해 Firebase 로그인 → 백엔드 로그인 → 토큰 저장을 수행합니다.
-  /// 성공 시 [AuthResultEntity]를 state에 설정합니다.
   Future<void> signInWithApple() async {
     await _signInWithSocial(
       provider: SocialLoginProvider.apple,
@@ -265,9 +248,6 @@ class AuthNotifier extends _$AuthNotifier {
   }
 
   /// 게스트로 로그인
-  ///
-  /// SharedPreferences에 게스트 상태를 저장하고
-  /// 게스트 AuthResultEntity를 state에 설정합니다.
   Future<void> signInAsGuest() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(kIsGuestKey, true);
@@ -277,9 +257,9 @@ class AuthNotifier extends _$AuthNotifier {
 
     state = const AsyncValue.data(
       AuthResultEntity(
-        userId: -1,
+        memberId: kGuestMemberId,
         nickname: '게스트',
-        isNewUser: false,
+        isNewMember: false,
         isGuest: true,
       ),
     );
@@ -352,13 +332,13 @@ class AuthNotifier extends _$AuthNotifier {
 
   /// 닉네임 설정 완료 후 상태 갱신
   ///
-  /// isNewUser를 false로 변경하여 GoRouter가 다시
-  /// /nickname-setup으로 리다이렉트하지 않도록 합니다.
+  /// isNewMember를 false로 변경하여 GoRouter가 다시
+  /// 닉네임 설정 화면으로 리다이렉트하지 않도록 합니다.
   void updateNicknameCompleted(String nickname) {
     final current = state.value;
     if (current != null) {
       state = AsyncValue.data(
-        current.copyWith(nickname: nickname, isNewUser: false),
+        current.copyWith(nickname: nickname, isNewMember: false),
       );
     }
   }

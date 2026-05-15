@@ -13,6 +13,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'core/config/env_config.dart';
 import 'core/services/fcm/firebase_messaging_service.dart';
 import 'core/services/fcm/local_notifications_service.dart';
+import 'core/storage/secure_token_storage.dart';
 import 'core/theme/app_theme.dart';
 import 'features/badge/data/datasources/badge_local_datasource.dart';
 import 'features/badge/presentation/providers/badge_provider.dart';
@@ -114,6 +115,15 @@ void main() async {
     }
   } else {
     debugPrint('⚠️ [Crashlytics] Firebase 초기화 실패로 건너뜁니다.');
+  }
+
+  // ============================================================
+  // 4-1. iOS 재설치 시 Keychain 잔존 토큰 정리 (Firebase 초기화 후)
+  // ============================================================
+  try {
+    await SecureTokenStorage().clearTokensIfReinstalled();
+  } catch (e) {
+    debugPrint('❌ [SecureTokenStorage] 재설치 감지 실패: $e');
   }
 
   // ============================================================

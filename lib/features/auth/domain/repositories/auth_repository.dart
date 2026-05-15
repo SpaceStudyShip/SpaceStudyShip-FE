@@ -14,7 +14,7 @@ abstract class AuthRepository {
   /// 3. 백엔드 `/api/auth/login` 호출
   /// 4. JWT 토큰 저장
   ///
-  /// Returns: [AuthResultEntity] (userId, nickname, isNewUser)
+  /// Returns: [AuthResultEntity] (memberId, nickname, isNewMember)
   Future<AuthResultEntity> signInWithGoogle();
 
   /// 소셜 로그인 (Apple)
@@ -24,7 +24,7 @@ abstract class AuthRepository {
   /// 3. 백엔드 `/api/auth/login` 호출
   /// 4. JWT 토큰 저장
   ///
-  /// Returns: [AuthResultEntity] (userId, nickname, isNewUser)
+  /// Returns: [AuthResultEntity] (memberId, nickname, isNewMember)
   Future<AuthResultEntity> signInWithApple();
 
   /// 로그아웃

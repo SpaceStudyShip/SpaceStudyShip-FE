@@ -9,19 +9,19 @@ part of 'login_response_model.dart';
 _$LoginResponseModelImpl _$$LoginResponseModelImplFromJson(
   Map<String, dynamic> json,
 ) => _$LoginResponseModelImpl(
-  userId: (json['userId'] as num).toInt(),
+  memberId: (json['memberId'] as num).toInt(),
   nickname: json['nickname'] as String,
   tokens: TokensModel.fromJson(json['tokens'] as Map<String, dynamic>),
-  isNewUser: json['isNewUser'] as bool,
+  isNewMember: json['isNewMember'] as bool,
 );
 
 Map<String, dynamic> _$$LoginResponseModelImplToJson(
   _$LoginResponseModelImpl instance,
 ) => <String, dynamic>{
-  'userId': instance.userId,
+  'memberId': instance.memberId,
   'nickname': instance.nickname,
   'tokens': instance.tokens,
-  'isNewUser': instance.isNewUser,
+  'isNewMember': instance.isNewMember,
 };
 
 _$TokensModelImpl _$$TokensModelImplFromJson(Map<String, dynamic> json) =>

@@ -6,7 +6,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
-import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'firebase_options.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -14,6 +13,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'core/config/env_config.dart';
 import 'core/services/fcm/firebase_messaging_service.dart';
 import 'core/services/fcm/local_notifications_service.dart';
+import 'core/storage/secure_token_storage.dart';
 import 'core/theme/app_theme.dart';
 import 'features/badge/data/datasources/badge_local_datasource.dart';
 import 'features/badge/presentation/providers/badge_provider.dart';
@@ -113,33 +113,17 @@ void main() async {
       debugPrint('❌ [Crashlytics] 초기화 실패: $e');
       debugPrint('Stack trace: $stackTrace');
     }
-
-    // ============================================================
-    // 4-1. Firebase Analytics 초기화
-    // ============================================================
-    try {
-      debugPrint('📊 [Analytics] 초기화 시작...');
-
-      final analytics = FirebaseAnalytics.instance;
-
-      // 개발 모드에서는 Analytics 비활성화
-      if (kDebugMode) {
-        await analytics.setAnalyticsCollectionEnabled(false);
-        debugPrint('📊 [Analytics] Debug 모드에서 비활성화되었습니다.');
-      } else {
-        await analytics.setAnalyticsCollectionEnabled(true);
-        await analytics.logAppOpen();
-        debugPrint('📊 [Analytics] 앱 시작 이벤트가 기록되었습니다.');
-      }
-
-      debugPrint('✅ [Analytics] 초기화 완료!');
-    } catch (e, stackTrace) {
-      debugPrint('❌ [Analytics] 초기화 실패: $e');
-      debugPrint('Stack trace: $stackTrace');
-    }
   } else {
     debugPrint('⚠️ [Crashlytics] Firebase 초기화 실패로 건너뜁니다.');
-    debugPrint('⚠️ [Analytics] Firebase 초기화 실패로 건너뜁니다.');
+  }
+
+  // ============================================================
+  // 4-1. iOS 재설치 시 Keychain 잔존 토큰 정리 (Firebase 초기화 후)
+  // ============================================================
+  try {
+    await SecureTokenStorage().clearTokensIfReinstalled();
+  } catch (e) {
+    debugPrint('❌ [SecureTokenStorage] 재설치 감지 실패: $e');
   }
 
   // ============================================================

@@ -6,28 +6,6 @@ part of 'auth_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$secureTokenStorageHash() =>
-    r'ec2a6ab4973e2476db2619c692e149e324a2cdab';
-
-/// SecureTokenStorage Provider
-///
-/// 앱 생애주기 동안 유지 (keepAlive) — 인터셉터 콜백에서 안전하게 접근 가능
-///
-/// Copied from [secureTokenStorage].
-@ProviderFor(secureTokenStorage)
-final secureTokenStorageProvider = Provider<SecureTokenStorage>.internal(
-  secureTokenStorage,
-  name: r'secureTokenStorageProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$secureTokenStorageHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef SecureTokenStorageRef = ProviderRef<SecureTokenStorage>;
 String _$firebaseAuthDataSourceHash() =>
     r'95a0b0edd77b64b9889b799f7f261a1e504f76b6';
 
@@ -51,27 +29,6 @@ final firebaseAuthDataSourceProvider =
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef FirebaseAuthDataSourceRef = ProviderRef<FirebaseAuthDataSource>;
-String _$dioHash() => r'39aeecfc1d3bf21de375577db5bac9c73488f171';
-
-/// Dio Provider (AuthInterceptor 포함)
-///
-/// 앱 생애주기 동안 유지 (keepAlive) — HTTP 클라이언트는 dispose되면 안 됨
-///
-/// Copied from [dio].
-@ProviderFor(dio)
-final dioProvider = Provider<Dio>.internal(
-  dio,
-  name: r'dioProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$dioHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef DioRef = ProviderRef<Dio>;
 String _$authRemoteDataSourceHash() =>
     r'08fbc5fbf94c86964791b7f20b39f2504c0e8a74';
 
@@ -179,10 +136,7 @@ String _$authStateHash() => r'facb22ebd952358284758f2de88b4f654584d127';
 
 /// Firebase Auth State를 실시간으로 제공하는 StreamProvider
 ///
-/// 현재는 미사용. 소셜 로그인 도입 시 Firebase 외부 로그아웃
-/// (토큰 만료, 계정 삭제 등)을 감지하기 위해 RouterNotifier에
-/// listen 추가 예정. AuthInterceptor의 401 → forceLogout() 경로만으로는
-/// Firebase 레벨 상태 변경을 감지할 수 없으므로 보존.
+/// GoRouter refreshListenable 또는 외부 로그아웃(토큰 만료, 계정 삭제 등) 감지에 사용.
 ///
 /// Copied from [authState].
 @ProviderFor(authState)
@@ -223,10 +177,6 @@ String _$activeLoginNotifierHash() =>
 
 /// 현재 진행 중인 소셜 로그인 프로바이더를 추적하는 Notifier
 ///
-/// Google/Apple 로그인 시작 시 해당 프로바이더로 설정,
-/// 로그인 완료/실패 시 null로 초기화.
-/// LoginScreen에서 버튼별 로딩/비활성화 상태를 결정하는 데 사용.
-///
 /// Copied from [ActiveLoginNotifier].
 @ProviderFor(ActiveLoginNotifier)
 final activeLoginNotifierProvider =
@@ -244,12 +194,9 @@ final activeLoginNotifierProvider =
     );
 
 typedef _$ActiveLoginNotifier = AutoDisposeNotifier<SocialLoginProvider?>;
-String _$authNotifierHash() => r'bde59bf1d7846aee2380a7c3187822f17c2c8b58';
+String _$authNotifierHash() => r'74b6d7f0f8bd0bd6145eb19d2d55d84ee02ba56d';
 
 /// 인증 상태를 관리하는 Notifier
-///
-/// UseCase를 통해 로그인/로그아웃을 수행하며
-/// 로딩/에러 상태를 관리합니다.
 ///
 /// **State**: `AsyncValue<AuthResultEntity?>` - 로그인 결과 (null = 미로그인)
 ///

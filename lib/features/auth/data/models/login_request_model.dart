@@ -7,29 +7,17 @@ part 'login_request_model.g.dart';
 ///
 /// `POST /api/auth/login` 요청 바디
 ///
-/// **필수 필드**:
-/// - [socialPlatform]: 소셜 플랫폼 (`GOOGLE`, `APPLE`)
+/// **필수 필드** (백엔드 OpenAPI 스펙 기준):
+/// - [socialType]: 소셜 플랫폼 (`KAKAO`, `GOOGLE`, `APPLE`)
 /// - [idToken]: Firebase ID Token
-/// - [fcmToken]: FCM 디바이스 토큰
-/// - [deviceType]: 디바이스 타입 (`IOS`, `ANDROID`)
-/// - [deviceId]: 고유 디바이스 ID
 @freezed
 class LoginRequestModel with _$LoginRequestModel {
   const factory LoginRequestModel({
-    /// 소셜 플랫폼 (`GOOGLE`, `APPLE`)
-    required String socialPlatform,
+    /// 소셜 플랫폼 (`KAKAO`, `GOOGLE`, `APPLE`)
+    required String socialType,
 
     /// Firebase ID Token
     required String idToken,
-
-    /// FCM 디바이스 토큰
-    required String fcmToken,
-
-    /// 디바이스 타입 (`IOS`, `ANDROID`)
-    required String deviceType,
-
-    /// 고유 디바이스 ID
-    required String deviceId,
   }) = _LoginRequestModel;
 
   factory LoginRequestModel.fromJson(Map<String, dynamic> json) =>

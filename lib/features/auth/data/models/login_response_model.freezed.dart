@@ -21,8 +21,8 @@ LoginResponseModel _$LoginResponseModelFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$LoginResponseModel {
-  /// 사용자 ID
-  int get userId => throw _privateConstructorUsedError;
+  /// 회원 ID (백엔드 식별자, int64)
+  int get memberId => throw _privateConstructorUsedError;
 
   /// 닉네임 (서버에서 자동 생성)
   String get nickname => throw _privateConstructorUsedError;
@@ -30,8 +30,8 @@ mixin _$LoginResponseModel {
   /// JWT 토큰 (Access + Refresh)
   TokensModel get tokens => throw _privateConstructorUsedError;
 
-  /// 신규 회원 여부
-  bool get isNewUser => throw _privateConstructorUsedError;
+  /// 신규 회원 여부 (true 시 닉네임 설정 화면 이동)
+  bool get isNewMember => throw _privateConstructorUsedError;
 
   /// Serializes this LoginResponseModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -50,7 +50,12 @@ abstract class $LoginResponseModelCopyWith<$Res> {
     $Res Function(LoginResponseModel) then,
   ) = _$LoginResponseModelCopyWithImpl<$Res, LoginResponseModel>;
   @useResult
-  $Res call({int userId, String nickname, TokensModel tokens, bool isNewUser});
+  $Res call({
+    int memberId,
+    String nickname,
+    TokensModel tokens,
+    bool isNewMember,
+  });
 
   $TokensModelCopyWith<$Res> get tokens;
 }
@@ -70,16 +75,16 @@ class _$LoginResponseModelCopyWithImpl<$Res, $Val extends LoginResponseModel>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? userId = null,
+    Object? memberId = null,
     Object? nickname = null,
     Object? tokens = null,
-    Object? isNewUser = null,
+    Object? isNewMember = null,
   }) {
     return _then(
       _value.copyWith(
-            userId: null == userId
-                ? _value.userId
-                : userId // ignore: cast_nullable_to_non_nullable
+            memberId: null == memberId
+                ? _value.memberId
+                : memberId // ignore: cast_nullable_to_non_nullable
                       as int,
             nickname: null == nickname
                 ? _value.nickname
@@ -89,9 +94,9 @@ class _$LoginResponseModelCopyWithImpl<$Res, $Val extends LoginResponseModel>
                 ? _value.tokens
                 : tokens // ignore: cast_nullable_to_non_nullable
                       as TokensModel,
-            isNewUser: null == isNewUser
-                ? _value.isNewUser
-                : isNewUser // ignore: cast_nullable_to_non_nullable
+            isNewMember: null == isNewMember
+                ? _value.isNewMember
+                : isNewMember // ignore: cast_nullable_to_non_nullable
                       as bool,
           )
           as $Val,
@@ -118,7 +123,12 @@ abstract class _$$LoginResponseModelImplCopyWith<$Res>
   ) = __$$LoginResponseModelImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({int userId, String nickname, TokensModel tokens, bool isNewUser});
+  $Res call({
+    int memberId,
+    String nickname,
+    TokensModel tokens,
+    bool isNewMember,
+  });
 
   @override
   $TokensModelCopyWith<$Res> get tokens;
@@ -138,16 +148,16 @@ class __$$LoginResponseModelImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? userId = null,
+    Object? memberId = null,
     Object? nickname = null,
     Object? tokens = null,
-    Object? isNewUser = null,
+    Object? isNewMember = null,
   }) {
     return _then(
       _$LoginResponseModelImpl(
-        userId: null == userId
-            ? _value.userId
-            : userId // ignore: cast_nullable_to_non_nullable
+        memberId: null == memberId
+            ? _value.memberId
+            : memberId // ignore: cast_nullable_to_non_nullable
                   as int,
         nickname: null == nickname
             ? _value.nickname
@@ -157,9 +167,9 @@ class __$$LoginResponseModelImplCopyWithImpl<$Res>
             ? _value.tokens
             : tokens // ignore: cast_nullable_to_non_nullable
                   as TokensModel,
-        isNewUser: null == isNewUser
-            ? _value.isNewUser
-            : isNewUser // ignore: cast_nullable_to_non_nullable
+        isNewMember: null == isNewMember
+            ? _value.isNewMember
+            : isNewMember // ignore: cast_nullable_to_non_nullable
                   as bool,
       ),
     );
@@ -170,18 +180,18 @@ class __$$LoginResponseModelImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$LoginResponseModelImpl implements _LoginResponseModel {
   const _$LoginResponseModelImpl({
-    required this.userId,
+    required this.memberId,
     required this.nickname,
     required this.tokens,
-    required this.isNewUser,
+    required this.isNewMember,
   });
 
   factory _$LoginResponseModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$LoginResponseModelImplFromJson(json);
 
-  /// 사용자 ID
+  /// 회원 ID (백엔드 식별자, int64)
   @override
-  final int userId;
+  final int memberId;
 
   /// 닉네임 (서버에서 자동 생성)
   @override
@@ -191,13 +201,13 @@ class _$LoginResponseModelImpl implements _LoginResponseModel {
   @override
   final TokensModel tokens;
 
-  /// 신규 회원 여부
+  /// 신규 회원 여부 (true 시 닉네임 설정 화면 이동)
   @override
-  final bool isNewUser;
+  final bool isNewMember;
 
   @override
   String toString() {
-    return 'LoginResponseModel(userId: $userId, nickname: $nickname, tokens: $tokens, isNewUser: $isNewUser)';
+    return 'LoginResponseModel(memberId: $memberId, nickname: $nickname, tokens: $tokens, isNewMember: $isNewMember)';
   }
 
   @override
@@ -205,18 +215,19 @@ class _$LoginResponseModelImpl implements _LoginResponseModel {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$LoginResponseModelImpl &&
-            (identical(other.userId, userId) || other.userId == userId) &&
+            (identical(other.memberId, memberId) ||
+                other.memberId == memberId) &&
             (identical(other.nickname, nickname) ||
                 other.nickname == nickname) &&
             (identical(other.tokens, tokens) || other.tokens == tokens) &&
-            (identical(other.isNewUser, isNewUser) ||
-                other.isNewUser == isNewUser));
+            (identical(other.isNewMember, isNewMember) ||
+                other.isNewMember == isNewMember));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode =>
-      Object.hash(runtimeType, userId, nickname, tokens, isNewUser);
+      Object.hash(runtimeType, memberId, nickname, tokens, isNewMember);
 
   /// Create a copy of LoginResponseModel
   /// with the given fields replaced by the non-null parameter values.
@@ -237,18 +248,18 @@ class _$LoginResponseModelImpl implements _LoginResponseModel {
 
 abstract class _LoginResponseModel implements LoginResponseModel {
   const factory _LoginResponseModel({
-    required final int userId,
+    required final int memberId,
     required final String nickname,
     required final TokensModel tokens,
-    required final bool isNewUser,
+    required final bool isNewMember,
   }) = _$LoginResponseModelImpl;
 
   factory _LoginResponseModel.fromJson(Map<String, dynamic> json) =
       _$LoginResponseModelImpl.fromJson;
 
-  /// 사용자 ID
+  /// 회원 ID (백엔드 식별자, int64)
   @override
-  int get userId;
+  int get memberId;
 
   /// 닉네임 (서버에서 자동 생성)
   @override
@@ -258,9 +269,9 @@ abstract class _LoginResponseModel implements LoginResponseModel {
   @override
   TokensModel get tokens;
 
-  /// 신규 회원 여부
+  /// 신규 회원 여부 (true 시 닉네임 설정 화면 이동)
   @override
-  bool get isNewUser;
+  bool get isNewMember;
 
   /// Create a copy of LoginResponseModel
   /// with the given fields replaced by the non-null parameter values.

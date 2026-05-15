@@ -17,16 +17,19 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$AuthResultEntity {
-  /// 사용자 ID
-  int get userId => throw _privateConstructorUsedError;
+  /// 회원 ID (백엔드 식별자, int64)
+  ///
+  /// 게스트 모드일 경우 `-1`. 실제 회원 식별이 필요한 곳에서는
+  /// [isGuest] 플래그를 먼저 확인해야 합니다.
+  int get memberId => throw _privateConstructorUsedError;
 
-  /// 닉네임 (서버에서 자동 생성)
+  /// 닉네임 (서버에서 자동 생성 또는 사용자 설정)
   String get nickname => throw _privateConstructorUsedError;
 
   /// 신규 회원 여부
   ///
   /// true일 경우 닉네임 설정 페이지로 이동해야 합니다.
-  bool get isNewUser => throw _privateConstructorUsedError;
+  bool get isNewMember => throw _privateConstructorUsedError;
 
   /// 게스트 모드 여부
   ///
@@ -48,7 +51,7 @@ abstract class $AuthResultEntityCopyWith<$Res> {
     $Res Function(AuthResultEntity) then,
   ) = _$AuthResultEntityCopyWithImpl<$Res, AuthResultEntity>;
   @useResult
-  $Res call({int userId, String nickname, bool isNewUser, bool isGuest});
+  $Res call({int memberId, String nickname, bool isNewMember, bool isGuest});
 }
 
 /// @nodoc
@@ -66,24 +69,24 @@ class _$AuthResultEntityCopyWithImpl<$Res, $Val extends AuthResultEntity>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? userId = null,
+    Object? memberId = null,
     Object? nickname = null,
-    Object? isNewUser = null,
+    Object? isNewMember = null,
     Object? isGuest = null,
   }) {
     return _then(
       _value.copyWith(
-            userId: null == userId
-                ? _value.userId
-                : userId // ignore: cast_nullable_to_non_nullable
+            memberId: null == memberId
+                ? _value.memberId
+                : memberId // ignore: cast_nullable_to_non_nullable
                       as int,
             nickname: null == nickname
                 ? _value.nickname
                 : nickname // ignore: cast_nullable_to_non_nullable
                       as String,
-            isNewUser: null == isNewUser
-                ? _value.isNewUser
-                : isNewUser // ignore: cast_nullable_to_non_nullable
+            isNewMember: null == isNewMember
+                ? _value.isNewMember
+                : isNewMember // ignore: cast_nullable_to_non_nullable
                       as bool,
             isGuest: null == isGuest
                 ? _value.isGuest
@@ -104,7 +107,7 @@ abstract class _$$AuthResultEntityImplCopyWith<$Res>
   ) = __$$AuthResultEntityImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({int userId, String nickname, bool isNewUser, bool isGuest});
+  $Res call({int memberId, String nickname, bool isNewMember, bool isGuest});
 }
 
 /// @nodoc
@@ -121,24 +124,24 @@ class __$$AuthResultEntityImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? userId = null,
+    Object? memberId = null,
     Object? nickname = null,
-    Object? isNewUser = null,
+    Object? isNewMember = null,
     Object? isGuest = null,
   }) {
     return _then(
       _$AuthResultEntityImpl(
-        userId: null == userId
-            ? _value.userId
-            : userId // ignore: cast_nullable_to_non_nullable
+        memberId: null == memberId
+            ? _value.memberId
+            : memberId // ignore: cast_nullable_to_non_nullable
                   as int,
         nickname: null == nickname
             ? _value.nickname
             : nickname // ignore: cast_nullable_to_non_nullable
                   as String,
-        isNewUser: null == isNewUser
-            ? _value.isNewUser
-            : isNewUser // ignore: cast_nullable_to_non_nullable
+        isNewMember: null == isNewMember
+            ? _value.isNewMember
+            : isNewMember // ignore: cast_nullable_to_non_nullable
                   as bool,
         isGuest: null == isGuest
             ? _value.isGuest
@@ -153,17 +156,20 @@ class __$$AuthResultEntityImplCopyWithImpl<$Res>
 
 class _$AuthResultEntityImpl implements _AuthResultEntity {
   const _$AuthResultEntityImpl({
-    required this.userId,
+    required this.memberId,
     required this.nickname,
-    required this.isNewUser,
+    required this.isNewMember,
     this.isGuest = false,
   });
 
-  /// 사용자 ID
+  /// 회원 ID (백엔드 식별자, int64)
+  ///
+  /// 게스트 모드일 경우 `-1`. 실제 회원 식별이 필요한 곳에서는
+  /// [isGuest] 플래그를 먼저 확인해야 합니다.
   @override
-  final int userId;
+  final int memberId;
 
-  /// 닉네임 (서버에서 자동 생성)
+  /// 닉네임 (서버에서 자동 생성 또는 사용자 설정)
   @override
   final String nickname;
 
@@ -171,7 +177,7 @@ class _$AuthResultEntityImpl implements _AuthResultEntity {
   ///
   /// true일 경우 닉네임 설정 페이지로 이동해야 합니다.
   @override
-  final bool isNewUser;
+  final bool isNewMember;
 
   /// 게스트 모드 여부
   ///
@@ -183,7 +189,7 @@ class _$AuthResultEntityImpl implements _AuthResultEntity {
 
   @override
   String toString() {
-    return 'AuthResultEntity(userId: $userId, nickname: $nickname, isNewUser: $isNewUser, isGuest: $isGuest)';
+    return 'AuthResultEntity(memberId: $memberId, nickname: $nickname, isNewMember: $isNewMember, isGuest: $isGuest)';
   }
 
   @override
@@ -191,17 +197,18 @@ class _$AuthResultEntityImpl implements _AuthResultEntity {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$AuthResultEntityImpl &&
-            (identical(other.userId, userId) || other.userId == userId) &&
+            (identical(other.memberId, memberId) ||
+                other.memberId == memberId) &&
             (identical(other.nickname, nickname) ||
                 other.nickname == nickname) &&
-            (identical(other.isNewUser, isNewUser) ||
-                other.isNewUser == isNewUser) &&
+            (identical(other.isNewMember, isNewMember) ||
+                other.isNewMember == isNewMember) &&
             (identical(other.isGuest, isGuest) || other.isGuest == isGuest));
   }
 
   @override
   int get hashCode =>
-      Object.hash(runtimeType, userId, nickname, isNewUser, isGuest);
+      Object.hash(runtimeType, memberId, nickname, isNewMember, isGuest);
 
   /// Create a copy of AuthResultEntity
   /// with the given fields replaced by the non-null parameter values.
@@ -217,17 +224,20 @@ class _$AuthResultEntityImpl implements _AuthResultEntity {
 
 abstract class _AuthResultEntity implements AuthResultEntity {
   const factory _AuthResultEntity({
-    required final int userId,
+    required final int memberId,
     required final String nickname,
-    required final bool isNewUser,
+    required final bool isNewMember,
     final bool isGuest,
   }) = _$AuthResultEntityImpl;
 
-  /// 사용자 ID
+  /// 회원 ID (백엔드 식별자, int64)
+  ///
+  /// 게스트 모드일 경우 `-1`. 실제 회원 식별이 필요한 곳에서는
+  /// [isGuest] 플래그를 먼저 확인해야 합니다.
   @override
-  int get userId;
+  int get memberId;
 
-  /// 닉네임 (서버에서 자동 생성)
+  /// 닉네임 (서버에서 자동 생성 또는 사용자 설정)
   @override
   String get nickname;
 
@@ -235,7 +245,7 @@ abstract class _AuthResultEntity implements AuthResultEntity {
   ///
   /// true일 경우 닉네임 설정 페이지로 이동해야 합니다.
   @override
-  bool get isNewUser;
+  bool get isNewMember;
 
   /// 게스트 모드 여부
   ///

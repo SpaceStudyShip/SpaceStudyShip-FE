@@ -32,19 +32,13 @@ Firebase ID Token을 백엔드에 전송하여 JWT를 발급받습니다.
 
 | 필드 | 타입 | 필수 | 설명 | 예시 |
 |------|------|------|------|------|
-| `socialPlatform` | String | O | 소셜 로그인 플랫폼 | `"GOOGLE"`, `"APPLE"` |
+| `socialType` | String | O | 소셜 로그인 플랫폼 | `"KAKAO"`, `"GOOGLE"`, `"APPLE"` |
 | `idToken` | String | O | Firebase에서 발급받은 ID Token | `"eyJhbG..."` |
-| `fcmToken` | String | O | Firebase Cloud Messaging 디바이스 토큰 | `"dK3mL..."` |
-| `deviceType` | String | O | 디바이스 OS 타입 | `"IOS"`, `"ANDROID"` |
-| `deviceId` | String | O | 디바이스 고유 식별자 (UUID) | `"550e8400-e29b..."` |
 
 ```json
 {
-  "socialPlatform": "GOOGLE",
-  "idToken": "eyJhbGciOiJSUzI1NiIs...",
-  "fcmToken": "dK3mL9xRTp2...",
-  "deviceType": "IOS",
-  "deviceId": "550e8400-e29b-41d4-a716-446655440000"
+  "socialType": "GOOGLE",
+  "idToken": "eyJhbGciOiJSUzI1NiIs..."
 }
 ```
 
@@ -55,41 +49,40 @@ Firebase ID Token을 백엔드에 전송하여 JWT를 발급받습니다.
 
 ```json
 {
-  "userId": 1,
+  "memberId": 1,
   "nickname": "민첩한괴도5308",
   "tokens": {
     "accessToken": "eyJhbGciOiJIUzI1NiIs...",
     "refreshToken": "eyJhbGciOiJIUzI1NiIs..."
   },
-  "isNewUser": false
+  "isNewMember": false
 }
 ```
 
 | 필드 | 타입 | 설명 |
 |------|------|------|
-| `userId` | Long | 서버에서 부여한 유저 ID |
+| `memberId` | Long | 서버에서 부여한 회원 ID (int64) |
 | `nickname` | String | 닉네임 (신규 가입 시 서버에서 랜덤 생성: "형용사+명사+숫자4자리") |
 | `tokens.accessToken` | String | JWT Access Token |
 | `tokens.refreshToken` | String | JWT Refresh Token |
-| `isNewUser` | Boolean | `true`: 신규 가입 (닉네임 설정 화면으로 이동), `false`: 기존 회원 |
+| `isNewMember` | Boolean | `true`: 신규 가입 (닉네임 설정 화면으로 이동), `false`: 기존 회원 |
 
-### Error
+### Error (RFC 7807)
 
-| Status | code | 상황 |
-|--------|------|------|
-| 400 | `INVALID_ID_TOKEN` | Firebase ID Token 검증 실패 |
-| 400 | `UNSUPPORTED_PLATFORM` | socialPlatform이 GOOGLE/APPLE이 아닌 경우 |
+| Status | title | 상황 |
+|--------|-------|------|
+| 400 | `유효하지 않은 입력값` | Firebase ID Token 검증 실패 또는 필드 누락 |
+| 400 | `지원하지 않는 소셜 플랫폼` | socialType이 KAKAO/GOOGLE/APPLE이 아닌 경우 |
 
 ### 서버 처리 로직
 
-```
+```text
 1. Firebase ID Token 검증 (Firebase Admin SDK)
 2. Token에서 이메일, 이름 추출
-3. DB에서 해당 소셜 계정으로 유저 조회
-   3-a. 기존 유저: JWT 발급, 디바이스 정보 업데이트, 200 응답
-   3-b. 신규 유저: 유저 생성 (랜덤 닉네임), JWT 발급, 201 응답
-4. FCM 토큰 + 디바이스 정보 저장/업데이트
-5. Refresh Token을 DB에 저장 (디바이스별)
+3. DB에서 해당 소셜 계정으로 회원 조회
+   3-a. 기존 회원: JWT 발급, 200 응답
+   3-b. 신규 회원: 회원 생성 (랜덤 닉네임), JWT 발급, 201 응답
+4. Refresh Token을 DB에 저장
 ```
 
 ---
@@ -121,10 +114,9 @@ Firebase ID Token을 백엔드에 전송하여 JWT를 발급받습니다.
 
 ### 서버 처리 로직
 
-```
-1. Access Token에서 userId 추출
-2. 해당 userId + refreshToken 조합으로 DB에서 세션 삭제
-3. 해당 디바이스의 FCM 토큰 삭제
+```text
+1. Access Token에서 memberId 추출
+2. 해당 memberId + refreshToken 조합으로 DB에서 세션 삭제
 ```
 
 ---
@@ -197,17 +189,17 @@ Refresh Token도 함께 갱신됩니다 (Refresh Token Rotation).
 
 ### 서버 처리 로직
 
-```
-1. Access Token에서 userId 추출
-2. 해당 유저의 모든 데이터 삭제:
-   - 유저 정보
+```text
+1. Access Token에서 memberId 추출
+2. 해당 회원의 모든 데이터 삭제:
+   - 회원 정보
    - Todo + 카테고리
    - 타이머 세션
    - 연료 + 거래 내역
    - 탐험 진행 상태
    - 배지 해금 상태
    - 친구 관계 + 친구 요청
-   - Refresh Token + 디바이스 정보
+   - Refresh Token
 3. Firebase 연동 해제 (선택적)
 ```
 

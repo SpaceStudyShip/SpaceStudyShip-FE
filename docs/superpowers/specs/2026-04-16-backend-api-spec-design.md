@@ -59,23 +59,20 @@
 
 | 필드 | 타입 | 필수 | 설명 |
 |------|------|------|------|
-| `socialPlatform` | String | O | `GOOGLE` 또는 `APPLE` |
+| `socialType` | String | O | `KAKAO`, `GOOGLE` 또는 `APPLE` |
 | `idToken` | String | O | Firebase ID Token |
-| `fcmToken` | String | O | FCM 디바이스 토큰 |
-| `deviceType` | String | O | `IOS` 또는 `ANDROID` |
-| `deviceId` | String | O | 고유 디바이스 ID |
 
 **Response (200 - 기존 회원 / 201 - 신규 가입):**
 
 ```json
 {
-  "userId": 1,
+  "memberId": 1,
   "nickname": "민첩한괴도5308",
   "tokens": {
     "accessToken": "eyJhbG...",
     "refreshToken": "eyJhbG..."
   },
-  "isNewUser": false
+  "isNewMember": false
 }
 ```
 
@@ -723,7 +720,7 @@
 ```json
 [
   {
-    "userId": 10,
+    "memberId": 10,
     "nickname": "김우주",
     "status": "STUDYING",
     "studyDurationMinutes": 155,
@@ -731,7 +728,7 @@
     "weeklyStudyDurationMinutes": 980
   },
   {
-    "userId": 11,
+    "memberId": 11,
     "nickname": "최성운",
     "status": "IDLE",
     "studyDurationMinutes": null,
@@ -867,14 +864,14 @@
   "rankings": [
     {
       "rank": 1,
-      "userId": 10,
+      "memberId": 10,
       "nickname": "김우주",
       "studyDurationMinutes": 5670,
       "isCurrentUser": false
     },
     {
       "rank": 4,
-      "userId": 1,
+      "memberId": 1,
       "nickname": "나",
       "studyDurationMinutes": 3300,
       "isCurrentUser": true

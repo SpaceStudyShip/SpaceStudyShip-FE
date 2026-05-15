@@ -56,7 +56,7 @@ FirebaseAuthDataSource.signInWithGoogle() → ID Token
    ↓
 AuthRemoteDataSource.login(idToken, ...) → JWT (access + refresh)
    ↓
-SecureTokenStorage.saveTokens() / saveUserId() / saveIsNewUser()
+SecureTokenStorage.saveTokens() / saveMemberId() / saveIsNewMember()
    ↓
 [이후 API 호출]
    ↓
@@ -462,8 +462,8 @@ class SecureTokenStorage {
 
   static const String _accessTokenKey = 'access_token';
   static const String _refreshTokenKey = 'refresh_token';
-  static const String _userIdKey = 'user_id';
-  static const String _isNewUserKey = 'is_new_user';
+  static const String _memberIdKey = 'member_id';
+  static const String _isNewMemberKey = 'is_new_member';
 
   // ============================================
   // Token 저장
@@ -484,13 +484,13 @@ class SecureTokenStorage {
   }
 
   /// 사용자 ID 저장
-  Future<void> saveUserId(int userId) async {
-    await _storage.write(key: _userIdKey, value: userId.toString());
+  Future<void> saveMemberId(int memberId) async {
+    await _storage.write(key: _memberIdKey, value: memberId.toString());
   }
 
   /// 신규 회원 여부 저장
-  Future<void> saveIsNewUser(bool value) async {
-    await _storage.write(key: _isNewUserKey, value: value ? 'true' : 'false');
+  Future<void> saveIsNewMember(bool value) async {
+    await _storage.write(key: _isNewMemberKey, value: value ? 'true' : 'false');
   }
 
   // ============================================
@@ -505,14 +505,14 @@ class SecureTokenStorage {
     return await _storage.read(key: _refreshTokenKey);
   }
 
-  Future<int?> getUserId() async {
-    final value = await _storage.read(key: _userIdKey);
+  Future<int?> getMemberId() async {
+    final value = await _storage.read(key: _memberIdKey);
     return value != null ? int.tryParse(value) : null;
   }
 
   /// 신규 회원 여부 조회 (fail-safe: 값 없거나 'true' 아니면 false)
-  Future<bool> getIsNewUser() async {
-    final value = await _storage.read(key: _isNewUserKey);
+  Future<bool> getIsNewMember() async {
+    final value = await _storage.read(key: _isNewMemberKey);
     return value == 'true';
   }
 
@@ -525,8 +525,8 @@ class SecureTokenStorage {
     await Future.wait([
       _storage.delete(key: _accessTokenKey),
       _storage.delete(key: _refreshTokenKey),
-      _storage.delete(key: _userIdKey),
-      _storage.delete(key: _isNewUserKey),
+      _storage.delete(key: _memberIdKey),
+      _storage.delete(key: _isNewMemberKey),
     ]);
     if (kDebugMode) {
       debugPrint('✅ 토큰 삭제 완료');
@@ -959,9 +959,9 @@ part 'auth_result_entity.freezed.dart';
 @freezed
 class AuthResultEntity with _$AuthResultEntity {
   const factory AuthResultEntity({
-    required int userId,
+    required int memberId,
     required String nickname,
-    required bool isNewUser,
+    required bool isNewMember,
   }) = _AuthResultEntity;
 }
 ```
@@ -1226,7 +1226,7 @@ part 'login_request_model.g.dart';
 class LoginRequestModel with _$LoginRequestModel {
   const factory LoginRequestModel({
     /// 소셜 플랫폼 (`GOOGLE`, `APPLE`)
-    required String socialPlatform,
+    required String socialType,
 
     /// Firebase ID Token
     required String idToken,
@@ -1257,22 +1257,22 @@ part 'login_response_model.g.dart';
 /// 응답 예시:
 /// ```json
 /// {
-///   "userId": 1,
+///   "memberId": 1,
 ///   "nickname": "홍길동",
 ///   "tokens": {
 ///     "accessToken": "eyJhbG...",
 ///     "refreshToken": "eyJhbG..."
 ///   },
-///   "isNewUser": false
+///   "isNewMember": false
 /// }
 /// ```
 @freezed
 class LoginResponseModel with _$LoginResponseModel {
   const factory LoginResponseModel({
-    required int userId,
+    required int memberId,
     required String nickname,
     required TokensModel tokens,
-    required bool isNewUser,
+    required bool isNewMember,
   }) = _LoginResponseModel;
 
   factory LoginResponseModel.fromJson(Map<String, dynamic> json) =>
@@ -1431,7 +1431,7 @@ class AuthRepositoryImpl implements AuthRepository {
       // ⚠️ 프로젝트별: LoginRequestModel에 fcmToken/deviceId 등 추가 필드 주입
       final response = await _authRemoteDataSource.login(
         LoginRequestModel(
-          socialPlatform: provider,
+          socialType: provider,
           idToken: idToken,
         ),
       );
@@ -1441,17 +1441,17 @@ class AuthRepositoryImpl implements AuthRepository {
         accessToken: response.tokens.accessToken,
         refreshToken: response.tokens.refreshToken,
       );
-      await _tokenStorage.saveUserId(response.userId);
-      await _tokenStorage.saveIsNewUser(response.isNewUser);
+      await _tokenStorage.saveMemberId(response.memberId);
+      await _tokenStorage.saveIsNewMember(response.isNewMember);
 
       if (kDebugMode) {
-        debugPrint('✅ 백엔드 로그인 성공 ($provider) — userId=${response.userId}');
+        debugPrint('✅ 백엔드 로그인 성공 ($provider) — memberId=${response.memberId}');
       }
 
       return AuthResultEntity(
-        userId: response.userId,
+        memberId: response.memberId,
         nickname: response.nickname,
-        isNewUser: response.isNewUser,
+        isNewMember: response.isNewMember,
       );
     } on DioException catch (e) {
       // 백엔드 호출 실패 → Firebase 세션 정리 (재로그인 가능 상태로)
@@ -1611,9 +1611,9 @@ class AuthNotifier extends _$AuthNotifier {
       final hasTokens = await tokenStorage.hasTokens();
       if (!hasTokens) return null;
 
-      final userId = await tokenStorage.getUserId();
-      if (userId == null) {
-        debugPrint('[AuthNotifier] userId 없음 → 세션 초기화');
+      final memberId = await tokenStorage.getMemberId();
+      if (memberId == null) {
+        debugPrint('[AuthNotifier] memberId 없음 → 세션 초기화');
         try {
           await dataSource.signOut();
         } catch (_) {}
@@ -1625,12 +1625,12 @@ class AuthNotifier extends _$AuthNotifier {
       // 약관 동의 상태, 백엔드 프로필 조회 등 여기서 처리.
       // 각 조회는 독립적으로 실패를 허용하여 한쪽이 실패해도 다른 값은 반영.
 
-      final isNewUser = await tokenStorage.getIsNewUser();
+      final isNewMember = await tokenStorage.getIsNewMember();
 
       return AuthResultEntity(
-        userId: userId,
+        memberId: memberId,
         nickname: currentUser.displayName ?? '',
-        isNewUser: isNewUser,
+        isNewMember: isNewMember,
       );
     }
 

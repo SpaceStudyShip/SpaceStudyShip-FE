@@ -7,7 +7,7 @@
   },
   "servers": [
     {
-      "url": "백엔드주소",
+      "url": "http://suh-project.synology.me:8099",
       "description": "Production"
     },
     {
@@ -31,6 +31,7 @@
       "post": {
         "tags": ["Auth"],
         "summary": "토큰 재발급",
+        "description": "만료된 Access Token 을 Refresh Token 으로 재발급합니다.\nRefresh Token 도 함께 갱신됩니다 (**Refresh Token Rotation**).\n\n### 인증 불필요\n이 엔드포인트는 공개 API입니다. `Authorization` 헤더 대신 요청 본문의 `refreshToken` 으로 인증합니다.\n\n### 클라이언트 처리 흐름\n1. 보호된 API 호출 → `401 UNAUTHORIZED` 수신\n2. 본 엔드포인트 호출 (`refreshToken` 본문 전송)\n3-a. 성공 (200): 새 Access/Refresh Token 저장 후 원래 API 재시도\n3-b. 실패 (401 `INVALID_TOKEN`): 로그아웃 처리 + 로그인 화면 이동\n\n### 보안 정책\n- Refresh Token 해시가 DB의 저장 해시와 불일치하면 **탈취 의심**으로 간주, 해당 디바이스 세션을 즉시 무효화한 뒤 401 응답.\n",
         "operationId": "reissue",
         "requestBody": {
           "content": {
@@ -43,12 +44,80 @@
           "required": true
         },
         "responses": {
-          "200": {
-            "description": "OK",
+          "401": {
+            "description": "Refresh Token 이 만료되었거나, DB의 저장 해시와 불일치(탈취 의심)이거나, 변조된 경우. 클라이언트는 로그아웃 처리 후 로그인 화면으로 이동해야 합니다.",
             "content": {
-              "*/*": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "InvalidToken": {
+                    "description": "InvalidToken",
+                    "value": {
+                      "code": "INVALID_TOKEN",
+                      "message": "인증 정보가 올바르지 않습니다."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "서버 내부 오류.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "InternalServerError": {
+                    "description": "InternalServerError",
+                    "value": {
+                      "code": "INTERNAL_SERVER_ERROR",
+                      "message": "서버 내부 오류가 발생했습니다."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "토큰 재발급 성공. 클라이언트는 두 토큰 모두 교체 저장해야 합니다.",
+            "content": {
+              "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ReissueResponse"
+                },
+                "examples": {
+                  "ReissueSuccess": {
+                    "description": "ReissueSuccess",
+                    "value": {
+                      "tokens": {
+                        "accessToken": "eyJhbGciOiJIUzI1NiIs...(new)",
+                        "refreshToken": "eyJhbGciOiJIUzI1NiIs...(new)"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "요청 본문 형식 오류 (refreshToken 누락 등).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "InvalidInputValue": {
+                    "description": "InvalidInputValue",
+                    "value": {
+                      "code": "INVALID_INPUT_VALUE",
+                      "message": "refreshToken: Refresh Token은 필수입니다."
+                    }
+                  }
                 }
               }
             }
@@ -60,6 +129,7 @@
       "post": {
         "tags": ["Auth"],
         "summary": "로그아웃",
+        "description": "서버에서 해당 디바이스의 Refresh Token 을 삭제(무효화)합니다.\n클라이언트는 응답 수신 후 로컬에 저장된 Access/Refresh Token 도 함께 삭제해야 합니다.\n\n### 인증 불필요 (실제 동작상)\n서버는 요청 본문의 `refreshToken` 에서 memberId 를 추출해 user_devices 테이블의 (member_id, device_id) row를 삭제합니다.\nRefresh Token 이 유효하지 않거나 이미 삭제된 경우에도 멱등하게 **204** 를 응답합니다.\n\n### 단일 디바이스 로그아웃\nRefresh Token 은 디바이스별로 발급되므로, 본 호출은 **현재 디바이스의 세션만** 종료합니다.\n",
         "operationId": "logout",
         "requestBody": {
           "content": {
@@ -72,8 +142,46 @@
           "required": true
         },
         "responses": {
-          "200": {
-            "description": "OK"
+          "204": {
+            "description": "로그아웃 처리 완료. 응답 본문 없음."
+          },
+          "500": {
+            "description": "서버 내부 오류.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "InternalServerError": {
+                    "description": "InternalServerError",
+                    "value": {
+                      "code": "INTERNAL_SERVER_ERROR",
+                      "message": "서버 내부 오류가 발생했습니다."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "요청 본문 형식 오류 (refreshToken 누락 등).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "InvalidInputValue": {
+                    "description": "InvalidInputValue",
+                    "value": {
+                      "code": "INVALID_INPUT_VALUE",
+                      "message": "refreshToken: Refresh Token은 필수입니다."
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -82,6 +190,7 @@
       "post": {
         "tags": ["Auth"],
         "summary": "소셜 로그인",
+        "description": "소셜 플랫폼(Firebase 등)에서 발급받은 ID Token을 백엔드에 전송하여 JWT를 발급받습니다.\n해당 유저가 DB에 없으면 **자동으로 회원가입** 처리됩니다 (랜덤 닉네임 부여).\n\n### 응답 코드\n- `200 OK` — 기존 회원 로그인 성공\n- `201 Created` — 신규 회원 가입 + 로그인 성공 (클라이언트는 닉네임 설정 화면으로 이동 권장)\n\n### 인증 불필요\n이 엔드포인트는 공개 API입니다. `Authorization` 헤더 없이 호출하세요.\n\n### 서버 처리 흐름\n1. 소셜 ID Token 검증 (현재는 stub — 추후 Firebase Admin SDK 연동 예정)\n2. socialType + socialId 로 DB 조회\n   - 존재: 기존 회원 정보로 JWT 발급\n   - 없음: 신규 회원 생성 (랜덤 닉네임), JWT 발급\n3. Refresh Token 해시를 user_devices 테이블에 저장 (디바이스별)\n",
         "operationId": "login",
         "requestBody": {
           "content": {
@@ -94,12 +203,393 @@
           "required": true
         },
         "responses": {
-          "200": {
-            "description": "OK",
+          "201": {
+            "description": "신규 회원 가입 + 로그인 성공. 응답 본문은 200과 동일 구조이며 `isNewMember: true`.",
             "content": {
-              "*/*": {
+              "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/LoginResponse"
+                },
+                "examples": {
+                  "NewMember": {
+                    "summary": "신규 회원 가입",
+                    "description": "NewMember",
+                    "value": {
+                      "memberId": 42,
+                      "nickname": "용감한고양이7321",
+                      "tokens": {
+                        "accessToken": "eyJhbGciOiJIUzI1NiIs...",
+                        "refreshToken": "eyJhbGciOiJIUzI1NiIs..."
+                      },
+                      "isNewMember": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "서버 내부 오류. 닉네임 생성 재시도 초과 등.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "InternalServerError": {
+                    "description": "InternalServerError",
+                    "value": {
+                      "code": "INTERNAL_SERVER_ERROR",
+                      "message": "서버 내부 오류가 발생했습니다."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "요청 본문 형식 오류 (필수 필드 누락, socialType 이 유효하지 않은 값 등).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "InvalidInputValue": {
+                    "summary": "필수 필드 누락",
+                    "description": "InvalidInputValue",
+                    "value": {
+                      "code": "INVALID_INPUT_VALUE",
+                      "message": "idToken: 소셜 인증 토큰(ID Token)은 필수입니다."
+                    }
+                  },
+                  "UnsupportedSocialType": {
+                    "summary": "지원하지 않는 소셜 타입",
+                    "description": "UnsupportedSocialType",
+                    "value": {
+                      "code": "UNSUPPORTED_SOCIAL_TYPE",
+                      "message": "지원하지 않는 소셜 로그인 방식입니다."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "소셜 ID Token 검증 실패 (토큰 만료, 변조, 발급자 불일치 등).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "SocialLoginFailed": {
+                    "description": "SocialLoginFailed",
+                    "value": {
+                      "code": "SOCIAL_LOGIN_FAILED",
+                      "message": "소셜 로그인에 실패하였습니다."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "기존 회원 로그인 성공.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponse"
+                },
+                "examples": {
+                  "ExistingMember": {
+                    "summary": "기존 회원 로그인",
+                    "description": "ExistingMember",
+                    "value": {
+                      "memberId": 1,
+                      "nickname": "민첩한괴도5308",
+                      "tokens": {
+                        "accessToken": "eyJhbGciOiJIUzI1NiIs...",
+                        "refreshToken": "eyJhbGciOiJIUzI1NiIs..."
+                      },
+                      "isNewMember": false
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/nickname": {
+      "patch": {
+        "tags": ["Auth"],
+        "summary": "닉네임 변경",
+        "description": "사용자의 닉네임을 변경합니다.\n\n### 동작\n1. 닉네임 형식 검증 (길이, 허용 문자)\n2. 본인 현재 닉네임과 동일하면 NO-OP — 중복 검사 없이 그대로 통과 (200)\n3. 다른 회원이 사용 중이면 `409 DUPLICATED_NICKNAME`\n4. 통과 시 DB 갱신 + JPA flush 로 unique 제약 위반을 동기적으로 감지 (race condition 처리)\n\n### 닉네임 규칙\n- 길이: 2 ~ 10 자\n- 허용 문자: 한글, 영문 대소문자, 숫자\n- 금지: 공백, 특수문자, 이모지\n\n### 사전 검증\n클라이언트는 입력 직후 `GET /api/auth/check-nickname` 로 사용 가능 여부를 먼저 확인하는 것을 권장합니다.\n다만 이 호출 후 다른 사용자가 같은 닉네임을 차지하는 race 는 본 엔드포인트가 안전하게 처리합니다.\n",
+        "operationId": "updateNickname",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateNicknameRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "401": {
+            "description": "인증 실패 — Access Token 이 헤더에 없거나, 만료되었거나, 유효하지 않은 경우.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "UnauthenticatedRequest": {
+                    "description": "UnauthenticatedRequest",
+                    "value": {
+                      "code": "UNAUTHENTICATED_REQUEST",
+                      "message": "로그인이 필요합니다."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "이미 다른 사용자가 사용 중인 닉네임.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "DuplicatedNickname": {
+                    "description": "DuplicatedNickname",
+                    "value": {
+                      "code": "DUPLICATED_NICKNAME",
+                      "message": "이미 사용 중인 닉네임입니다."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "서버 내부 오류.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "InternalServerError": {
+                    "description": "InternalServerError",
+                    "value": {
+                      "code": "INTERNAL_SERVER_ERROR",
+                      "message": "서버 내부 오류가 발생했습니다."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "닉네임 형식 오류 (길이 미달/초과, 허용되지 않은 문자).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "InvalidInputValue": {
+                    "description": "InvalidInputValue",
+                    "value": {
+                      "code": "INVALID_INPUT_VALUE",
+                      "message": "nickname: 닉네임은 2자 이상 10자 이하여야 합니다."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "닉네임 변경 성공. 응답 본문에 변경된 닉네임 포함.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateNicknameResponse"
+                },
+                "examples": {
+                  "UpdateSuccess": {
+                    "description": "UpdateSuccess",
+                    "value": {
+                      "nickname": "우주탐험가"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/check-nickname": {
+      "get": {
+        "tags": ["Auth"],
+        "summary": "닉네임 중복 확인",
+        "description": "입력한 닉네임이 다른 사용자가 이미 사용 중인지 확인합니다.\n\n### 동작\n- DB에 동일한 닉네임이 존재하지 않으면 `available: true`\n- 이미 존재하면 `available: false`\n\n### 닉네임 규칙\n- 길이: 2 ~ 10 자\n- 허용 문자: 한글, 영문 대소문자, 숫자\n- 금지: 공백, 특수문자, 이모지\n\n### 주의\n- 본인이 현재 사용 중인 닉네임으로 조회해도 `available: false`로 응답됩니다. (프론트에서 본인 닉네임 입력 시 중복확인 버튼을 비활성화하는 것을 권장)\n- 닉네임 변경 직전 마지막 검증으로 사용하되, 동시에 다른 사용자가 같은 닉네임을 등록하는 race condition 은 `PATCH /api/auth/nickname` 단계에서 별도로 처리됩니다.\n",
+        "operationId": "checkNickname",
+        "parameters": [
+          {
+            "name": "nickname",
+            "in": "query",
+            "description": "확인할 닉네임. 2~10자, 한글/영문 대소문자/숫자만 허용. 공백·특수문자·이모지 불가.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "확인할 닉네임. 2~10자, 한글/영문 대소문자/숫자만 허용. 공백·특수문자·이모지 불가.",
+              "example": "우주탐험가",
+              "maxLength": 10,
+              "minLength": 2,
+              "pattern": "^[가-힣a-zA-Z0-9]+$"
+            },
+            "example": "우주탐험가"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "정상 조회. 본문의 `available` 필드로 사용 가능 여부 판단.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CheckNicknameResponse"
+                },
+                "examples": {
+                  "Available": {
+                    "summary": "사용 가능한 닉네임",
+                    "description": "Available",
+                    "value": {
+                      "available": true
+                    }
+                  },
+                  "NotAvailable": {
+                    "summary": "이미 사용 중인 닉네임",
+                    "description": "NotAvailable",
+                    "value": {
+                      "available": false
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "인증 실패 — Access Token 이 헤더에 없거나, 만료되었거나, 유효하지 않은 경우. 클라이언트는 `/api/auth/reissue` 로 재발급을 시도해야 합니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "UnauthenticatedRequest": {
+                    "description": "UnauthenticatedRequest",
+                    "value": {
+                      "code": "UNAUTHENTICATED_REQUEST",
+                      "message": "로그인이 필요합니다."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "닉네임 형식 오류 (길이 미달/초과, 허용되지 않은 문자 포함 등). `message` 필드에 어떤 필드의 어떤 제약을 어겼는지 상세 표기됩니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "InvalidInputValue": {
+                    "description": "InvalidInputValue",
+                    "value": {
+                      "code": "INVALID_INPUT_VALUE",
+                      "message": "nickname: 닉네임은 한글, 영문, 숫자만 사용할 수 있습니다."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "서버 내부 오류. 사용자에게는 \"잠시 후 다시 시도해주세요\" 안내가 적절합니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "InternalServerError": {
+                    "description": "InternalServerError",
+                    "value": {
+                      "code": "INTERNAL_SERVER_ERROR",
+                      "message": "서버 내부 오류가 발생했습니다."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/withdraw": {
+      "delete": {
+        "tags": ["Auth"],
+        "summary": "회원 탈퇴",
+        "description": "인증된 사용자의 계정과 관련 데이터를 영구 삭제합니다. **이 작업은 되돌릴 수 없습니다.**\n\n### 삭제 대상\n- `members` 테이블의 해당 회원 row\n- `user_devices` 테이블의 해당 회원 row 전체 (FK CASCADE로 자동 삭제, 모든 디바이스 세션 무효화)\n- Firebase Authentication 의 해당 사용자 (uid = 회원의 socialId)\n\n### 처리 순서\n1. 회원 row 삭제 (`@Transactional`) → FK CASCADE로 user_devices 자동 삭제\n2. Firebase Authentication 사용자 삭제\n\n### 멱등성\n- 동일한 토큰으로 두 번 호출되거나, 다른 디바이스에서 먼저 탈퇴되어 회원이 이미 없는 상태에서 호출되어도 동일하게 **204**를 응답합니다.\n- Firebase 측에서 사용자가 이미 없는 경우(`USER_NOT_FOUND`)도 무시하고 정상 완료 처리합니다.\n- Firebase 일시 장애 등 외부 시스템 오류도 서버에서 로그만 남기고 클라이언트에는 **204**를 응답합니다 (우리 측 데이터 정리는 이미 완료).\n\n### 클라이언트 처리 가이드\n- 응답 받은 후 로컬에 저장된 Access Token / Refresh Token / 회원 정보를 모두 삭제하고 로그인 화면으로 이동하세요.\n- 네트워크 오류로 응답을 못 받은 경우 재시도 가능합니다 (멱등 보장).\n",
+        "operationId": "withdraw",
+        "responses": {
+          "204": {
+            "description": "탈퇴 성공. 응답 본문 없음. (이미 탈퇴된 상태 / Firebase 측 사용자 부재 / 외부 시스템 일시 오류 등 모두 포함)"
+          },
+          "401": {
+            "description": "인증 실패 — Access Token 이 헤더에 없거나, 만료되었거나, 유효하지 않은 경우. 클라이언트는 `/api/auth/reissue` 로 재발급을 시도해야 합니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "UnauthenticatedRequest": {
+                    "description": "UnauthenticatedRequest",
+                    "value": {
+                      "code": "UNAUTHENTICATED_REQUEST",
+                      "message": "로그인이 필요합니다."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "서버 내부 오류. 주로 DB 통신 실패 시. 사용자에게는 \"잠시 후 다시 시도해주세요\" 안내가 적절합니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "InternalServerError": {
+                    "description": "InternalServerError",
+                    "value": {
+                      "code": "INTERNAL_SERVER_ERROR",
+                      "message": "서버 내부 오류가 발생했습니다."
+                    }
+                  }
                 }
               }
             }
@@ -112,68 +602,166 @@
     "schemas": {
       "ReissueRequest": {
         "type": "object",
+        "description": "토큰 재발급 요청 본문",
         "properties": {
           "refreshToken": {
-            "type": "string"
+            "type": "string",
+            "description": "현재 보유한 Refresh Token. 서버에서 검증 후 새 Access/Refresh Token을 발급합니다 (Refresh Token Rotation).",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzE..."
           }
         },
         "required": ["refreshToken"]
       },
-      "ReissueResponse": {
+      "ErrorResponse": {
         "type": "object",
         "properties": {
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "ReissueResponse": {
+        "type": "object",
+        "description": "토큰 재발급 응답. 새 Access/Refresh Token이 함께 발급되며, 클라이언트는 두 토큰 모두 교체 저장해야 합니다.",
+        "properties": {
           "tokens": {
-            "$ref": "#/components/schemas/Tokens"
+            "$ref": "#/components/schemas/Tokens",
+            "description": "새로 발급된 JWT 토큰 쌍."
           }
         }
       },
       "Tokens": {
         "type": "object",
+        "description": "JWT 토큰 쌍. accessToken은 `Authorization: Bearer \u003Ctoken\u003E` 헤더에 실어 보내고, refreshToken은 만료 시 재발급에 사용합니다.",
         "properties": {
           "accessToken": {
-            "type": "string"
+            "type": "string",
+            "description": "JWT Access Token. 보호된 API 호출 시 Authorization 헤더에 사용.",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzE..."
           },
           "refreshToken": {
-            "type": "string"
+            "type": "string",
+            "description": "JWT Refresh Token. Access Token 만료 시 `POST /api/auth/reissue`로 재발급 받는 데 사용.",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzE..."
           }
         }
       },
       "LogoutRequest": {
         "type": "object",
+        "description": "로그아웃 요청 본문. 서버에 저장된 Refresh Token을 무효화하기 위해 전달합니다.",
         "properties": {
           "refreshToken": {
-            "type": "string"
+            "type": "string",
+            "description": "현재 디바이스의 Refresh Token. 서버는 이 토큰에서 memberId를 추출해 해당 세션을 삭제합니다.",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzE..."
           }
         },
         "required": ["refreshToken"]
       },
       "LoginRequest": {
         "type": "object",
+        "description": "소셜 로그인 요청 본문",
         "properties": {
           "socialType": {
             "type": "string",
-            "enum": ["KAKAO", "GOOGLE", "APPLE"]
+            "description": "소셜 로그인 플랫폼. 지원: GOOGLE, APPLE, KAKAO.",
+            "enum": ["KAKAO", "GOOGLE", "APPLE"],
+            "example": "GOOGLE"
           },
           "idToken": {
-            "type": "string"
+            "type": "string",
+            "description": "Firebase에서 발급받은 ID Token.",
+            "example": "eyJhbGciOiJSUzI1NiIs..."
+          },
+          "fcmToken": {
+            "type": "string",
+            "description": "Firebase Cloud Messaging 디바이스 토큰.",
+            "example": "dK3mL9xRTp2...",
+            "maxLength": 255,
+            "minLength": 0
+          },
+          "deviceType": {
+            "type": "string",
+            "description": "디바이스 OS 타입.",
+            "enum": ["IOS", "ANDROID"],
+            "example": "IOS"
+          },
+          "deviceId": {
+            "type": "string",
+            "description": "디바이스 고유 식별자(UUID).",
+            "example": "550e8400-e29b-41d4-a716-446655440000",
+            "maxLength": 255,
+            "minLength": 0,
+            "pattern": "^[0-9a-fA-F-]{36}$"
           }
         },
-        "required": ["idToken", "socialType"]
+        "required": [
+          "deviceId",
+          "deviceType",
+          "fcmToken",
+          "idToken",
+          "socialType"
+        ]
       },
       "LoginResponse": {
         "type": "object",
+        "description": "소셜 로그인 응답. 기존 회원이면 200, 신규 회원이면 201로 응답됩니다.",
         "properties": {
           "memberId": {
             "type": "integer",
-            "format": "int64"
+            "format": "int64",
+            "description": "서버에서 부여한 회원 ID.",
+            "example": 1
           },
           "nickname": {
-            "type": "string"
+            "type": "string",
+            "description": "회원 닉네임. 신규 가입 시 서버가 랜덤 생성(형용사+명사+숫자 4자리 패턴).",
+            "example": "민첩한괴도5308"
           },
           "tokens": {
-            "$ref": "#/components/schemas/Tokens"
+            "$ref": "#/components/schemas/Tokens",
+            "description": "JWT Access/Refresh Token 쌍."
           },
           "isNewMember": {
+            "type": "boolean",
+            "description": "신규 가입 여부. true → 닉네임 설정 화면으로 이동 권장. false → 기존 회원, 홈 화면으로 이동.",
+            "example": false
+          }
+        }
+      },
+      "UpdateNicknameRequest": {
+        "type": "object",
+        "description": "닉네임 변경 요청 본문",
+        "properties": {
+          "nickname": {
+            "type": "string",
+            "description": "변경할 닉네임. 2~10자, 한글/영문 대소문자/숫자만 허용. 공백·특수문자·이모지 불가.",
+            "example": "우주탐험가",
+            "maxLength": 10,
+            "minLength": 2,
+            "pattern": "^[가-힣a-zA-Z0-9]+$"
+          }
+        },
+        "required": ["nickname"]
+      },
+      "UpdateNicknameResponse": {
+        "type": "object",
+        "description": "닉네임 변경 응답. 변경된 닉네임을 반환합니다.",
+        "properties": {
+          "nickname": {
+            "type": "string",
+            "description": "변경된 회원 닉네임.",
+            "example": "우주탐험가"
+          }
+        }
+      },
+      "CheckNicknameResponse": {
+        "type": "object",
+        "properties": {
+          "available": {
             "type": "boolean"
           }
         }

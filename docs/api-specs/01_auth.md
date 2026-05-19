@@ -11,7 +11,7 @@
 | # | Method | Path | 설명 | 인증 |
 |---|--------|------|------|------|
 | 1 | POST | `/api/auth/login` | 소셜 로그인 | X |
-| 2 | POST | `/api/auth/logout` | 로그아웃 | O |
+| 2 | POST | `/api/auth/logout` | 로그아웃 | X (refreshToken 본문) |
 | 3 | POST | `/api/auth/reissue` | 토큰 재발급 | X |
 | 4 | DELETE | `/api/auth/withdraw` | 회원 탈퇴 | O |
 | 5 | GET | `/api/auth/check-nickname` | 닉네임 중복 확인 | O |
@@ -32,13 +32,19 @@ Firebase ID Token을 백엔드에 전송하여 JWT를 발급받습니다.
 
 | 필드 | 타입 | 필수 | 설명 | 예시 |
 |------|------|------|------|------|
-| `socialType` | String | O | 소셜 로그인 플랫폼 | `"KAKAO"`, `"GOOGLE"`, `"APPLE"` |
-| `idToken` | String | O | Firebase에서 발급받은 ID Token | `"eyJhbG..."` |
+| `socialType` | String | O | 소셜 로그인 플랫폼 (`KAKAO` / `GOOGLE` / `APPLE`) | `"GOOGLE"` |
+| `idToken` | String | O | Firebase 발급 ID Token | `"eyJhbG..."` |
+| `fcmToken` | String | O | FCM 디바이스 토큰 (minLength: 0 — 발급 실패 시 빈 문자열 허용) | `"dK3mL9xRTp2..."` |
+| `deviceType` | String | O | 디바이스 OS (`IOS` / `ANDROID`) | `"IOS"` |
+| `deviceId` | String | O | 디바이스 UUID v4 (`^[0-9a-fA-F-]{36}$`) | `"550e8400-e29b-41d4-a716-446655440000"` |
 
 ```json
 {
   "socialType": "GOOGLE",
-  "idToken": "eyJhbGciOiJSUzI1NiIs..."
+  "idToken": "eyJhbGciOiJSUzI1NiIs...",
+  "fcmToken": "dK3mL9xRTp2...",
+  "deviceType": "IOS",
+  "deviceId": "550e8400-e29b-41d4-a716-446655440000"
 }
 ```
 
@@ -67,12 +73,14 @@ Firebase ID Token을 백엔드에 전송하여 JWT를 발급받습니다.
 | `tokens.refreshToken` | String | JWT Refresh Token |
 | `isNewMember` | Boolean | `true`: 신규 가입 (닉네임 설정 화면으로 이동), `false`: 기존 회원 |
 
-### Error (RFC 7807)
+### Error
 
-| Status | title | 상황 |
-|--------|-------|------|
-| 400 | `유효하지 않은 입력값` | Firebase ID Token 검증 실패 또는 필드 누락 |
-| 400 | `지원하지 않는 소셜 플랫폼` | socialType이 KAKAO/GOOGLE/APPLE이 아닌 경우 |
+| Status | code | 상황 |
+|--------|------|------|
+| 400 | `INVALID_INPUT_VALUE` | 필수 필드 누락 또는 형식 오류 |
+| 400 | `UNSUPPORTED_SOCIAL_TYPE` | socialType 이 KAKAO/GOOGLE/APPLE 외 값 |
+| 401 | `SOCIAL_LOGIN_FAILED` | Firebase ID Token 검증 실패 |
+| 500 | `INTERNAL_SERVER_ERROR` | 서버 내부 오류 |
 
 ### 서버 처리 로직
 
@@ -111,6 +119,13 @@ Firebase ID Token을 백엔드에 전송하여 JWT를 발급받습니다.
 ### Response
 
 **204 No Content** (응답 본문 없음)
+
+### Error
+
+| Status | code | 상황 |
+|--------|------|------|
+| 400 | `INVALID_INPUT_VALUE` | 요청 본문 형식 오류 (refreshToken 누락 등) |
+| 500 | `INTERNAL_SERVER_ERROR` | 서버 내부 오류 |
 
 ### 서버 처리 로직
 
@@ -159,7 +174,9 @@ Refresh Token도 함께 갱신됩니다 (Refresh Token Rotation).
 
 | Status | code | 상황 | 클라이언트 처리 |
 |--------|------|------|--------------|
-| 401 | `INVALID_REFRESH_TOKEN` | Refresh Token이 만료되었거나 DB에 존재하지 않음 | 로그아웃 처리 → 로그인 화면 이동 |
+| 400 | `INVALID_INPUT_VALUE` | refreshToken 누락 | 입력값 확인 |
+| 401 | `INVALID_TOKEN` | Refresh Token 만료/DB 불일치/변조 | 로그아웃 + 로그인 화면 이동 |
+| 500 | `INTERNAL_SERVER_ERROR` | 서버 내부 오류 | 재시도 안내 |
 
 ### 서버 처리 로직
 
@@ -186,6 +203,13 @@ Refresh Token도 함께 갱신됩니다 (Refresh Token Rotation).
 ### Response
 
 **204 No Content** (응답 본문 없음)
+
+### Error
+
+| Status | code | 상황 |
+|--------|------|------|
+| 401 | `UNAUTHENTICATED_REQUEST` | 인증 실패 |
+| 500 | `INTERNAL_SERVER_ERROR` | 서버 내부 오류 (멱등성으로 보통은 204) |
 
 ### 서버 처리 로직
 
@@ -246,7 +270,9 @@ GET /api/auth/check-nickname?nickname=우주탐험가
 
 | Status | code | 상황 |
 |--------|------|------|
-| 400 | `INVALID_NICKNAME_FORMAT` | 길이 미달/초과, 허용되지 않은 문자 포함 |
+| 400 | `INVALID_INPUT_VALUE` | 닉네임 형식 오류 |
+| 401 | `UNAUTHENTICATED_REQUEST` | 인증 실패 |
+| 500 | `INTERNAL_SERVER_ERROR` | 서버 내부 오류 |
 
 ### 닉네임 규칙
 
@@ -291,8 +317,10 @@ GET /api/auth/check-nickname?nickname=우주탐험가
 
 | Status | code | 상황 |
 |--------|------|------|
-| 400 | `INVALID_NICKNAME_FORMAT` | 닉네임 형식 오류 |
-| 409 | `NICKNAME_DUPLICATED` | 이미 사용 중인 닉네임 |
+| 400 | `INVALID_INPUT_VALUE` | 닉네임 형식 오류 |
+| 401 | `UNAUTHENTICATED_REQUEST` | 인증 실패 |
+| 409 | `DUPLICATED_NICKNAME` | 이미 사용 중인 닉네임 |
+| 500 | `INTERNAL_SERVER_ERROR` | 서버 내부 오류 |
 
 ### 서버 처리 로직
 

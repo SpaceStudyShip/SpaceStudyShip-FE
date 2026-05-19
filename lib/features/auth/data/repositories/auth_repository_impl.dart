@@ -228,26 +228,31 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<void> withdraw() async {
     try {
       await _authRemoteDataSource.withdraw();
-
-      // 204 성공 시에만 도달.
-      // 멱등 보장: Firebase signOut 실패도 무시하고 토큰 삭제는 진행.
-      try {
-        await _firebaseAuthDataSource.signOut();
-      } catch (e) {
-        if (kDebugMode) {
-          debugPrint('withdraw 후 Firebase signOut 실패 (무시): $e');
-        }
-      }
-      await _tokenStorage.clearTokens();
-
-      if (kDebugMode) {
-        debugPrint('회원 탈퇴 완료 (백엔드 + Firebase + 토큰 삭제)');
-      }
     } on DioException catch (e) {
       throw DioExceptionHandler.handle(e);
     } catch (e) {
       if (e is AppException) rethrow;
       throw AuthException(message: '회원 탈퇴 중 오류가 발생했습니다.', originalException: e);
+    }
+
+    // 서버 탈퇴는 비가역. 이후 로컬 정리 실패는 로그만 남기고 로그아웃 상태 유지.
+    try {
+      await _firebaseAuthDataSource.signOut();
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('withdraw 후 Firebase signOut 실패 (무시): $e');
+      }
+    }
+    try {
+      await _tokenStorage.clearTokens();
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('withdraw 후 토큰 삭제 실패 (무시): $e');
+      }
+    }
+
+    if (kDebugMode) {
+      debugPrint('회원 탈퇴 완료 (백엔드 + Firebase + 토큰 삭제)');
     }
   }
 
@@ -261,8 +266,15 @@ class AuthRepositoryImpl implements AuthRepository {
   /// FCM 토큰 발급 실패 시 빈 문자열로 fallback (백엔드가 `minLength: 0` 허용).
   Future<({String fcmToken, String deviceType, String deviceId})>
   _collectDeviceInfo() async {
-    final fcmToken =
-        (await FirebaseMessagingService.instance().getFcmToken()) ?? '';
+    String fcmToken = '';
+    try {
+      fcmToken =
+          (await FirebaseMessagingService.instance().getFcmToken()) ?? '';
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('FCM 토큰 발급 실패 - 빈 문자열 fallback: $e');
+      }
+    }
     final deviceType = DeviceInfoService.getDeviceType();
     final deviceId = await DeviceIdManager.getOrCreateDeviceId();
 

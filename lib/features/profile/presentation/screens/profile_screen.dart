@@ -289,7 +289,8 @@ class ProfileScreen extends ConsumerWidget {
     await AppDialog.show<void>(
       context: context,
       title: '정말 탈퇴하시겠어요?',
-      message: '계정과 모든 학습 기록이 영구 삭제돼요. 되돌릴 수 없어요.\n\n'
+      message:
+          '계정과 모든 학습 기록이 영구 삭제돼요. 되돌릴 수 없어요.\n\n'
           '확인을 위해 "탈퇴하기" 또는 "delete" 를 입력해 주세요.',
       confirmationPhrases: const ['탈퇴하기', 'delete'],
       confirmationHint: '탈퇴하기 또는 delete 입력',
@@ -303,10 +304,7 @@ class ProfileScreen extends ConsumerWidget {
         } catch (e) {
           debugPrint('[ProfileScreen._onWithdrawTap] withdraw error: $e');
           if (context.mounted) {
-            AppSnackBar.error(
-              context,
-              '탈퇴에 실패했어요. 잠시 후 다시 시도해 주세요.',
-            );
+            AppSnackBar.error(context, '탈퇴에 실패했어요. 잠시 후 다시 시도해 주세요.');
           }
         }
       },

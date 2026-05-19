@@ -42,7 +42,8 @@ void main() {
   group('updateNickname', () {
     test('성공 시 응답 닉네임 반환', () async {
       when(() => remote.updateNickname(any())).thenAnswer(
-          (_) async => const UpdateNicknameResponseModel(nickname: '우주탐험가'));
+        (_) async => const UpdateNicknameResponseModel(nickname: '우주탐험가'),
+      );
 
       final result = await repo.updateNickname('우주탐험가');
 
@@ -55,35 +56,41 @@ void main() {
 
     test('409 응답 → DuplicatedNicknameException', () async {
       final req = RequestOptions(path: '/api/auth/nickname');
-      when(() => remote.updateNickname(any())).thenThrow(DioException(
-        requestOptions: req,
-        response: Response(
+      when(() => remote.updateNickname(any())).thenThrow(
+        DioException(
           requestOptions: req,
-          statusCode: 409,
-          data: {
-            'code': 'DUPLICATED_NICKNAME',
-            'message': '이미 사용 중인 닉네임입니다.',
-          },
+          response: Response(
+            requestOptions: req,
+            statusCode: 409,
+            data: {
+              'code': 'DUPLICATED_NICKNAME',
+              'message': '이미 사용 중인 닉네임입니다.',
+            },
+          ),
+          type: DioExceptionType.badResponse,
         ),
-        type: DioExceptionType.badResponse,
-      ));
+      );
 
-      expect(() => repo.updateNickname('우주탐험가'),
-          throwsA(isA<DuplicatedNicknameException>()));
+      expect(
+        () => repo.updateNickname('우주탐험가'),
+        throwsA(isA<DuplicatedNicknameException>()),
+      );
     });
   });
 
   group('checkNickname', () {
     test('available: true 응답 → true 반환', () async {
       when(() => remote.checkNickname('우주탐험가')).thenAnswer(
-          (_) async => const CheckNicknameResponseModel(available: true));
+        (_) async => const CheckNicknameResponseModel(available: true),
+      );
 
       expect(await repo.checkNickname('우주탐험가'), isTrue);
     });
 
     test('available: false 응답 → false 반환', () async {
       when(() => remote.checkNickname('user')).thenAnswer(
-          (_) async => const CheckNicknameResponseModel(available: false));
+        (_) async => const CheckNicknameResponseModel(available: false),
+      );
 
       expect(await repo.checkNickname('user'), isFalse);
     });
@@ -106,18 +113,17 @@ void main() {
 
     test('500 응답 시 토큰 유지 (clearTokens 미호출) 후 ServerException 전파', () async {
       final req = RequestOptions(path: '/api/auth/withdraw');
-      when(() => remote.withdraw()).thenThrow(DioException(
-        requestOptions: req,
-        response: Response(
+      when(() => remote.withdraw()).thenThrow(
+        DioException(
           requestOptions: req,
-          statusCode: 500,
-          data: {
-            'code': 'INTERNAL_SERVER_ERROR',
-            'message': '서버 내부 오류',
-          },
+          response: Response(
+            requestOptions: req,
+            statusCode: 500,
+            data: {'code': 'INTERNAL_SERVER_ERROR', 'message': '서버 내부 오류'},
+          ),
+          type: DioExceptionType.badResponse,
         ),
-        type: DioExceptionType.badResponse,
-      ));
+      );
 
       expect(() => repo.withdraw(), throwsA(isA<ServerException>()));
       verifyNever(() => firebase.signOut());

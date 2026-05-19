@@ -13,16 +13,18 @@ class CheckNicknameUseCase {
   final AuthRepository _repository;
 
   CheckNicknameUseCase({required AuthRepository repository})
-      : _repository = repository;
+    : _repository = repository;
 
   Future<bool> execute(String nickname) async {
     if (nickname.length < _minLength || nickname.length > _maxLength) {
       throw const InvalidInputValueException(
-          message: '닉네임은 2자 이상 10자 이하여야 합니다.');
+        message: '닉네임은 2자 이상 10자 이하여야 합니다.',
+      );
     }
     if (!_pattern.hasMatch(nickname)) {
       throw const InvalidInputValueException(
-          message: '닉네임은 한글, 영문, 숫자만 사용할 수 있습니다.');
+        message: '닉네임은 한글, 영문, 숫자만 사용할 수 있습니다.',
+      );
     }
     return _repository.checkNickname(nickname);
   }

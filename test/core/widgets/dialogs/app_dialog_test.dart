@@ -42,11 +42,7 @@ void main() {
     testWidgets('확인 버튼이 항상 enable (onPressed != null)', (tester) async {
       await pumpDialog(
         tester,
-        AppDialog(
-          title: '제목',
-          confirmText: '확인',
-          onConfirm: () {},
-        ),
+        AppDialog(title: '제목', confirmText: '확인', onConfirm: () {}),
       );
 
       expect(confirmButton(tester, '확인').onPressed, isNotNull);

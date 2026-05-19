@@ -117,10 +117,7 @@ void main() {
         response: Response(
           requestOptions: req,
           statusCode: 401,
-          data: {
-            'code': 'INVALID_TOKEN',
-            'message': '인증 정보가 올바르지 않습니다.',
-          },
+          data: {'code': 'INVALID_TOKEN', 'message': '인증 정보가 올바르지 않습니다.'},
         ),
         type: DioExceptionType.badResponse,
       );

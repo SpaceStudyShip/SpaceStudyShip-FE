@@ -32,8 +32,10 @@ void main() {
 
     test('code 와 message 모두 없으면 null 반환', () {
       expect(ApiErrorResponse.tryParse({}), isNull);
-      expect(ApiErrorResponse.tryParse({'title': 'old', 'detail': 'rfc7807'}),
-          isNull);
+      expect(
+        ApiErrorResponse.tryParse({'title': 'old', 'detail': 'rfc7807'}),
+        isNull,
+      );
     });
 
     test('data 가 Map 이 아니면 null 반환', () {
@@ -44,7 +46,9 @@ void main() {
 
     test('toString 은 [code] message 포맷', () {
       const r = ApiErrorResponse(
-          code: 'DUPLICATED_NICKNAME', message: '이미 사용 중인 닉네임입니다.');
+        code: 'DUPLICATED_NICKNAME',
+        message: '이미 사용 중인 닉네임입니다.',
+      );
       expect(r.toString(), '[DUPLICATED_NICKNAME] 이미 사용 중인 닉네임입니다.');
     });
   });

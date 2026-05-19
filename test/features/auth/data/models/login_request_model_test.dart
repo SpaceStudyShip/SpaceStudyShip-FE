@@ -14,8 +14,16 @@ void main() {
 
       final json = model.toJson();
 
-      expect(json.keys, containsAll(
-          ['socialType', 'idToken', 'fcmToken', 'deviceType', 'deviceId']));
+      expect(
+        json.keys,
+        containsAll([
+          'socialType',
+          'idToken',
+          'fcmToken',
+          'deviceType',
+          'deviceId',
+        ]),
+      );
       expect(json['socialType'], 'GOOGLE');
       expect(json['idToken'], 'eyJhbGc...');
       expect(json['fcmToken'], 'fcm-abc');

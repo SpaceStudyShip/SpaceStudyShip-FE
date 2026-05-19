@@ -8,7 +8,7 @@ class WithdrawUseCase {
   final AuthRepository _repository;
 
   WithdrawUseCase({required AuthRepository repository})
-      : _repository = repository;
+    : _repository = repository;
 
   Future<void> execute() => _repository.withdraw();
 }

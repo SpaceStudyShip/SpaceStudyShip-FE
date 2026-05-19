@@ -100,7 +100,8 @@ class AuthInterceptor extends QueuedInterceptor {
       final apiError = ApiErrorResponse.tryParse(err.response?.data);
       if (kDebugMode && apiError != null && apiError.code != 'INVALID_TOKEN') {
         debugPrint(
-            '⚠️ reissue 401 응답이 예상 외 code: ${apiError.code} — 강제 로그아웃은 진행');
+          '⚠️ reissue 401 응답이 예상 외 code: ${apiError.code} — 강제 로그아웃은 진행',
+        );
       }
       await _handleForceLogout(message: apiError?.message);
       return handler.next(err);
@@ -138,7 +139,8 @@ class AuthInterceptor extends QueuedInterceptor {
         TokenReissueResponseModel parsed;
         try {
           parsed = TokenReissueResponseModel.fromJson(
-              response.data as Map<String, dynamic>);
+            response.data as Map<String, dynamic>,
+          );
         } catch (parseErr) {
           if (kDebugMode) {
             debugPrint('❌ 토큰 재발급 응답 파싱 실패: $parseErr / data=${response.data}');

@@ -197,22 +197,26 @@ class AuthRepositoryImpl implements AuthRepository {
     } catch (e) {
       if (e is AppException) rethrow;
       throw AuthException(
-          message: '닉네임 변경 중 오류가 발생했습니다.', originalException: e);
+        message: '닉네임 변경 중 오류가 발생했습니다.',
+        originalException: e,
+      );
     }
   }
 
   @override
   Future<bool> checkNickname(String nickname) async {
     try {
-      final CheckNicknameResponseModel response =
-          await _authRemoteDataSource.checkNickname(nickname);
+      final CheckNicknameResponseModel response = await _authRemoteDataSource
+          .checkNickname(nickname);
       return response.available;
     } on DioException catch (e) {
       throw DioExceptionHandler.handle(e);
     } catch (e) {
       if (e is AppException) rethrow;
       throw AuthException(
-          message: '닉네임 중복 확인 중 오류가 발생했습니다.', originalException: e);
+        message: '닉네임 중복 확인 중 오류가 발생했습니다.',
+        originalException: e,
+      );
     }
   }
 
@@ -243,8 +247,7 @@ class AuthRepositoryImpl implements AuthRepository {
       throw DioExceptionHandler.handle(e);
     } catch (e) {
       if (e is AppException) rethrow;
-      throw AuthException(
-          message: '회원 탈퇴 중 오류가 발생했습니다.', originalException: e);
+      throw AuthException(message: '회원 탈퇴 중 오류가 발생했습니다.', originalException: e);
     }
   }
 

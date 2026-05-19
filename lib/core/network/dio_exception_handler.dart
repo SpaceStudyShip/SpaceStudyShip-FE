@@ -41,19 +41,29 @@ class DioExceptionHandler {
       switch (apiError.code) {
         case 'DUPLICATED_NICKNAME':
           return DuplicatedNicknameException(
-              message: apiError.message, originalException: e);
+            message: apiError.message,
+            originalException: e,
+          );
         case 'SOCIAL_LOGIN_FAILED':
           return SocialLoginFailedException(
-              message: apiError.message, originalException: e);
+            message: apiError.message,
+            originalException: e,
+          );
         case 'UNSUPPORTED_SOCIAL_TYPE':
           return UnsupportedSocialTypeException(
-              message: apiError.message, originalException: e);
+            message: apiError.message,
+            originalException: e,
+          );
         case 'UNAUTHENTICATED_REQUEST':
           return UnauthenticatedRequestException(
-              message: apiError.message, originalException: e);
+            message: apiError.message,
+            originalException: e,
+          );
         case 'INVALID_INPUT_VALUE':
           return InvalidInputValueException(
-              message: apiError.message, originalException: e);
+            message: apiError.message,
+            originalException: e,
+          );
         case 'INVALID_TOKEN':
           // reissue 401 — 강제 로그아웃은 AuthInterceptor 가 직접 처리.
           return AuthException(
@@ -85,35 +95,35 @@ class DioExceptionHandler {
 
     return switch (statusCode) {
       400 => ValidationException(
-          message: message.isNotEmpty ? message : '잘못된 요청입니다.',
-          code: code.isNotEmpty ? code : 'bad-request',
-          originalException: e,
-        ),
+        message: message.isNotEmpty ? message : '잘못된 요청입니다.',
+        code: code.isNotEmpty ? code : 'bad-request',
+        originalException: e,
+      ),
       401 => AuthException(
-          message: message.isNotEmpty ? message : '인증에 실패했습니다.',
-          code: code.isNotEmpty ? code : 'unauthorized',
-          originalException: e,
-        ),
+        message: message.isNotEmpty ? message : '인증에 실패했습니다.',
+        code: code.isNotEmpty ? code : 'unauthorized',
+        originalException: e,
+      ),
       403 => AuthException(
-          message: message.isNotEmpty ? message : '접근 권한이 없습니다.',
-          code: code.isNotEmpty ? code : 'forbidden',
-          originalException: e,
-        ),
+        message: message.isNotEmpty ? message : '접근 권한이 없습니다.',
+        code: code.isNotEmpty ? code : 'forbidden',
+        originalException: e,
+      ),
       404 => ServerException(
-          message: message.isNotEmpty ? message : '요청한 리소스를 찾을 수 없습니다.',
-          code: code.isNotEmpty ? code : 'not-found',
-          originalException: e,
-        ),
+        message: message.isNotEmpty ? message : '요청한 리소스를 찾을 수 없습니다.',
+        code: code.isNotEmpty ? code : 'not-found',
+        originalException: e,
+      ),
       409 => ServerException(
-          message: message.isNotEmpty ? message : '요청이 현재 상태와 충돌합니다.',
-          code: code.isNotEmpty ? code : 'conflict',
-          originalException: e,
-        ),
+        message: message.isNotEmpty ? message : '요청이 현재 상태와 충돌합니다.',
+        code: code.isNotEmpty ? code : 'conflict',
+        originalException: e,
+      ),
       _ => NetworkException(
-          message: message.isNotEmpty ? message : '네트워크 연결을 확인하세요.',
-          code: 'network-error',
-          originalException: e,
-        ),
+        message: message.isNotEmpty ? message : '네트워크 연결을 확인하세요.',
+        code: 'network-error',
+        originalException: e,
+      ),
     };
   }
 

@@ -9,9 +9,8 @@ part 'check_nickname_response_model.g.dart';
 /// `available: true` 면 사용 가능, `false` 면 이미 사용 중.
 @freezed
 class CheckNicknameResponseModel with _$CheckNicknameResponseModel {
-  const factory CheckNicknameResponseModel({
-    required bool available,
-  }) = _CheckNicknameResponseModel;
+  const factory CheckNicknameResponseModel({required bool available}) =
+      _CheckNicknameResponseModel;
 
   factory CheckNicknameResponseModel.fromJson(Map<String, dynamic> json) =>
       _$CheckNicknameResponseModelFromJson(json);

@@ -16,8 +16,10 @@ void main() {
   });
 
   test('형식 불일치 → InvalidInputValueException', () {
-    expect(() => useCase.execute('a'),
-        throwsA(isA<InvalidInputValueException>()));
+    expect(
+      () => useCase.execute('a'),
+      throwsA(isA<InvalidInputValueException>()),
+    );
     verifyNever(() => repo.checkNickname(any()));
   });
 

@@ -59,39 +59,41 @@ class AuthCancelledException extends AuthException {
 /// 닉네임 중복 (409 DUPLICATED_NICKNAME)
 class DuplicatedNicknameException extends AuthException {
   const DuplicatedNicknameException({String? message, super.originalException})
-      : super(
-          message: message ?? '이미 사용 중인 닉네임입니다.',
-          code: 'DUPLICATED_NICKNAME',
-        );
+    : super(
+        message: message ?? '이미 사용 중인 닉네임입니다.',
+        code: 'DUPLICATED_NICKNAME',
+      );
 }
 
 /// 소셜 ID Token 검증 실패 (401 SOCIAL_LOGIN_FAILED)
 class SocialLoginFailedException extends AuthException {
   const SocialLoginFailedException({String? message, super.originalException})
-      : super(
-          message: message ?? '소셜 로그인에 실패하였습니다.',
-          code: 'SOCIAL_LOGIN_FAILED',
-        );
+    : super(
+        message: message ?? '소셜 로그인에 실패하였습니다.',
+        code: 'SOCIAL_LOGIN_FAILED',
+      );
 }
 
 /// 지원하지 않는 socialType (400 UNSUPPORTED_SOCIAL_TYPE)
 class UnsupportedSocialTypeException extends AuthException {
-  const UnsupportedSocialTypeException(
-      {String? message, super.originalException})
-      : super(
-          message: message ?? '지원하지 않는 소셜 로그인 방식입니다.',
-          code: 'UNSUPPORTED_SOCIAL_TYPE',
-        );
+  const UnsupportedSocialTypeException({
+    String? message,
+    super.originalException,
+  }) : super(
+         message: message ?? '지원하지 않는 소셜 로그인 방식입니다.',
+         code: 'UNSUPPORTED_SOCIAL_TYPE',
+       );
 }
 
 /// 보호 API 인증 실패 (401 UNAUTHENTICATED_REQUEST)
 class UnauthenticatedRequestException extends AuthException {
-  const UnauthenticatedRequestException(
-      {String? message, super.originalException})
-      : super(
-          message: message ?? '로그인이 필요합니다.',
-          code: 'UNAUTHENTICATED_REQUEST',
-        );
+  const UnauthenticatedRequestException({
+    String? message,
+    super.originalException,
+  }) : super(
+         message: message ?? '로그인이 필요합니다.',
+         code: 'UNAUTHENTICATED_REQUEST',
+       );
 }
 
 /// 검증 관련 예외
@@ -106,12 +108,8 @@ class ValidationException extends AppException {
 
 /// 입력값 유효성 오류 (400 INVALID_INPUT_VALUE) — 모든 도메인 공용
 class InvalidInputValueException extends ValidationException {
-  const InvalidInputValueException(
-      {String? message, super.originalException})
-      : super(
-          message: message ?? '입력값이 올바르지 않습니다.',
-          code: 'INVALID_INPUT_VALUE',
-        );
+  const InvalidInputValueException({String? message, super.originalException})
+    : super(message: message ?? '입력값이 올바르지 않습니다.', code: 'INVALID_INPUT_VALUE');
 }
 
 /// 서버 관련 예외

@@ -5,19 +5,23 @@ part 'login_request_model.g.dart';
 
 /// 소셜 로그인 요청 DTO
 ///
-/// `POST /api/auth/login` 요청 바디
+/// `POST /api/auth/login` 요청 바디. `docs/api-docs.json` 의
+/// `LoginRequest` 스키마와 1:1 정렬.
 ///
-/// **필수 필드** (백엔드 OpenAPI 스펙 기준):
-/// - [socialType]: 소셜 플랫폼 (`KAKAO`, `GOOGLE`, `APPLE`)
+/// **필수 필드 (5개)**:
+/// - [socialType]: `KAKAO` | `GOOGLE` | `APPLE`
 /// - [idToken]: Firebase ID Token
+/// - [fcmToken]: FCM 디바이스 토큰 (minLength: 0 — 발급 실패 시 빈 문자열 fallback)
+/// - [deviceType]: `IOS` | `ANDROID`
+/// - [deviceId]: UUID v4 (`^[0-9a-fA-F-]{36}$`)
 @freezed
 class LoginRequestModel with _$LoginRequestModel {
   const factory LoginRequestModel({
-    /// 소셜 플랫폼 (`KAKAO`, `GOOGLE`, `APPLE`)
     required String socialType,
-
-    /// Firebase ID Token
     required String idToken,
+    required String fcmToken,
+    required String deviceType,
+    required String deviceId,
   }) = _LoginRequestModel;
 
   factory LoginRequestModel.fromJson(Map<String, dynamic> json) =>

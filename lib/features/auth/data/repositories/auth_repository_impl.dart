@@ -4,6 +4,9 @@ import 'package:flutter/foundation.dart';
 
 import '../../../../core/errors/app_exception.dart';
 import '../../../../core/network/dio_exception_handler.dart';
+import '../../../../core/services/device/device_id_manager.dart';
+import '../../../../core/services/device/device_info_service.dart';
+import '../../../../core/services/fcm/firebase_messaging_service.dart';
 import '../../../../core/storage/secure_token_storage.dart';
 import '../../domain/entities/auth_result_entity.dart';
 import '../../domain/repositories/auth_repository.dart';
@@ -75,8 +78,15 @@ class AuthRepositoryImpl implements AuthRepository {
       final idToken = await _firebaseAuthDataSource.getIdToken();
 
       // 3. 백엔드 로그인 API 호출
+      final deviceInfo = await _collectDeviceInfo();
       final response = await _authRemoteDataSource.login(
-        LoginRequestModel(socialType: socialType, idToken: idToken),
+        LoginRequestModel(
+          socialType: socialType,
+          idToken: idToken,
+          fcmToken: deviceInfo.fcmToken,
+          deviceType: deviceInfo.deviceType,
+          deviceId: deviceInfo.deviceId,
+        ),
       );
 
       // 4. JWT 토큰 + 메타정보 저장 (부분 실패 시 전체 롤백)
@@ -169,6 +179,27 @@ class AuthRepositoryImpl implements AuthRepository {
   // ============================================
   // Private Helpers
   // ============================================
+
+  /// 디바이스 메타 정보 수집 (fcmToken / deviceType / deviceId)
+  ///
+  /// `docs/api-docs.json` LoginRequest 의 3 필드를 채우기 위해 사용.
+  /// FCM 토큰 발급 실패 시 빈 문자열로 fallback (백엔드가 `minLength: 0` 허용).
+  Future<({String fcmToken, String deviceType, String deviceId})>
+  _collectDeviceInfo() async {
+    final fcmToken =
+        (await FirebaseMessagingService.instance().getFcmToken()) ?? '';
+    final deviceType = DeviceInfoService.getDeviceType();
+    final deviceId = await DeviceIdManager.getOrCreateDeviceId();
+
+    if (kDebugMode) {
+      debugPrint(
+        'LoginRequest device info — '
+        'type=$deviceType, id=$deviceId, fcmEmpty=${fcmToken.isEmpty}',
+      );
+    }
+
+    return (fcmToken: fcmToken, deviceType: deviceType, deviceId: deviceId);
+  }
 
   /// Firebase 세션 정리 (백엔드 호출 실패 시)
   Future<void> _cleanupFirebaseSession(String socialType) async {

@@ -47,7 +47,7 @@
 2. 서버가 401 UNAUTHORIZED 응답
 3. 클라이언트가 POST /api/auth/reissue 호출 (refreshToken 전송)
 4-a. 성공 (200): 새 accessToken + refreshToken 저장 후 원래 API 재시도
-4-b. 실패 (401 INVALID_REFRESH_TOKEN): 로그아웃 처리 → 로그인 화면 이동
+4-b. 실패 (401 INVALID_TOKEN): 로그아웃 처리 → 로그인 화면 이동
 ```
 
 ---
@@ -63,34 +63,31 @@
 
 ### 에러 응답
 
-모든 에러는 [RFC 7807 Problem Details](https://datatracker.ietf.org/doc/html/rfc7807) 형식으로 응답합니다.
+모든 에러는 `code` 와 `message` 두 필드를 갖는 JSON 형식으로 응답합니다.
 
 ```json
 {
-  "title": "유효하지 않은 입력값",
-  "status": 400,
-  "detail": "idToken: 소셜 인증 토큰(ID Token)은 필수입니다.",
-  "instance": "/api/auth/login"
+  "code": "INVALID_TOKEN",
+  "message": "인증 정보가 올바르지 않습니다."
 }
 ```
 
 | 필드 | 타입 | 설명 |
 |------|------|------|
-| `title` | String | 사람이 읽을 수 있는 에러 제목 |
-| `status` | Integer | HTTP 상태 코드 (응답 헤더와 동일) |
-| `detail` | String | 에러 상세 설명 (사용자 노출 가능 메시지) |
-| `instance` | String | 에러가 발생한 요청 경로 |
+| `code` | String | 에러 식별 코드 (예: INVALID_TOKEN, DUPLICATED_NICKNAME). 클라이언트의 Exception 분기에 사용 |
+| `message` | String | 사용자에게 노출 가능한 메시지 |
 
-### 공통 HTTP Status Code
+### 공통 에러 코드
 
-| HTTP Status | title 예시 | 설명 | 클라이언트 처리 |
-|-------------|-----------|------|--------------|
-| 400 | `유효하지 않은 입력값` | 요청 파라미터 오류 | 입력값 확인 후 재시도 |
-| 401 | `인증 필요` | 토큰 없음 또는 만료 | 토큰 재발급 시도 |
-| 403 | `권한 없음` | 권한 부족 | 접근 제한 안내 |
-| 404 | `리소스 없음` | 리소스 없음 | 목록으로 이동 또는 안내 |
-| 409 | `중복된 리소스` | 중복 (닉네임, 친구 요청 등) | 중복 안내 메시지 표시 |
-| 500 | `서버 오류` | 서버 내부 오류 | "잠시 후 다시 시도해주세요" 표시 |
+| HTTP Status | code | 설명 | 클라이언트 처리 |
+|-------------|------|------|--------------|
+| 400 | `INVALID_INPUT_VALUE` | 요청 파라미터 형식/제약 위반 | 입력값 확인 |
+| 400 | `UNSUPPORTED_SOCIAL_TYPE` | 지원하지 않는 소셜 플랫폼 | (Auth 전용) |
+| 401 | `UNAUTHENTICATED_REQUEST` | 토큰 없음 또는 유효하지 않음 | `/api/auth/reissue` 시도 |
+| 401 | `INVALID_TOKEN` | Refresh Token 만료/탈취/변조 | 로그아웃 + 로그인 화면 |
+| 401 | `SOCIAL_LOGIN_FAILED` | 소셜 ID Token 검증 실패 | 재로그인 |
+| 409 | `DUPLICATED_NICKNAME` | 이미 사용 중인 닉네임 | 중복 안내 |
+| 500 | `INTERNAL_SERVER_ERROR` | 서버 내부 오류 | "잠시 후 다시" 안내 |
 
 ---
 

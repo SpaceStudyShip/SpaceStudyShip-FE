@@ -4,13 +4,18 @@ import 'package:flutter/foundation.dart';
 
 import '../../../../core/errors/app_exception.dart';
 import '../../../../core/network/dio_exception_handler.dart';
+import '../../../../core/services/device/device_id_manager.dart';
+import '../../../../core/services/device/device_info_service.dart';
+import '../../../../core/services/fcm/firebase_messaging_service.dart';
 import '../../../../core/storage/secure_token_storage.dart';
 import '../../domain/entities/auth_result_entity.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../datasources/auth_remote_datasource.dart';
 import '../datasources/firebase_auth_datasource.dart';
+import '../models/check_nickname_response_model.dart';
 import '../models/login_request_model.dart';
 import '../models/logout_request_model.dart';
+import '../models/update_nickname_request_model.dart';
 
 /// Auth Repository 구현체
 ///
@@ -75,8 +80,15 @@ class AuthRepositoryImpl implements AuthRepository {
       final idToken = await _firebaseAuthDataSource.getIdToken();
 
       // 3. 백엔드 로그인 API 호출
+      final deviceInfo = await _collectDeviceInfo();
       final response = await _authRemoteDataSource.login(
-        LoginRequestModel(socialType: socialType, idToken: idToken),
+        LoginRequestModel(
+          socialType: socialType,
+          idToken: idToken,
+          fcmToken: deviceInfo.fcmToken,
+          deviceType: deviceInfo.deviceType,
+          deviceId: deviceInfo.deviceId,
+        ),
       );
 
       // 4. JWT 토큰 + 메타정보 저장 (부분 실패 시 전체 롤백)
@@ -167,8 +179,114 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   // ============================================
+  // 닉네임
+  // ============================================
+
+  @override
+  Future<String> updateNickname(String nickname) async {
+    try {
+      final response = await _authRemoteDataSource.updateNickname(
+        UpdateNicknameRequestModel(nickname: nickname),
+      );
+      if (kDebugMode) {
+        debugPrint('닉네임 변경 성공: ${response.nickname}');
+      }
+      return response.nickname;
+    } on DioException catch (e) {
+      throw DioExceptionHandler.handle(e);
+    } catch (e) {
+      if (e is AppException) rethrow;
+      throw AuthException(
+        message: '닉네임 변경 중 오류가 발생했습니다.',
+        originalException: e,
+      );
+    }
+  }
+
+  @override
+  Future<bool> checkNickname(String nickname) async {
+    try {
+      final CheckNicknameResponseModel response = await _authRemoteDataSource
+          .checkNickname(nickname);
+      return response.available;
+    } on DioException catch (e) {
+      throw DioExceptionHandler.handle(e);
+    } catch (e) {
+      if (e is AppException) rethrow;
+      throw AuthException(
+        message: '닉네임 중복 확인 중 오류가 발생했습니다.',
+        originalException: e,
+      );
+    }
+  }
+
+  // ============================================
+  // 회원 탈퇴
+  // ============================================
+
+  @override
+  Future<void> withdraw() async {
+    try {
+      await _authRemoteDataSource.withdraw();
+    } on DioException catch (e) {
+      throw DioExceptionHandler.handle(e);
+    } catch (e) {
+      if (e is AppException) rethrow;
+      throw AuthException(message: '회원 탈퇴 중 오류가 발생했습니다.', originalException: e);
+    }
+
+    // 서버 탈퇴는 비가역. 이후 로컬 정리 실패는 로그만 남기고 로그아웃 상태 유지.
+    try {
+      await _firebaseAuthDataSource.signOut();
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('withdraw 후 Firebase signOut 실패 (무시): $e');
+      }
+    }
+    try {
+      await _tokenStorage.clearTokens();
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('withdraw 후 토큰 삭제 실패 (무시): $e');
+      }
+    }
+
+    if (kDebugMode) {
+      debugPrint('회원 탈퇴 완료 (백엔드 + Firebase + 토큰 삭제)');
+    }
+  }
+
+  // ============================================
   // Private Helpers
   // ============================================
+
+  /// 디바이스 메타 정보 수집 (fcmToken / deviceType / deviceId)
+  ///
+  /// `docs/api-docs.json` LoginRequest 의 3 필드를 채우기 위해 사용.
+  /// FCM 토큰 발급 실패 시 빈 문자열로 fallback (백엔드가 `minLength: 0` 허용).
+  Future<({String fcmToken, String deviceType, String deviceId})>
+  _collectDeviceInfo() async {
+    String fcmToken = '';
+    try {
+      fcmToken =
+          (await FirebaseMessagingService.instance().getFcmToken()) ?? '';
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('FCM 토큰 발급 실패 - 빈 문자열 fallback: $e');
+      }
+    }
+    final deviceType = DeviceInfoService.getDeviceType();
+    final deviceId = await DeviceIdManager.getOrCreateDeviceId();
+
+    if (kDebugMode) {
+      debugPrint(
+        'LoginRequest device info — '
+        'type=$deviceType, id=$deviceId, fcmEmpty=${fcmToken.isEmpty}',
+      );
+    }
+
+    return (fcmToken: fcmToken, deviceType: deviceType, deviceId: deviceId);
+  }
 
   /// Firebase 세션 정리 (백엔드 호출 실패 시)
   Future<void> _cleanupFirebaseSession(String socialType) async {

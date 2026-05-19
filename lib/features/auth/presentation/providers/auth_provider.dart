@@ -13,9 +13,12 @@ import '../../data/repositories/auth_repository_impl.dart';
 import '../../data/utils/firebase_auth_error_handler.dart';
 import '../../domain/entities/auth_result_entity.dart';
 import '../../domain/repositories/auth_repository.dart';
+import '../../domain/usecases/check_nickname_usecase.dart';
 import '../../domain/usecases/sign_in_with_apple_usecase.dart';
 import '../../domain/usecases/sign_in_with_google_usecase.dart';
 import '../../domain/usecases/sign_out_usecase.dart';
+import '../../domain/usecases/update_nickname_usecase.dart';
+import '../../domain/usecases/withdraw_usecase.dart';
 import '../../../badge/presentation/providers/badge_provider.dart';
 import '../../../exploration/presentation/providers/exploration_provider.dart';
 import '../../../fuel/presentation/providers/fuel_provider.dart';
@@ -91,6 +94,24 @@ SignInWithAppleUseCase signInWithAppleUseCase(Ref ref) {
 @riverpod
 SignOutUseCase signOutUseCase(Ref ref) {
   return SignOutUseCase(repository: ref.watch(authRepositoryProvider));
+}
+
+/// 닉네임 변경 UseCase Provider
+@riverpod
+UpdateNicknameUseCase updateNicknameUseCase(Ref ref) {
+  return UpdateNicknameUseCase(repository: ref.watch(authRepositoryProvider));
+}
+
+/// 닉네임 중복 확인 UseCase Provider
+@riverpod
+CheckNicknameUseCase checkNicknameUseCase(Ref ref) {
+  return CheckNicknameUseCase(repository: ref.watch(authRepositoryProvider));
+}
+
+/// 회원 탈퇴 UseCase Provider
+@riverpod
+WithdrawUseCase withdrawUseCase(Ref ref) {
+  return WithdrawUseCase(repository: ref.watch(authRepositoryProvider));
 }
 
 // ============================================================================
@@ -356,6 +377,49 @@ class AuthNotifier extends _$AuthNotifier {
   /// GoRouter가 로그인 화면으로 리다이렉트하도록 합니다.
   void forceLogout() {
     state = const AsyncValue.data(null);
+  }
+
+  /// 닉네임 변경
+  ///
+  /// 성공 시 현재 상태의 nickname 을 갱신하고 isNewMember=false 처리.
+  Future<void> updateNickname(String nickname) async {
+    final useCase = ref.read(updateNicknameUseCaseProvider);
+    final newNickname = await useCase.execute(nickname);
+
+    final current = state.value;
+    if (current != null) {
+      state = AsyncValue.data(
+        current.copyWith(nickname: newNickname, isNewMember: false),
+      );
+    }
+  }
+
+  /// 닉네임 중복 확인
+  ///
+  /// 정규식 실패 시 [InvalidInputValueException], 서버 응답이면 true/false 반환.
+  Future<bool> checkNickname(String nickname) {
+    return ref.read(checkNicknameUseCaseProvider).execute(nickname);
+  }
+
+  /// 회원 탈퇴
+  ///
+  /// 백엔드 응답 + Firebase signOut + 토큰 삭제 완료 후 state=null 로 종료.
+  /// GoRouter 가 state 변화 감지하여 로그인 화면으로 이동.
+  Future<void> withdraw() async {
+    // 타이머 강제 리셋 (세션 저장 없이)
+    ref.read(timerNotifierProvider.notifier).forceReset();
+
+    final previous = state;
+    state = const AsyncValue.loading();
+
+    try {
+      await ref.read(withdrawUseCaseProvider).execute();
+      state = const AsyncValue.data(null);
+    } catch (e, stack) {
+      state = previous;
+      debugPrint('회원 탈퇴 실패: $e\n$stack');
+      rethrow;
+    }
   }
 }
 

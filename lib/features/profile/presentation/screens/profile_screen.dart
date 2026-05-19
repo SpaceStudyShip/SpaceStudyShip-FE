@@ -10,6 +10,7 @@ import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../../../core/widgets/atoms/space_stat_item.dart';
 import '../../../../core/widgets/dialogs/app_dialog.dart';
+import '../../../../core/widgets/feedback/app_snackbar.dart';
 import '../../../auth/domain/entities/auth_result_entity.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../../timer/presentation/providers/study_stats_provider.dart';
@@ -229,6 +230,15 @@ class ProfileScreen extends ConsumerWidget {
             }
           },
         ),
+        if (!isGuest)
+          _buildMenuItem(
+            icon: Icons.delete_forever_outlined,
+            title: '회원 탈퇴',
+            iconColor: AppColors.error,
+            textColor: AppColors.error,
+            showChevron: false,
+            onTap: () => _onWithdrawTap(context, ref),
+          ),
       ],
     );
   }
@@ -272,6 +282,32 @@ class ProfileScreen extends ConsumerWidget {
           ],
         ),
       ),
+    );
+  }
+
+  Future<void> _onWithdrawTap(BuildContext context, WidgetRef ref) async {
+    await AppDialog.show<void>(
+      context: context,
+      title: '정말 탈퇴하시겠어요?',
+      message:
+          '계정과 모든 학습 기록이 영구 삭제돼요. 되돌릴 수 없어요.\n\n'
+          '확인을 위해 "탈퇴하기" 또는 "delete" 를 입력해 주세요.',
+      confirmationPhrases: const ['탈퇴하기', 'delete'],
+      confirmationHint: '탈퇴하기 또는 delete 입력',
+      confirmText: '탈퇴',
+      cancelText: '취소',
+      isDestructive: true,
+      onConfirm: () async {
+        try {
+          await ref.read(authNotifierProvider.notifier).withdraw();
+          // 성공 시 라우터가 state=null 감지 후 로그인 화면 자동 이동.
+        } catch (e) {
+          debugPrint('[ProfileScreen._onWithdrawTap] withdraw error: $e');
+          if (context.mounted) {
+            AppSnackBar.error(context, '탈퇴에 실패했어요. 잠시 후 다시 시도해 주세요.');
+          }
+        }
+      },
     );
   }
 }

@@ -35,6 +35,19 @@ import '../buttons/app_button.dart';
 ///   onConfirm: () => delete(),
 /// );
 ///
+/// // Confirmation phrase 입력 (탈퇴 등 destructive action)
+/// AppDialog.show(
+///   context: context,
+///   title: '정말 탈퇴하시겠어요?',
+///   message: '되돌릴 수 없어요. 확인을 위해 phrase 를 입력해 주세요.',
+///   confirmationPhrases: ['탈퇴하기', 'delete'],
+///   confirmationHint: '탈퇴하기 또는 delete 입력',
+///   confirmText: '탈퇴',
+///   cancelText: '취소',
+///   isDestructive: true,
+///   onConfirm: () => withdraw(),
+/// );
+///
 /// // 간편 확인 (bool 반환)
 /// final result = await AppDialog.confirm(
 ///   context: context,
@@ -42,7 +55,7 @@ import '../buttons/app_button.dart';
 /// );
 /// if (result == true) { /* 저장 */ }
 /// ```
-class AppDialog extends StatelessWidget {
+class AppDialog extends StatefulWidget {
   const AppDialog({
     super.key,
     required this.title,
@@ -53,6 +66,8 @@ class AppDialog extends StatelessWidget {
     this.onCancel,
     this.isDestructive = false,
     this.customContent,
+    this.confirmationPhrases,
+    this.confirmationHint,
   });
 
   /// 제목 (필수)
@@ -79,6 +94,15 @@ class AppDialog extends StatelessWidget {
   /// 커스텀 콘텐츠 (message 대신 사용)
   final Widget? customContent;
 
+  /// 확인 텍스트필드 phrase 후보 (예: `['탈퇴하기', 'delete']`).
+  ///
+  /// 입력값이 `trim().toLowerCase()` 변환 후 후보 중 하나와 매치되어야
+  /// 확인 버튼이 활성화됨. null 이면 textfield 표시 안 함 (기존 동작 유지).
+  final List<String>? confirmationPhrases;
+
+  /// 확인 텍스트필드 hint. [confirmationPhrases] 가 있을 때만 사용.
+  final String? confirmationHint;
+
   // ============================================
   // 정적 메서드
   // ============================================
@@ -94,6 +118,8 @@ class AppDialog extends StatelessWidget {
     VoidCallback? onCancel,
     bool isDestructive = false,
     Widget? customContent,
+    List<String>? confirmationPhrases,
+    String? confirmationHint,
     bool barrierDismissible = true,
   }) {
     return showGeneralDialog<T>(
@@ -110,6 +136,8 @@ class AppDialog extends StatelessWidget {
           cancelText: cancelText,
           isDestructive: isDestructive,
           customContent: customContent,
+          confirmationPhrases: confirmationPhrases,
+          confirmationHint: confirmationHint,
           onConfirm: () {
             Navigator.of(dialogContext).pop();
             onConfirm?.call();
@@ -170,9 +198,43 @@ class AppDialog extends StatelessWidget {
     );
   }
 
-  // ============================================
-  // UI 빌드
-  // ============================================
+  @override
+  State<AppDialog> createState() => _AppDialogState();
+}
+
+class _AppDialogState extends State<AppDialog> {
+  late final TextEditingController _confirmationController;
+
+  @override
+  void initState() {
+    super.initState();
+    _confirmationController = TextEditingController()
+      ..addListener(_onConfirmationChanged);
+  }
+
+  @override
+  void dispose() {
+    _confirmationController.dispose();
+    super.dispose();
+  }
+
+  void _onConfirmationChanged() {
+    if (!mounted) return;
+    // Trigger rebuild so confirm button reflects match state.
+    setState(() {});
+  }
+
+  /// 확인 버튼 활성 여부.
+  ///
+  /// `confirmationPhrases` 가 null 이면 항상 true (기존 동작).
+  /// 있으면 입력값 `trim().toLowerCase()` 가 후보 중 하나와 일치해야 true.
+  bool get _isConfirmEnabled {
+    final phrases = widget.confirmationPhrases;
+    if (phrases == null) return true;
+    final normalized = _confirmationController.text.trim().toLowerCase();
+    if (normalized.isEmpty) return false;
+    return phrases.any((p) => p.toLowerCase() == normalized);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -199,22 +261,55 @@ class AppDialog extends StatelessWidget {
             children: [
               // 제목
               Text(
-                title,
+                widget.title,
                 style: AppTextStyles.heading_20.copyWith(color: Colors.white),
                 textAlign: TextAlign.center,
               ),
 
               // 메시지 또는 커스텀 콘텐츠
-              if (message != null || customContent != null) ...[
+              if (widget.message != null || widget.customContent != null) ...[
                 SizedBox(height: AppSpacing.s24),
-                customContent ??
+                widget.customContent ??
                     Text(
-                      message!,
+                      widget.message!,
                       style: AppTextStyles.paragraph_14.copyWith(
                         color: AppColors.textSecondary,
                       ),
                       textAlign: TextAlign.center,
                     ),
+              ],
+
+              // Confirmation textfield (phrase 가 주어진 경우)
+              if (widget.confirmationPhrases != null) ...[
+                SizedBox(height: AppSpacing.s16),
+                TextField(
+                  controller: _confirmationController,
+                  autofocus: true,
+                  textAlign: TextAlign.center,
+                  style: AppTextStyles.label_16.copyWith(color: Colors.white),
+                  decoration: InputDecoration(
+                    hintText: widget.confirmationHint,
+                    hintStyle: AppTextStyles.paragraph_14.copyWith(
+                      color: AppColors.textTertiary,
+                    ),
+                    filled: true,
+                    fillColor: AppColors.spaceSurface,
+                    contentPadding: AppPadding.all12,
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: AppRadius.medium,
+                      borderSide: BorderSide(color: AppColors.spaceDivider),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: AppRadius.medium,
+                      borderSide: BorderSide(
+                        color: widget.isDestructive
+                            ? AppColors.error
+                            : AppColors.primary,
+                        width: 1.5,
+                      ),
+                    ),
+                  ),
+                ),
               ],
 
               SizedBox(height: AppSpacing.s24),
@@ -229,7 +324,8 @@ class AppDialog extends StatelessWidget {
   }
 
   Widget _buildButtons(BuildContext context) {
-    final hasCancel = cancelText != null;
+    final hasCancel = widget.cancelText != null;
+    final confirmCallback = _isConfirmEnabled ? widget.onConfirm : null;
 
     if (hasCancel) {
       return Row(
@@ -237,27 +333,27 @@ class AppDialog extends StatelessWidget {
           // 취소 버튼
           Expanded(
             child: AppButton(
-              text: cancelText!,
+              text: widget.cancelText!,
               backgroundColor: AppColors.spaceSurface,
               borderColor: AppColors.spaceDivider,
               foregroundColor: AppColors.textSecondary,
               height: 48.h,
-              onPressed: onCancel,
+              onPressed: widget.onCancel,
             ),
           ),
           SizedBox(width: AppSpacing.s12),
           // 확인 버튼
           Expanded(
             child: AppButton(
-              text: confirmText,
-              backgroundColor: isDestructive
+              text: widget.confirmText,
+              backgroundColor: widget.isDestructive
                   ? AppColors.error
                   : AppColors.primary,
-              borderColor: isDestructive
+              borderColor: widget.isDestructive
                   ? AppColors.error
                   : AppColors.primaryDark,
               height: 48.h,
-              onPressed: onConfirm,
+              onPressed: confirmCallback,
             ),
           ),
         ],
@@ -266,12 +362,16 @@ class AppDialog extends StatelessWidget {
 
     // 확인 버튼만
     return AppButton(
-      text: confirmText,
-      backgroundColor: isDestructive ? AppColors.error : AppColors.primary,
-      borderColor: isDestructive ? AppColors.error : AppColors.primaryDark,
+      text: widget.confirmText,
+      backgroundColor: widget.isDestructive
+          ? AppColors.error
+          : AppColors.primary,
+      borderColor: widget.isDestructive
+          ? AppColors.error
+          : AppColors.primaryDark,
       width: double.infinity,
       height: 48.h,
-      onPressed: onConfirm,
+      onPressed: confirmCallback,
     );
   }
 }

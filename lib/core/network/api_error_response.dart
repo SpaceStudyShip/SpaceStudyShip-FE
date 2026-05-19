@@ -1,60 +1,39 @@
-/// 백엔드 공통 에러 응답 모델 (RFC 7807 Problem Details)
+/// 백엔드 공통 에러 응답 모델
 ///
-/// 백엔드의 모든 에러 응답은 이 형식을 따릅니다:
+/// `docs/api-docs.json` 의 ErrorResponse 스키마와 1:1 정렬:
 /// ```json
 /// {
-///   "title": "유효하지 않은 입력값",
-///   "status": 400,
-///   "detail": "idToken: 소셜 인증 토큰(ID Token)은 필수입니다.",
-///   "instance": "/api/auth/login"
+///   "code": "INVALID_TOKEN",
+///   "message": "인증 정보가 올바르지 않습니다."
 /// }
 /// ```
 ///
-/// [API_SPEC.md - 6. 공통 스키마 - ErrorResponse] 참조
+/// 모든 4xx/5xx 응답 본문이 이 형식이며, `DioExceptionHandler` 가
+/// `code` 를 기반으로 적절한 `AppException` 서브타입으로 매핑한다.
 class ApiErrorResponse {
-  /// 에러 제목 (예: "유효하지 않은 입력값", "소셜 로그인 실패")
-  final String title;
+  /// 에러 식별 코드 (예: INVALID_TOKEN, DUPLICATED_NICKNAME)
+  final String code;
 
-  /// HTTP 상태 코드
-  final int status;
+  /// 사용자에게 노출 가능한 메시지
+  final String message;
 
-  /// 에러 상세 설명 (사용자에게 표시할 메시지)
-  final String detail;
+  const ApiErrorResponse({required this.code, required this.message});
 
-  /// 요청 경로 (예: "/api/auth/login")
-  final String instance;
-
-  const ApiErrorResponse({
-    required this.title,
-    required this.status,
-    required this.detail,
-    required this.instance,
-  });
-
-  /// JSON Map에서 ApiErrorResponse 생성
   factory ApiErrorResponse.fromJson(Map<String, dynamic> json) {
     return ApiErrorResponse(
-      title: json['title'] as String? ?? '',
-      status: json['status'] as int? ?? 0,
-      detail: json['detail'] as String? ?? '',
-      instance: json['instance'] as String? ?? '',
+      code: json['code'] as String? ?? '',
+      message: json['message'] as String? ?? '',
     );
   }
 
-  /// 응답 데이터에서 안전하게 파싱 시도
-  ///
-  /// 파싱 실패 시 null 반환 (백엔드가 RFC 7807 형식이 아닌 경우)
+  /// 응답 데이터에서 안전하게 파싱 시도.
+  /// `code` 와 `message` 가 모두 없으면 null 반환 (백엔드 비표준 응답 대비).
   static ApiErrorResponse? tryParse(dynamic data) {
-    if (data == null || data is! Map<String, dynamic>) return null;
-
-    // title과 detail이 모두 없으면 RFC 7807 형식이 아닌 것으로 판단
-    if (data['title'] == null && data['detail'] == null) return null;
-
+    if (data is! Map<String, dynamic>) return null;
+    if (data['code'] == null && data['message'] == null) return null;
     return ApiErrorResponse.fromJson(data);
   }
 
   @override
-  String toString() {
-    return '[$status] $title | $detail (instance: $instance)';
-  }
+  String toString() => '[$code] $message';
 }

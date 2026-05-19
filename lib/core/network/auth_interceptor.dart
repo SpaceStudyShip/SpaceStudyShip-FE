@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 
+import '../../features/auth/data/models/token_reissue_response_model.dart';
 import '../constants/api_endpoints.dart';
 import '../storage/secure_token_storage.dart';
 import 'api_error_response.dart';
@@ -36,7 +37,7 @@ class AuthInterceptor extends QueuedInterceptor {
   ///
   /// 토큰 재발급 실패 시 호출됩니다.
   /// Presentation Layer에서 Firebase 로그아웃 + 로그인 화면 이동을 처리합니다.
-  /// [message]: 백엔드 에러 메시지 (RFC 7807 detail) — 로그인 화면에서 스낵바로 표시
+  /// [message]: 백엔드 에러 메시지 (`ApiErrorResponse.message`) — 로그인 화면에서 스낵바로 표시
   final Future<void> Function({String? message}) onForceLogout;
 
   AuthInterceptor({
@@ -52,11 +53,14 @@ class AuthInterceptor extends QueuedInterceptor {
 
   /// 인증 토큰이 불필요한 API 경로
   ///
-  /// ⚠️ 프로젝트별로 조정.
+  /// - login: 신규 인증 시작점
+  /// - logout: 본문 refreshToken 으로 인증 (api-docs.json: "인증 불필요(실제 동작상)")
+  ///   만료 토큰 상태에서도 reissue 우회로 즉시 로그아웃 가능
+  /// - reissue: refreshToken 으로 인증 (Access Token 만료된 상태에서 호출)
   static const List<String> _publicPaths = [
     ApiEndpoints.login,
+    ApiEndpoints.logout,
     ApiEndpoints.reissue,
-    ApiEndpoints.checkNickname, // 닉네임 중복 확인 (인증 불필요)
   ];
 
   bool _isPublicPath(String path) {
@@ -90,10 +94,15 @@ class AuthInterceptor extends QueuedInterceptor {
       return handler.next(err);
     }
 
-    // reissue API 자체가 401이면 강제 로그아웃
+    // reissue API 자체가 401 이면 강제 로그아웃
+    // 정상 동작 시 백엔드는 code == "INVALID_TOKEN" 응답 (api-docs.json 명시)
     if (err.requestOptions.path.contains(ApiEndpoints.reissue)) {
       final apiError = ApiErrorResponse.tryParse(err.response?.data);
-      await _handleForceLogout(message: apiError?.detail);
+      if (kDebugMode && apiError != null && apiError.code != 'INVALID_TOKEN') {
+        debugPrint(
+            '⚠️ reissue 401 응답이 예상 외 code: ${apiError.code} — 강제 로그아웃은 진행');
+      }
+      await _handleForceLogout(message: apiError?.message);
       return handler.next(err);
     }
 
@@ -126,31 +135,30 @@ class AuthInterceptor extends QueuedInterceptor {
       );
 
       if (response.statusCode == 200) {
-        final tokens = response.data['tokens'] as Map<String, dynamic>?;
-        final newAccessToken = tokens?['accessToken'] as String?;
-        final newRefreshToken = tokens?['refreshToken'] as String?;
-
-        if (newAccessToken == null || newRefreshToken == null) {
+        TokenReissueResponseModel parsed;
+        try {
+          parsed = TokenReissueResponseModel.fromJson(
+              response.data as Map<String, dynamic>);
+        } catch (parseErr) {
           if (kDebugMode) {
-            debugPrint('❌ 토큰 재발급 응답 파싱 실패: tokens=$tokens');
+            debugPrint('❌ 토큰 재발급 응답 파싱 실패: $parseErr / data=${response.data}');
           }
           await _handleForceLogout();
           return handler.next(err);
         }
 
         await _tokenStorage.saveTokens(
-          accessToken: newAccessToken,
-          refreshToken: newRefreshToken,
+          accessToken: parsed.tokens.accessToken,
+          refreshToken: parsed.tokens.refreshToken,
         );
 
         if (kDebugMode) {
           debugPrint('🔄 토큰 재발급 성공');
         }
 
-        // 원래 요청 재시도
         final retryResponse = await _retryRequest(
           err.requestOptions,
-          newAccessToken,
+          parsed.tokens.accessToken,
         );
         return handler.resolve(retryResponse);
       } else {
@@ -160,7 +168,7 @@ class AuthInterceptor extends QueuedInterceptor {
     } catch (e) {
       String? errorDetail;
       if (e is DioException) {
-        errorDetail = ApiErrorResponse.tryParse(e.response?.data)?.detail;
+        errorDetail = ApiErrorResponse.tryParse(e.response?.data)?.message;
         if (kDebugMode) {
           debugPrint('❌ [Reissue] 토큰 재발급 실패: ${e.response?.statusCode}');
           debugPrint('   responseData: ${e.response?.data}');

@@ -50,7 +50,7 @@
 
 ### 4.1 의존성 흐름 (변화 없음)
 
-```
+```text
 ProfileScreen (탭 핸들러)
     ↓
 AppDialog.show(confirmationPhrases: [...], onConfirm: ...)
@@ -66,7 +66,7 @@ app_router.dart redirect → /login
 
 ### 4.2 AppDialog 의 새 동작 분기
 
-```
+```text
 build():
   if confirmationPhrases != null:
     StatefulWidget 으로 controller 보유

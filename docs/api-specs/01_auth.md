@@ -102,7 +102,10 @@ Firebase ID Token을 백엔드에 전송하여 JWT를 발급받습니다.
 서버에서 Refresh Token 및 디바이스 정보를 삭제합니다.
 클라이언트는 응답 후 로컬의 Access/Refresh Token을 삭제합니다.
 
-### 인증: 필요
+### 인증: 불필요 (본문 refreshToken 으로 세션 식별)
+
+> Access Token 이 만료된 상태에서도 즉시 로그아웃이 가능해야 하므로 인증 헤더를 요구하지 않습니다.
+> 클라이언트(`AuthInterceptor._publicPaths`)도 이 경로에 Authorization 헤더를 주입하지 않습니다.
 
 ### Request Body
 
@@ -130,8 +133,8 @@ Firebase ID Token을 백엔드에 전송하여 JWT를 발급받습니다.
 ### 서버 처리 로직
 
 ```text
-1. Access Token에서 memberId 추출
-2. 해당 memberId + refreshToken 조합으로 DB에서 세션 삭제
+1. 본문 refreshToken 으로 DB 의 세션(user_devices) 조회
+2. 해당 세션 삭제 (없으면 멱등하게 204 응답)
 ```
 
 ---

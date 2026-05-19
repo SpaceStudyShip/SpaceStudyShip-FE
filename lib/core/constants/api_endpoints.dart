@@ -25,4 +25,7 @@ abstract class ApiEndpoints {
 
   /// 닉네임 중복 확인
   static const checkNickname = '/api/auth/check-nickname';
+
+  /// 닉네임 변경
+  static const nickname = '/api/auth/nickname';
 }

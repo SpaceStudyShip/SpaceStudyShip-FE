@@ -1,3 +1,4 @@
+import '../../../../core/errors/app_exception.dart';
 import '../entities/auth_result_entity.dart';
 
 /// Auth Repository 인터페이스
@@ -33,4 +34,32 @@ abstract class AuthRepository {
   /// 2. Firebase 로그아웃
   /// 3. JWT 토큰 삭제
   Future<void> signOut();
+
+  /// 닉네임 변경
+  ///
+  /// `PATCH /api/auth/nickname` 호출 후 새 닉네임 문자열 반환.
+  ///
+  /// Throws:
+  /// - [InvalidInputValueException] (400): 클라이언트 사전 검증 실패 또는 서버 형식 오류
+  /// - [UnauthenticatedRequestException] (401)
+  /// - [DuplicatedNicknameException] (409)
+  Future<String> updateNickname(String nickname);
+
+  /// 닉네임 중복 확인
+  ///
+  /// `GET /api/auth/check-nickname` 호출. true = 사용 가능, false = 이미 사용 중.
+  ///
+  /// Throws:
+  /// - [InvalidInputValueException] (400)
+  /// - [UnauthenticatedRequestException] (401)
+  Future<bool> checkNickname(String nickname);
+
+  /// 회원 탈퇴
+  ///
+  /// `DELETE /api/auth/withdraw` 호출 후 Firebase signOut + 로컬 토큰 삭제.
+  /// 204 응답 / Firebase 측 사용자 부재 / 외부 시스템 일시 오류 모두 정상 완료로 처리 (멱등).
+  ///
+  /// Throws:
+  /// - [UnauthenticatedRequestException] (401)
+  Future<void> withdraw();
 }

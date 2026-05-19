@@ -12,8 +12,10 @@ import '../../domain/entities/auth_result_entity.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../datasources/auth_remote_datasource.dart';
 import '../datasources/firebase_auth_datasource.dart';
+import '../models/check_nickname_response_model.dart';
 import '../models/login_request_model.dart';
 import '../models/logout_request_model.dart';
+import '../models/update_nickname_request_model.dart';
 
 /// Auth Repository 구현체
 ///
@@ -173,6 +175,76 @@ class AuthRepositoryImpl implements AuthRepository {
     } catch (e) {
       if (e is AppException) rethrow;
       throw AuthException(message: '로그아웃 중 오류가 발생했습니다.', originalException: e);
+    }
+  }
+
+  // ============================================
+  // 닉네임
+  // ============================================
+
+  @override
+  Future<String> updateNickname(String nickname) async {
+    try {
+      final response = await _authRemoteDataSource.updateNickname(
+        UpdateNicknameRequestModel(nickname: nickname),
+      );
+      if (kDebugMode) {
+        debugPrint('닉네임 변경 성공: ${response.nickname}');
+      }
+      return response.nickname;
+    } on DioException catch (e) {
+      throw DioExceptionHandler.handle(e);
+    } catch (e) {
+      if (e is AppException) rethrow;
+      throw AuthException(
+          message: '닉네임 변경 중 오류가 발생했습니다.', originalException: e);
+    }
+  }
+
+  @override
+  Future<bool> checkNickname(String nickname) async {
+    try {
+      final CheckNicknameResponseModel response =
+          await _authRemoteDataSource.checkNickname(nickname);
+      return response.available;
+    } on DioException catch (e) {
+      throw DioExceptionHandler.handle(e);
+    } catch (e) {
+      if (e is AppException) rethrow;
+      throw AuthException(
+          message: '닉네임 중복 확인 중 오류가 발생했습니다.', originalException: e);
+    }
+  }
+
+  // ============================================
+  // 회원 탈퇴
+  // ============================================
+
+  @override
+  Future<void> withdraw() async {
+    try {
+      await _authRemoteDataSource.withdraw();
+
+      // 204 성공 시에만 도달.
+      // 멱등 보장: Firebase signOut 실패도 무시하고 토큰 삭제는 진행.
+      try {
+        await _firebaseAuthDataSource.signOut();
+      } catch (e) {
+        if (kDebugMode) {
+          debugPrint('withdraw 후 Firebase signOut 실패 (무시): $e');
+        }
+      }
+      await _tokenStorage.clearTokens();
+
+      if (kDebugMode) {
+        debugPrint('회원 탈퇴 완료 (백엔드 + Firebase + 토큰 삭제)');
+      }
+    } on DioException catch (e) {
+      throw DioExceptionHandler.handle(e);
+    } catch (e) {
+      if (e is AppException) rethrow;
+      throw AuthException(
+          message: '회원 탈퇴 중 오류가 발생했습니다.', originalException: e);
     }
   }
 

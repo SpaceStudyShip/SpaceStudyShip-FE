@@ -132,6 +132,68 @@ final signOutUseCaseProvider = AutoDisposeProvider<SignOutUseCase>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef SignOutUseCaseRef = AutoDisposeProviderRef<SignOutUseCase>;
+String _$updateNicknameUseCaseHash() =>
+    r'd5da31be5fb239d0ec6d3f2feccbb73c0fad3268';
+
+/// 닉네임 변경 UseCase Provider
+///
+/// Copied from [updateNicknameUseCase].
+@ProviderFor(updateNicknameUseCase)
+final updateNicknameUseCaseProvider =
+    AutoDisposeProvider<UpdateNicknameUseCase>.internal(
+      updateNicknameUseCase,
+      name: r'updateNicknameUseCaseProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$updateNicknameUseCaseHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef UpdateNicknameUseCaseRef =
+    AutoDisposeProviderRef<UpdateNicknameUseCase>;
+String _$checkNicknameUseCaseHash() =>
+    r'f32484a99a3201ed32ca6c672063b265bdd5b5ee';
+
+/// 닉네임 중복 확인 UseCase Provider
+///
+/// Copied from [checkNicknameUseCase].
+@ProviderFor(checkNicknameUseCase)
+final checkNicknameUseCaseProvider =
+    AutoDisposeProvider<CheckNicknameUseCase>.internal(
+      checkNicknameUseCase,
+      name: r'checkNicknameUseCaseProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$checkNicknameUseCaseHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef CheckNicknameUseCaseRef = AutoDisposeProviderRef<CheckNicknameUseCase>;
+String _$withdrawUseCaseHash() => r'29acaec0a21a6ab45418128f1076a00762577253';
+
+/// 회원 탈퇴 UseCase Provider
+///
+/// Copied from [withdrawUseCase].
+@ProviderFor(withdrawUseCase)
+final withdrawUseCaseProvider = AutoDisposeProvider<WithdrawUseCase>.internal(
+  withdrawUseCase,
+  name: r'withdrawUseCaseProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$withdrawUseCaseHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef WithdrawUseCaseRef = AutoDisposeProviderRef<WithdrawUseCase>;
 String _$authStateHash() => r'facb22ebd952358284758f2de88b4f654584d127';
 
 /// Firebase Auth State를 실시간으로 제공하는 StreamProvider
@@ -194,7 +256,7 @@ final activeLoginNotifierProvider =
     );
 
 typedef _$ActiveLoginNotifier = AutoDisposeNotifier<SocialLoginProvider?>;
-String _$authNotifierHash() => r'74b6d7f0f8bd0bd6145eb19d2d55d84ee02ba56d';
+String _$authNotifierHash() => r'cc2af010028837e76bb830e34eb6c347704bce3c';
 
 /// 인증 상태를 관리하는 Notifier
 ///

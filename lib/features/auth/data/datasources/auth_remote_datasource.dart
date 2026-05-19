@@ -2,11 +2,14 @@ import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
 
 import '../../../../core/constants/api_endpoints.dart';
+import '../models/check_nickname_response_model.dart';
 import '../models/login_request_model.dart';
 import '../models/login_response_model.dart';
 import '../models/logout_request_model.dart';
 import '../models/token_reissue_request_model.dart';
 import '../models/token_reissue_response_model.dart';
+import '../models/update_nickname_request_model.dart';
+import '../models/update_nickname_response_model.dart';
 
 part 'auth_remote_datasource.g.dart';
 
@@ -51,4 +54,38 @@ abstract class AuthRemoteDataSource {
   Future<TokenReissueResponseModel> reissue(
     @Body() TokenReissueRequestModel request,
   );
+
+  /// 닉네임 변경
+  ///
+  /// `PATCH /api/auth/nickname` — 인증 필요.
+  ///
+  /// - 200: 변경 성공
+  /// - 400 INVALID_INPUT_VALUE: 형식 오류
+  /// - 401 UNAUTHENTICATED_REQUEST: 인증 실패
+  /// - 409 DUPLICATED_NICKNAME: 이미 사용 중
+  @PATCH(ApiEndpoints.nickname)
+  Future<UpdateNicknameResponseModel> updateNickname(
+    @Body() UpdateNicknameRequestModel request,
+  );
+
+  /// 닉네임 중복 확인
+  ///
+  /// `GET /api/auth/check-nickname?nickname=...` — 인증 필요.
+  ///
+  /// - 200: `{available: bool}`
+  /// - 400 INVALID_INPUT_VALUE: 형식 오류
+  /// - 401 UNAUTHENTICATED_REQUEST: 인증 실패
+  @GET(ApiEndpoints.checkNickname)
+  Future<CheckNicknameResponseModel> checkNickname(
+    @Query('nickname') String nickname,
+  );
+
+  /// 회원 탈퇴
+  ///
+  /// `DELETE /api/auth/withdraw` — 인증 필요. 요청 본문 없음.
+  ///
+  /// - 204: 탈퇴 성공 (멱등)
+  /// - 401 UNAUTHENTICATED_REQUEST: 인증 실패
+  @DELETE(ApiEndpoints.withdraw)
+  Future<void> withdraw();
 }

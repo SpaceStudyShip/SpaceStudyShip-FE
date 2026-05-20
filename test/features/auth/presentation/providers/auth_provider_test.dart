@@ -29,10 +29,12 @@ void main() {
   tearDown(() {
     // AuthNotifier.build() 의 onDispose 콜백은 forceLogoutCallbackNotifierProvider
     // 를 read 하는데, ProviderContainer 전체 dispose 중에는 의존 provider 가 이미
-    // 정리되어 "Bad state" 예외가 발생할 수 있다. Riverpod 의 runGuarded 가 이
-    // 예외를 Zone 으로 전파하므로, runZonedGuarded 로 흡수한다 (본 단위 테스트의
-    // 검증 대상이 아님).
-    runZonedGuarded(() => container.dispose(), (_, _) {});
+    // 정리되어 "Bad state" (StateError) 예외가 발생할 수 있다. Riverpod 의
+    // runGuarded 가 이 예외를 Zone 으로 전파하므로 흡수한다 (본 단위 테스트의
+    // 검증 대상이 아님). 그 외 예외는 실제 회귀 신호이므로 다시 던진다.
+    runZonedGuarded(() => container.dispose(), (error, _) {
+      if (error is! StateError) throw error;
+    });
   });
 
   group('markNicknameConfirmed', () {
@@ -88,7 +90,9 @@ void main() {
         ],
       );
       addTearDown(() {
-        runZonedGuarded(() => c.dispose(), (_, _) {});
+        runZonedGuarded(() => c.dispose(), (error, _) {
+          if (error is! StateError) throw error;
+        });
       });
 
       final notifier = c.read(authNotifierProvider.notifier);
@@ -117,7 +121,9 @@ void main() {
         ],
       );
       addTearDown(() {
-        runZonedGuarded(() => c.dispose(), (_, _) {});
+        runZonedGuarded(() => c.dispose(), (error, _) {
+          if (error is! StateError) throw error;
+        });
       });
 
       final notifier = c.read(authNotifierProvider.notifier);

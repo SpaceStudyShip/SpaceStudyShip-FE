@@ -171,7 +171,12 @@ void main() {
         ],
       );
       addTearDown(() {
-        runZonedGuarded(() => container.dispose(), (error, stack) {});
+        // ProviderContainer dispose 중 의존 provider 가 이미 정리되어 발생하는
+        // Riverpod "Bad state" (StateError) 만 흡수한다. 그 외 예외는 실제
+        // 회귀 신호이므로 다시 던진다.
+        runZonedGuarded(() => container.dispose(), (error, _) {
+          if (error is! StateError) throw error;
+        });
       });
     });
 

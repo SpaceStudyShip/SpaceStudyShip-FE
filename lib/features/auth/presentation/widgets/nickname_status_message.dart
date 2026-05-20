@@ -20,7 +20,7 @@ class NicknameStatusMessage extends StatelessWidget {
   Color _color() {
     switch (status) {
       case NicknameValidationStatus.available:
-        return AppColors.info;
+        return AppColors.success;
       case NicknameValidationStatus.invalidFormat:
       case NicknameValidationStatus.unavailable:
         return AppColors.error;

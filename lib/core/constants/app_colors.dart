@@ -78,7 +78,7 @@ class AppColors {
   // ============================================
 
   /// Success Green - 연료 충분, Todo 완료, 성공 상태
-  static const Color success = Color(0xFF4CAF50);
+  static const Color success = Color(0xFF38F55B);
 
   /// Warning Orange - 타이머 일시정지, 주의 필요
   static const Color warning = Color(0xFFFF9800);
@@ -141,10 +141,10 @@ class AppColors {
   static const Color timerPaused = Color(0xFFFF9800);
 
   /// Timer Completed - 타이머 완료
-  static const Color timerCompleted = Color(0xFF4CAF50);
+  static const Color timerCompleted = Color(0xFF38F55B);
 
   /// Fuel Full - 연료 충분 (75-100%)
-  static const Color fuelFull = Color(0xFF4CAF50);
+  static const Color fuelFull = Color(0xFF38F55B);
 
   /// Fuel Medium - 연료 보통 (50-74%)
   static const Color fuelMedium = Color(0xFFFFD740);
@@ -156,7 +156,7 @@ class AppColors {
   static const Color fuelEmpty = Color(0xFFF44336);
 
   /// Online - 온라인 상태
-  static const Color online = Color(0xFF4CAF50);
+  static const Color online = Color(0xFF38F55B);
 
   /// Away - 자리비움 상태
   static const Color away = Color(0xFFFF9800);

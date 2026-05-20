@@ -156,24 +156,19 @@ test/routes/
 ```dart
 // lib/routes/route_paths.dart
 static const nicknameSetup = '/nickname-setup';
-static const nicknameEdit  = '/profile/settings/nickname-edit';
+static const nicknameEdit  = '/nickname-edit';
 ```
 
 라우트 등록 위치:
 - `nicknameSetup` → 인증 플로우 그룹(`splash`/`login`/`onboarding` 옆), ShellRoute **외부** GoRoute.
-- `nicknameEdit` → Profile 탭 → `settings` 하위 GoRoute (`path: 'nickname-edit'`). ShellRoute **내부**. 즉:
+- `nicknameEdit` → 인증 플로우 그룹 옆, ShellRoute **외부** top-level GoRoute
+  (설정 메뉴 진입 — 바텀 네비 숨김). 즉:
   ```dart
   GoRoute(
-    path: 'settings',
-    name: 'settings',
-    builder: (context, state) => const SettingsScreen(),
-    routes: [
-      GoRoute(
-        path: 'nickname-edit',
-        name: 'nicknameEdit',
-        builder: (context, state) => const NicknameSetupScreen(mode: NicknameMode.edit),
-      ),
-    ],
+    path: RoutePaths.nicknameEdit,
+    name: 'nicknameEdit',
+    builder: (context, state) =>
+        const NicknameSetupScreen(mode: NicknameMode.edit),
   ),
   ```
 

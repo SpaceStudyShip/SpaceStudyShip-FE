@@ -76,14 +76,14 @@ flutter test <해당 테스트 경로>       # 통과 확인
   static const nicknameSetup = '/nickname-setup';   // 추가
 ```
 
-- [ ] **Step 2: Profile 하위 화면 그룹에 nicknameEdit 추가**
+- [ ] **Step 2: 인증 플로우 그룹에 nicknameEdit 추가**
 
-같은 파일의 "Profile 하위 화면" 섹션 안 `settings` 라인 아래에 한 줄 추가:
+같은 파일의 "인증 플로우" 섹션 `nicknameSetup` 라인 아래에 한 줄 추가
+(ShellRoute 외부 top-level — 바텀 네비 숨김):
 
 ```dart
-  static const settings = '/profile/settings';
-  static const nicknameEdit = '/profile/settings/nickname-edit';   // 추가
-  static const badges = '/profile/badges';
+  static const nicknameSetup = '/nickname-setup';
+  static const nicknameEdit = '/nickname-edit';   // 추가
 ```
 
 - [ ] **Step 3: 컴파일 확인**

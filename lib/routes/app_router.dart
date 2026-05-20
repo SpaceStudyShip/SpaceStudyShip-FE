@@ -66,8 +66,7 @@ String? resolveAuthRedirect({
   required bool splashDone,
 }) {
   // 인증 로딩 중이거나 스플래시 최소 시간 미경과 → 스플래시 유지
-  if (authState.isLoading ||
-      (location == RoutePaths.splash && !splashDone)) {
+  if (authState.isLoading || (location == RoutePaths.splash && !splashDone)) {
     return null;
   }
 

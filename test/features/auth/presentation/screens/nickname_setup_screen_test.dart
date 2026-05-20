@@ -50,18 +50,23 @@ void main() {
       ],
       child: ScreenUtilInit(
         designSize: const Size(390, 844),
-        builder: (context, child) => MaterialApp(
-          home: NicknameSetupScreen(mode: mode),
-        ),
+        builder: (context, child) =>
+            MaterialApp(home: NicknameSetupScreen(mode: mode)),
       ),
     );
   }
 
   testWidgets('mode=initialSetup → AppBar 없음 + 시스템 백 차단', (tester) async {
-    await tester.pumpWidget(makeApp(
-      NicknameMode.initialSetup,
-      const AuthResultEntity(memberId: 1, nickname: 'abc12', isNewMember: true),
-    ));
+    await tester.pumpWidget(
+      makeApp(
+        NicknameMode.initialSetup,
+        const AuthResultEntity(
+          memberId: 1,
+          nickname: 'abc12',
+          isNewMember: true,
+        ),
+      ),
+    );
     await tester.pump();
     expect(find.byType(AppBar), findsNothing);
     final popScope = tester.widget<PopScope>(
@@ -71,10 +76,16 @@ void main() {
   });
 
   testWidgets('mode=edit → AppBar 없음 (UI 동일) + 시스템 백 허용', (tester) async {
-    await tester.pumpWidget(makeApp(
-      NicknameMode.edit,
-      const AuthResultEntity(memberId: 1, nickname: 'abc12', isNewMember: false),
-    ));
+    await tester.pumpWidget(
+      makeApp(
+        NicknameMode.edit,
+        const AuthResultEntity(
+          memberId: 1,
+          nickname: 'abc12',
+          isNewMember: false,
+        ),
+      ),
+    );
     await tester.pump();
     expect(find.byType(AppBar), findsNothing);
     // 두 모드 모두 동일한 헤딩을 노출한다.
@@ -86,10 +97,16 @@ void main() {
   });
 
   testWidgets('진입 직후 확인 버튼 활성 (idle)', (tester) async {
-    await tester.pumpWidget(makeApp(
-      NicknameMode.initialSetup,
-      const AuthResultEntity(memberId: 1, nickname: 'abc12', isNewMember: true),
-    ));
+    await tester.pumpWidget(
+      makeApp(
+        NicknameMode.initialSetup,
+        const AuthResultEntity(
+          memberId: 1,
+          nickname: 'abc12',
+          isNewMember: true,
+        ),
+      ),
+    );
     await tester.pump();
     final btn = tester.widget<AppButton>(
       find.byKey(const Key('nickname-confirm-button')),
@@ -98,10 +115,16 @@ void main() {
   });
 
   testWidgets('입력 변경 → 확인 비활성, 중복확인 활성', (tester) async {
-    await tester.pumpWidget(makeApp(
-      NicknameMode.initialSetup,
-      const AuthResultEntity(memberId: 1, nickname: 'abc12', isNewMember: true),
-    ));
+    await tester.pumpWidget(
+      makeApp(
+        NicknameMode.initialSetup,
+        const AuthResultEntity(
+          memberId: 1,
+          nickname: 'abc12',
+          isNewMember: true,
+        ),
+      ),
+    );
     await tester.pump();
     await tester.enterText(find.byType(TextField), '우주탐험가');
     await tester.pump();

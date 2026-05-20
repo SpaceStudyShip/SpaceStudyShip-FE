@@ -10,7 +10,8 @@ import 'package:space_study_ship/features/auth/presentation/providers/auth_provi
 
 class _MockTokenStorage extends Mock implements SecureTokenStorage {}
 
-class _MockUpdateNicknameUseCase extends Mock implements UpdateNicknameUseCase {}
+class _MockUpdateNicknameUseCase extends Mock
+    implements UpdateNicknameUseCase {}
 
 void main() {
   late _MockTokenStorage tokenStorage;
@@ -21,9 +22,7 @@ void main() {
     when(() => tokenStorage.saveIsNewMember(any())).thenAnswer((_) async {});
     when(() => tokenStorage.saveNickname(any())).thenAnswer((_) async {});
     container = ProviderContainer(
-      overrides: [
-        secureTokenStorageProvider.overrideWithValue(tokenStorage),
-      ],
+      overrides: [secureTokenStorageProvider.overrideWithValue(tokenStorage)],
     );
   });
 
@@ -37,18 +36,24 @@ void main() {
   });
 
   group('markNicknameConfirmed', () {
-    test('isNewMember=true 상태 → false 로 전환 + saveIsNewMember(false) 호출', () async {
-      final notifier = container.read(authNotifierProvider.notifier);
-      notifier.state = const AsyncValue.data(
-        AuthResultEntity(memberId: 1, nickname: 'abc', isNewMember: true),
-      );
+    test(
+      'isNewMember=true 상태 → false 로 전환 + saveIsNewMember(false) 호출',
+      () async {
+        final notifier = container.read(authNotifierProvider.notifier);
+        notifier.state = const AsyncValue.data(
+          AuthResultEntity(memberId: 1, nickname: 'abc', isNewMember: true),
+        );
 
-      await notifier.markNicknameConfirmed();
+        await notifier.markNicknameConfirmed();
 
-      expect(container.read(authNotifierProvider).value!.isNewMember, isFalse);
-      expect(container.read(authNotifierProvider).value!.nickname, 'abc');
-      verify(() => tokenStorage.saveIsNewMember(false)).called(1);
-    });
+        expect(
+          container.read(authNotifierProvider).value!.isNewMember,
+          isFalse,
+        );
+        expect(container.read(authNotifierProvider).value!.nickname, 'abc');
+        verify(() => tokenStorage.saveIsNewMember(false)).called(1);
+      },
+    );
 
     test('isNewMember=false 상태 → no-op (storage 호출 없음)', () async {
       final notifier = container.read(authNotifierProvider.notifier);
@@ -74,8 +79,7 @@ void main() {
   group('updateNickname storage sync', () {
     test('성공 시 state 갱신 + saveIsNewMember(false) await 호출', () async {
       final useCase = _MockUpdateNicknameUseCase();
-      when(() => useCase.execute('우주탐험가'))
-          .thenAnswer((_) async => '우주탐험가');
+      when(() => useCase.execute('우주탐험가')).thenAnswer((_) async => '우주탐험가');
 
       final c = ProviderContainer(
         overrides: [

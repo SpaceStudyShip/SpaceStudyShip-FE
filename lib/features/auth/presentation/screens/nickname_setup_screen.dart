@@ -33,11 +33,9 @@ class NicknameSetupScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final initial =
-        ref.watch(authNotifierProvider).valueOrNull?.nickname ?? '';
+    final initial = ref.watch(authNotifierProvider).valueOrNull?.nickname ?? '';
     final form = ref.watch(nicknameFormNotifierProvider(initial));
-    final notifier =
-        ref.read(nicknameFormNotifierProvider(initial).notifier);
+    final notifier = ref.read(nicknameFormNotifierProvider(initial).notifier);
 
     return PopScope(
       key: const Key('nickname-setup-popscope'),
@@ -52,8 +50,9 @@ class NicknameSetupScreen extends ConsumerWidget {
                 builder: (context, constraints) {
                   return SingleChildScrollView(
                     child: ConstrainedBox(
-                      constraints:
-                          BoxConstraints(minHeight: constraints.maxHeight),
+                      constraints: BoxConstraints(
+                        minHeight: constraints.maxHeight,
+                      ),
                       child: IntrinsicHeight(
                         child: Padding(
                           padding: AppPadding.all20,
@@ -63,8 +62,9 @@ class NicknameSetupScreen extends ConsumerWidget {
                               SizedBox(height: AppSpacing.s48),
                               Text(
                                 '닉네임을 정해주세요',
-                                style: AppTextStyles.heading_24
-                                    .copyWith(color: Colors.white),
+                                style: AppTextStyles.heading_24.copyWith(
+                                  color: Colors.white,
+                                ),
                               ),
                               SizedBox(height: AppSpacing.s8),
                               Text(
@@ -92,27 +92,25 @@ class NicknameSetupScreen extends ConsumerWidget {
                                 key: const Key('nickname-confirm-button'),
                                 text: '확인',
                                 isLoading: form.isSubmitting,
-                                onPressed: _canSubmit(form.status) &&
+                                onPressed:
+                                    _canSubmit(form.status) &&
                                         !form.isSubmitting
                                     ? () => notifier.submit(
-                                          mode: mode,
-                                          onCompleted: () {
-                                            if (mode == NicknameMode.edit &&
-                                                context.mounted) {
-                                              context.pop();
-                                            }
-                                            // initialSetup: GoRouter redirect
-                                            // 가 자동으로 /home 으로 이동
-                                          },
-                                          onError: (message) {
-                                            if (context.mounted) {
-                                              AppSnackBar.error(
-                                                context,
-                                                message,
-                                              );
-                                            }
-                                          },
-                                        )
+                                        mode: mode,
+                                        onCompleted: () {
+                                          if (mode == NicknameMode.edit &&
+                                              context.mounted) {
+                                            context.pop();
+                                          }
+                                          // initialSetup: GoRouter redirect
+                                          // 가 자동으로 /home 으로 이동
+                                        },
+                                        onError: (message) {
+                                          if (context.mounted) {
+                                            AppSnackBar.error(context, message);
+                                          }
+                                        },
+                                      )
                                     : null,
                                 width: double.infinity,
                                 height: 56.h,

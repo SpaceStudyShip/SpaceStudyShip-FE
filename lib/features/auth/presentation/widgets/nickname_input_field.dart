@@ -38,8 +38,9 @@ class NicknameInputField extends StatefulWidget {
 }
 
 class _NicknameInputFieldState extends State<NicknameInputField> {
-  late final TextEditingController _controller =
-      TextEditingController(text: widget.initialValue);
+  late final TextEditingController _controller = TextEditingController(
+    text: widget.initialValue,
+  );
 
   @override
   void dispose() {
@@ -66,9 +67,7 @@ class _NicknameInputFieldState extends State<NicknameInputField> {
           padding: EdgeInsets.only(bottom: AppSpacing.s4),
           child: Text(
             '${widget.currentLength}/10',
-            style: AppTextStyles.tag_12.copyWith(
-              color: AppColors.textTertiary,
-            ),
+            style: AppTextStyles.tag_12.copyWith(color: AppColors.textTertiary),
           ),
         ),
         // 입력 + 우측 버튼

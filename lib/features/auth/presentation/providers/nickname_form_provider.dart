@@ -92,8 +92,9 @@ class NicknameFormNotifier extends _$NicknameFormNotifier {
     state = state.copyWith(isCheckingDuplicate: true);
     final inputAtCall = state.input;
     try {
-      final available =
-          await ref.read(checkNicknameUseCaseProvider).execute(inputAtCall);
+      final available = await ref
+          .read(checkNicknameUseCaseProvider)
+          .execute(inputAtCall);
       if (state.input != inputAtCall) {
         // 사용자가 도중에 입력을 변경 — 결과 폐기, isCheckingDuplicate 만 해제
         state = state.copyWith(isCheckingDuplicate: false);
@@ -104,9 +105,7 @@ class NicknameFormNotifier extends _$NicknameFormNotifier {
         status: available
             ? NicknameValidationStatus.available
             : NicknameValidationStatus.unavailable,
-        errorMessage: available
-            ? '사용 가능한 닉네임이에요'
-            : '이미 사용 중인 닉네임이에요',
+        errorMessage: available ? '사용 가능한 닉네임이에요' : '이미 사용 중인 닉네임이에요',
       );
     } on InvalidInputValueException catch (e) {
       state = state.copyWith(
@@ -115,7 +114,9 @@ class NicknameFormNotifier extends _$NicknameFormNotifier {
         errorMessage: e.message,
       );
     } catch (e, stackTrace) {
-      debugPrint('❌ NicknameFormNotifier.checkDuplicate failed: $e\n$stackTrace');
+      debugPrint(
+        '❌ NicknameFormNotifier.checkDuplicate failed: $e\n$stackTrace',
+      );
       // 네트워크/기타 — 상태는 needsCheck 로 복원, 메시지만 갱신
       state = state.copyWith(
         isCheckingDuplicate: false,

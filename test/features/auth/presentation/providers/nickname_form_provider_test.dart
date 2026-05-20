@@ -37,7 +37,8 @@ void main() {
   group('onInputChanged 상태 전이', () {
     test('입력 변경 (다른 유효 값) → needsCheck', () {
       final c = makeContainer('abc12');
-      c.read(nicknameFormNotifierProvider('abc12').notifier)
+      c
+          .read(nicknameFormNotifierProvider('abc12').notifier)
           .onInputChanged('우주탐험가');
       final s = c.read(nicknameFormNotifierProvider('abc12'));
       expect(s.status, NicknameValidationStatus.needsCheck);
@@ -76,7 +77,7 @@ void main() {
     test('이모지 포함 → invalidFormat', () {
       final c = makeContainer('abc12');
       final n = c.read(nicknameFormNotifierProvider('abc12').notifier);
-      n.onInputChanged('우주\u{1F680}');   // 🚀
+      n.onInputChanged('우주\u{1F680}'); // 🚀
       expect(n.state.status, NicknameValidationStatus.invalidFormat);
     });
   });
@@ -95,9 +96,7 @@ void main() {
 
     test('available=true → status=available', () async {
       when(() => repo.checkNickname('우주탐험가')).thenAnswer((_) async => true);
-      final n = container.read(
-        nicknameFormNotifierProvider('abc12').notifier,
-      );
+      final n = container.read(nicknameFormNotifierProvider('abc12').notifier);
       n.onInputChanged('우주탐험가');
       await n.checkDuplicate();
       expect(n.state.status, NicknameValidationStatus.available);
@@ -106,21 +105,17 @@ void main() {
 
     test('available=false → status=unavailable', () async {
       when(() => repo.checkNickname('taken')).thenAnswer((_) async => false);
-      final n = container.read(
-        nicknameFormNotifierProvider('abc12').notifier,
-      );
+      final n = container.read(nicknameFormNotifierProvider('abc12').notifier);
       n.onInputChanged('taken');
       await n.checkDuplicate();
       expect(n.state.status, NicknameValidationStatus.unavailable);
     });
 
     test('InvalidInputValueException → status=invalidFormat', () async {
-      when(() => repo.checkNickname(any())).thenThrow(
-        const InvalidInputValueException(message: '금지어'),
-      );
-      final n = container.read(
-        nicknameFormNotifierProvider('abc12').notifier,
-      );
+      when(
+        () => repo.checkNickname(any()),
+      ).thenThrow(const InvalidInputValueException(message: '금지어'));
+      final n = container.read(nicknameFormNotifierProvider('abc12').notifier);
       n.onInputChanged('욕설');
       await n.checkDuplicate();
       expect(n.state.status, NicknameValidationStatus.invalidFormat);
@@ -132,9 +127,7 @@ void main() {
         await Future<void>.delayed(const Duration(milliseconds: 50));
         return true;
       });
-      final n = container.read(
-        nicknameFormNotifierProvider('abc12').notifier,
-      );
+      final n = container.read(nicknameFormNotifierProvider('abc12').notifier);
       n.onInputChanged('우주탐험가');
       final future = n.checkDuplicate();
       expect(n.state.isCheckingDuplicate, isTrue);
@@ -148,9 +141,7 @@ void main() {
         return true;
       });
 
-      final n = container.read(
-        nicknameFormNotifierProvider('abc12').notifier,
-      );
+      final n = container.read(nicknameFormNotifierProvider('abc12').notifier);
       n.onInputChanged('우주탐험가');
       final future = n.checkDuplicate();
       // await 중 사용자가 입력을 다른 값으로 변경
@@ -184,39 +175,42 @@ void main() {
       });
     });
 
-    test('status=idle, mode=initialSetup → markNicknameConfirmed 호출 + onCompleted', () async {
-      final auth = container.read(authNotifierProvider.notifier);
-      auth.state = const AsyncValue.data(
-        AuthResultEntity(memberId: 1, nickname: 'abc12', isNewMember: true),
-      );
-      var completed = false;
+    test(
+      'status=idle, mode=initialSetup → markNicknameConfirmed 호출 + onCompleted',
+      () async {
+        final auth = container.read(authNotifierProvider.notifier);
+        auth.state = const AsyncValue.data(
+          AuthResultEntity(memberId: 1, nickname: 'abc12', isNewMember: true),
+        );
+        var completed = false;
 
-      final n = container.read(
-        nicknameFormNotifierProvider('abc12').notifier,
-      );
-      await n.submit(
-        mode: NicknameMode.initialSetup,
-        onCompleted: () => completed = true,
-        onError: (_) {},
-      );
+        final n = container.read(
+          nicknameFormNotifierProvider('abc12').notifier,
+        );
+        await n.submit(
+          mode: NicknameMode.initialSetup,
+          onCompleted: () => completed = true,
+          onError: (_) {},
+        );
 
-      expect(completed, isTrue);
-      expect(container.read(authNotifierProvider).value!.isNewMember, isFalse);
-      verify(() => tokenStorage.saveIsNewMember(false)).called(1);
-      verifyNever(() => repo.updateNickname(any()));
-    });
+        expect(completed, isTrue);
+        expect(
+          container.read(authNotifierProvider).value!.isNewMember,
+          isFalse,
+        );
+        verify(() => tokenStorage.saveIsNewMember(false)).called(1);
+        verifyNever(() => repo.updateNickname(any()));
+      },
+    );
 
     test('status=available → updateNickname 호출 + onCompleted', () async {
-      when(() => repo.updateNickname('우주탐험가'))
-          .thenAnswer((_) async => '우주탐험가');
+      when(() => repo.updateNickname('우주탐험가')).thenAnswer((_) async => '우주탐험가');
       final auth = container.read(authNotifierProvider.notifier);
       auth.state = const AsyncValue.data(
         AuthResultEntity(memberId: 1, nickname: 'abc12', isNewMember: true),
       );
 
-      final n = container.read(
-        nicknameFormNotifierProvider('abc12').notifier,
-      );
+      final n = container.read(nicknameFormNotifierProvider('abc12').notifier);
       n.onInputChanged('우주탐험가');
       when(() => repo.checkNickname('우주탐험가')).thenAnswer((_) async => true);
       await n.checkDuplicate();
@@ -236,11 +230,10 @@ void main() {
     });
 
     test('submit 중 DuplicatedNicknameException → status=unavailable', () async {
-      when(() => repo.updateNickname(any()))
-          .thenThrow(const DuplicatedNicknameException());
-      final n = container.read(
-        nicknameFormNotifierProvider('abc12').notifier,
-      );
+      when(
+        () => repo.updateNickname(any()),
+      ).thenThrow(const DuplicatedNicknameException());
+      final n = container.read(nicknameFormNotifierProvider('abc12').notifier);
       n.onInputChanged('우주탐험가');
       when(() => repo.checkNickname('우주탐험가')).thenAnswer((_) async => true);
       await n.checkDuplicate();
@@ -255,35 +248,36 @@ void main() {
       expect(n.state.errorMessage, contains('다른 분이'));
     });
 
-    test('submit 중 InvalidInputValueException → status=invalidFormat', () async {
-      when(() => repo.updateNickname(any())).thenThrow(
-        const InvalidInputValueException(message: '금지어'),
-      );
-      final n = container.read(
-        nicknameFormNotifierProvider('abc12').notifier,
-      );
-      n.onInputChanged('우주탐험가');
-      when(() => repo.checkNickname('우주탐험가')).thenAnswer((_) async => true);
-      await n.checkDuplicate();
+    test(
+      'submit 중 InvalidInputValueException → status=invalidFormat',
+      () async {
+        when(
+          () => repo.updateNickname(any()),
+        ).thenThrow(const InvalidInputValueException(message: '금지어'));
+        final n = container.read(
+          nicknameFormNotifierProvider('abc12').notifier,
+        );
+        n.onInputChanged('우주탐험가');
+        when(() => repo.checkNickname('우주탐험가')).thenAnswer((_) async => true);
+        await n.checkDuplicate();
 
-      await n.submit(
-        mode: NicknameMode.initialSetup,
-        onCompleted: () {},
-        onError: (_) {},
-      );
+        await n.submit(
+          mode: NicknameMode.initialSetup,
+          onCompleted: () {},
+          onError: (_) {},
+        );
 
-      expect(n.state.status, NicknameValidationStatus.invalidFormat);
-      expect(n.state.errorMessage, '금지어');
-    });
+        expect(n.state.status, NicknameValidationStatus.invalidFormat);
+        expect(n.state.errorMessage, '금지어');
+      },
+    );
 
     test('isSubmitting 토글', () async {
       when(() => repo.updateNickname(any())).thenAnswer((_) async {
         await Future<void>.delayed(const Duration(milliseconds: 50));
         return 'x';
       });
-      final n = container.read(
-        nicknameFormNotifierProvider('abc12').notifier,
-      );
+      final n = container.read(nicknameFormNotifierProvider('abc12').notifier);
       n.onInputChanged('우주탐험가');
       when(() => repo.checkNickname('우주탐험가')).thenAnswer((_) async => true);
       await n.checkDuplicate();
@@ -298,26 +292,30 @@ void main() {
       expect(n.state.isSubmitting, isFalse);
     });
 
-    test('submit 중 NetworkException → onError 콜백 호출 + status available 유지', () async {
-      when(() => repo.updateNickname(any()))
-          .thenThrow(const NetworkException(message: 'no connection'));
-      final n = container.read(
-        nicknameFormNotifierProvider('abc12').notifier,
-      );
-      n.onInputChanged('우주탐험가');
-      when(() => repo.checkNickname('우주탐험가')).thenAnswer((_) async => true);
-      await n.checkDuplicate();
+    test(
+      'submit 중 NetworkException → onError 콜백 호출 + status available 유지',
+      () async {
+        when(
+          () => repo.updateNickname(any()),
+        ).thenThrow(const NetworkException(message: 'no connection'));
+        final n = container.read(
+          nicknameFormNotifierProvider('abc12').notifier,
+        );
+        n.onInputChanged('우주탐험가');
+        when(() => repo.checkNickname('우주탐험가')).thenAnswer((_) async => true);
+        await n.checkDuplicate();
 
-      String? errorMessage;
-      await n.submit(
-        mode: NicknameMode.initialSetup,
-        onCompleted: () {},
-        onError: (msg) => errorMessage = msg,
-      );
+        String? errorMessage;
+        await n.submit(
+          mode: NicknameMode.initialSetup,
+          onCompleted: () {},
+          onError: (msg) => errorMessage = msg,
+        );
 
-      expect(errorMessage, '연결 상태를 확인해주세요');
-      expect(n.state.status, NicknameValidationStatus.available);
-      expect(n.state.isSubmitting, isFalse);
-    });
+        expect(errorMessage, '연결 상태를 확인해주세요');
+        expect(n.state.status, NicknameValidationStatus.available);
+        expect(n.state.isSubmitting, isFalse);
+      },
+    );
   });
 }

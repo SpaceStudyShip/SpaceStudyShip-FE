@@ -383,7 +383,13 @@ class AuthNotifier extends _$AuthNotifier {
     final current = state.value;
     if (current == null || !current.isNewMember) return;
     state = AsyncValue.data(current.copyWith(isNewMember: false));
-    await ref.read(secureTokenStorageProvider).saveIsNewMember(false);
+    // 스토리지 동기화 실패는 콜드스타트 복원 일관성에만 영향 — 성공 플로우를
+    // 막지 않도록 내부에서 흡수한다.
+    try {
+      await ref.read(secureTokenStorageProvider).saveIsNewMember(false);
+    } catch (e) {
+      debugPrint('❌ markNicknameConfirmed: isNewMember 영속 실패 - $e');
+    }
   }
 
   /// 강제 로그아웃 (AuthInterceptor에서 호출)
@@ -407,9 +413,15 @@ class AuthNotifier extends _$AuthNotifier {
       state = AsyncValue.data(
         current.copyWith(nickname: newNickname, isNewMember: false),
       );
-      final storage = ref.read(secureTokenStorageProvider);
-      await storage.saveIsNewMember(false);
-      await storage.saveNickname(newNickname);
+      // 서버 반영은 이미 끝났으므로 스토리지 동기화 실패가 성공 플로우를
+      // 막지 않도록 내부에서 흡수한다 (콜드스타트 복원 일관성에만 영향).
+      try {
+        final storage = ref.read(secureTokenStorageProvider);
+        await storage.saveIsNewMember(false);
+        await storage.saveNickname(newNickname);
+      } catch (e) {
+        debugPrint('❌ updateNickname: 닉네임 영속 실패 - $e');
+      }
     }
   }
 

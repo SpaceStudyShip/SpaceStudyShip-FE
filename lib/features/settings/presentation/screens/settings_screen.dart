@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../../../core/widgets/backgrounds/space_background.dart';
+import '../../../../routes/route_paths.dart';
 import '../providers/settings_provider.dart';
 
 class SettingsScreen extends ConsumerWidget {
@@ -91,6 +93,50 @@ class SettingsScreen extends ConsumerWidget {
                         },
                       ),
                     ],
+                  ),
+                ),
+
+                Divider(color: AppColors.spaceDivider),
+
+                SizedBox(height: AppSpacing.s24),
+
+                // 섹션 헤더: 계정
+                Padding(
+                  padding: EdgeInsets.only(
+                    left: AppSpacing.s4,
+                    bottom: AppSpacing.s12,
+                  ),
+                  child: Text(
+                    '계정',
+                    style: AppTextStyles.subHeading_18.copyWith(
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+
+                Divider(color: AppColors.spaceDivider),
+
+                // 닉네임 변경
+                InkWell(
+                  onTap: () => context.push(RoutePaths.nicknameEdit),
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: AppSpacing.s16),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            '닉네임 변경',
+                            style: AppTextStyles.label_16.copyWith(
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                        Icon(
+                          Icons.chevron_right,
+                          color: AppColors.textSecondary,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
 

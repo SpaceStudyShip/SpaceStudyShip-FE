@@ -202,10 +202,15 @@ class AuthNotifier extends _$AuthNotifier {
       }
 
       final isNewMember = await tokenStorage.getIsNewMember();
+      // 닉네임은 서버 값을 영속한 것을 복원한다. 저장값이 없는 경우(이 수정 이전
+      // 세션 등)에만 Firebase displayName 으로 폴백 — displayName 은 소셜 계정
+      // 이름이라 서버 닉네임과 다를 수 있다.
+      final nickname =
+          await tokenStorage.getNickname() ?? currentUser.displayName ?? '';
 
       return AuthResultEntity(
         memberId: memberId,
-        nickname: currentUser.displayName ?? '',
+        nickname: nickname,
         isNewMember: isNewMember,
       );
     }
@@ -371,6 +376,22 @@ class AuthNotifier extends _$AuthNotifier {
     }
   }
 
+  /// 닉네임 설정 완료 신호 — 입력값이 진입 시점 서버 닉네임과 동일해
+  /// PATCH 호출을 스킵하는 경우 사용. isNewMember 만 false 로 전환하고
+  /// SecureTokenStorage 와 동기화한다 (콜드스타트 복원 일관성).
+  Future<void> markNicknameConfirmed() async {
+    final current = state.value;
+    if (current == null || !current.isNewMember) return;
+    state = AsyncValue.data(current.copyWith(isNewMember: false));
+    // 스토리지 동기화 실패는 콜드스타트 복원 일관성에만 영향 — 성공 플로우를
+    // 막지 않도록 내부에서 흡수한다.
+    try {
+      await ref.read(secureTokenStorageProvider).saveIsNewMember(false);
+    } catch (e) {
+      debugPrint('❌ markNicknameConfirmed: isNewMember 영속 실패 - $e');
+    }
+  }
+
   /// 강제 로그아웃 (AuthInterceptor에서 호출)
   ///
   /// 토큰 재발급 실패 시 state를 null로 초기화하여
@@ -381,7 +402,8 @@ class AuthNotifier extends _$AuthNotifier {
 
   /// 닉네임 변경
   ///
-  /// 성공 시 현재 상태의 nickname 을 갱신하고 isNewMember=false 처리.
+  /// 성공 시 현재 상태의 nickname 갱신, isNewMember=false 처리,
+  /// SecureTokenStorage 도 동기화한다.
   Future<void> updateNickname(String nickname) async {
     final useCase = ref.read(updateNicknameUseCaseProvider);
     final newNickname = await useCase.execute(nickname);
@@ -391,6 +413,15 @@ class AuthNotifier extends _$AuthNotifier {
       state = AsyncValue.data(
         current.copyWith(nickname: newNickname, isNewMember: false),
       );
+      // 서버 반영은 이미 끝났으므로 스토리지 동기화 실패가 성공 플로우를
+      // 막지 않도록 내부에서 흡수한다 (콜드스타트 복원 일관성에만 영향).
+      try {
+        final storage = ref.read(secureTokenStorageProvider);
+        await storage.saveIsNewMember(false);
+        await storage.saveNickname(newNickname);
+      } catch (e) {
+        debugPrint('❌ updateNickname: 닉네임 영속 실패 - $e');
+      }
     }
   }
 

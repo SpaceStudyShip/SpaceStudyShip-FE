@@ -16,6 +16,8 @@ import '../features/auth/presentation/screens/splash_screen.dart';
 import '../features/settings/presentation/screens/settings_screen.dart';
 import '../features/auth/presentation/screens/login_screen.dart';
 import '../features/auth/presentation/screens/onboarding_screen.dart';
+import '../features/auth/presentation/screens/nickname_setup_screen.dart';
+import '../features/auth/presentation/providers/nickname_mode.dart';
 import '../features/timer/presentation/screens/timer_history_screen.dart';
 import '../features/home/presentation/screens/home_screen.dart';
 import '../features/timer/presentation/screens/timer_screen.dart';
@@ -55,6 +57,45 @@ class RouterNotifier extends ChangeNotifier {
   final Ref _ref;
 }
 
+/// 인증 상태 기반 리다이렉트 판정 — 순수 함수(테스트 용이).
+///
+/// 반환값이 null 이면 현재 위치 유지, 아니면 해당 경로로 리다이렉트.
+String? resolveAuthRedirect({
+  required AsyncValue<AuthResultEntity?> authState,
+  required String location,
+  required bool splashDone,
+}) {
+  // 인증 로딩 중이거나 스플래시 최소 시간 미경과 → 스플래시 유지
+  if (authState.isLoading || (location == RoutePaths.splash && !splashDone)) {
+    return null;
+  }
+
+  final user = authState.valueOrNull;
+
+  // 미로그인 → 로그인 화면으로
+  if (user == null) {
+    return (location == RoutePaths.login) ? null : RoutePaths.login;
+  }
+
+  // 신규 회원(게스트 제외) → 닉네임 설정 강제
+  final needsNicknameSetup = user.isNewMember && !user.isGuest;
+  if (needsNicknameSetup) {
+    return (location == RoutePaths.nicknameSetup)
+        ? null
+        : RoutePaths.nicknameSetup;
+  }
+
+  // 닉네임 설정 완료 / 기존 회원 / 게스트 — 인증 흐름 화면에 머물러 있으면 home 으로
+  if (location == RoutePaths.login ||
+      location == RoutePaths.splash ||
+      location == RoutePaths.nicknameSetup ||
+      location == RoutePaths.onboarding) {
+    return RoutePaths.home;
+  }
+
+  return null;
+}
+
 /// 앱 라우터 Provider
 final appRouterProvider = Provider<GoRouter>((ref) {
   final routerNotifier = RouterNotifier(ref);
@@ -64,37 +105,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
     debugLogDiagnostics: kDebugMode,
     refreshListenable: routerNotifier,
     redirect: (context, state) {
-      final authState = ref.read(authNotifierProvider);
-      final location = state.matchedLocation;
-
-      final isAuthRoute =
-          location == RoutePaths.splash ||
-          location == RoutePaths.login ||
-          location == RoutePaths.onboarding;
-
-      final splashDone = ref.read(splashDelayProvider).hasValue;
-
-      // 인증 로딩 중이거나 스플래시 최소 시간 미경과 → 스플래시 유지
-      if (authState.isLoading ||
-          (location == RoutePaths.splash && !splashDone)) {
-        return null;
-      }
-
-      final user = authState.valueOrNull;
-
-      // 미로그인 → 로그인 화면으로
-      if (user == null) {
-        return (location == RoutePaths.login) ? null : RoutePaths.login;
-      }
-
-      // 로그인됨 + 인증 화면에 있으면
-      if (isAuthRoute) {
-        if (location == RoutePaths.login) return RoutePaths.onboarding;
-        if (location == RoutePaths.onboarding) return null;
-        return RoutePaths.home; // splash 등
-      }
-
-      return null;
+      return resolveAuthRedirect(
+        authState: ref.read(authNotifierProvider),
+        location: state.matchedLocation,
+        splashDone: ref.read(splashDelayProvider).hasValue,
+      );
     },
     routes: [
       // ═══════════════════════════════════════════════════
@@ -138,6 +153,26 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             return FadeTransition(opacity: animation, child: child);
           },
         ),
+      ),
+      GoRoute(
+        path: RoutePaths.nicknameSetup,
+        name: 'nicknameSetup',
+        pageBuilder: (context, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const NicknameSetupScreen(mode: NicknameMode.initialSetup),
+          transitionDuration: const Duration(milliseconds: 400),
+          reverseTransitionDuration: const Duration(milliseconds: 300),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return FadeTransition(opacity: animation, child: child);
+          },
+        ),
+      ),
+      // 닉네임 변경 (설정 메뉴 진입 — Shell 외부 top-level, 바텀 네비 숨김)
+      GoRoute(
+        path: RoutePaths.nicknameEdit,
+        name: 'nicknameEdit',
+        builder: (context, state) =>
+            const NicknameSetupScreen(mode: NicknameMode.edit),
       ),
 
       // ═══════════════════════════════════════════════════

@@ -47,7 +47,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   Future<void> _handleGuestSignIn() async {
     AppSnackBar.warning(context, '게스트 모드에서는 정보가 저장되지 않습니다');
     await ref.read(authNotifierProvider.notifier).signInAsGuest();
-    // GoRouter redirect가 /login → /onboarding으로 자동 이동
+    // GoRouter redirect가 /login → /home으로 자동 이동
   }
 
   void _showLoginError() {

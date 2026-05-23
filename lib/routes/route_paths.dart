@@ -8,6 +8,8 @@ abstract class RoutePaths {
   static const splash = '/';
   static const login = '/login';
   static const onboarding = '/onboarding';
+  static const nicknameSetup = '/nickname-setup';
+  static const nicknameEdit = '/nickname-edit';
 
   // ═══════════════════════════════════════════════════
   // 메인 탭 (ShellRoute - 바텀 네비게이션)

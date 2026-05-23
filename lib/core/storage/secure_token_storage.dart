@@ -28,6 +28,7 @@ class SecureTokenStorage {
   static const String _refreshTokenKey = 'refresh_token';
   static const String _memberIdKey = 'member_id';
   static const String _isNewMemberKey = 'is_new_member';
+  static const String _nicknameKey = 'nickname';
 
   // ============================================
   // Token 저장
@@ -67,6 +68,13 @@ class SecureTokenStorage {
     await _storage.write(key: _isNewMemberKey, value: value ? 'true' : 'false');
   }
 
+  /// 닉네임 저장 (서버가 부여하거나 사용자가 설정한 닉네임)
+  ///
+  /// 콜드스타트 시 Firebase displayName(소셜 계정 이름) 대신 이 값을 복원한다.
+  Future<void> saveNickname(String nickname) async {
+    await _storage.write(key: _nicknameKey, value: nickname);
+  }
+
   // ============================================
   // Token 조회
   // ============================================
@@ -90,6 +98,11 @@ class SecureTokenStorage {
     return value == 'true';
   }
 
+  /// 닉네임 조회 (저장값 없으면 null)
+  Future<String?> getNickname() async {
+    return await _storage.read(key: _nicknameKey);
+  }
+
   // ============================================
   // Token 삭제
   // ============================================
@@ -101,6 +114,7 @@ class SecureTokenStorage {
       _storage.delete(key: _refreshTokenKey),
       _storage.delete(key: _memberIdKey),
       _storage.delete(key: _isNewMemberKey),
+      _storage.delete(key: _nicknameKey),
     ]);
     if (kDebugMode) {
       debugPrint('✅ 토큰 삭제 완료');

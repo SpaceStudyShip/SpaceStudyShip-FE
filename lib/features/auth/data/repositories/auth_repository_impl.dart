@@ -99,6 +99,7 @@ class AuthRepositoryImpl implements AuthRepository {
         );
         await _tokenStorage.saveMemberId(response.memberId);
         await _tokenStorage.saveIsNewMember(response.isNewMember);
+        await _tokenStorage.saveNickname(response.nickname);
       } catch (e) {
         // 저장 도중 실패 → 로컬 토큰/Firebase 세션 함께 정리 (반쯤 인증 상태 방지)
         debugPrint('❌ 토큰 저장 실패 - 롤백 진행: $e');

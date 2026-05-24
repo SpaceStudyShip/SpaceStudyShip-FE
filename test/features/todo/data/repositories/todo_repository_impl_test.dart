@@ -18,16 +18,16 @@ class _FakeCreateReq extends Fake implements TodoCreateRequestModel {}
 class _FakeUpdateReq extends Fake implements TodoUpdateRequestModel {}
 
 TodoModel _sampleModel({String id = 'id-1'}) => TodoModel(
-      id: id,
-      title: '수학',
-      createdAt: DateTime.parse('2026-05-23T00:00:00Z'),
-      updatedAt: DateTime.parse('2026-05-23T00:00:00Z'),
-    );
+  id: id,
+  title: '수학',
+  createdAt: DateTime.parse('2026-05-23T00:00:00Z'),
+  updatedAt: DateTime.parse('2026-05-23T00:00:00Z'),
+);
 
 DioException _networkError(String path) => DioException(
-      requestOptions: RequestOptions(path: path),
-      type: DioExceptionType.connectionError,
-    );
+  requestOptions: RequestOptions(path: path),
+  type: DioExceptionType.connectionError,
+);
 
 DioException _domainError(String path, int status, String code) {
   final req = RequestOptions(path: path);
@@ -66,8 +66,12 @@ void main() {
   group('getTodoList', () {
     test('서버 성공 → 캐시 갱신 + Entity 반환', () async {
       final models = [_sampleModel()];
-      when(() => remote.getTodos(date: any(named: 'date'), categoryId: any(named: 'categoryId')))
-          .thenAnswer((_) async => models);
+      when(
+        () => remote.getTodos(
+          date: any(named: 'date'),
+          categoryId: any(named: 'categoryId'),
+        ),
+      ).thenAnswer((_) async => models);
 
       final result = await repo.getTodoList();
 
@@ -76,8 +80,12 @@ void main() {
     });
 
     test('네트워크 실패 → 캐시 폴백', () async {
-      when(() => remote.getTodos(date: any(named: 'date'), categoryId: any(named: 'categoryId')))
-          .thenThrow(_networkError('/api/todos'));
+      when(
+        () => remote.getTodos(
+          date: any(named: 'date'),
+          categoryId: any(named: 'categoryId'),
+        ),
+      ).thenThrow(_networkError('/api/todos'));
       when(() => cache.getTodos()).thenReturn([_sampleModel()]);
 
       final result = await repo.getTodoList();
@@ -87,10 +95,17 @@ void main() {
     });
 
     test('도메인 에러 (401) → UnauthenticatedRequestException throw', () async {
-      when(() => remote.getTodos(date: any(named: 'date'), categoryId: any(named: 'categoryId')))
-          .thenThrow(_domainError('/api/todos', 401, 'UNAUTHENTICATED_REQUEST'));
+      when(
+        () => remote.getTodos(
+          date: any(named: 'date'),
+          categoryId: any(named: 'categoryId'),
+        ),
+      ).thenThrow(_domainError('/api/todos', 401, 'UNAUTHENTICATED_REQUEST'));
 
-      expect(() => repo.getTodoList(), throwsA(isA<UnauthenticatedRequestException>()));
+      expect(
+        () => repo.getTodoList(),
+        throwsA(isA<UnauthenticatedRequestException>()),
+      );
     });
   });
 
@@ -106,8 +121,9 @@ void main() {
     });
 
     test('CATEGORY_NOT_FOUND (404) → CategoryNotFoundException', () async {
-      when(() => remote.createTodo(any()))
-          .thenThrow(_domainError('/api/todos', 404, 'CATEGORY_NOT_FOUND'));
+      when(
+        () => remote.createTodo(any()),
+      ).thenThrow(_domainError('/api/todos', 404, 'CATEGORY_NOT_FOUND'));
 
       expect(
         () => repo.createTodo(title: '수학', categoryIds: ['missing']),
@@ -119,19 +135,23 @@ void main() {
 
   group('deleteTodo', () {
     test('서버 성공 → 캐시에서 제거', () async {
-      when(() => cache.getTodos()).thenReturn([_sampleModel(id: 'a'), _sampleModel(id: 'b')]);
+      when(
+        () => cache.getTodos(),
+      ).thenReturn([_sampleModel(id: 'a'), _sampleModel(id: 'b')]);
       when(() => remote.deleteTodo('a')).thenAnswer((_) async {});
 
       await repo.deleteTodo('a');
 
-      final captured = verify(() => cache.saveTodos(captureAny())).captured.single
-          as List<TodoModel>;
+      final captured =
+          verify(() => cache.saveTodos(captureAny())).captured.single
+              as List<TodoModel>;
       expect(captured.map((m) => m.id), ['b']);
     });
 
     test('TODO_NOT_FOUND (404) → TodoNotFoundException', () async {
-      when(() => remote.deleteTodo('a'))
-          .thenThrow(_domainError('/api/todos/a', 404, 'TODO_NOT_FOUND'));
+      when(
+        () => remote.deleteTodo('a'),
+      ).thenThrow(_domainError('/api/todos/a', 404, 'TODO_NOT_FOUND'));
 
       expect(() => repo.deleteTodo('a'), throwsA(isA<TodoNotFoundException>()));
     });
@@ -146,7 +166,9 @@ void main() {
     });
 
     test('네트워크 실패 → 캐시 폴백', () async {
-      when(() => remote.getCategories()).thenThrow(_networkError('/api/todo-categories'));
+      when(
+        () => remote.getCategories(),
+      ).thenThrow(_networkError('/api/todo-categories'));
       final result = await repo.getCategories();
       expect(result, isEmpty);
     });

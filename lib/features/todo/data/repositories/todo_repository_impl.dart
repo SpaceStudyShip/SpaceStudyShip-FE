@@ -23,18 +23,18 @@ class TodoRepositoryImpl implements TodoRepository {
   final LocalTodoDataSource cache;
   final Uuid _uuid;
 
-  TodoRepositoryImpl({
-    required this.remote,
-    required this.cache,
-    Uuid? uuid,
-  }) : _uuid = uuid ?? const Uuid();
+  TodoRepositoryImpl({required this.remote, required this.cache, Uuid? uuid})
+    : _uuid = uuid ?? const Uuid();
 
   static final _dateFmt = DateFormat('yyyy-MM-dd');
 
   // === Todos ===
 
   @override
-  Future<List<TodoEntity>> getTodoList({DateTime? date, String? categoryId}) async {
+  Future<List<TodoEntity>> getTodoList({
+    DateTime? date,
+    String? categoryId,
+  }) async {
     try {
       final models = await remote.getTodos(
         date: date != null ? _dateFmt.format(date) : null,
@@ -87,7 +87,9 @@ class TodoRepositoryImpl implements TodoRepository {
       );
       final updated = await remote.updateTodo(todo.id, request);
       final cached = cache.getTodos();
-      final replaced = cached.map((m) => m.id == updated.id ? updated : m).toList();
+      final replaced = cached
+          .map((m) => m.id == updated.id ? updated : m)
+          .toList();
       await cache.saveTodos(replaced);
       return updated.toEntity();
     } on DioException catch (e) {

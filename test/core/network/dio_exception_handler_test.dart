@@ -102,10 +102,7 @@ void main() {
           response: Response(
             requestOptions: req,
             statusCode: 404,
-            data: {
-              'code': 'TODO_NOT_FOUND',
-              'message': '해당 할 일을 찾을 수 없습니다.',
-            },
+            data: {'code': 'TODO_NOT_FOUND', 'message': '해당 할 일을 찾을 수 없습니다.'},
           ),
           type: DioExceptionType.badResponse,
         ),

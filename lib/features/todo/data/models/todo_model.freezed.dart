@@ -23,19 +23,12 @@ TodoModel _$TodoModelFromJson(Map<String, dynamic> json) {
 mixin _$TodoModel {
   String get id => throw _privateConstructorUsedError;
   String get title => throw _privateConstructorUsedError;
-  @JsonKey(name: 'scheduled_dates')
   List<DateTime> get scheduledDates => throw _privateConstructorUsedError;
-  @JsonKey(name: 'completed_dates')
   List<DateTime> get completedDates => throw _privateConstructorUsedError;
-  @JsonKey(name: 'category_ids')
   List<String> get categoryIds => throw _privateConstructorUsedError;
-  @JsonKey(name: 'estimated_minutes')
   int? get estimatedMinutes => throw _privateConstructorUsedError;
-  @JsonKey(name: 'actual_minutes')
   int? get actualMinutes => throw _privateConstructorUsedError;
-  @JsonKey(name: 'created_at')
   DateTime get createdAt => throw _privateConstructorUsedError;
-  @JsonKey(name: 'updated_at')
   DateTime get updatedAt => throw _privateConstructorUsedError;
 
   /// Serializes this TodoModel to a JSON map.
@@ -56,13 +49,13 @@ abstract class $TodoModelCopyWith<$Res> {
   $Res call({
     String id,
     String title,
-    @JsonKey(name: 'scheduled_dates') List<DateTime> scheduledDates,
-    @JsonKey(name: 'completed_dates') List<DateTime> completedDates,
-    @JsonKey(name: 'category_ids') List<String> categoryIds,
-    @JsonKey(name: 'estimated_minutes') int? estimatedMinutes,
-    @JsonKey(name: 'actual_minutes') int? actualMinutes,
-    @JsonKey(name: 'created_at') DateTime createdAt,
-    @JsonKey(name: 'updated_at') DateTime updatedAt,
+    List<DateTime> scheduledDates,
+    List<DateTime> completedDates,
+    List<String> categoryIds,
+    int? estimatedMinutes,
+    int? actualMinutes,
+    DateTime createdAt,
+    DateTime updatedAt,
   });
 }
 
@@ -147,13 +140,13 @@ abstract class _$$TodoModelImplCopyWith<$Res>
   $Res call({
     String id,
     String title,
-    @JsonKey(name: 'scheduled_dates') List<DateTime> scheduledDates,
-    @JsonKey(name: 'completed_dates') List<DateTime> completedDates,
-    @JsonKey(name: 'category_ids') List<String> categoryIds,
-    @JsonKey(name: 'estimated_minutes') int? estimatedMinutes,
-    @JsonKey(name: 'actual_minutes') int? actualMinutes,
-    @JsonKey(name: 'created_at') DateTime createdAt,
-    @JsonKey(name: 'updated_at') DateTime updatedAt,
+    List<DateTime> scheduledDates,
+    List<DateTime> completedDates,
+    List<String> categoryIds,
+    int? estimatedMinutes,
+    int? actualMinutes,
+    DateTime createdAt,
+    DateTime updatedAt,
   });
 }
 
@@ -230,15 +223,13 @@ class _$TodoModelImpl implements _TodoModel {
   const _$TodoModelImpl({
     required this.id,
     required this.title,
-    @JsonKey(name: 'scheduled_dates')
     final List<DateTime> scheduledDates = const [],
-    @JsonKey(name: 'completed_dates')
     final List<DateTime> completedDates = const [],
-    @JsonKey(name: 'category_ids') final List<String> categoryIds = const [],
-    @JsonKey(name: 'estimated_minutes') this.estimatedMinutes,
-    @JsonKey(name: 'actual_minutes') this.actualMinutes,
-    @JsonKey(name: 'created_at') required this.createdAt,
-    @JsonKey(name: 'updated_at') required this.updatedAt,
+    final List<String> categoryIds = const [],
+    this.estimatedMinutes,
+    this.actualMinutes,
+    required this.createdAt,
+    required this.updatedAt,
   }) : _scheduledDates = scheduledDates,
        _completedDates = completedDates,
        _categoryIds = categoryIds;
@@ -252,7 +243,7 @@ class _$TodoModelImpl implements _TodoModel {
   final String title;
   final List<DateTime> _scheduledDates;
   @override
-  @JsonKey(name: 'scheduled_dates')
+  @JsonKey()
   List<DateTime> get scheduledDates {
     if (_scheduledDates is EqualUnmodifiableListView) return _scheduledDates;
     // ignore: implicit_dynamic_type
@@ -261,7 +252,7 @@ class _$TodoModelImpl implements _TodoModel {
 
   final List<DateTime> _completedDates;
   @override
-  @JsonKey(name: 'completed_dates')
+  @JsonKey()
   List<DateTime> get completedDates {
     if (_completedDates is EqualUnmodifiableListView) return _completedDates;
     // ignore: implicit_dynamic_type
@@ -270,7 +261,7 @@ class _$TodoModelImpl implements _TodoModel {
 
   final List<String> _categoryIds;
   @override
-  @JsonKey(name: 'category_ids')
+  @JsonKey()
   List<String> get categoryIds {
     if (_categoryIds is EqualUnmodifiableListView) return _categoryIds;
     // ignore: implicit_dynamic_type
@@ -278,16 +269,12 @@ class _$TodoModelImpl implements _TodoModel {
   }
 
   @override
-  @JsonKey(name: 'estimated_minutes')
   final int? estimatedMinutes;
   @override
-  @JsonKey(name: 'actual_minutes')
   final int? actualMinutes;
   @override
-  @JsonKey(name: 'created_at')
   final DateTime createdAt;
   @override
-  @JsonKey(name: 'updated_at')
   final DateTime updatedAt;
 
   @override
@@ -357,13 +344,13 @@ abstract class _TodoModel implements TodoModel {
   const factory _TodoModel({
     required final String id,
     required final String title,
-    @JsonKey(name: 'scheduled_dates') final List<DateTime> scheduledDates,
-    @JsonKey(name: 'completed_dates') final List<DateTime> completedDates,
-    @JsonKey(name: 'category_ids') final List<String> categoryIds,
-    @JsonKey(name: 'estimated_minutes') final int? estimatedMinutes,
-    @JsonKey(name: 'actual_minutes') final int? actualMinutes,
-    @JsonKey(name: 'created_at') required final DateTime createdAt,
-    @JsonKey(name: 'updated_at') required final DateTime updatedAt,
+    final List<DateTime> scheduledDates,
+    final List<DateTime> completedDates,
+    final List<String> categoryIds,
+    final int? estimatedMinutes,
+    final int? actualMinutes,
+    required final DateTime createdAt,
+    required final DateTime updatedAt,
   }) = _$TodoModelImpl;
 
   factory _TodoModel.fromJson(Map<String, dynamic> json) =
@@ -374,25 +361,18 @@ abstract class _TodoModel implements TodoModel {
   @override
   String get title;
   @override
-  @JsonKey(name: 'scheduled_dates')
   List<DateTime> get scheduledDates;
   @override
-  @JsonKey(name: 'completed_dates')
   List<DateTime> get completedDates;
   @override
-  @JsonKey(name: 'category_ids')
   List<String> get categoryIds;
   @override
-  @JsonKey(name: 'estimated_minutes')
   int? get estimatedMinutes;
   @override
-  @JsonKey(name: 'actual_minutes')
   int? get actualMinutes;
   @override
-  @JsonKey(name: 'created_at')
   DateTime get createdAt;
   @override
-  @JsonKey(name: 'updated_at')
   DateTime get updatedAt;
 
   /// Create a copy of TodoModel

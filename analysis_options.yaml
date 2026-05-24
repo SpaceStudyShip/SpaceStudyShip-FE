@@ -9,6 +9,12 @@
 # packages, and plugins designed to encourage good coding practices.
 include: package:flutter_lints/flutter.yaml
 
+analyzer:
+  exclude:
+    # request-only DTO (`@Freezed(fromJson: false)`) 들은 미사용 `_$$ImplFromJson`
+    # 헬퍼를 생성한다 — json_serializable + freezed 상호작용 잡음. 사용자 코드 아님.
+    - "lib/features/todo/data/models/*_request_model.g.dart"
+
 linter:
   # The lint rules applied to this project can be customized in the
   # section below to disable rules from the `package:flutter_lints/flutter.yaml`

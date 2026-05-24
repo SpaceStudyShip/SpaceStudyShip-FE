@@ -16,11 +16,27 @@ class LocalTodoRepositoryImpl implements TodoRepository {
   // === Todos ===
 
   @override
-  Future<List<TodoEntity>> getTodoList({String? categoryId}) async {
+  Future<List<TodoEntity>> getTodoList({
+    DateTime? date,
+    String? categoryId,
+  }) async {
     final models = _dataSource.getTodos();
-    final filtered = categoryId != null
-        ? models.where((m) => m.categoryIds.contains(categoryId)).toList()
-        : models;
+    var filtered = models;
+    if (categoryId != null) {
+      filtered = filtered
+          .where((m) => m.categoryIds.contains(categoryId))
+          .toList();
+    }
+    if (date != null) {
+      final normalized = TodoEntity.normalizeDate(date);
+      filtered = filtered
+          .where(
+            (m) => m.scheduledDates.any(
+              (d) => TodoEntity.normalizeDate(d) == normalized,
+            ),
+          )
+          .toList();
+    }
     return filtered.map((m) => m.toEntity()).toList();
   }
 

@@ -6,7 +6,7 @@ class GetTodoListUseCase {
 
   GetTodoListUseCase(this._repository);
 
-  Future<List<TodoEntity>> execute({String? categoryId}) {
-    return _repository.getTodoList(categoryId: categoryId);
+  Future<List<TodoEntity>> execute({DateTime? date, String? categoryId}) {
+    return _repository.getTodoList(date: date, categoryId: categoryId);
   }
 }

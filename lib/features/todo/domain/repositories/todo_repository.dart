@@ -2,7 +2,7 @@ import '../entities/todo_category_entity.dart';
 import '../entities/todo_entity.dart';
 
 abstract class TodoRepository {
-  Future<List<TodoEntity>> getTodoList({String? categoryId});
+  Future<List<TodoEntity>> getTodoList({DateTime? date, String? categoryId});
   Future<TodoEntity> createTodo({
     required String title,
     List<String> categoryIds = const [],

@@ -339,8 +339,11 @@ class AuthNotifier extends _$AuthNotifier {
   /// 게스트 데이터 일괄 삭제 (디스크 + 메모리 캐시)
   Future<void> _clearGuestData() async {
     // 각 저장소 독립 삭제 — 하나 실패해도 나머지 계속 진행
+    // todo 는 localTodoDataSource 직접 호출. todoRepositoryProvider 는
+    // isAuthenticatedProvider 를 watch 하므로 authNotifier 내부에서 read 하면
+    // CircularDependencyError 가 발생한다.
     final clearTasks = <Future<void> Function()>[
-      () => ref.read(todoRepositoryProvider).clearAll(),
+      () => ref.read(localTodoDataSourceProvider).clearAll(),
       () => ref.read(timerSessionRepositoryProvider).clearAll(),
       () => ref.read(fuelRepositoryProvider).clearAll(),
       () => ref.read(explorationRepositoryProvider).clearAll(),

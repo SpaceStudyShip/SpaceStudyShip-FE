@@ -77,6 +77,26 @@ class DioExceptionHandler {
             code: apiError.code,
             originalException: e,
           );
+        case 'TODO_NOT_FOUND':
+          return TodoNotFoundException(
+            message: apiError.message,
+            originalException: e,
+          );
+        case 'TODO_ALREADY_EXISTS':
+          return TodoAlreadyExistsException(
+            message: apiError.message,
+            originalException: e,
+          );
+        case 'CATEGORY_NOT_FOUND':
+          return CategoryNotFoundException(
+            message: apiError.message,
+            originalException: e,
+          );
+        case 'CATEGORY_ALREADY_EXISTS':
+          return CategoryAlreadyExistsException(
+            message: apiError.message,
+            originalException: e,
+          );
       }
     }
 

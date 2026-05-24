@@ -112,6 +112,45 @@ class InvalidInputValueException extends ValidationException {
     : super(message: message ?? '입력값이 올바르지 않습니다.', code: 'INVALID_INPUT_VALUE');
 }
 
+/// 할 일 없음 (404 TODO_NOT_FOUND)
+class TodoNotFoundException extends AppException {
+  const TodoNotFoundException({String? message, super.originalException})
+    : super(message: message ?? '해당 할 일을 찾을 수 없습니다.', code: 'TODO_NOT_FOUND');
+}
+
+/// 할 일 ID 중복 (409 TODO_ALREADY_EXISTS)
+class TodoAlreadyExistsException extends AppException {
+  const TodoAlreadyExistsException({String? message, super.originalException})
+    : super(
+        message: message ?? '동일 ID의 할 일이 이미 존재합니다.',
+        code: 'TODO_ALREADY_EXISTS',
+      );
+}
+
+/// 카테고리 없음 (404 CATEGORY_NOT_FOUND)
+///
+/// 발생 컨텍스트 2종:
+/// - `POST /api/todos` (categoryIds 에 존재하지 않는 카테고리 포함)
+/// - `PATCH/DELETE /api/todo-categories/{id}` (해당 카테고리 부재)
+class CategoryNotFoundException extends AppException {
+  const CategoryNotFoundException({String? message, super.originalException})
+    : super(
+        message: message ?? '해당 카테고리를 찾을 수 없습니다.',
+        code: 'CATEGORY_NOT_FOUND',
+      );
+}
+
+/// 카테고리 ID 중복 (409 CATEGORY_ALREADY_EXISTS)
+class CategoryAlreadyExistsException extends AppException {
+  const CategoryAlreadyExistsException({
+    String? message,
+    super.originalException,
+  }) : super(
+         message: message ?? '동일 ID의 카테고리가 이미 존재합니다.',
+         code: 'CATEGORY_ALREADY_EXISTS',
+       );
+}
+
 /// 서버 관련 예외
 /// Server related exception
 class ServerException extends AppException {

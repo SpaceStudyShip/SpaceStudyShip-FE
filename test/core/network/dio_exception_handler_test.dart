@@ -94,6 +94,83 @@ void main() {
       expect(result, isA<ServerException>());
     });
 
+    test('TODO_NOT_FOUND code → TodoNotFoundException', () {
+      final req = RequestOptions(path: '/api/todos/abc');
+      final exc = DioExceptionHandler.handle(
+        DioException(
+          requestOptions: req,
+          response: Response(
+            requestOptions: req,
+            statusCode: 404,
+            data: {
+              'code': 'TODO_NOT_FOUND',
+              'message': '해당 할 일을 찾을 수 없습니다.',
+            },
+          ),
+          type: DioExceptionType.badResponse,
+        ),
+      );
+      expect(exc, isA<TodoNotFoundException>());
+      expect(exc.code, 'TODO_NOT_FOUND');
+    });
+
+    test('TODO_ALREADY_EXISTS code → TodoAlreadyExistsException', () {
+      final req = RequestOptions(path: '/api/todos');
+      final exc = DioExceptionHandler.handle(
+        DioException(
+          requestOptions: req,
+          response: Response(
+            requestOptions: req,
+            statusCode: 409,
+            data: {
+              'code': 'TODO_ALREADY_EXISTS',
+              'message': '동일 ID의 할 일이 이미 존재합니다.',
+            },
+          ),
+          type: DioExceptionType.badResponse,
+        ),
+      );
+      expect(exc, isA<TodoAlreadyExistsException>());
+    });
+
+    test('CATEGORY_NOT_FOUND code → CategoryNotFoundException', () {
+      final req = RequestOptions(path: '/api/todo-categories/abc');
+      final exc = DioExceptionHandler.handle(
+        DioException(
+          requestOptions: req,
+          response: Response(
+            requestOptions: req,
+            statusCode: 404,
+            data: {
+              'code': 'CATEGORY_NOT_FOUND',
+              'message': '해당 카테고리를 찾을 수 없습니다.',
+            },
+          ),
+          type: DioExceptionType.badResponse,
+        ),
+      );
+      expect(exc, isA<CategoryNotFoundException>());
+    });
+
+    test('CATEGORY_ALREADY_EXISTS code → CategoryAlreadyExistsException', () {
+      final req = RequestOptions(path: '/api/todo-categories');
+      final exc = DioExceptionHandler.handle(
+        DioException(
+          requestOptions: req,
+          response: Response(
+            requestOptions: req,
+            statusCode: 409,
+            data: {
+              'code': 'CATEGORY_ALREADY_EXISTS',
+              'message': '동일 ID의 카테고리가 이미 존재합니다.',
+            },
+          ),
+          type: DioExceptionType.badResponse,
+        ),
+      );
+      expect(exc, isA<CategoryAlreadyExistsException>());
+    });
+
     test('알 수 없는 code + 401 → 기본 AuthException', () {
       final e = _exception(
         statusCode: 401,

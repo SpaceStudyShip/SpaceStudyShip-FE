@@ -50,7 +50,7 @@ final authRemoteDataSourceProvider =
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef AuthRemoteDataSourceRef = AutoDisposeProviderRef<AuthRemoteDataSource>;
-String _$authRepositoryHash() => r'76a65429e2d010171c010ca11e8101871250895e';
+String _$authRepositoryHash() => r'19bf9377a78dad00c133e92acf7038f8f5f422dc';
 
 /// AuthRepository Provider
 ///
@@ -234,6 +234,27 @@ final isGuestProvider = AutoDisposeProvider<bool>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef IsGuestRef = AutoDisposeProviderRef<bool>;
+String _$isAuthenticatedHash() => r'18743fe331f12688fd9f4fb4fe33a2cd2aca395f';
+
+/// 서버 인증이 완료된 회원인지 여부 — Todo Provider 등의 서버/로컬 분기에 사용.
+///
+/// 게스트 모드(`isGuest: true`) 는 서버 호출이 불가하므로 `false` 반환.
+///
+/// Copied from [isAuthenticated].
+@ProviderFor(isAuthenticated)
+final isAuthenticatedProvider = AutoDisposeProvider<bool>.internal(
+  isAuthenticated,
+  name: r'isAuthenticatedProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$isAuthenticatedHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef IsAuthenticatedRef = AutoDisposeProviderRef<bool>;
 String _$activeLoginNotifierHash() =>
     r'9c1933f79e775a81e480be7b026021622dd7405b';
 
@@ -256,7 +277,7 @@ final activeLoginNotifierProvider =
     );
 
 typedef _$ActiveLoginNotifier = AutoDisposeNotifier<SocialLoginProvider?>;
-String _$authNotifierHash() => r'7642aacf9be89608e7cd3525c202d078085762e4';
+String _$authNotifierHash() => r'005d825bc8ede844ca09172eba602dceae01ecfc';
 
 /// 인증 상태를 관리하는 Notifier
 ///

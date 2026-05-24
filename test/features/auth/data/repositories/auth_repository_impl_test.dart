@@ -6,9 +6,11 @@ import 'package:space_study_ship/core/storage/secure_token_storage.dart';
 import 'package:space_study_ship/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:space_study_ship/features/auth/data/datasources/firebase_auth_datasource.dart';
 import 'package:space_study_ship/features/auth/data/models/check_nickname_response_model.dart';
+import 'package:space_study_ship/features/auth/data/models/logout_request_model.dart';
 import 'package:space_study_ship/features/auth/data/models/update_nickname_request_model.dart';
 import 'package:space_study_ship/features/auth/data/models/update_nickname_response_model.dart';
 import 'package:space_study_ship/features/auth/data/repositories/auth_repository_impl.dart';
+import 'package:space_study_ship/features/todo/data/datasources/local_todo_datasource.dart';
 
 class _MockFirebase extends Mock implements FirebaseAuthDataSource {}
 
@@ -16,27 +18,38 @@ class _MockRemote extends Mock implements AuthRemoteDataSource {}
 
 class _MockStorage extends Mock implements SecureTokenStorage {}
 
+class _MockLocalTodo extends Mock implements LocalTodoDataSource {}
+
 class _FakeUpdateReq extends Fake implements UpdateNicknameRequestModel {}
+
+class _FakeLogoutReq extends Fake implements LogoutRequestModel {}
 
 void main() {
   late _MockFirebase firebase;
   late _MockRemote remote;
   late _MockStorage storage;
+  late _MockLocalTodo localTodo;
   late AuthRepositoryImpl repo;
 
   setUpAll(() {
     registerFallbackValue(_FakeUpdateReq());
+    registerFallbackValue(_FakeLogoutReq());
   });
 
   setUp(() {
     firebase = _MockFirebase();
     remote = _MockRemote();
     storage = _MockStorage();
+    localTodo = _MockLocalTodo();
     repo = AuthRepositoryImpl(
       firebaseAuthDataSource: firebase,
       authRemoteDataSource: remote,
       tokenStorage: storage,
+      localTodoDataSource: localTodo,
     );
+
+    // Default stub: clearAll() 호출이 발생해도 기존 테스트들이 깨지지 않도록.
+    when(() => localTodo.clearAll()).thenAnswer((_) async {});
   });
 
   group('updateNickname', () {
@@ -128,6 +141,31 @@ void main() {
       expect(() => repo.withdraw(), throwsA(isA<ServerException>()));
       verifyNever(() => firebase.signOut());
       verifyNever(() => storage.clearTokens());
+    });
+  });
+
+  group('Todo 캐시 정리', () {
+    test('signOut 성공 시 LocalTodoDataSource.clearAll 호출', () async {
+      when(() => storage.getRefreshToken()).thenAnswer((_) async => 'rt');
+      when(() => remote.logout(any())).thenAnswer((_) async {});
+      when(() => firebase.signOut()).thenAnswer((_) async {});
+      when(() => storage.clearTokens()).thenAnswer((_) async {});
+      when(() => localTodo.clearAll()).thenAnswer((_) async {});
+
+      await repo.signOut();
+
+      verify(() => localTodo.clearAll()).called(1);
+    });
+
+    test('withdraw 성공 시 LocalTodoDataSource.clearAll 호출', () async {
+      when(() => remote.withdraw()).thenAnswer((_) async {});
+      when(() => firebase.signOut()).thenAnswer((_) async {});
+      when(() => storage.clearTokens()).thenAnswer((_) async {});
+      when(() => localTodo.clearAll()).thenAnswer((_) async {});
+
+      await repo.withdraw();
+
+      verify(() => localTodo.clearAll()).called(1);
     });
   });
 }

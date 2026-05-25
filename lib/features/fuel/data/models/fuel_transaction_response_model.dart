@@ -1,3 +1,4 @@
+// ignore_for_file: invalid_annotation_target
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 import '../../domain/entities/fuel_transaction_entity.dart';
@@ -28,11 +29,9 @@ class FuelTransactionResponseModel with _$FuelTransactionResponseModel {
 
   const factory FuelTransactionResponseModel({
     required String id,
-    // ignore: invalid_annotation_target
     @JsonKey(unknownEnumValue: FuelTransactionTypeWire.charge)
     required FuelTransactionTypeWire type,
     required int amount,
-    // ignore: invalid_annotation_target
     @JsonKey(unknownEnumValue: FuelTransactionReasonWire.studySession)
     required FuelTransactionReasonWire reason,
     String? referenceId,

@@ -28,9 +28,11 @@ class FuelTransactionResponseModel with _$FuelTransactionResponseModel {
 
   const factory FuelTransactionResponseModel({
     required String id,
+    // ignore: invalid_annotation_target
     @JsonKey(unknownEnumValue: FuelTransactionTypeWire.charge)
     required FuelTransactionTypeWire type,
     required int amount,
+    // ignore: invalid_annotation_target
     @JsonKey(unknownEnumValue: FuelTransactionReasonWire.studySession)
     required FuelTransactionReasonWire reason,
     String? referenceId,

@@ -39,7 +39,8 @@ class ExploreScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final currentFuel = ref.watch(currentFuelProvider);
+    final currentFuelAsync = ref.watch(currentFuelProvider);
+    final currentFuel = currentFuelAsync.valueOrNull ?? 0;
     final isGuest = ref.watch(isGuestProvider);
     final planets = ref.watch(explorationNotifierProvider);
 

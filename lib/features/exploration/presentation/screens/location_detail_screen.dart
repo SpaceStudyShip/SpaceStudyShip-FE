@@ -80,7 +80,8 @@ class _LocationDetailScreenState extends ConsumerState<LocationDetailScreen> {
   Widget build(BuildContext context) {
     final regions = ref.watch(regionListNotifierProvider(widget.planetId));
     final progress = ref.watch(explorationProgressProvider(widget.planetId));
-    final currentFuel = ref.watch(currentFuelProvider);
+    final currentFuelAsync = ref.watch(currentFuelProvider);
+    final currentFuel = currentFuelAsync.valueOrNull ?? 0;
     final planet = ref.watch(
       explorationNotifierProvider.select(
         (planets) => planets.where((p) => p.id == widget.planetId).firstOrNull,

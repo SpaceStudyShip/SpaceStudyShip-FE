@@ -53,7 +53,9 @@ class BadgeNotifier extends _$BadgeNotifier {
     final totalMinutes = ref.read(totalStudyMinutesProvider);
     final streak = ref.read(currentStreakProvider);
     final sessionCount = ref.read(totalSessionCountProvider);
-    final fuelState = ref.read(fuelNotifierProvider);
+    final fuelStateAsync = ref.read(fuelNotifierProvider);
+    final fuelState = fuelStateAsync.valueOrNull;
+    if (fuelState == null) return []; // 잔량 아직 로드 전이면 배지 해금 평가 skip
     final planets = ref.read(explorationNotifierProvider);
     final unlockedPlanets = planets.where((p) => p.isUnlocked).length;
 

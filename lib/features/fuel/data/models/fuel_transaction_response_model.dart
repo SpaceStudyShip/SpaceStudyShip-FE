@@ -1,10 +1,14 @@
 // ignore_for_file: invalid_annotation_target
+import 'package:flutter/foundation.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 import '../../domain/entities/fuel_transaction_entity.dart';
 
 part 'fuel_transaction_response_model.freezed.dart';
 part 'fuel_transaction_response_model.g.dart';
+
+const _knownTypeWireValues = {'charge', 'consume'};
+const _knownReasonWireValues = {'STUDY_SESSION', 'EXPLORATION_UNLOCK'};
 
 /// 서버 wire 포맷 (SCREAMING_SNAKE_CASE) 와 도메인 enum 의 매핑 계층.
 /// 도메인 enum 은 camelCase 를 유지하기 위해 wire 전용 enum 을 둔다.
@@ -39,8 +43,19 @@ class FuelTransactionResponseModel with _$FuelTransactionResponseModel {
     required DateTime createdAt,
   }) = _FuelTransactionResponseModel;
 
-  factory FuelTransactionResponseModel.fromJson(Map<String, dynamic> json) =>
-      _$FuelTransactionResponseModelFromJson(json);
+  factory FuelTransactionResponseModel.fromJson(Map<String, dynamic> json) {
+    final rawType = json['type'];
+    if (rawType is String && !_knownTypeWireValues.contains(rawType)) {
+      debugPrint('⚠️ Unknown fuel type: $rawType (fallback: charge)');
+    }
+    final rawReason = json['reason'];
+    if (rawReason is String && !_knownReasonWireValues.contains(rawReason)) {
+      debugPrint(
+        '⚠️ Unknown fuel reason: $rawReason (fallback: STUDY_SESSION)',
+      );
+    }
+    return _$FuelTransactionResponseModelFromJson(json);
+  }
 
   FuelTransactionEntity toEntity() => FuelTransactionEntity(
         id: id,

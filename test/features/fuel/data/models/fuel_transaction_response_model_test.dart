@@ -52,6 +52,19 @@ void main() {
       expect(model.reason, FuelTransactionReasonWire.studySession);
     });
 
+    test('fromJson — 미지 type → fallback (charge)', () {
+      final json = {
+        'id': 'tx-x',
+        'type': 'UNKNOWN_TYPE',
+        'amount': 1,
+        'reason': 'STUDY_SESSION',
+        'balanceAfter': 1,
+        'createdAt': '2026-04-16T10:30:00Z',
+      };
+      final model = FuelTransactionResponseModel.fromJson(json);
+      expect(model.type, FuelTransactionTypeWire.charge);
+    });
+
     test('toEntity — wire enum → 도메인 enum 매핑', () {
       final model = FuelTransactionResponseModel(
         id: 'tx-1',

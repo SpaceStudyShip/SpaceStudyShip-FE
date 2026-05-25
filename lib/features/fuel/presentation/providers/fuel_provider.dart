@@ -1,15 +1,21 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../../../core/network/dio_client.dart';
+import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../data/datasources/fuel_local_datasource.dart';
+import '../../data/datasources/fuel_remote_datasource.dart';
 import '../../data/repositories/fuel_repository_impl.dart';
+import '../../data/repositories/local_fuel_repository_impl.dart';
 import '../../domain/entities/fuel_entity.dart';
 import '../../domain/entities/fuel_transaction_entity.dart';
+import '../../domain/entities/fuel_transaction_filter.dart';
+import '../../domain/entities/fuel_transaction_page.dart';
 import '../../domain/repositories/fuel_repository.dart';
 
 part 'fuel_provider.g.dart';
 
-// === DataSource & Repository ===
+// === DataSource ===
 
 @Riverpod(keepAlive: true)
 FuelLocalDataSource fuelLocalDataSource(Ref ref) {
@@ -20,73 +26,124 @@ FuelLocalDataSource fuelLocalDataSource(Ref ref) {
 }
 
 @Riverpod(keepAlive: true)
-FuelRepository fuelRepository(Ref ref) {
-  final dataSource = ref.watch(fuelLocalDataSourceProvider);
-  return FuelRepositoryImpl(dataSource);
+FuelRemoteDataSource fuelRemoteDataSource(Ref ref) {
+  final dio = ref.watch(dioProvider);
+  return FuelRemoteDataSource(dio);
 }
 
-// === Fuel State ===
+// === Repository 분기 ===
+
+@Riverpod(keepAlive: true)
+FuelRepository fuelRepository(Ref ref) {
+  final isAuthenticated = ref.watch(isAuthenticatedProvider);
+  if (isAuthenticated) {
+    return FuelRepositoryImpl(
+      remote: ref.watch(fuelRemoteDataSourceProvider),
+      cache: ref.watch(fuelLocalDataSourceProvider),
+    );
+  }
+  return LocalFuelRepositoryImpl(ref.watch(fuelLocalDataSourceProvider));
+}
+
+// === Fuel State (async) ===
 
 @Riverpod(keepAlive: true)
 class FuelNotifier extends _$FuelNotifier {
   @override
-  FuelEntity build() {
+  Future<FuelEntity> build() async {
     final repository = ref.watch(fuelRepositoryProvider);
     return repository.getFuel();
   }
 
-  /// 공부 시간으로 연료 충전 (30분 = 1통, 잔여분 누적)
+  /// 공부 시간으로 연료 충전. server-backed 사용자는 도메인 액션 API 가
+  /// 서버 쪽에서 잔량을 변동시키므로, 본 메서드는 잔량 재조회만 수행한다.
   Future<void> chargeFuel({
     required int studyMinutes,
     String? sessionId,
   }) async {
     if (studyMinutes <= 0) return;
-    final totalMinutes = state.pendingMinutes + studyMinutes;
+
+    final isAuthenticated = ref.read(isAuthenticatedProvider);
+    if (isAuthenticated) {
+      // Notifier 레벨 분기 흡수: 서버 mutation 은 timer/exploration 도메인
+      // 액션 API 가 담당. 본 메서드는 재조회로 동기화.
+      ref.invalidateSelf();
+      ref.invalidate(fuelTransactionListNotifierProvider);
+      return;
+    }
+
+    // 게스트: 기존 로컬 mutation 그대로
+    final current = state.valueOrNull;
+    if (current == null) return;
+    final totalMinutes = current.pendingMinutes + studyMinutes;
     final amount = totalMinutes ~/ 30;
     final newPendingMinutes = totalMinutes % 30;
     final repository = ref.read(fuelRepositoryProvider);
-    state = await repository.chargeFuel(
+    final updated = await repository.chargeFuel(
       amount,
       newPendingMinutes,
       FuelTransactionReason.studySession,
       sessionId,
     );
-    // 실제 충전이 발생한 경우에만 이력 갱신
+    state = AsyncValue.data(updated);
     if (amount > 0) {
       ref.invalidate(fuelTransactionListNotifierProvider);
     }
   }
 
-  /// 탐험 해금 등으로 연료 소비
-  ///
-  /// 잔량 부족 시 [InsufficientFuelException] 발생.
+  /// 탐험 해금 등으로 연료 소비. server-backed 는 재조회만.
   Future<void> consumeFuel({required int amount, String? nodeId}) async {
     if (amount <= 0) return;
+
+    final isAuthenticated = ref.read(isAuthenticatedProvider);
+    if (isAuthenticated) {
+      ref.invalidateSelf();
+      ref.invalidate(fuelTransactionListNotifierProvider);
+      return;
+    }
+
     final repository = ref.read(fuelRepositoryProvider);
-    state = await repository.consumeFuel(
+    final updated = await repository.consumeFuel(
       amount,
       FuelTransactionReason.explorationUnlock,
       nodeId,
     );
-    // 이력도 갱신
+    state = AsyncValue.data(updated);
     ref.invalidate(fuelTransactionListNotifierProvider);
   }
 }
 
-// === Transaction History ===
+// === Transaction History (게스트 전용 단순 목록) ===
 
 @riverpod
 class FuelTransactionListNotifier extends _$FuelTransactionListNotifier {
   @override
-  List<FuelTransactionEntity> build() {
+  Future<List<FuelTransactionEntity>> build() async {
+    final isAuthenticated = ref.watch(isAuthenticatedProvider);
+    if (isAuthenticated) {
+      // server-backed 는 페이지 API 만 지원 → 단순 목록은 빈 결과.
+      // 후속 거래 내역 UI 에서 fuelTransactionsPageProvider 사용.
+      return [];
+    }
     final repository = ref.watch(fuelRepositoryProvider);
     return repository.getTransactions();
   }
 }
 
-// === Convenience Providers ===
+// === Server-backed 거래 내역 페이지 ===
 
 @riverpod
-int currentFuel(Ref ref) {
-  return ref.watch(fuelNotifierProvider).currentFuel;
+Future<FuelTransactionPage> fuelTransactionsPage(
+  Ref ref,
+  FuelTransactionFilter filter,
+) async {
+  final repository = ref.watch(fuelRepositoryProvider);
+  return repository.getTransactionsPage(filter);
+}
+
+// === Convenience ===
+
+@riverpod
+AsyncValue<int> currentFuel(Ref ref) {
+  return ref.watch(fuelNotifierProvider).whenData((fuel) => fuel.currentFuel);
 }

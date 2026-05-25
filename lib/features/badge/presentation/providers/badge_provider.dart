@@ -77,7 +77,7 @@ class BadgeNotifier extends _$BadgeNotifier {
           totalMinutes: totalMinutes,
           streak: streak,
           sessionCount: sessionCount,
-          totalCharged: fuelState.totalCharged,
+          totalCharged: fuelState.valueOrNull?.totalCharged ?? 0,
           unlockedPlanets: unlockedPlanets,
           unlockedRegions: unlockedRegions,
           currentHour: currentHour,

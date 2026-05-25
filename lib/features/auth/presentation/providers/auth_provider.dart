@@ -345,7 +345,7 @@ class AuthNotifier extends _$AuthNotifier {
     final clearTasks = <Future<void> Function()>[
       () => ref.read(localTodoDataSourceProvider).clearAll(),
       () => ref.read(timerSessionRepositoryProvider).clearAll(),
-      () => ref.read(fuelRepositoryProvider).clearAll(),
+      () => ref.read(fuelLocalDataSourceProvider).clearAll(),
       () => ref.read(explorationRepositoryProvider).clearAll(),
       () => ref.read(badgeRepositoryProvider).clearAll(),
     ];

@@ -2,14 +2,18 @@ import 'dart:async';
 
 import 'package:flutter/widgets.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:uuid/uuid.dart';
 
 import '../../domain/entities/timer_session_entity.dart';
+import '../../domain/exceptions/timer_session_exceptions.dart';
+import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../../badge/domain/entities/badge_entity.dart';
 import '../../../badge/presentation/providers/badge_provider.dart';
 import '../../../fuel/presentation/providers/fuel_provider.dart';
 import '../../../todo/presentation/providers/todo_provider.dart';
 import 'timer_session_provider.dart';
 import 'timer_state.dart';
+import 'today_stats_provider.dart';
 
 part 'timer_provider.g.dart';
 
@@ -51,9 +55,32 @@ class TimerNotifier extends _$TimerNotifier with WidgetsBindingObserver {
       accumulatedBeforePause: Duration.zero,
       linkedTodoId: todoId,
       linkedTodoTitle: todoTitle,
+      idempotencyKey: const Uuid().v4(),
     );
 
     _startPeriodicUiUpdate();
+  }
+
+  /// 테스트 전용: 세션 상태를 직접 주입합니다.
+  ///
+  /// 실 타이머 없이 1분 이상 경과 상태를 시뮬레이션하기 위해 사용합니다.
+  @visibleForTesting
+  void setSessionForTest({
+    required TimerStatus status,
+    required DateTime startTime,
+    required Duration accumulatedBeforePause,
+    String? linkedTodoId,
+    String? linkedTodoTitle,
+    String? idempotencyKey,
+  }) {
+    state = state.copyWith(
+      status: status,
+      startTime: startTime,
+      accumulatedBeforePause: accumulatedBeforePause,
+      linkedTodoId: linkedTodoId,
+      linkedTodoTitle: linkedTodoTitle,
+      idempotencyKey: idempotencyKey,
+    );
   }
 
   /// 타이머 일시정지
@@ -80,7 +107,10 @@ class TimerNotifier extends _$TimerNotifier with WidgetsBindingObserver {
     _startPeriodicUiUpdate();
   }
 
-  /// 타이머 정지 + 할일 시간 업데이트 + 배지 해금 체크
+  /// 타이머 정지 + 세션 저장 + 배지 해금 체크
+  ///
+  /// 인증 모드: 서버 POST /api/timer-sessions 에 위임 (fuel/todo/streak 서버 갱신).
+  /// 게스트 모드: 기존 로컬 로직 (actualMinutes 업데이트 + 로컬 세션 저장 + 연료 충전).
   /// 반환: sessionDuration, todoTitle, totalMinutes, newBadges 레코드 (1분 미만 세션은 null)
   Future<
     ({
@@ -93,28 +123,74 @@ class TimerNotifier extends _$TimerNotifier with WidgetsBindingObserver {
   stop() async {
     _timer?.cancel();
 
-    final todoId = state.linkedTodoId;
-    final todoTitle = state.linkedTodoTitle;
     final sessionDuration = state.elapsed;
-    final elapsedMinutes = sessionDuration.inMinutes;
-    final endedAt = DateTime.now();
+    final elapsedMinutes  = sessionDuration.inMinutes;
+    final endedAt         = DateTime.now();
+    final startedAt       = endedAt.subtract(sessionDuration);
+    final todoId          = state.linkedTodoId;
+    final todoTitle       = state.linkedTodoTitle;
+    final idempotencyKey  = state.idempotencyKey;
+
+    // 1분 미만 세션은 저장하지 않음 (서버 SESSION_TOO_SHORT 사전 차단 + 게스트 기존 로직과 동일).
+    if (elapsedMinutes < 1) {
+      state = const TimerState();
+      return null;
+    }
+
+    final isAuthenticated = ref.read(isAuthenticatedProvider);
 
     int? totalMinutes;
     List<BadgeEntity> newBadges = [];
 
     try {
-      // 연동된 할일이 있고 1분 이상 측정 시 actualMinutes 누적
-      if (todoId != null && elapsedMinutes > 0) {
-        totalMinutes = await _updateTodoActualMinutes(todoId, elapsedMinutes);
-      }
+      if (isAuthenticated) {
+        // === 서버 권위 모드 ===
+        assert(idempotencyKey != null, 'start() 시 발급된 idempotencyKey 가 있어야 함');
+        final repository = ref.read(timerSessionRepositoryProvider);
+        try {
+          await repository.createSession(
+            startedAt: startedAt,
+            endedAt:   endedAt,
+            durationMinutes: elapsedMinutes,
+            todoId:    todoId,
+            todoTitle: todoTitle,
+            idempotencyKey: idempotencyKey!,
+          );
+        } on LinkedTodoNotFound {
+          // 404 → todoId 빼고 1회 재시도 (세션은 저장하되 Todo 미연결).
+          await repository.createSession(
+            startedAt: startedAt,
+            endedAt:   endedAt,
+            durationMinutes: elapsedMinutes,
+            todoId:    null,
+            todoTitle: todoTitle,
+            idempotencyKey: idempotencyKey!,
+          );
+        }
+        // 서버가 이미 fuel/actualMinutes 갱신. 재조회 트리거.
+        ref.invalidate(fuelNotifierProvider);
+        ref.invalidate(todoListNotifierProvider);
+        ref.invalidate(timerSessionListNotifierProvider);
+        ref.invalidate(todayStatsNotifierProvider);
 
-      // 1분 이상 세션이면 기록 저장
-      if (sessionDuration.inMinutes >= 1) {
+        // 배지 해금은 서버 미제공 → 클라이언트 유지.
+        try {
+          newBadges = await ref
+              .read(badgeNotifierProvider.notifier)
+              .checkAndUnlock(sessionStartTime: startedAt);
+        } catch (e) {
+          debugPrint('배지 해금 체크 실패: $e');
+        }
+      } else {
+        // === 게스트 모드 (기존 로직 그대로) ===
+        if (todoId != null && elapsedMinutes > 0) {
+          totalMinutes = await _updateTodoActualMinutes(todoId, elapsedMinutes);
+        }
         final session = TimerSessionEntity(
           id: endedAt.millisecondsSinceEpoch.toString(),
           todoId: todoId,
           todoTitle: todoTitle,
-          startedAt: endedAt.subtract(sessionDuration),
+          startedAt: startedAt,
           endedAt: endedAt,
           durationMinutes: elapsedMinutes,
         );
@@ -137,18 +213,15 @@ class TimerNotifier extends _$TimerNotifier with WidgetsBindingObserver {
         }
       }
     } finally {
-      state = const TimerState();
+      state = const TimerState(); // idempotencyKey 폐기 포함.
     }
 
-    // 1분 미만 세션은 null 반환 (다이얼로그 생략)
-    return sessionDuration.inMinutes >= 1
-        ? (
-            sessionDuration: sessionDuration,
-            todoTitle: todoTitle,
-            totalMinutes: totalMinutes,
-            newBadges: newBadges,
-          )
-        : null;
+    return (
+      sessionDuration: sessionDuration,
+      todoTitle: todoTitle,
+      totalMinutes: totalMinutes,
+      newBadges: newBadges,
+    );
   }
 
   /// 강제 리셋 (세션 저장 없이 초기 상태로 복원)

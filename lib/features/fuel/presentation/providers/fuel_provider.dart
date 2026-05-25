@@ -72,9 +72,8 @@ class FuelNotifier extends _$FuelNotifier {
       return;
     }
 
-    // 게스트: 기존 로컬 mutation 그대로
-    final current = state.valueOrNull;
-    if (current == null) return;
+    // 게스트: 기존 로컬 mutation 그대로. build() 완료 전이면 future 를 await.
+    final current = state.valueOrNull ?? await future;
     final totalMinutes = current.pendingMinutes + studyMinutes;
     final amount = totalMinutes ~/ 30;
     final newPendingMinutes = totalMinutes % 30;
@@ -102,6 +101,8 @@ class FuelNotifier extends _$FuelNotifier {
       return;
     }
 
+    // build() 완료 전이면 future 를 await 하여 초기 상태 확보
+    await future;
     final repository = ref.read(fuelRepositoryProvider);
     final updated = await repository.consumeFuel(
       amount,

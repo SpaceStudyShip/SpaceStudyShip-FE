@@ -48,4 +48,14 @@ abstract class ApiEndpoints {
 
   /// 카테고리 단건 (수정/삭제)
   static String todoCategoryById(String id) => '/api/todo-categories/$id';
+
+  // ============================================
+  // Fuel
+  // ============================================
+
+  /// 연료 잔량 조회
+  static const fuel = '/api/fuel';
+
+  /// 연료 거래 내역 조회 (페이지네이션)
+  static const fuelTransactions = '/api/fuel/transactions';
 }

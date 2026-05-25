@@ -2,22 +2,23 @@
 
 > Base Path: `/api/todos`, `/api/todo-categories`
 > 엔드포인트: 8개
-> 동기화: **Tier 1 (Optimistic Updates)**
+> 동기화: **서버 source of truth + 로컬 캐시 폴백**
+> (Tier 1 Optimistic Updates 의 완전 구현 — 동기화 큐·재시도 정책 — 은 별도 사이클)
 > 공통 규칙: [00_common.md](./00_common.md) 참조
 
 ---
 
 ## 동기화 전략
 
-Todo는 **Optimistic Updates** 방식입니다.
+Todo·Category 는 **서버 source of truth + 로컬 캐시 폴백** 방식입니다.
 
-```
-1. 클라이언트가 로컬 DB에 먼저 저장 (임시 UUID 생성)
-2. UI 즉시 반영
-3. 백그라운드에서 서버 API 호출
-4. 성공: 서버 응답으로 로컬 데이터 갱신
-5. 실패: 재시도 큐에 추가 (최대 3회)
-```
+1. 클라이언트가 서버 API 호출
+2. 성공: 응답으로 로컬 SharedPreferences 캐시 덮어쓰기 + Entity 반환
+3. 네트워크 실패 (timeout/connection/unknown): 로컬 캐시 반환 (오프라인 폴백)
+4. 도메인 에러 (4xx/5xx with code): 예외 throw (캐시 미변경)
+
+> Tier 1 Optimistic Updates 의 완전 구현 (sync_queue · retry 정책 · 충돌 해결) 은 별도 사이클에서 다룬다.
+> 게스트(미로그인) 사용자는 LocalTodoRepositoryImpl 단독 동작 — 서버 미연동.
 
 ---
 
@@ -170,10 +171,9 @@ Todo 객체 전체 반환 (위 공통 구조 참조)
 
 | Status | code | 상황 |
 |--------|------|------|
-| 400 | `INVALID_TITLE` | 제목이 비어있거나 100자 초과 |
-| 400 | `INVALID_DATE_FORMAT` | scheduledDates 형식 오류 |
-| 404 | `CATEGORY_NOT_FOUND` | categoryIds에 존재하지 않는 카테고리 |
-| 409 | `TODO_ALREADY_EXISTS` | 동일 ID의 Todo가 이미 존재 |
+| 400 | `INVALID_INPUT_VALUE` | 제목 길이 초과, scheduledDates 형식 오류 등 |
+| 404 | `CATEGORY_NOT_FOUND` | categoryIds 에 존재하지 않는 카테고리 |
+| 409 | `TODO_ALREADY_EXISTS` | 동일 ID 의 Todo 가 이미 존재 |
 
 ---
 
@@ -182,6 +182,8 @@ Todo 객체 전체 반환 (위 공통 구조 참조)
 `PATCH /api/todos/{todoId}`
 
 변경할 필드만 전송합니다. 전송하지 않은 필드는 기존 값을 유지합니다.
+
+> 빈 배열(`[]`)은 명시적 모두 제거를 의미합니다. 변경하지 않을 필드는 본문에서 생략하세요.
 
 ### 인증: 필요
 
@@ -227,8 +229,7 @@ Todo 객체 전체 반환 (위 공통 구조 참조)
 
 | Status | code | 상황 |
 |--------|------|------|
-| 404 | `TODO_NOT_FOUND` | todoId에 해당하는 Todo 없음 |
-| 403 | `FORBIDDEN` | 다른 유저의 Todo 수정 시도 |
+| 404 | `TODO_NOT_FOUND` | todoId에 해당하는 Todo 없음 (다른 사용자 소유 포함) |
 
 ---
 
@@ -252,7 +253,7 @@ Todo 객체 전체 반환 (위 공통 구조 참조)
 
 | Status | code | 상황 |
 |--------|------|------|
-| 404 | `TODO_NOT_FOUND` | todoId에 해당하는 Todo 없음 |
+| 404 | `TODO_NOT_FOUND` | todoId에 해당하는 Todo 없음 (다른 사용자 소유 포함) |
 
 ### 서버 처리
 
@@ -358,7 +359,7 @@ Todo 객체 전체 반환 (위 공통 구조 참조)
 
 | Status | code | 상황 |
 |--------|------|------|
-| 400 | `INVALID_CATEGORY_NAME` | 이름이 비어있거나 20자 초과 |
+| 400 | `INVALID_INPUT_VALUE` | 이름이 비어있거나 20자 초과 |
 | 409 | `CATEGORY_ALREADY_EXISTS` | 동일 ID의 카테고리가 이미 존재 |
 
 ---
@@ -368,6 +369,8 @@ Todo 객체 전체 반환 (위 공통 구조 참조)
 `PATCH /api/todo-categories/{categoryId}`
 
 변경할 필드만 전송합니다.
+
+> 빈 배열(`[]`)은 명시적 모두 제거를 의미합니다. 변경하지 않을 필드는 본문에서 생략하세요.
 
 ### 인증: 필요
 

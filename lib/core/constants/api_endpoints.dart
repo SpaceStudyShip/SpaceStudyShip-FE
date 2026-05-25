@@ -28,4 +28,24 @@ abstract class ApiEndpoints {
 
   /// 닉네임 변경
   static const nickname = '/api/auth/nickname';
+
+  // ============================================
+  // Todo
+  // ============================================
+
+  /// 할 일 목록 / 생성
+  static const todos = '/api/todos';
+
+  /// 할 일 단건 (수정/삭제)
+  static String todoById(String id) => '/api/todos/$id';
+
+  // ============================================
+  // Todo Category
+  // ============================================
+
+  /// 카테고리 목록 / 생성
+  static const todoCategories = '/api/todo-categories';
+
+  /// 카테고리 단건 (수정/삭제)
+  static String todoCategoryById(String id) => '/api/todo-categories/$id';
 }

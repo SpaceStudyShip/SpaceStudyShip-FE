@@ -23,15 +23,10 @@ TodoCategoryModel _$TodoCategoryModelFromJson(Map<String, dynamic> json) {
 mixin _$TodoCategoryModel {
   String get id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
-  @JsonKey(name: 'icon_id')
   String? get iconId => throw _privateConstructorUsedError;
-  @JsonKey(name: 'position_x')
   double? get positionX => throw _privateConstructorUsedError;
-  @JsonKey(name: 'position_y')
   double? get positionY => throw _privateConstructorUsedError;
-  @JsonKey(name: 'created_at')
   DateTime get createdAt => throw _privateConstructorUsedError;
-  @JsonKey(name: 'updated_at')
   DateTime? get updatedAt => throw _privateConstructorUsedError;
 
   /// Serializes this TodoCategoryModel to a JSON map.
@@ -54,11 +49,11 @@ abstract class $TodoCategoryModelCopyWith<$Res> {
   $Res call({
     String id,
     String name,
-    @JsonKey(name: 'icon_id') String? iconId,
-    @JsonKey(name: 'position_x') double? positionX,
-    @JsonKey(name: 'position_y') double? positionY,
-    @JsonKey(name: 'created_at') DateTime createdAt,
-    @JsonKey(name: 'updated_at') DateTime? updatedAt,
+    String? iconId,
+    double? positionX,
+    double? positionY,
+    DateTime createdAt,
+    DateTime? updatedAt,
   });
 }
 
@@ -133,11 +128,11 @@ abstract class _$$TodoCategoryModelImplCopyWith<$Res>
   $Res call({
     String id,
     String name,
-    @JsonKey(name: 'icon_id') String? iconId,
-    @JsonKey(name: 'position_x') double? positionX,
-    @JsonKey(name: 'position_y') double? positionY,
-    @JsonKey(name: 'created_at') DateTime createdAt,
-    @JsonKey(name: 'updated_at') DateTime? updatedAt,
+    String? iconId,
+    double? positionX,
+    double? positionY,
+    DateTime createdAt,
+    DateTime? updatedAt,
   });
 }
 
@@ -204,11 +199,11 @@ class _$TodoCategoryModelImpl implements _TodoCategoryModel {
   const _$TodoCategoryModelImpl({
     required this.id,
     required this.name,
-    @JsonKey(name: 'icon_id') this.iconId,
-    @JsonKey(name: 'position_x') this.positionX,
-    @JsonKey(name: 'position_y') this.positionY,
-    @JsonKey(name: 'created_at') required this.createdAt,
-    @JsonKey(name: 'updated_at') this.updatedAt,
+    this.iconId,
+    this.positionX,
+    this.positionY,
+    required this.createdAt,
+    this.updatedAt,
   });
 
   factory _$TodoCategoryModelImpl.fromJson(Map<String, dynamic> json) =>
@@ -219,19 +214,14 @@ class _$TodoCategoryModelImpl implements _TodoCategoryModel {
   @override
   final String name;
   @override
-  @JsonKey(name: 'icon_id')
   final String? iconId;
   @override
-  @JsonKey(name: 'position_x')
   final double? positionX;
   @override
-  @JsonKey(name: 'position_y')
   final double? positionY;
   @override
-  @JsonKey(name: 'created_at')
   final DateTime createdAt;
   @override
-  @JsonKey(name: 'updated_at')
   final DateTime? updatedAt;
 
   @override
@@ -291,11 +281,11 @@ abstract class _TodoCategoryModel implements TodoCategoryModel {
   const factory _TodoCategoryModel({
     required final String id,
     required final String name,
-    @JsonKey(name: 'icon_id') final String? iconId,
-    @JsonKey(name: 'position_x') final double? positionX,
-    @JsonKey(name: 'position_y') final double? positionY,
-    @JsonKey(name: 'created_at') required final DateTime createdAt,
-    @JsonKey(name: 'updated_at') final DateTime? updatedAt,
+    final String? iconId,
+    final double? positionX,
+    final double? positionY,
+    required final DateTime createdAt,
+    final DateTime? updatedAt,
   }) = _$TodoCategoryModelImpl;
 
   factory _TodoCategoryModel.fromJson(Map<String, dynamic> json) =
@@ -306,19 +296,14 @@ abstract class _TodoCategoryModel implements TodoCategoryModel {
   @override
   String get name;
   @override
-  @JsonKey(name: 'icon_id')
   String? get iconId;
   @override
-  @JsonKey(name: 'position_x')
   double? get positionX;
   @override
-  @JsonKey(name: 'position_y')
   double? get positionY;
   @override
-  @JsonKey(name: 'created_at')
   DateTime get createdAt;
   @override
-  @JsonKey(name: 'updated_at')
   DateTime? get updatedAt;
 
   /// Create a copy of TodoCategoryModel

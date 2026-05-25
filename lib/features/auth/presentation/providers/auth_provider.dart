@@ -71,6 +71,7 @@ AuthRepository authRepository(Ref ref) {
     firebaseAuthDataSource: ref.watch(firebaseAuthDataSourceProvider),
     authRemoteDataSource: ref.watch(authRemoteDataSourceProvider),
     tokenStorage: ref.watch(secureTokenStorageProvider),
+    localTodoDataSource: ref.watch(localTodoDataSourceProvider),
   );
 }
 
@@ -338,8 +339,11 @@ class AuthNotifier extends _$AuthNotifier {
   /// 게스트 데이터 일괄 삭제 (디스크 + 메모리 캐시)
   Future<void> _clearGuestData() async {
     // 각 저장소 독립 삭제 — 하나 실패해도 나머지 계속 진행
+    // todo 는 localTodoDataSource 직접 호출. todoRepositoryProvider 는
+    // isAuthenticatedProvider 를 watch 하므로 authNotifier 내부에서 read 하면
+    // CircularDependencyError 가 발생한다.
     final clearTasks = <Future<void> Function()>[
-      () => ref.read(todoRepositoryProvider).clearAll(),
+      () => ref.read(localTodoDataSourceProvider).clearAll(),
       () => ref.read(timerSessionRepositoryProvider).clearAll(),
       () => ref.read(fuelRepositoryProvider).clearAll(),
       () => ref.read(explorationRepositoryProvider).clearAll(),
@@ -458,4 +462,13 @@ class AuthNotifier extends _$AuthNotifier {
 @riverpod
 bool isGuest(Ref ref) {
   return ref.watch(authNotifierProvider).valueOrNull?.isGuest ?? false;
+}
+
+/// 서버 인증이 완료된 회원인지 여부 — Todo Provider 등의 서버/로컬 분기에 사용.
+///
+/// 게스트 모드(`isGuest: true`) 는 서버 호출이 불가하므로 `false` 반환.
+@riverpod
+bool isAuthenticated(Ref ref) {
+  final entity = ref.watch(authNotifierProvider).valueOrNull;
+  return entity != null && !entity.isGuest;
 }

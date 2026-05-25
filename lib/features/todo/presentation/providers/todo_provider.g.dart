@@ -25,7 +25,26 @@ final localTodoDataSourceProvider =
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef LocalTodoDataSourceRef = AutoDisposeProviderRef<LocalTodoDataSource>;
-String _$todoRepositoryHash() => r'3e1059fe95fa87fa8773deee58d44aba3e3523af';
+String _$todoRemoteDataSourceHash() =>
+    r'a7a3047ec32ef8c88a9e987f151a9f4e596156a2';
+
+/// See also [todoRemoteDataSource].
+@ProviderFor(todoRemoteDataSource)
+final todoRemoteDataSourceProvider =
+    AutoDisposeProvider<TodoRemoteDataSource>.internal(
+      todoRemoteDataSource,
+      name: r'todoRemoteDataSourceProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$todoRemoteDataSourceHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef TodoRemoteDataSourceRef = AutoDisposeProviderRef<TodoRemoteDataSource>;
+String _$todoRepositoryHash() => r'53bc15433e40a4cf35c07356345f02b380fef918';
 
 /// See also [todoRepository].
 @ProviderFor(todoRepository)

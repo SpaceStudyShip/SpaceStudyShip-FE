@@ -11,59 +11,79 @@ class TodoModel with _$TodoModel {
   const factory TodoModel({
     required String id,
     required String title,
-    @JsonKey(name: 'scheduled_dates')
-    @Default([])
-    List<DateTime> scheduledDates,
-    @JsonKey(name: 'completed_dates')
-    @Default([])
-    List<DateTime> completedDates,
-    @JsonKey(name: 'category_ids') @Default([]) List<String> categoryIds,
-    @JsonKey(name: 'estimated_minutes') int? estimatedMinutes,
-    @JsonKey(name: 'actual_minutes') int? actualMinutes,
-    @JsonKey(name: 'created_at') required DateTime createdAt,
-    @JsonKey(name: 'updated_at') required DateTime updatedAt,
+    @Default([]) List<DateTime> scheduledDates,
+    @Default([]) List<DateTime> completedDates,
+    @Default([]) List<String> categoryIds,
+    int? estimatedMinutes,
+    int? actualMinutes,
+    required DateTime createdAt,
+    required DateTime updatedAt,
   }) = _TodoModel;
 
   factory TodoModel.fromJson(Map<String, dynamic> json) =>
       _$TodoModelFromJson(_migrateJson(json));
 
-  /// 기존 단일 날짜/bool 완료 형식 → 다중 날짜 형식 마이그레이션
+  /// 구버전 캐시 마이그레이션:
+  /// - snake_case 키 → camelCase 키 (서버 응답은 camelCase 이므로 SharedPreferences 캐시 호환용)
+  /// - 단일 scheduledDate → 배열 scheduledDates
+  /// - bool completed → List completedDates
+  /// - 단일 categoryId → 배열 categoryIds
   static Map<String, dynamic> _migrateJson(Map<String, dynamic> json) {
     final migrated = Map<String, dynamic>.from(json);
 
-    // scheduled_date → scheduled_dates
-    if (!migrated.containsKey('scheduled_dates') &&
-        migrated.containsKey('scheduled_date')) {
-      final oldDate = migrated['scheduled_date'];
-      migrated['scheduled_dates'] = oldDate != null ? [oldDate] : [];
-      migrated.remove('scheduled_date');
+    // 0) snake_case → camelCase 키 변환 (구버전 SharedPreferences 캐시 호환)
+    const renames = {
+      'scheduled_dates': 'scheduledDates',
+      'completed_dates': 'completedDates',
+      'category_ids': 'categoryIds',
+      'estimated_minutes': 'estimatedMinutes',
+      'actual_minutes': 'actualMinutes',
+      'created_at': 'createdAt',
+      'updated_at': 'updatedAt',
+      'scheduled_date': 'scheduledDate', // 더 옛 형식 (단일)
+      'category_id': 'categoryId',
+    };
+    for (final entry in renames.entries) {
+      if (migrated.containsKey(entry.key) &&
+          !migrated.containsKey(entry.value)) {
+        migrated[entry.value] = migrated[entry.key];
+        migrated.remove(entry.key);
+      }
     }
 
-    // completed (bool) → completed_dates (List)
-    if (!migrated.containsKey('completed_dates') &&
+    // 1) scheduledDate (단일) → scheduledDates (배열)
+    if (!migrated.containsKey('scheduledDates') &&
+        migrated.containsKey('scheduledDate')) {
+      final oldDate = migrated['scheduledDate'];
+      migrated['scheduledDates'] = oldDate != null ? [oldDate] : [];
+      migrated.remove('scheduledDate');
+    }
+
+    // 2) completed (bool) → completedDates (배열)
+    if (!migrated.containsKey('completedDates') &&
         migrated.containsKey('completed')) {
       final wasCompleted = migrated['completed'] as bool? ?? false;
       if (wasCompleted) {
-        final scheduledDates = migrated['scheduled_dates'] as List<dynamic>?;
+        final scheduledDates = migrated['scheduledDates'] as List<dynamic>?;
         if (scheduledDates != null && scheduledDates.isNotEmpty) {
-          migrated['completed_dates'] = List<dynamic>.from(scheduledDates);
+          migrated['completedDates'] = List<dynamic>.from(scheduledDates);
         } else {
-          migrated['completed_dates'] = [
-            migrated['updated_at'] ?? DateTime.now().toIso8601String(),
+          migrated['completedDates'] = [
+            migrated['updatedAt'] ?? DateTime.now().toIso8601String(),
           ];
         }
       } else {
-        migrated['completed_dates'] = [];
+        migrated['completedDates'] = [];
       }
       migrated.remove('completed');
     }
 
-    // category_id (String?) → category_ids (List<String>)
-    if (!migrated.containsKey('category_ids') &&
-        migrated.containsKey('category_id')) {
-      final oldId = migrated['category_id'] as String?;
-      migrated['category_ids'] = oldId != null ? [oldId] : <String>[];
-      migrated.remove('category_id');
+    // 3) categoryId (단일) → categoryIds (배열)
+    if (!migrated.containsKey('categoryIds') &&
+        migrated.containsKey('categoryId')) {
+      final oldId = migrated['categoryId'] as String?;
+      migrated['categoryIds'] = oldId != null ? [oldId] : <String>[];
+      migrated.remove('categoryId');
     }
 
     return migrated;

@@ -11,13 +11,13 @@ _$TodoCategoryModelImpl _$$TodoCategoryModelImplFromJson(
 ) => _$TodoCategoryModelImpl(
   id: json['id'] as String,
   name: json['name'] as String,
-  iconId: json['icon_id'] as String?,
-  positionX: (json['position_x'] as num?)?.toDouble(),
-  positionY: (json['position_y'] as num?)?.toDouble(),
-  createdAt: DateTime.parse(json['created_at'] as String),
-  updatedAt: json['updated_at'] == null
+  iconId: json['iconId'] as String?,
+  positionX: (json['positionX'] as num?)?.toDouble(),
+  positionY: (json['positionY'] as num?)?.toDouble(),
+  createdAt: DateTime.parse(json['createdAt'] as String),
+  updatedAt: json['updatedAt'] == null
       ? null
-      : DateTime.parse(json['updated_at'] as String),
+      : DateTime.parse(json['updatedAt'] as String),
 );
 
 Map<String, dynamic> _$$TodoCategoryModelImplToJson(
@@ -25,9 +25,9 @@ Map<String, dynamic> _$$TodoCategoryModelImplToJson(
 ) => <String, dynamic>{
   'id': instance.id,
   'name': instance.name,
-  'icon_id': instance.iconId,
-  'position_x': instance.positionX,
-  'position_y': instance.positionY,
-  'created_at': instance.createdAt.toIso8601String(),
-  'updated_at': instance.updatedAt?.toIso8601String(),
+  'iconId': instance.iconId,
+  'positionX': instance.positionX,
+  'positionY': instance.positionY,
+  'createdAt': instance.createdAt.toIso8601String(),
+  'updatedAt': instance.updatedAt?.toIso8601String(),
 };

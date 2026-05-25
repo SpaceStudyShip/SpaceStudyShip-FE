@@ -3,8 +3,12 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../../../core/network/dio_client.dart';
+import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../data/datasources/local_todo_datasource.dart';
+import '../../data/datasources/todo_remote_datasource.dart';
 import '../../data/repositories/local_todo_repository_impl.dart';
+import '../../data/repositories/todo_repository_impl.dart';
 import '../../domain/entities/todo_category_entity.dart';
 import '../../domain/entities/todo_entity.dart';
 import '../../domain/repositories/todo_repository.dart';
@@ -19,7 +23,7 @@ import '../../domain/usecases/update_todo_usecase.dart';
 
 part 'todo_provider.g.dart';
 
-// === DataSource & Repository ===
+// === DataSource ===
 
 @riverpod
 LocalTodoDataSource localTodoDataSource(Ref ref) {
@@ -30,9 +34,25 @@ LocalTodoDataSource localTodoDataSource(Ref ref) {
 }
 
 @riverpod
+TodoRemoteDataSource todoRemoteDataSource(Ref ref) {
+  final dio = ref.watch(dioProvider);
+  return TodoRemoteDataSource(dio);
+}
+
+// === Repository (인증 상태에 따라 분기) ===
+
+@riverpod
 TodoRepository todoRepository(Ref ref) {
-  final dataSource = ref.watch(localTodoDataSourceProvider);
-  return LocalTodoRepositoryImpl(dataSource);
+  final isAuthenticated = ref.watch(isAuthenticatedProvider);
+  final cache = ref.watch(localTodoDataSourceProvider);
+
+  if (isAuthenticated) {
+    return TodoRepositoryImpl(
+      remote: ref.watch(todoRemoteDataSourceProvider),
+      cache: cache,
+    );
+  }
+  return LocalTodoRepositoryImpl(cache);
 }
 
 // === UseCases ===

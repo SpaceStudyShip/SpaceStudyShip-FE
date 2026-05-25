@@ -8,6 +8,7 @@ import '../../../../core/services/device/device_id_manager.dart';
 import '../../../../core/services/device/device_info_service.dart';
 import '../../../../core/services/fcm/firebase_messaging_service.dart';
 import '../../../../core/storage/secure_token_storage.dart';
+import '../../../todo/data/datasources/local_todo_datasource.dart';
 import '../../domain/entities/auth_result_entity.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../datasources/auth_remote_datasource.dart';
@@ -36,14 +37,17 @@ class AuthRepositoryImpl implements AuthRepository {
   final FirebaseAuthDataSource _firebaseAuthDataSource;
   final AuthRemoteDataSource _authRemoteDataSource;
   final SecureTokenStorage _tokenStorage;
+  final LocalTodoDataSource _localTodoDataSource;
 
   AuthRepositoryImpl({
     required FirebaseAuthDataSource firebaseAuthDataSource,
     required AuthRemoteDataSource authRemoteDataSource,
     required SecureTokenStorage tokenStorage,
+    required LocalTodoDataSource localTodoDataSource,
   }) : _firebaseAuthDataSource = firebaseAuthDataSource,
        _authRemoteDataSource = authRemoteDataSource,
-       _tokenStorage = tokenStorage;
+       _tokenStorage = tokenStorage,
+       _localTodoDataSource = localTodoDataSource;
 
   // ============================================
   // 소셜 로그인
@@ -170,8 +174,11 @@ class AuthRepositoryImpl implements AuthRepository {
       // 3. 로컬 토큰 삭제
       await _tokenStorage.clearTokens();
 
+      // 4. 로컬 도메인 캐시 정리 (Todo 등)
+      await _clearLocalDomainCaches();
+
       if (kDebugMode) {
-        debugPrint('✅ 로그아웃 완료 (백엔드 + Firebase + 토큰 삭제)');
+        debugPrint('✅ 로그아웃 완료 (백엔드 + Firebase + 토큰 삭제 + 캐시 정리)');
       }
     } catch (e) {
       if (e is AppException) rethrow;
@@ -252,14 +259,27 @@ class AuthRepositoryImpl implements AuthRepository {
       }
     }
 
+    await _clearLocalDomainCaches();
+
     if (kDebugMode) {
-      debugPrint('회원 탈퇴 완료 (백엔드 + Firebase + 토큰 삭제)');
+      debugPrint('회원 탈퇴 완료 (백엔드 + Firebase + 토큰 삭제 + 캐시 정리)');
     }
   }
 
   // ============================================
   // Private Helpers
   // ============================================
+
+  /// 로컬 도메인 캐시 정리 — 로그아웃/탈퇴 시 다른 사용자 데이터 오염 방지.
+  ///
+  /// 실패해도 인증 상태 전이를 막지 않도록 예외를 흡수한다.
+  Future<void> _clearLocalDomainCaches() async {
+    try {
+      await _localTodoDataSource.clearAll();
+    } catch (e) {
+      if (kDebugMode) debugPrint('Todo 캐시 정리 실패 (무시): $e');
+    }
+  }
 
   /// 디바이스 메타 정보 수집 (fcmToken / deviceType / deviceId)
   ///

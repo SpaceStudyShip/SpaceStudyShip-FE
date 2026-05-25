@@ -24,6 +24,7 @@ import '../../../exploration/presentation/providers/exploration_provider.dart';
 import '../../../fuel/presentation/providers/fuel_provider.dart';
 import '../../../timer/presentation/providers/timer_provider.dart';
 import '../../../timer/presentation/providers/timer_session_provider.dart';
+import '../../../timer/presentation/providers/today_stats_provider.dart';
 import '../../../todo/presentation/providers/todo_provider.dart';
 
 part 'auth_provider.g.dart';
@@ -326,6 +327,11 @@ class AuthNotifier extends _$AuthNotifier {
     try {
       final useCase = ref.read(signOutUseCaseProvider);
       await useCase.execute();
+      // Timer 로컬 캐시 삭제 (인증 → 게스트 전환 시 이전 세션 데이터 노출 방지)
+      await ref.read(timerSessionRepositoryProvider).clearAll();
+      // 메모리 캐시 무효화
+      ref.invalidate(timerSessionListNotifierProvider);
+      ref.invalidate(todayStatsNotifierProvider);
       state = const AsyncValue.data(null);
     } on FirebaseAuthException catch (e) {
       state = previous;
@@ -360,6 +366,7 @@ class AuthNotifier extends _$AuthNotifier {
 
     // 메모리 캐시 무효화 (예외 발생 불가)
     ref.invalidate(timerSessionListNotifierProvider);
+    ref.invalidate(todayStatsNotifierProvider);
     ref.invalidate(todoListNotifierProvider);
     ref.invalidate(categoryListNotifierProvider);
     ref.invalidate(fuelNotifierProvider);
@@ -449,6 +456,11 @@ class AuthNotifier extends _$AuthNotifier {
 
     try {
       await ref.read(withdrawUseCaseProvider).execute();
+      // Timer 로컬 캐시 삭제 (인증 → 비로그인 전환 시 이전 세션 데이터 노출 방지)
+      await ref.read(timerSessionRepositoryProvider).clearAll();
+      // 메모리 캐시 무효화
+      ref.invalidate(timerSessionListNotifierProvider);
+      ref.invalidate(todayStatsNotifierProvider);
       state = const AsyncValue.data(null);
     } catch (e, stack) {
       state = previous;

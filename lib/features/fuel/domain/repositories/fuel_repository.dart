@@ -29,9 +29,7 @@ abstract class FuelRepository {
 
   /// 거래 내역 페이지 조회 (server-backed 전용). LocalRepository 는
   /// UnsupportedError 를 던진다.
-  Future<FuelTransactionPage> getTransactionsPage(
-    FuelTransactionFilter filter,
-  );
+  Future<FuelTransactionPage> getTransactionsPage(FuelTransactionFilter filter);
 
   /// 로컬 캐시 / 영속 데이터 전체 삭제 (로그아웃·탈퇴 흐름에서 호출).
   Future<void> clearAll();

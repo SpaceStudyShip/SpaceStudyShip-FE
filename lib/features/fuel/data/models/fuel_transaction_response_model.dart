@@ -58,20 +58,20 @@ class FuelTransactionResponseModel with _$FuelTransactionResponseModel {
   }
 
   FuelTransactionEntity toEntity() => FuelTransactionEntity(
-        id: id,
-        type: switch (type) {
-          FuelTransactionTypeWire.charge => FuelTransactionType.charge,
-          FuelTransactionTypeWire.consume => FuelTransactionType.consume,
-        },
-        amount: amount,
-        reason: switch (reason) {
-          FuelTransactionReasonWire.studySession =>
-            FuelTransactionReason.studySession,
-          FuelTransactionReasonWire.explorationUnlock =>
-            FuelTransactionReason.explorationUnlock,
-        },
-        referenceId: referenceId,
-        balanceAfter: balanceAfter,
-        createdAt: createdAt,
-      );
+    id: id,
+    type: switch (type) {
+      FuelTransactionTypeWire.charge => FuelTransactionType.charge,
+      FuelTransactionTypeWire.consume => FuelTransactionType.consume,
+    },
+    amount: amount,
+    reason: switch (reason) {
+      FuelTransactionReasonWire.studySession =>
+        FuelTransactionReason.studySession,
+      FuelTransactionReasonWire.explorationUnlock =>
+        FuelTransactionReason.explorationUnlock,
+    },
+    referenceId: referenceId,
+    balanceAfter: balanceAfter,
+    createdAt: createdAt,
+  );
 }

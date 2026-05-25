@@ -14,10 +14,14 @@ void main() {
 
   Future<ProviderContainer> guestContainer() async {
     final prefs = await SharedPreferences.getInstance();
-    return ProviderContainer(overrides: [
-      fuelLocalDataSourceProvider.overrideWithValue(FuelLocalDataSource(prefs)),
-      isAuthenticatedProvider.overrideWith((ref) => false),
-    ]);
+    return ProviderContainer(
+      overrides: [
+        fuelLocalDataSourceProvider.overrideWithValue(
+          FuelLocalDataSource(prefs),
+        ),
+        isAuthenticatedProvider.overrideWith((ref) => false),
+      ],
+    );
   }
 
   test('데이터 도착 후 AsyncData<int> 노출', () async {
@@ -26,8 +30,7 @@ void main() {
     await container.read(fuelNotifierProvider.future);
     final fuel = container.read(currentFuelProvider);
     expect(fuel, isA<AsyncData<int>>());
-    expect(fuel.value, 0,
-        reason: '게스트 신규 컨테이너의 초기 잔량은 0');
+    expect(fuel.value, 0, reason: '게스트 신규 컨테이너의 초기 잔량은 0');
   });
 
   test('loading 시점에는 AsyncLoading 또는 즉시 data — 어느 쪽도 acceptable', () async {

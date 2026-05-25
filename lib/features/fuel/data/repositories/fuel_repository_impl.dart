@@ -50,10 +50,12 @@ class FuelRepositoryImpl implements FuelRepository {
           FuelTransactionType.consume => 'consume',
           null => null,
         },
-        startDate:
-            filter.startDate != null ? _dateFmt.format(filter.startDate!) : null,
-        endDate:
-            filter.endDate != null ? _dateFmt.format(filter.endDate!) : null,
+        startDate: filter.startDate != null
+            ? _dateFmt.format(filter.startDate!)
+            : null,
+        endDate: filter.endDate != null
+            ? _dateFmt.format(filter.endDate!)
+            : null,
         page: filter.page,
         size: filter.size,
       );
@@ -109,10 +111,10 @@ class FuelRepositoryImpl implements FuelRepository {
 
   /// 서버 응답을 LocalDataSource 가 쓰는 영속 모델 형태로 변환.
   static FuelModel _toCacheModel(FuelResponseModel m) => FuelModel(
-        currentFuel: m.currentFuel,
-        totalCharged: m.totalCharged,
-        totalConsumed: m.totalConsumed,
-        pendingMinutes: m.pendingMinutes,
-        lastUpdatedAt: m.lastUpdatedAt,
-      );
+    currentFuel: m.currentFuel,
+    totalCharged: m.totalCharged,
+    totalConsumed: m.totalConsumed,
+    pendingMinutes: m.pendingMinutes,
+    lastUpdatedAt: m.lastUpdatedAt,
+  );
 }

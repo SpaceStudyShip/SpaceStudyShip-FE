@@ -8,8 +8,7 @@ part 'fuel_transaction_page_response_model.g.dart';
 
 /// GET /api/fuel/transactions 페이지 응답 DTO
 @freezed
-class FuelTransactionPageResponseModel
-    with _$FuelTransactionPageResponseModel {
+class FuelTransactionPageResponseModel with _$FuelTransactionPageResponseModel {
   const FuelTransactionPageResponseModel._();
 
   const factory FuelTransactionPageResponseModel({
@@ -22,14 +21,13 @@ class FuelTransactionPageResponseModel
 
   factory FuelTransactionPageResponseModel.fromJson(
     Map<String, dynamic> json,
-  ) =>
-      _$FuelTransactionPageResponseModelFromJson(json);
+  ) => _$FuelTransactionPageResponseModelFromJson(json);
 
   FuelTransactionPage toEntity() => FuelTransactionPage(
-        items: content.map((m) => m.toEntity()).toList(growable: false),
-        page: page,
-        size: size,
-        totalElements: totalElements,
-        totalPages: totalPages,
-      );
+    items: content.map((m) => m.toEntity()).toList(growable: false),
+    page: page,
+    size: size,
+    totalElements: totalElements,
+    totalPages: totalPages,
+  );
 }

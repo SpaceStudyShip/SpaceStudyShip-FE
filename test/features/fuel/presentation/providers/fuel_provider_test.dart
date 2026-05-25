@@ -14,10 +14,14 @@ void main() {
 
   Future<ProviderContainer> containerWithAuth({required bool authed}) async {
     final prefs = await SharedPreferences.getInstance();
-    return ProviderContainer(overrides: [
-      fuelLocalDataSourceProvider.overrideWithValue(FuelLocalDataSource(prefs)),
-      isAuthenticatedProvider.overrideWith((ref) => authed),
-    ]);
+    return ProviderContainer(
+      overrides: [
+        fuelLocalDataSourceProvider.overrideWithValue(
+          FuelLocalDataSource(prefs),
+        ),
+        isAuthenticatedProvider.overrideWith((ref) => authed),
+      ],
+    );
   }
 
   test('isAuthenticated=false → LocalFuelRepositoryImpl 주입', () async {
@@ -39,8 +43,10 @@ void main() {
     final authedContainer = await containerWithAuth(authed: true);
     addTearDown(guestContainer.dispose);
     addTearDown(authedContainer.dispose);
-    expect(guestContainer.read(fuelRepositoryProvider).runtimeType,
-        isNot(equals(authedContainer.read(fuelRepositoryProvider).runtimeType)));
+    expect(
+      guestContainer.read(fuelRepositoryProvider).runtimeType,
+      isNot(equals(authedContainer.read(fuelRepositoryProvider).runtimeType)),
+    );
   });
 
   group('FuelNotifier 게스트 mutation loading-window 회귀', () {
@@ -56,16 +62,17 @@ void main() {
       expect(fuel.pendingMinutes, 0);
     });
 
-    test('build 완료 전 consumeFuel 호출 → 잔량 부족 시 InsufficientFuelException', () async {
-      final container = await containerWithAuth(authed: false);
-      addTearDown(container.dispose);
-      await expectLater(
-        container
-            .read(fuelNotifierProvider.notifier)
-            .consumeFuel(amount: 5),
-        throwsA(anything),
-      );
-    });
+    test(
+      'build 완료 전 consumeFuel 호출 → 잔량 부족 시 InsufficientFuelException',
+      () async {
+        final container = await containerWithAuth(authed: false);
+        addTearDown(container.dispose);
+        await expectLater(
+          container.read(fuelNotifierProvider.notifier).consumeFuel(amount: 5),
+          throwsA(anything),
+        );
+      },
+    );
 
     test('build 완료 후 chargeFuel 누적 pendingMinutes 정상', () async {
       final container = await containerWithAuth(authed: false);

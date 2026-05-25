@@ -22,10 +22,10 @@ class FuelResponseModel with _$FuelResponseModel {
       _$FuelResponseModelFromJson(json);
 
   FuelEntity toEntity() => FuelEntity(
-        currentFuel: currentFuel,
-        totalCharged: totalCharged,
-        totalConsumed: totalConsumed,
-        pendingMinutes: pendingMinutes,
-        lastUpdatedAt: lastUpdatedAt,
-      );
+    currentFuel: currentFuel,
+    totalCharged: totalCharged,
+    totalConsumed: totalConsumed,
+    pendingMinutes: pendingMinutes,
+    lastUpdatedAt: lastUpdatedAt,
+  );
 }

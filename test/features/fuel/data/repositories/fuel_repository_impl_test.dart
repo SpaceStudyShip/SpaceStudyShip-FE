@@ -25,15 +25,13 @@ void main() {
     cache = _MockCache();
     repo = FuelRepositoryImpl(remote: remote, cache: cache);
 
-    registerFallbackValue(
-      FuelModel(lastUpdatedAt: DateTime.utc(2026, 1, 1)),
-    );
+    registerFallbackValue(FuelModel(lastUpdatedAt: DateTime.utc(2026, 1, 1)));
   });
 
   DioException buildConnectionError() => DioException.connectionError(
-        requestOptions: RequestOptions(path: '/api/fuel'),
-        reason: 'no network',
-      );
+    requestOptions: RequestOptions(path: '/api/fuel'),
+    reason: 'no network',
+  );
 
   group('getFuel', () {
     test('remote 성공 → entity 반환 + 캐시 저장', () async {
@@ -71,33 +69,43 @@ void main() {
       verifyNever(() => cache.saveFuel(any()));
     });
 
-    test('네트워크 외 DioException → DioExceptionHandler 통한 AppException throw', () async {
-      when(() => remote.getFuel()).thenThrow(DioException(
-        requestOptions: RequestOptions(path: '/api/fuel'),
-        response: Response(
-          requestOptions: RequestOptions(path: '/api/fuel'),
-          statusCode: 401,
-          data: {'code': 'UNAUTHENTICATED_REQUEST', 'message': '로그인이 필요합니다.'},
-        ),
-        type: DioExceptionType.badResponse,
-      ));
+    test(
+      '네트워크 외 DioException → DioExceptionHandler 통한 AppException throw',
+      () async {
+        when(() => remote.getFuel()).thenThrow(
+          DioException(
+            requestOptions: RequestOptions(path: '/api/fuel'),
+            response: Response(
+              requestOptions: RequestOptions(path: '/api/fuel'),
+              statusCode: 401,
+              data: {
+                'code': 'UNAUTHENTICATED_REQUEST',
+                'message': '로그인이 필요합니다.',
+              },
+            ),
+            type: DioExceptionType.badResponse,
+          ),
+        );
 
-      await expectLater(
-        repo.getFuel(),
-        throwsA(isA<UnauthenticatedRequestException>()),
-      );
-    });
+        await expectLater(
+          repo.getFuel(),
+          throwsA(isA<UnauthenticatedRequestException>()),
+        );
+      },
+    );
   });
 
   group('getTransactionsPage', () {
     test('remote 성공 → Page entity 반환', () async {
-      when(() => remote.getTransactions(
-            type: any(named: 'type'),
-            startDate: any(named: 'startDate'),
-            endDate: any(named: 'endDate'),
-            page: any(named: 'page'),
-            size: any(named: 'size'),
-          )).thenAnswer(
+      when(
+        () => remote.getTransactions(
+          type: any(named: 'type'),
+          startDate: any(named: 'startDate'),
+          endDate: any(named: 'endDate'),
+          page: any(named: 'page'),
+          size: any(named: 'size'),
+        ),
+      ).thenAnswer(
         (_) async => const FuelTransactionPageResponseModel(
           content: [],
           page: 0,
@@ -115,13 +123,15 @@ void main() {
     });
 
     test('네트워크 실패 → AppException 전파 (캐시 폴백 없음)', () async {
-      when(() => remote.getTransactions(
-            type: any(named: 'type'),
-            startDate: any(named: 'startDate'),
-            endDate: any(named: 'endDate'),
-            page: any(named: 'page'),
-            size: any(named: 'size'),
-          )).thenThrow(buildConnectionError());
+      when(
+        () => remote.getTransactions(
+          type: any(named: 'type'),
+          startDate: any(named: 'startDate'),
+          endDate: any(named: 'endDate'),
+          page: any(named: 'page'),
+          size: any(named: 'size'),
+        ),
+      ).thenThrow(buildConnectionError());
 
       await expectLater(
         repo.getTransactionsPage(const FuelTransactionFilter()),
@@ -130,13 +140,15 @@ void main() {
     });
 
     test('filter type / dates 가 query 로 전달됨', () async {
-      when(() => remote.getTransactions(
-            type: any(named: 'type'),
-            startDate: any(named: 'startDate'),
-            endDate: any(named: 'endDate'),
-            page: any(named: 'page'),
-            size: any(named: 'size'),
-          )).thenAnswer(
+      when(
+        () => remote.getTransactions(
+          type: any(named: 'type'),
+          startDate: any(named: 'startDate'),
+          endDate: any(named: 'endDate'),
+          page: any(named: 'page'),
+          size: any(named: 'size'),
+        ),
+      ).thenAnswer(
         (_) async => const FuelTransactionPageResponseModel(
           content: [],
           page: 0,
@@ -146,21 +158,25 @@ void main() {
         ),
       );
 
-      await repo.getTransactionsPage(FuelTransactionFilter(
-        type: FuelTransactionType.charge,
-        startDate: DateTime.utc(2026, 4, 1),
-        endDate: DateTime.utc(2026, 4, 30),
-        page: 2,
-        size: 50,
-      ));
+      await repo.getTransactionsPage(
+        FuelTransactionFilter(
+          type: FuelTransactionType.charge,
+          startDate: DateTime.utc(2026, 4, 1),
+          endDate: DateTime.utc(2026, 4, 30),
+          page: 2,
+          size: 50,
+        ),
+      );
 
-      verify(() => remote.getTransactions(
-            type: 'charge',
-            startDate: '2026-04-01',
-            endDate: '2026-04-30',
-            page: 2,
-            size: 50,
-          )).called(1);
+      verify(
+        () => remote.getTransactions(
+          type: 'charge',
+          startDate: '2026-04-01',
+          endDate: '2026-04-30',
+          page: 2,
+          size: 50,
+        ),
+      ).called(1);
     });
   });
 

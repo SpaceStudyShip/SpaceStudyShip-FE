@@ -55,9 +55,9 @@ class _TimerHistoryScreenState extends ConsumerState<TimerHistoryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // 세션 목록이 변경되면 PagingController 리프레시
-    ref.listen(timerSessionListNotifierProvider, (_, _) {
-      _pagingController.refresh();
+    // 세션 목록이 변경되면 PagingController 리프레시 (AsyncValue 언래핑)
+    ref.listen(timerSessionListNotifierProvider, (_, next) {
+      if (next is AsyncData) _pagingController.refresh();
     });
 
     final isEmpty = ref.watch(

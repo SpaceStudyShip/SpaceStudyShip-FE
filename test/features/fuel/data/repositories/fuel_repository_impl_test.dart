@@ -30,7 +30,7 @@ void main() {
     );
   });
 
-  DioException _connectionError() => DioException.connectionError(
+  DioException buildConnectionError() => DioException.connectionError(
         requestOptions: RequestOptions(path: '/api/fuel'),
         reason: 'no network',
       );
@@ -55,7 +55,7 @@ void main() {
     });
 
     test('네트워크 실패 → 캐시 폴백', () async {
-      when(() => remote.getFuel()).thenThrow(_connectionError());
+      when(() => remote.getFuel()).thenThrow(buildConnectionError());
       when(() => cache.getFuel()).thenReturn(
         FuelModel(
           currentFuel: 100,
@@ -121,7 +121,7 @@ void main() {
             endDate: any(named: 'endDate'),
             page: any(named: 'page'),
             size: any(named: 'size'),
-          )).thenThrow(_connectionError());
+          )).thenThrow(buildConnectionError());
 
       await expectLater(
         repo.getTransactionsPage(const FuelTransactionFilter()),

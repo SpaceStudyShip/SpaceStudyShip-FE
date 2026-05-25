@@ -108,7 +108,8 @@ class _ExplorationDetailScreenState
     }
     final regions = ref.watch(regionListNotifierProvider(widget.planetId));
     final progress = ref.watch(explorationProgressProvider(widget.planetId));
-    final currentFuel = ref.watch(currentFuelProvider);
+    final currentFuelAsync = ref.watch(currentFuelProvider);
+    final currentFuel = currentFuelAsync.valueOrNull ?? 0;
 
     return Scaffold(
       backgroundColor: AppColors.spaceBackground,

@@ -6,7 +6,7 @@ part of 'study_stats_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$todayStudyMinutesHash() => r'410d2ddb1ed7f2797f1664c0204aaa7fc3af5b0f';
+String _$todayStudyMinutesHash() => r'945b739e7bb40dbb04d6d397d4cecb7a2664bf79';
 
 /// 오늘 공부 시간 (분)
 ///
@@ -26,7 +26,7 @@ final todayStudyMinutesProvider = AutoDisposeProvider<int>.internal(
 // ignore: unused_element
 typedef TodayStudyMinutesRef = AutoDisposeProviderRef<int>;
 String _$weeklyStudyMinutesHash() =>
-    r'bd67a8f1b8bb35d8f7024038945fb6209b0a3539';
+    r'f972b83f62e0641552e1fe32d5d04482e9f55074';
 
 /// 이번 주 공부 시간 (분) — 최근 7일
 ///
@@ -46,7 +46,7 @@ final weeklyStudyMinutesProvider = AutoDisposeProvider<int>.internal(
 // ignore: unused_element
 typedef WeeklyStudyMinutesRef = AutoDisposeProviderRef<int>;
 String _$monthlyStudyMinutesHash() =>
-    r'355ce71c683dd8ebd3ffe86137a9f91eb552e8b3';
+    r'0848eb2ad73d324eaf87dd350f6b857fd05b08fa';
 
 /// 이번 달 공부 시간 (분)
 ///
@@ -65,7 +65,7 @@ final monthlyStudyMinutesProvider = AutoDisposeProvider<int>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef MonthlyStudyMinutesRef = AutoDisposeProviderRef<int>;
-String _$totalStudyMinutesHash() => r'd870d7b0b8f95efccd4697699209efd31856e555';
+String _$totalStudyMinutesHash() => r'8477df0e108d2a18ac8dcd546bd05ecf93fd2adb';
 
 /// 전체 총 공부 시간 (분)
 ///
@@ -84,7 +84,7 @@ final totalStudyMinutesProvider = AutoDisposeProvider<int>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef TotalStudyMinutesRef = AutoDisposeProviderRef<int>;
-String _$totalSessionCountHash() => r'6f93c508978438642d9b5d6728ad9a72c6c996bf';
+String _$totalSessionCountHash() => r'dee88fc7f314f89bad35757ae90d9f066372b401';
 
 /// 전체 세션 수
 ///
@@ -103,7 +103,7 @@ final totalSessionCountProvider = AutoDisposeProvider<int>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef TotalSessionCountRef = AutoDisposeProviderRef<int>;
-String _$currentStreakHash() => r'0a4b30dff7e3e0f05a96f4413232eff23703f82c';
+String _$currentStreakHash() => r'695c3e5cc1b3eef210917de2240ab38f7a862007';
 
 /// 연속 공부 일수 (streak)
 ///

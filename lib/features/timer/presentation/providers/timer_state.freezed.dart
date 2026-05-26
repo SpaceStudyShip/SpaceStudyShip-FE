@@ -23,6 +23,10 @@ mixin _$TimerState {
   String? get linkedTodoId => throw _privateConstructorUsedError;
   String? get linkedTodoTitle => throw _privateConstructorUsedError;
 
+  /// 인증 모드에서 stop() 시 POST 헤더로 전송할 idempotency key.
+  /// start() 시 발급, stop() 성공 시 null 로 폐기, 실패 시 유지 (재시도용).
+  String? get idempotencyKey => throw _privateConstructorUsedError;
+
   /// Create a copy of TimerState
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -43,6 +47,7 @@ abstract class $TimerStateCopyWith<$Res> {
     DateTime? startTime,
     String? linkedTodoId,
     String? linkedTodoTitle,
+    String? idempotencyKey,
   });
 }
 
@@ -66,6 +71,7 @@ class _$TimerStateCopyWithImpl<$Res, $Val extends TimerState>
     Object? startTime = freezed,
     Object? linkedTodoId = freezed,
     Object? linkedTodoTitle = freezed,
+    Object? idempotencyKey = freezed,
   }) {
     return _then(
       _value.copyWith(
@@ -89,6 +95,10 @@ class _$TimerStateCopyWithImpl<$Res, $Val extends TimerState>
                 ? _value.linkedTodoTitle
                 : linkedTodoTitle // ignore: cast_nullable_to_non_nullable
                       as String?,
+            idempotencyKey: freezed == idempotencyKey
+                ? _value.idempotencyKey
+                : idempotencyKey // ignore: cast_nullable_to_non_nullable
+                      as String?,
           )
           as $Val,
     );
@@ -110,6 +120,7 @@ abstract class _$$TimerStateImplCopyWith<$Res>
     DateTime? startTime,
     String? linkedTodoId,
     String? linkedTodoTitle,
+    String? idempotencyKey,
   });
 }
 
@@ -132,6 +143,7 @@ class __$$TimerStateImplCopyWithImpl<$Res>
     Object? startTime = freezed,
     Object? linkedTodoId = freezed,
     Object? linkedTodoTitle = freezed,
+    Object? idempotencyKey = freezed,
   }) {
     return _then(
       _$TimerStateImpl(
@@ -155,6 +167,10 @@ class __$$TimerStateImplCopyWithImpl<$Res>
             ? _value.linkedTodoTitle
             : linkedTodoTitle // ignore: cast_nullable_to_non_nullable
                   as String?,
+        idempotencyKey: freezed == idempotencyKey
+            ? _value.idempotencyKey
+            : idempotencyKey // ignore: cast_nullable_to_non_nullable
+                  as String?,
       ),
     );
   }
@@ -169,6 +185,7 @@ class _$TimerStateImpl extends _TimerState {
     this.startTime,
     this.linkedTodoId,
     this.linkedTodoTitle,
+    this.idempotencyKey,
   }) : super._();
 
   @override
@@ -184,9 +201,14 @@ class _$TimerStateImpl extends _TimerState {
   @override
   final String? linkedTodoTitle;
 
+  /// 인증 모드에서 stop() 시 POST 헤더로 전송할 idempotency key.
+  /// start() 시 발급, stop() 성공 시 null 로 폐기, 실패 시 유지 (재시도용).
+  @override
+  final String? idempotencyKey;
+
   @override
   String toString() {
-    return 'TimerState(status: $status, accumulatedBeforePause: $accumulatedBeforePause, startTime: $startTime, linkedTodoId: $linkedTodoId, linkedTodoTitle: $linkedTodoTitle)';
+    return 'TimerState(status: $status, accumulatedBeforePause: $accumulatedBeforePause, startTime: $startTime, linkedTodoId: $linkedTodoId, linkedTodoTitle: $linkedTodoTitle, idempotencyKey: $idempotencyKey)';
   }
 
   @override
@@ -202,7 +224,9 @@ class _$TimerStateImpl extends _TimerState {
             (identical(other.linkedTodoId, linkedTodoId) ||
                 other.linkedTodoId == linkedTodoId) &&
             (identical(other.linkedTodoTitle, linkedTodoTitle) ||
-                other.linkedTodoTitle == linkedTodoTitle));
+                other.linkedTodoTitle == linkedTodoTitle) &&
+            (identical(other.idempotencyKey, idempotencyKey) ||
+                other.idempotencyKey == idempotencyKey));
   }
 
   @override
@@ -213,6 +237,7 @@ class _$TimerStateImpl extends _TimerState {
     startTime,
     linkedTodoId,
     linkedTodoTitle,
+    idempotencyKey,
   );
 
   /// Create a copy of TimerState
@@ -231,6 +256,7 @@ abstract class _TimerState extends TimerState {
     final DateTime? startTime,
     final String? linkedTodoId,
     final String? linkedTodoTitle,
+    final String? idempotencyKey,
   }) = _$TimerStateImpl;
   const _TimerState._() : super._();
 
@@ -244,6 +270,11 @@ abstract class _TimerState extends TimerState {
   String? get linkedTodoId;
   @override
   String? get linkedTodoTitle;
+
+  /// 인증 모드에서 stop() 시 POST 헤더로 전송할 idempotency key.
+  /// start() 시 발급, stop() 성공 시 null 로 폐기, 실패 시 유지 (재시도용).
+  @override
+  String? get idempotencyKey;
 
   /// Create a copy of TimerState
   /// with the given fields replaced by the non-null parameter values.

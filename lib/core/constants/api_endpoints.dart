@@ -58,4 +58,14 @@ abstract class ApiEndpoints {
 
   /// 연료 거래 내역 조회 (페이지네이션)
   static const fuelTransactions = '/api/fuel/transactions';
+
+  // ============================================
+  // Timer
+  // ============================================
+
+  /// 타이머 세션 저장(POST) / 페이지네이션 조회(GET)
+  static const timerSessions = '/api/timer-sessions';
+
+  /// 오늘 공부 통계 (KST)
+  static const timerSessionsTodayStats = '/api/timer-sessions/today-stats';
 }

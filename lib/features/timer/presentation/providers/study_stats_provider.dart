@@ -1,8 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import 'timer_session_provider.dart';
 import '../utils/timer_format_utils.dart';
+import 'timer_session_provider.dart';
 
 part 'study_stats_provider.g.dart';
 
@@ -11,7 +11,8 @@ part 'study_stats_provider.g.dart';
 /// 오늘 공부 시간 (분)
 @riverpod
 int todayStudyMinutes(Ref ref) {
-  final sessions = ref.watch(timerSessionListNotifierProvider);
+  final sessions =
+      ref.watch(timerSessionListNotifierProvider).valueOrNull ?? [];
   final today = normalizeDate(DateTime.now());
 
   return sessions
@@ -22,7 +23,8 @@ int todayStudyMinutes(Ref ref) {
 /// 이번 주 공부 시간 (분) — 최근 7일
 @riverpod
 int weeklyStudyMinutes(Ref ref) {
-  final sessions = ref.watch(timerSessionListNotifierProvider);
+  final sessions =
+      ref.watch(timerSessionListNotifierProvider).valueOrNull ?? [];
   final now = DateTime.now();
   final weekStart = normalizeDate(now.subtract(const Duration(days: 6)));
 
@@ -36,7 +38,8 @@ int weeklyStudyMinutes(Ref ref) {
 /// 이번 달 공부 시간 (분)
 @riverpod
 int monthlyStudyMinutes(Ref ref) {
-  final sessions = ref.watch(timerSessionListNotifierProvider);
+  final sessions =
+      ref.watch(timerSessionListNotifierProvider).valueOrNull ?? [];
   final now = DateTime.now();
   final monthStart = DateTime(now.year, now.month, 1);
 
@@ -48,14 +51,16 @@ int monthlyStudyMinutes(Ref ref) {
 /// 전체 총 공부 시간 (분)
 @riverpod
 int totalStudyMinutes(Ref ref) {
-  final sessions = ref.watch(timerSessionListNotifierProvider);
+  final sessions =
+      ref.watch(timerSessionListNotifierProvider).valueOrNull ?? [];
   return sessions.fold<int>(0, (sum, s) => sum + s.durationMinutes);
 }
 
 /// 전체 세션 수
 @riverpod
 int totalSessionCount(Ref ref) {
-  final sessions = ref.watch(timerSessionListNotifierProvider);
+  final sessions =
+      ref.watch(timerSessionListNotifierProvider).valueOrNull ?? [];
   return sessions.length;
 }
 
@@ -64,7 +69,8 @@ int totalSessionCount(Ref ref) {
 /// 연속 공부 일수 (streak)
 @riverpod
 int currentStreak(Ref ref) {
-  final sessions = ref.watch(timerSessionListNotifierProvider);
+  final sessions =
+      ref.watch(timerSessionListNotifierProvider).valueOrNull ?? [];
   if (sessions.isEmpty) return 0;
 
   // 세션이 있는 날짜 집합

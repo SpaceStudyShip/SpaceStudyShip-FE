@@ -115,30 +115,16 @@
           "required": true
         },
         "responses": {
-          "400": {
-            "description": "입력값 검증 실패",
+          "401": {
+            "description": "인증 실패",
             "content": {
               "*/*": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
                 },
                 "example": {
-                  "code": "INVALID_INPUT_VALUE",
-                  "message": "title: 비어있을 수 없습니다."
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "카테고리 없음",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                },
-                "example": {
-                  "code": "CATEGORY_NOT_FOUND",
-                  "message": "해당 카테고리를 찾을 수 없습니다."
+                  "code": "UNAUTHENTICATED_REQUEST",
+                  "message": "로그인이 필요합니다."
                 }
               }
             }
@@ -171,16 +157,16 @@
               }
             }
           },
-          "401": {
-            "description": "인증 실패",
+          "400": {
+            "description": "입력값 검증 실패",
             "content": {
               "*/*": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
                 },
                 "example": {
-                  "code": "UNAUTHENTICATED_REQUEST",
-                  "message": "로그인이 필요합니다."
+                  "code": "INVALID_INPUT_VALUE",
+                  "message": "title: 비어있을 수 없습니다."
                 }
               }
             }
@@ -191,6 +177,20 @@
               "*/*": {
                 "schema": {
                   "$ref": "#/components/schemas/TodoResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "카테고리 없음",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": "CATEGORY_NOT_FOUND",
+                  "message": "해당 카테고리를 찾을 수 없습니다."
                 }
               }
             }
@@ -249,20 +249,6 @@
           "required": true
         },
         "responses": {
-          "500": {
-            "description": "서버 내부 오류",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                },
-                "example": {
-                  "code": "INTERNAL_SERVER_ERROR",
-                  "message": "서버 내부 오류가 발생했습니다."
-                }
-              }
-            }
-          },
           "401": {
             "description": "인증 실패",
             "content": {
@@ -287,16 +273,16 @@
               }
             }
           },
-          "409": {
-            "description": "동일 ID 중복",
+          "500": {
+            "description": "서버 내부 오류",
             "content": {
               "*/*": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
                 },
                 "example": {
-                  "code": "CATEGORY_ALREADY_EXISTS",
-                  "message": "동일 ID의 카테고리가 이미 존재합니다."
+                  "code": "INTERNAL_SERVER_ERROR",
+                  "message": "서버 내부 오류가 발생했습니다."
                 }
               }
             }
@@ -311,6 +297,20 @@
                 "example": {
                   "code": "INVALID_INPUT_VALUE",
                   "message": "name: 비어있을 수 없습니다."
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "동일 ID 중복",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": "CATEGORY_ALREADY_EXISTS",
+                  "message": "동일 ID의 카테고리가 이미 존재합니다."
                 }
               }
             }
@@ -371,20 +371,6 @@
           }
         ],
         "responses": {
-          "400": {
-            "description": "잘못된 query parameter",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                },
-                "example": {
-                  "code": "INVALID_INPUT_VALUE",
-                  "message": "입력값이 유효하지 않습니다."
-                }
-              }
-            }
-          },
           "401": {
             "description": "인증 필요",
             "content": {
@@ -401,6 +387,20 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/TimerSessionListResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "잘못된 query parameter",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": "INVALID_INPUT_VALUE",
+                  "message": "입력값이 유효하지 않습니다."
                 }
               }
             }
@@ -435,6 +435,61 @@
           "required": true
         },
         "responses": {
+          "401": {
+            "description": "인증 필요",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "연결된 Todo가 본인 소유 아님 / 존재하지 않음",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": "TODO_NOT_FOUND",
+                  "message": "해당 할 일을 찾을 수 없습니다."
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "저장 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TimerSessionCreateResponse"
+                },
+                "example": {
+                  "session": {
+                    "id": "sess-uuid",
+                    "todoId": "todo-1",
+                    "todoTitle": "수학",
+                    "startedAt": "2026-05-25T01:00:00Z",
+                    "endedAt": "2026-05-25T02:30:00Z",
+                    "durationMinutes": 90
+                  },
+                  "fuelCharged": 90
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "서버 오류",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/TimerSessionCreateResponse"
+                }
+              }
+            }
+          },
           "400": {
             "description": "검증 실패",
             "content": {
@@ -481,61 +536,6 @@
                 }
               }
             }
-          },
-          "500": {
-            "description": "서버 오류",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/TimerSessionCreateResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "연결된 Todo가 본인 소유 아님 / 존재하지 않음",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                },
-                "example": {
-                  "code": "TODO_NOT_FOUND",
-                  "message": "해당 할 일을 찾을 수 없습니다."
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "인증 필요",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "201": {
-            "description": "저장 성공",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TimerSessionCreateResponse"
-                },
-                "example": {
-                  "session": {
-                    "id": "sess-uuid",
-                    "todoId": "todo-1",
-                    "todoTitle": "수학",
-                    "startedAt": "2026-05-25T01:00:00Z",
-                    "endedAt": "2026-05-25T02:30:00Z",
-                    "durationMinutes": 90
-                  },
-                  "fuelCharged": 90
-                }
-              }
-            }
           }
         }
       }
@@ -557,6 +557,25 @@
           "required": true
         },
         "responses": {
+          "500": {
+            "description": "서버 내부 오류.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "InternalServerError": {
+                    "description": "InternalServerError",
+                    "value": {
+                      "code": "INTERNAL_SERVER_ERROR",
+                      "message": "서버 내부 오류가 발생했습니다."
+                    }
+                  }
+                }
+              }
+            }
+          },
           "200": {
             "description": "토큰 재발급 성공. 클라이언트는 두 토큰 모두 교체 저장해야 합니다.",
             "content": {
@@ -578,19 +597,19 @@
               }
             }
           },
-          "500": {
-            "description": "서버 내부 오류.",
+          "400": {
+            "description": "요청 본문 형식 오류 (refreshToken 누락 등).",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
                 },
                 "examples": {
-                  "InternalServerError": {
-                    "description": "InternalServerError",
+                  "InvalidInputValue": {
+                    "description": "InvalidInputValue",
                     "value": {
-                      "code": "INTERNAL_SERVER_ERROR",
-                      "message": "서버 내부 오류가 발생했습니다."
+                      "code": "INVALID_INPUT_VALUE",
+                      "message": "refreshToken: Refresh Token은 필수입니다."
                     }
                   }
                 }
@@ -610,25 +629,6 @@
                     "value": {
                       "code": "INVALID_TOKEN",
                       "message": "인증 정보가 올바르지 않습니다."
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "요청 본문 형식 오류 (refreshToken 누락 등).",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                },
-                "examples": {
-                  "InvalidInputValue": {
-                    "description": "InvalidInputValue",
-                    "value": {
-                      "code": "INVALID_INPUT_VALUE",
-                      "message": "refreshToken: Refresh Token은 필수입니다."
                     }
                   }
                 }
@@ -716,69 +716,19 @@
           "required": true
         },
         "responses": {
-          "201": {
-            "description": "신규 회원 가입 + 로그인 성공. 응답 본문은 200과 동일 구조이며 `isNewMember: true`.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/LoginResponse"
-                },
-                "examples": {
-                  "NewMember": {
-                    "summary": "신규 회원 가입",
-                    "description": "NewMember",
-                    "value": {
-                      "memberId": 42,
-                      "nickname": "용감한고양이7321",
-                      "tokens": {
-                        "accessToken": "eyJhbGciOiJIUzI1NiIs...",
-                        "refreshToken": "eyJhbGciOiJIUzI1NiIs..."
-                      },
-                      "isNewMember": true
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "기존 회원 로그인 성공.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/LoginResponse"
-                },
-                "examples": {
-                  "ExistingMember": {
-                    "summary": "기존 회원 로그인",
-                    "description": "ExistingMember",
-                    "value": {
-                      "memberId": 1,
-                      "nickname": "민첩한괴도5308",
-                      "tokens": {
-                        "accessToken": "eyJhbGciOiJIUzI1NiIs...",
-                        "refreshToken": "eyJhbGciOiJIUzI1NiIs..."
-                      },
-                      "isNewMember": false
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "소셜 ID Token 검증 실패 (토큰 만료, 변조, 발급자 불일치 등).",
+          "500": {
+            "description": "서버 내부 오류. 닉네임 생성 재시도 초과 등.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
                 },
                 "examples": {
-                  "SocialLoginFailed": {
-                    "description": "SocialLoginFailed",
+                  "InternalServerError": {
+                    "description": "InternalServerError",
                     "value": {
-                      "code": "SOCIAL_LOGIN_FAILED",
-                      "message": "소셜 로그인에 실패하였습니다."
+                      "code": "INTERNAL_SERVER_ERROR",
+                      "message": "서버 내부 오류가 발생했습니다."
                     }
                   }
                 }
@@ -813,19 +763,69 @@
               }
             }
           },
-          "500": {
-            "description": "서버 내부 오류. 닉네임 생성 재시도 초과 등.",
+          "200": {
+            "description": "기존 회원 로그인 성공.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponse"
+                },
+                "examples": {
+                  "ExistingMember": {
+                    "summary": "기존 회원 로그인",
+                    "description": "ExistingMember",
+                    "value": {
+                      "memberId": 1,
+                      "nickname": "민첩한괴도5308",
+                      "tokens": {
+                        "accessToken": "eyJhbGciOiJIUzI1NiIs...",
+                        "refreshToken": "eyJhbGciOiJIUzI1NiIs..."
+                      },
+                      "isNewMember": false
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "신규 회원 가입 + 로그인 성공. 응답 본문은 200과 동일 구조이며 `isNewMember: true`.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponse"
+                },
+                "examples": {
+                  "NewMember": {
+                    "summary": "신규 회원 가입",
+                    "description": "NewMember",
+                    "value": {
+                      "memberId": 42,
+                      "nickname": "용감한고양이7321",
+                      "tokens": {
+                        "accessToken": "eyJhbGciOiJIUzI1NiIs...",
+                        "refreshToken": "eyJhbGciOiJIUzI1NiIs..."
+                      },
+                      "isNewMember": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "소셜 ID Token 검증 실패 (토큰 만료, 변조, 발급자 불일치 등).",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
                 },
                 "examples": {
-                  "InternalServerError": {
-                    "description": "InternalServerError",
+                  "SocialLoginFailed": {
+                    "description": "SocialLoginFailed",
                     "value": {
-                      "code": "INTERNAL_SERVER_ERROR",
-                      "message": "서버 내부 오류가 발생했습니다."
+                      "code": "SOCIAL_LOGIN_FAILED",
+                      "message": "소셜 로그인에 실패하였습니다."
                     }
                   }
                 }
@@ -853,23 +853,6 @@
           }
         ],
         "responses": {
-          "500": {
-            "description": "서버 내부 오류",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                },
-                "example": {
-                  "code": "INTERNAL_SERVER_ERROR",
-                  "message": "서버 내부 오류가 발생했습니다."
-                }
-              }
-            }
-          },
-          "204": {
-            "description": "삭제 성공"
-          },
           "401": {
             "description": "인증 실패",
             "content": {
@@ -880,6 +863,23 @@
                 "example": {
                   "code": "UNAUTHENTICATED_REQUEST",
                   "message": "로그인이 필요합니다."
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "삭제 성공"
+          },
+          "500": {
+            "description": "서버 내부 오류",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": "INTERNAL_SERVER_ERROR",
+                  "message": "서버 내부 오류가 발생했습니다."
                 }
               }
             }
@@ -927,26 +927,16 @@
           "required": true
         },
         "responses": {
-          "400": {
-            "description": "입력값 검증 실패",
+          "401": {
+            "description": "인증 실패",
             "content": {
               "*/*": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
                 },
                 "example": {
-                  "code": "INVALID_INPUT_VALUE",
-                  "message": "..."
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "수정 성공",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/TodoResponse"
+                  "code": "UNAUTHENTICATED_REQUEST",
+                  "message": "로그인이 필요합니다."
                 }
               }
             }
@@ -965,16 +955,12 @@
               }
             }
           },
-          "401": {
-            "description": "인증 실패",
+          "200": {
+            "description": "수정 성공",
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                },
-                "example": {
-                  "code": "UNAUTHENTICATED_REQUEST",
-                  "message": "로그인이 필요합니다."
+                  "$ref": "#/components/schemas/TodoResponse"
                 }
               }
             }
@@ -989,6 +975,20 @@
                 "example": {
                   "code": "TODO_NOT_FOUND",
                   "message": "해당 할 일을 찾을 수 없습니다."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "입력값 검증 실패",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": "INVALID_INPUT_VALUE",
+                  "message": "..."
                 }
               }
             }
@@ -1014,19 +1014,22 @@
           }
         ],
         "responses": {
-          "404": {
-            "description": "카테고리 없음",
+          "401": {
+            "description": "인증 실패",
             "content": {
               "*/*": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
                 },
                 "example": {
-                  "code": "CATEGORY_NOT_FOUND",
-                  "message": "해당 카테고리를 찾을 수 없습니다."
+                  "code": "UNAUTHENTICATED_REQUEST",
+                  "message": "로그인이 필요합니다."
                 }
               }
             }
+          },
+          "204": {
+            "description": "삭제 성공"
           },
           "500": {
             "description": "서버 내부 오류",
@@ -1042,19 +1045,16 @@
               }
             }
           },
-          "204": {
-            "description": "삭제 성공"
-          },
-          "401": {
-            "description": "인증 실패",
+          "404": {
+            "description": "카테고리 없음",
             "content": {
               "*/*": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
                 },
                 "example": {
-                  "code": "UNAUTHENTICATED_REQUEST",
-                  "message": "로그인이 필요합니다."
+                  "code": "CATEGORY_NOT_FOUND",
+                  "message": "해당 카테고리를 찾을 수 없습니다."
                 }
               }
             }
@@ -1087,40 +1087,26 @@
           "required": true
         },
         "responses": {
+          "401": {
+            "description": "인증 실패",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": "UNAUTHENTICATED_REQUEST",
+                  "message": "로그인이 필요합니다."
+                }
+              }
+            }
+          },
           "200": {
             "description": "수정 성공",
             "content": {
               "*/*": {
                 "schema": {
                   "$ref": "#/components/schemas/CategoryResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "카테고리 없음",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                },
-                "example": {
-                  "code": "CATEGORY_NOT_FOUND",
-                  "message": "해당 카테고리를 찾을 수 없습니다."
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "입력값 검증 실패",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                },
-                "example": {
-                  "code": "INVALID_INPUT_VALUE",
-                  "message": "..."
                 }
               }
             }
@@ -1139,16 +1125,30 @@
               }
             }
           },
-          "401": {
-            "description": "인증 실패",
+          "400": {
+            "description": "입력값 검증 실패",
             "content": {
               "*/*": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
                 },
                 "example": {
-                  "code": "UNAUTHENTICATED_REQUEST",
-                  "message": "로그인이 필요합니다."
+                  "code": "INVALID_INPUT_VALUE",
+                  "message": "..."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "카테고리 없음",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": "CATEGORY_NOT_FOUND",
+                  "message": "해당 카테고리를 찾을 수 없습니다."
                 }
               }
             }
@@ -1173,19 +1173,37 @@
           "required": true
         },
         "responses": {
-          "401": {
-            "description": "인증 실패 — Access Token 이 헤더에 없거나, 만료되었거나, 유효하지 않은 경우.",
+          "500": {
+            "description": "서버 내부 오류.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
                 },
                 "examples": {
-                  "UnauthenticatedRequest": {
-                    "description": "UnauthenticatedRequest",
+                  "InternalServerError": {
+                    "description": "InternalServerError",
                     "value": {
-                      "code": "UNAUTHENTICATED_REQUEST",
-                      "message": "로그인이 필요합니다."
+                      "code": "INTERNAL_SERVER_ERROR",
+                      "message": "서버 내부 오류가 발생했습니다."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "닉네임 변경 성공. 응답 본문에 변경된 닉네임 포함.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateNicknameResponse"
+                },
+                "examples": {
+                  "UpdateSuccess": {
+                    "description": "UpdateSuccess",
+                    "value": {
+                      "nickname": "우주탐험가"
                     }
                   }
                 }
@@ -1211,19 +1229,19 @@
               }
             }
           },
-          "500": {
-            "description": "서버 내부 오류.",
+          "401": {
+            "description": "인증 실패 — Access Token 이 헤더에 없거나, 만료되었거나, 유효하지 않은 경우.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
                 },
                 "examples": {
-                  "InternalServerError": {
-                    "description": "InternalServerError",
+                  "UnauthenticatedRequest": {
+                    "description": "UnauthenticatedRequest",
                     "value": {
-                      "code": "INTERNAL_SERVER_ERROR",
-                      "message": "서버 내부 오류가 발생했습니다."
+                      "code": "UNAUTHENTICATED_REQUEST",
+                      "message": "로그인이 필요합니다."
                     }
                   }
                 }
@@ -1243,24 +1261,6 @@
                     "value": {
                       "code": "DUPLICATED_NICKNAME",
                       "message": "이미 사용 중인 닉네임입니다."
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "닉네임 변경 성공. 응답 본문에 변경된 닉네임 포함.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UpdateNicknameResponse"
-                },
-                "examples": {
-                  "UpdateSuccess": {
-                    "description": "UpdateSuccess",
-                    "value": {
-                      "nickname": "우주탐험가"
                     }
                   }
                 }
@@ -1334,6 +1334,16 @@
               }
             }
           },
+          "500": {
+            "description": "서버 오류",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
           "401": {
             "description": "인증 필요",
             "content": {
@@ -1344,16 +1354,6 @@
                 "example": {
                   "code": "UNAUTHENTICATED_REQUEST",
                   "message": "로그인이 필요합니다."
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "서버 오류",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -1414,38 +1414,6 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "조회 성공",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/FuelTransactionListResponse"
-                },
-                "examples": {
-                  "Page": {
-                    "description": "Page",
-                    "value": {
-                      "content": [
-                        {
-                          "id": "tx-1",
-                          "type": "charge",
-                          "amount": 90,
-                          "reason": "STUDY_SESSION",
-                          "referenceId": "session-1",
-                          "balanceAfter": 350,
-                          "createdAt": "2026-04-16T10:30:00Z"
-                        }
-                      ],
-                      "page": 0,
-                      "size": 20,
-                      "totalElements": 120,
-                      "totalPages": 6
-                    }
-                  }
-                }
-              }
-            }
-          },
           "401": {
             "description": "인증 필요",
             "content": {
@@ -1476,6 +1444,38 @@
                 "example": {
                   "code": "INVALID_INPUT_VALUE",
                   "message": "type은 charge 또는 consume이어야 합니다."
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "조회 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FuelTransactionListResponse"
+                },
+                "examples": {
+                  "Page": {
+                    "description": "Page",
+                    "value": {
+                      "content": [
+                        {
+                          "id": "tx-1",
+                          "type": "charge",
+                          "amount": 90,
+                          "reason": "STUDY_SESSION",
+                          "referenceId": "session-1",
+                          "balanceAfter": 350,
+                          "createdAt": "2026-04-16T10:30:00Z"
+                        }
+                      ],
+                      "page": 0,
+                      "size": 20,
+                      "totalElements": 120,
+                      "totalPages": 6
+                    }
+                  }
                 }
               }
             }
@@ -1533,19 +1533,19 @@
               }
             }
           },
-          "500": {
-            "description": "서버 내부 오류. 사용자에게는 \"잠시 후 다시 시도해주세요\" 안내가 적절합니다.",
+          "401": {
+            "description": "인증 실패 — Access Token 이 헤더에 없거나, 만료되었거나, 유효하지 않은 경우. 클라이언트는 `/api/auth/reissue` 로 재발급을 시도해야 합니다.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
                 },
                 "examples": {
-                  "InternalServerError": {
-                    "description": "InternalServerError",
+                  "UnauthenticatedRequest": {
+                    "description": "UnauthenticatedRequest",
                     "value": {
-                      "code": "INTERNAL_SERVER_ERROR",
-                      "message": "서버 내부 오류가 발생했습니다."
+                      "code": "UNAUTHENTICATED_REQUEST",
+                      "message": "로그인이 필요합니다."
                     }
                   }
                 }
@@ -1571,19 +1571,19 @@
               }
             }
           },
-          "401": {
-            "description": "인증 실패 — Access Token 이 헤더에 없거나, 만료되었거나, 유효하지 않은 경우. 클라이언트는 `/api/auth/reissue` 로 재발급을 시도해야 합니다.",
+          "500": {
+            "description": "서버 내부 오류. 사용자에게는 \"잠시 후 다시 시도해주세요\" 안내가 적절합니다.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
                 },
                 "examples": {
-                  "UnauthenticatedRequest": {
-                    "description": "UnauthenticatedRequest",
+                  "InternalServerError": {
+                    "description": "InternalServerError",
                     "value": {
-                      "code": "UNAUTHENTICATED_REQUEST",
-                      "message": "로그인이 필요합니다."
+                      "code": "INTERNAL_SERVER_ERROR",
+                      "message": "서버 내부 오류가 발생했습니다."
                     }
                   }
                 }
@@ -1603,25 +1603,6 @@
           "204": {
             "description": "탈퇴 성공. 응답 본문 없음. (이미 탈퇴된 상태 / Firebase 측 사용자 부재 / 외부 시스템 일시 오류 등 모두 포함)"
           },
-          "500": {
-            "description": "서버 내부 오류. 주로 DB 통신 실패 시. 사용자에게는 \"잠시 후 다시 시도해주세요\" 안내가 적절합니다.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                },
-                "examples": {
-                  "InternalServerError": {
-                    "description": "InternalServerError",
-                    "value": {
-                      "code": "INTERNAL_SERVER_ERROR",
-                      "message": "서버 내부 오류가 발생했습니다."
-                    }
-                  }
-                }
-              }
-            }
-          },
           "401": {
             "description": "인증 실패 — Access Token 이 헤더에 없거나, 만료되었거나, 유효하지 않은 경우. 클라이언트는 `/api/auth/reissue` 로 재발급을 시도해야 합니다.",
             "content": {
@@ -1635,6 +1616,25 @@
                     "value": {
                       "code": "UNAUTHENTICATED_REQUEST",
                       "message": "로그인이 필요합니다."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "서버 내부 오류. 주로 DB 통신 실패 시. 사용자에게는 \"잠시 후 다시 시도해주세요\" 안내가 적절합니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "InternalServerError": {
+                    "description": "InternalServerError",
+                    "value": {
+                      "code": "INTERNAL_SERVER_ERROR",
+                      "message": "서버 내부 오류가 발생했습니다."
                     }
                   }
                 }

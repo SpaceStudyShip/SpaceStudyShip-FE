@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 
 import '../errors/app_exception.dart';
+import '../../features/timer/domain/exceptions/timer_session_exceptions.dart';
 import 'api_error_response.dart';
 
 /// DioException → AppException 공통 변환 유틸리티
@@ -77,7 +78,24 @@ class DioExceptionHandler {
             code: apiError.code,
             originalException: e,
           );
+        case 'INVALID_SESSION_TIME':
+          return const InvalidSessionTime();
+        case 'INVALID_DURATION':
+          return const InvalidDuration();
+        case 'SESSION_TOO_SHORT':
+          // SESSION_TOO_SHORT 는 클라가 1분 미만일 때 사전 차단하므로 일반적으로는 도달하지 않는다.
+          // 서버 정책 변경 대비 안전망: InvalidDuration 으로 매핑.
+          return const InvalidDuration();
+        case 'SESSION_TOO_LONG':
+          return const SessionTooLong();
+        case 'FUTURE_SESSION':
+          return const FutureSession();
         case 'TODO_NOT_FOUND':
+          // Timer 세션 경로에서 발생하는 TODO_NOT_FOUND 는 LinkedTodoNotFound 로 매핑.
+          // Todo 경로에서 발생하는 경우는 기존 TodoNotFoundException 으로 유지.
+          if (e.requestOptions.path.startsWith('/api/timer-sessions')) {
+            return const LinkedTodoNotFound();
+          }
           return TodoNotFoundException(
             message: apiError.message,
             originalException: e,

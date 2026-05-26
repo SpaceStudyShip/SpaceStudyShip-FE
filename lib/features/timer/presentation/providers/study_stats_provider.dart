@@ -3,6 +3,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../utils/timer_format_utils.dart';
 import 'timer_session_provider.dart';
+import 'today_stats_provider.dart';
 
 part 'study_stats_provider.g.dart';
 
@@ -35,33 +36,22 @@ int weeklyStudyMinutes(Ref ref) {
 
 // === 월별/전체 통계 ===
 
-/// 이번 달 공부 시간 (분)
+/// 이번 달 공부 시간 (분) — todayStats 위임
 @riverpod
 int monthlyStudyMinutes(Ref ref) {
-  final sessions =
-      ref.watch(timerSessionListNotifierProvider).valueOrNull ?? [];
-  final now = DateTime.now();
-  final monthStart = DateTime(now.year, now.month, 1);
-
-  return sessions
-      .where((s) => !s.startedAt.isBefore(monthStart))
-      .fold<int>(0, (sum, s) => sum + s.durationMinutes);
+  return ref.watch(todayStatsNotifierProvider).valueOrNull?.monthlyMinutes ?? 0;
 }
 
-/// 전체 총 공부 시간 (분)
+/// 전체 총 공부 시간 (분) — todayStats 위임
 @riverpod
 int totalStudyMinutes(Ref ref) {
-  final sessions =
-      ref.watch(timerSessionListNotifierProvider).valueOrNull ?? [];
-  return sessions.fold<int>(0, (sum, s) => sum + s.durationMinutes);
+  return ref.watch(todayStatsNotifierProvider).valueOrNull?.lifetimeMinutes ?? 0;
 }
 
-/// 전체 세션 수
+/// 전체 세션 수 — todayStats 위임
 @riverpod
 int totalSessionCount(Ref ref) {
-  final sessions =
-      ref.watch(timerSessionListNotifierProvider).valueOrNull ?? [];
-  return sessions.length;
+  return ref.watch(todayStatsNotifierProvider).valueOrNull?.lifetimeSessionCount ?? 0;
 }
 
 // === Streak ===

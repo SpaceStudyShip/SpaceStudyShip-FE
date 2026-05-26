@@ -46,9 +46,9 @@ final weeklyStudyMinutesProvider = AutoDisposeProvider<int>.internal(
 // ignore: unused_element
 typedef WeeklyStudyMinutesRef = AutoDisposeProviderRef<int>;
 String _$monthlyStudyMinutesHash() =>
-    r'0848eb2ad73d324eaf87dd350f6b857fd05b08fa';
+    r'46281f77813a3b09026ab3aa09dbc3733e907a72';
 
-/// 이번 달 공부 시간 (분)
+/// 이번 달 공부 시간 (분) — todayStats 위임
 ///
 /// Copied from [monthlyStudyMinutes].
 @ProviderFor(monthlyStudyMinutes)
@@ -65,9 +65,9 @@ final monthlyStudyMinutesProvider = AutoDisposeProvider<int>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef MonthlyStudyMinutesRef = AutoDisposeProviderRef<int>;
-String _$totalStudyMinutesHash() => r'8477df0e108d2a18ac8dcd546bd05ecf93fd2adb';
+String _$totalStudyMinutesHash() => r'bd91b30decff70dbb57e5649252cff18b02607b9';
 
-/// 전체 총 공부 시간 (분)
+/// 전체 총 공부 시간 (분) — todayStats 위임
 ///
 /// Copied from [totalStudyMinutes].
 @ProviderFor(totalStudyMinutes)
@@ -84,9 +84,9 @@ final totalStudyMinutesProvider = AutoDisposeProvider<int>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef TotalStudyMinutesRef = AutoDisposeProviderRef<int>;
-String _$totalSessionCountHash() => r'dee88fc7f314f89bad35757ae90d9f066372b401';
+String _$totalSessionCountHash() => r'76529512582e8e028fb000f1a4791f4095cb80a7';
 
-/// 전체 세션 수
+/// 전체 세션 수 — todayStats 위임
 ///
 /// Copied from [totalSessionCount].
 @ProviderFor(totalSessionCount)

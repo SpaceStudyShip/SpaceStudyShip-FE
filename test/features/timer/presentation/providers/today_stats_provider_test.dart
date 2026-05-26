@@ -75,5 +75,6 @@ void main() {
     expect(stats.streak, 1);
     expect(stats.lifetimeMinutes, 90); // 게스트는 전체 = today 합산
     expect(stats.lifetimeSessionCount, 2);
+    expect(stats.monthlyMinutes, 90);
   });
 }

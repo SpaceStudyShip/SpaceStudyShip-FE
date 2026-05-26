@@ -14,6 +14,9 @@ void main() {
     expect(stats.totalMinutes, 180);
     expect(stats.lifetimeMinutes, 12450);
     expect(stats.monthlyMinutes, 1820);
+    expect(stats.sessionCount, 3);
+    expect(stats.streak, 7);
+    expect(stats.lifetimeSessionCount, 287);
   });
 
   test('TodayStats.empty(): 6필드 모두 0', () {

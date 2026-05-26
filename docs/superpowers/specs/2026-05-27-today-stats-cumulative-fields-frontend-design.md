@@ -44,11 +44,11 @@
 | `lib/features/timer/presentation/providers/today_stats_provider.dart` | **게스트 분기에서 6필드 모두 로컬 fold 로 채우도록 확장**. 컴파일 에러 회피 + 단일 진실 소스 보장 |
 | `lib/features/timer/presentation/providers/study_stats_provider.dart` | `totalStudyMinutes`, `totalSessionCount`, `monthlyStudyMinutes` 를 `todayStatsNotifierProvider` 위임 한 줄로 단순화. `isAuthenticatedProvider` watch 제거 |
 | `*.freezed.dart`, `*.g.dart` | `flutter pub run build_runner build --delete-conflicting-outputs` 로 재생성 |
-| `test/features/timer/data/models/today_stats_response_model_test.dart` | 새 필드 직렬화 + `toEntity()` 매핑 검증 추가 |
-| `test/features/timer/domain/entities/today_stats_test.dart` | 새 필드 + `empty()` 검증 추가, 기존 fixture 6필드로 확장 |
-| `test/features/timer/data/repositories/timer_session_repository_impl_test.dart` | **회귀 가드** — `TodayStatsResponseModel(...)` 직접 생성 fixture 6필드로 확장 |
-| `test/features/timer/presentation/providers/today_stats_provider_test.dart` | **회귀 가드** — `TodayStats(...)` 직접 생성 fixture 6필드로 확장 + 게스트 분기 새 필드 검증 보강 |
-| `test/features/timer/presentation/providers/study_stats_provider_test.dart` | **신규 파일**. `todayStatsNotifierProvider` override 만으로 3개 provider 검증 |
+| `test/features/timer/data/models/today_stats_response_model_test.dart` | 기존 케이스에 새 필드 3개 직렬화·매핑 검증 추가 |
+| `test/features/timer/domain/entities/today_stats_test.dart` | fixture 6필드로 확장 (회귀 가드) |
+| `test/features/timer/data/repositories/timer_session_repository_impl_test.dart` | fixture 6필드로 확장 (회귀 가드) |
+| `test/features/timer/presentation/providers/today_stats_provider_test.dart` | fixture 6필드로 확장 (회귀 가드) |
+| `test/features/timer/presentation/providers/study_stats_provider_test.dart` | **신규 파일**. 위임 동작 1 케이스 |
 
 ---
 
@@ -222,69 +222,32 @@ final sessionCount = ref.read(totalSessionCountProvider);
 
 ## 6. 테스트 계획
 
-### 6.1 DTO 테스트 — `today_stats_response_model_test.dart`
+작업 난이도가 낮으므로 **이슈가 명시한 테스트 + 회귀 가드 (fixture 갱신)** 만 진행. trivial 한 분기는 케이스 추가하지 않는다.
 
-기존 케이스에 새 필드 3개 직렬화·엔티티 매핑 추가:
+### 6.1 DTO — `today_stats_response_model_test.dart`
 
-```dart
-test('fromJson + toEntity — 6필드 모두', () {
-  final m = TodayStatsResponseModel.fromJson({
-    'totalMinutes': 180,
-    'sessionCount': 3,
-    'streak': 7,
-    'lifetimeMinutes': 12450,
-    'lifetimeSessionCount': 287,
-    'monthlyMinutes': 1820,
-  });
-  expect(m.lifetimeMinutes, 12450);
-  expect(m.lifetimeSessionCount, 287);
-  expect(m.monthlyMinutes, 1820);
+기존 테스트의 JSON 픽스처에 새 필드 3개 추가하고 6필드 모두 `toEntity()` 매핑이 동작하는지 한 케이스로 검증.
 
-  final e = m.toEntity();
-  expect(e.lifetimeMinutes, 12450);
-  expect(e.lifetimeSessionCount, 287);
-  expect(e.monthlyMinutes, 1820);
-});
-```
+### 6.2 신규 — `study_stats_provider_test.dart`
 
-### 6.2 Entity 테스트 — `today_stats_test.dart`
+`todayStatsNotifierProvider` override 한 줄로 위임 동작만 검증. **로드 완료 1 케이스만**:
 
-`TodayStats.empty()` 가 6필드 모두 0 반환하는지 검증:
+- `lifetimeMinutes=12450`, `lifetimeSessionCount=287`, `monthlyMinutes=1820` 인 `TodayStats` 주입 → 3 provider 가 각각 일치하는 값 반환.
 
-```dart
-test('empty() — 6 필드 모두 0', () {
-  final e = TodayStats.empty();
-  expect(e.totalMinutes, 0);
-  expect(e.sessionCount, 0);
-  expect(e.streak, 0);
-  expect(e.lifetimeMinutes, 0);
-  expect(e.lifetimeSessionCount, 0);
-  expect(e.monthlyMinutes, 0);
-});
-```
+loading/error 분기는 Riverpod 표준 동작 (`valueOrNull` 이 null 반환) 이므로 별도 케이스 불필요.
 
-### 6.3 Provider 테스트 — `study_stats_provider_test.dart` (신규)
+### 6.3 회귀 가드 — fixture 6필드 갱신
 
-`todayStatsNotifierProvider` override 만으로 3가지 시나리오 검증 — 인증/게스트 분기 책임이 todayStatsNotifierProvider 로 이동했으므로 study_stats_provider 자체는 위임만 검증:
+DTO/Entity 가 6필드 `required` 가 되면서 기존 픽스처는 컴파일 에러. 다음 4개 파일에서 6필드로 확장 (추가 필드는 모두 0):
 
-1. **todayStats 로드 완료** → `totalStudyMinutes = lifetimeMinutes`, `totalSessionCount = lifetimeSessionCount`, `monthlyStudyMinutes = monthlyMinutes`
-2. **todayStats 로딩 중** (`AsyncValue<TodayStats>.loading()` override) → 세 provider 모두 0 반환
-3. **todayStats 에러** (`AsyncValue<TodayStats>.error()` override) → 세 provider 모두 0 반환
+| 파일:라인 | 갱신 |
+|---|---|
+| `today_stats_test.dart:6` | `TodayStats(...)` 6필드 |
+| `today_stats_test.dart:15` | `TodayStats(...)` 6필드 모두 0 (`empty()` 비교 대상) |
+| `today_stats_provider_test.dart:26` | `TodayStats(...)` 6필드 |
+| `timer_session_repository_impl_test.dart:173-177` | `TodayStatsResponseModel(...)` 6필드 |
 
-### 6.4 회귀 가드 — 컴파일 통과 위한 fixture 갱신
-
-DTO/Entity 가 6필드 `required` 가 되면서 직접 생성자 호출하는 기존 테스트 파일들이 모두 컴파일 에러. 다음 4개 파일에서 fixture 를 6필드로 확장 — 추가 필드는 모두 0:
-
-| 파일:라인 | 현재 | 갱신 |
-|---|---|---|
-| `today_stats_test.dart:6` | `TodayStats(totalMinutes: 180, sessionCount: 3, streak: 7)` | 6필드. 추가 3필드는 0 또는 의미있는 값 |
-| `today_stats_test.dart:15` | `TodayStats(totalMinutes: 0, sessionCount: 0, streak: 0)` | 6필드 모두 0 — `empty()` 검증 케이스 |
-| `today_stats_provider_test.dart:26` | `TodayStats(totalMinutes: 180, sessionCount: 3, streak: 7)` | 인증 모드 케이스. 6필드 의미있는 값 |
-| `timer_session_repository_impl_test.dart:173-177` | `TodayStatsResponseModel(...)` 3필드 | 6필드 |
-
-추가로 `today_stats_provider_test.dart` 의 게스트 분기 케이스에 lifetime/monthly 검증 보강:
-
-- 오늘 세션 2개(60+30분) + 어제 세션 1개(40분) 시나리오 → `totalMinutes=90`, `lifetimeMinutes=130`, `lifetimeSessionCount=3`, `monthlyMinutes` (이번 달 시작 이후 합산값)
+기존 테스트 케이스 자체는 추가하지 않음. 컴파일 통과만 확보.
 
 ---
 

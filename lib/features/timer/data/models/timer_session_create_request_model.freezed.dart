@@ -27,7 +27,9 @@ mixin _$TimerSessionCreateRequestModel {
   String? get todoId => throw _privateConstructorUsedError;
   @JsonKey(includeIfNull: false)
   String? get todoTitle => throw _privateConstructorUsedError;
+  @JsonKey(toJson: _toUtcIso)
   DateTime get startedAt => throw _privateConstructorUsedError;
+  @JsonKey(toJson: _toUtcIso)
   DateTime get endedAt => throw _privateConstructorUsedError;
   int get durationMinutes => throw _privateConstructorUsedError;
 
@@ -55,8 +57,8 @@ abstract class $TimerSessionCreateRequestModelCopyWith<$Res> {
   $Res call({
     @JsonKey(includeIfNull: false) String? todoId,
     @JsonKey(includeIfNull: false) String? todoTitle,
-    DateTime startedAt,
-    DateTime endedAt,
+    @JsonKey(toJson: _toUtcIso) DateTime startedAt,
+    @JsonKey(toJson: _toUtcIso) DateTime endedAt,
     int durationMinutes,
   });
 }
@@ -125,8 +127,8 @@ abstract class _$$TimerSessionCreateRequestModelImplCopyWith<$Res>
   $Res call({
     @JsonKey(includeIfNull: false) String? todoId,
     @JsonKey(includeIfNull: false) String? todoTitle,
-    DateTime startedAt,
-    DateTime endedAt,
+    @JsonKey(toJson: _toUtcIso) DateTime startedAt,
+    @JsonKey(toJson: _toUtcIso) DateTime endedAt,
     int durationMinutes,
   });
 }
@@ -189,8 +191,8 @@ class _$TimerSessionCreateRequestModelImpl
   const _$TimerSessionCreateRequestModelImpl({
     @JsonKey(includeIfNull: false) this.todoId,
     @JsonKey(includeIfNull: false) this.todoTitle,
-    required this.startedAt,
-    required this.endedAt,
+    @JsonKey(toJson: _toUtcIso) required this.startedAt,
+    @JsonKey(toJson: _toUtcIso) required this.endedAt,
     required this.durationMinutes,
   });
 
@@ -205,8 +207,10 @@ class _$TimerSessionCreateRequestModelImpl
   @JsonKey(includeIfNull: false)
   final String? todoTitle;
   @override
+  @JsonKey(toJson: _toUtcIso)
   final DateTime startedAt;
   @override
+  @JsonKey(toJson: _toUtcIso)
   final DateTime endedAt;
   @override
   final int durationMinutes;
@@ -266,8 +270,8 @@ abstract class _TimerSessionCreateRequestModel
   const factory _TimerSessionCreateRequestModel({
     @JsonKey(includeIfNull: false) final String? todoId,
     @JsonKey(includeIfNull: false) final String? todoTitle,
-    required final DateTime startedAt,
-    required final DateTime endedAt,
+    @JsonKey(toJson: _toUtcIso) required final DateTime startedAt,
+    @JsonKey(toJson: _toUtcIso) required final DateTime endedAt,
     required final int durationMinutes,
   }) = _$TimerSessionCreateRequestModelImpl;
 
@@ -281,8 +285,10 @@ abstract class _TimerSessionCreateRequestModel
   @JsonKey(includeIfNull: false)
   String? get todoTitle;
   @override
+  @JsonKey(toJson: _toUtcIso)
   DateTime get startedAt;
   @override
+  @JsonKey(toJson: _toUtcIso)
   DateTime get endedAt;
   @override
   int get durationMinutes;

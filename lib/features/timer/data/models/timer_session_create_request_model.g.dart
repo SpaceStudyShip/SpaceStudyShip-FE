@@ -21,7 +21,7 @@ Map<String, dynamic> _$$TimerSessionCreateRequestModelImplToJson(
 ) => <String, dynamic>{
   if (instance.todoId case final value?) 'todoId': value,
   if (instance.todoTitle case final value?) 'todoTitle': value,
-  'startedAt': instance.startedAt.toIso8601String(),
-  'endedAt': instance.endedAt.toIso8601String(),
+  'startedAt': _toUtcIso(instance.startedAt),
+  'endedAt': _toUtcIso(instance.endedAt),
   'durationMinutes': instance.durationMinutes,
 };

@@ -36,7 +36,7 @@ TimerSessionRepository timerSessionRepository(Ref ref) {
   if (isAuthenticated) {
     return TimerSessionRepositoryImpl(
       remote: ref.watch(timerSessionRemoteDataSourceProvider),
-      cache:  ref.watch(timerSessionLocalDataSourceProvider),
+      cache: ref.watch(timerSessionLocalDataSourceProvider),
     );
   }
   return LocalTimerSessionRepositoryImpl(
@@ -85,6 +85,45 @@ Future<TimerSessionPage> timerSessionsPage(
   return repository.getSessionsPage(filter);
 }
 
+// === 기록 화면 페이지네이션 (인증·게스트 통합) ===
+
+/// 한 페이지에 표시할 세션 개수 (기록 화면 전용).
+const int timerHistoryPageSize = 20;
+
+/// 기록 화면용 페이지 조회.
+/// 인증 모드: 서버 GET /api/timer-sessions?page=N&size=20
+/// 게스트 모드: 로컬 전체 세션을 startedAt 내림차순 정렬 후 클라이언트 슬라이스.
+@riverpod
+Future<TimerSessionPage> timerHistoryPage(Ref ref, int page) async {
+  final isAuthenticated = ref.watch(isAuthenticatedProvider);
+  final repository = ref.watch(timerSessionRepositoryProvider);
+
+  if (isAuthenticated) {
+    return repository.getSessionsPage(
+      TimerSessionFilter(page: page, size: timerHistoryPageSize),
+    );
+  }
+
+  // 게스트: 로컬 전체 리스트를 직접 슬라이스해서 동일한 TimerSessionPage 모양으로 반환.
+  final all = [...repository.getSessions()]
+    ..sort((a, b) => b.startedAt.compareTo(a.startedAt));
+  final total = all.length;
+  final totalPages = total == 0 ? 0 : (total / timerHistoryPageSize).ceil();
+  final start = page * timerHistoryPageSize;
+  final end = (start + timerHistoryPageSize).clamp(0, total);
+  final items = start >= total
+      ? const <TimerSessionEntity>[]
+      : all.sublist(start, end);
+
+  return TimerSessionPage(
+    items: items,
+    page: page,
+    size: timerHistoryPageSize,
+    totalElements: total,
+    totalPages: totalPages,
+  );
+}
+
 // === 날짜별 그룹화 (페이지네이션용) ===
 
 /// 날짜별 세션 그룹 (페이지네이션 아이템 단위)
@@ -100,9 +139,8 @@ class DateGroup {
 /// 전체 세션을 날짜별로 그룹화 (최신순 정렬)
 @riverpod
 List<DateGroup> sortedDateGroups(Ref ref) {
-  final sessions = ref
-      .watch(timerSessionListNotifierProvider)
-      .valueOrNull ?? [];
+  final sessions =
+      ref.watch(timerSessionListNotifierProvider).valueOrNull ?? [];
   final grouped = <DateTime, List<TimerSessionEntity>>{};
 
   for (final session in sessions) {
@@ -122,4 +160,3 @@ List<DateGroup> sortedDateGroups(Ref ref) {
       .map((date) => DateGroup(date: date, sessions: grouped[date]!))
       .toList();
 }
-

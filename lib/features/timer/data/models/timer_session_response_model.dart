@@ -24,11 +24,11 @@ class TimerSessionResponseModel with _$TimerSessionResponseModel {
       _$TimerSessionResponseModelFromJson(json);
 
   TimerSessionEntity toEntity() => TimerSessionEntity(
-        id: id,
-        todoId: todoId,
-        todoTitle: todoTitle,
-        startedAt: startedAt,
-        endedAt: endedAt,
-        durationMinutes: durationMinutes,
-      );
+    id: id,
+    todoId: todoId,
+    todoTitle: todoTitle,
+    startedAt: startedAt,
+    endedAt: endedAt,
+    durationMinutes: durationMinutes,
+  );
 }

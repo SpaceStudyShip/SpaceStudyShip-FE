@@ -22,10 +22,10 @@ class TimerSessionPageResponseModel with _$TimerSessionPageResponseModel {
       _$TimerSessionPageResponseModelFromJson(json);
 
   TimerSessionPage toEntity() => TimerSessionPage(
-        items: content.map((m) => m.toEntity()).toList(),
-        page: page,
-        size: size,
-        totalElements: totalElements,
-        totalPages: totalPages,
-      );
+    items: content.map((m) => m.toEntity()).toList(),
+    page: page,
+    size: size,
+    totalElements: totalElements,
+    totalPages: totalPages,
+  );
 }

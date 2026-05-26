@@ -21,55 +21,69 @@ void main() {
   });
 
   ResponseBody jsonBody(int status, String body) => ResponseBody.fromString(
-        body, status,
-        headers: {Headers.contentTypeHeader: [Headers.jsonContentType]},
-      );
+    body,
+    status,
+    headers: {
+      Headers.contentTypeHeader: [Headers.jsonContentType],
+    },
+  );
 
   test('createSession: Idempotency-Key 헤더 전달 + body JSON 직렬화', () async {
     when(() => adapter.fetch(any(), any(), any())).thenAnswer(
-      (inv) async => jsonBody(201, '{"session":{"id":"sess1","startedAt":"2026-05-25T01:00:00Z","endedAt":"2026-05-25T02:00:00Z","durationMinutes":60},"fuelCharged":60}'),
+      (inv) async => jsonBody(
+        201,
+        '{"session":{"id":"sess1","startedAt":"2026-05-25T01:00:00Z","endedAt":"2026-05-25T02:00:00Z","durationMinutes":60},"fuelCharged":60}',
+      ),
     );
 
     await api.createSession(
       idempotencyKey: 'IDEM-KEY-123',
       body: TimerSessionCreateRequestModel(
         startedAt: DateTime.utc(2026, 5, 25, 1),
-        endedAt:   DateTime.utc(2026, 5, 25, 2),
+        endedAt: DateTime.utc(2026, 5, 25, 2),
         durationMinutes: 60,
       ),
     );
 
-    final captured = verify(() => adapter.fetch(captureAny(), any(), any())).captured.single as RequestOptions;
+    final captured =
+        verify(() => adapter.fetch(captureAny(), any(), any())).captured.single
+            as RequestOptions;
     expect(captured.method, 'POST');
-    expect(captured.path,   ApiEndpoints.timerSessions);
+    expect(captured.path, ApiEndpoints.timerSessions);
     expect(captured.headers['Idempotency-Key'], 'IDEM-KEY-123');
   });
 
   test('getSessions: query 파라미터 전달', () async {
     when(() => adapter.fetch(any(), any(), any())).thenAnswer(
-      (inv) async => jsonBody(200, '{"content":[],"page":2,"size":50,"totalElements":0,"totalPages":0}'),
+      (inv) async => jsonBody(
+        200,
+        '{"content":[],"page":2,"size":50,"totalElements":0,"totalPages":0}',
+      ),
     );
 
     await api.getSessions(
       startDate: '2026-05-01',
-      endDate:   '2026-05-31',
-      todoId:    'todo-1',
-      page:      2,
-      size:      50,
+      endDate: '2026-05-31',
+      todoId: 'todo-1',
+      page: 2,
+      size: 50,
     );
 
-    final captured = verify(() => adapter.fetch(captureAny(), any(), any())).captured.single as RequestOptions;
+    final captured =
+        verify(() => adapter.fetch(captureAny(), any(), any())).captured.single
+            as RequestOptions;
     expect(captured.method, 'GET');
     expect(captured.queryParameters['startDate'], '2026-05-01');
-    expect(captured.queryParameters['endDate'],   '2026-05-31');
-    expect(captured.queryParameters['todoId'],    'todo-1');
-    expect(captured.queryParameters['page'],      2);
-    expect(captured.queryParameters['size'],      50);
+    expect(captured.queryParameters['endDate'], '2026-05-31');
+    expect(captured.queryParameters['todoId'], 'todo-1');
+    expect(captured.queryParameters['page'], 2);
+    expect(captured.queryParameters['size'], 50);
   });
 
   test('getTodayStats: GET 호출', () async {
     when(() => adapter.fetch(any(), any(), any())).thenAnswer(
-      (inv) async => jsonBody(200, '{"totalMinutes":180,"sessionCount":3,"streak":7}'),
+      (inv) async =>
+          jsonBody(200, '{"totalMinutes":180,"sessionCount":3,"streak":7}'),
     );
 
     final res = await api.getTodayStats();

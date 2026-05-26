@@ -10,7 +10,7 @@ void main() {
           'todoId': null,
           'todoTitle': null,
           'startedAt': '2026-05-25T00:00:00Z',
-          'endedAt':   '2026-05-25T00:30:00Z',
+          'endedAt': '2026-05-25T00:30:00Z',
           'durationMinutes': 30,
         },
       ],
@@ -32,7 +32,11 @@ void main() {
 
   test('빈 content', () {
     final m = TimerSessionPageResponseModel.fromJson({
-      'content': [], 'page': 0, 'size': 20, 'totalElements': 0, 'totalPages': 0,
+      'content': [],
+      'page': 0,
+      'size': 20,
+      'totalElements': 0,
+      'totalPages': 0,
     });
     expect(m.toEntity().items, isEmpty);
   });

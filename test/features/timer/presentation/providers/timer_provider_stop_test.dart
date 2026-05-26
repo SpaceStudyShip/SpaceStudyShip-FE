@@ -22,7 +22,9 @@ import 'package:space_study_ship/features/todo/domain/repositories/todo_reposito
 import 'package:space_study_ship/features/todo/presentation/providers/todo_provider.dart';
 
 class _MockTimerRepo extends Mock implements TimerSessionRepository {}
+
 class _MockFuelRepo extends Mock implements FuelRepository {}
+
 class _MockTodoRepo extends Mock implements TodoRepository {}
 
 // 위젯 바인딩 초기화 (TimerNotifier가 WidgetsBindingObserver를 사용하므로 필요)
@@ -57,7 +59,8 @@ void _seedOneMinuteSession(
   String idempotencyKey = 'IDEM-TEST-123',
 }) {
   notifier.setSessionForTest(
-    status: TimerStatus.paused, // paused → elapsed = accumulated (deterministic)
+    status:
+        TimerStatus.paused, // paused → elapsed = accumulated (deterministic)
     startTime: DateTime.now().subtract(const Duration(minutes: 5)),
     accumulatedBeforePause: const Duration(minutes: 1),
     linkedTodoId: todoId,
@@ -105,183 +108,183 @@ void main() {
   List<Override> authOverrides() => [
     isAuthenticatedProvider.overrideWith((ref) => true),
     timerSessionRepositoryProvider.overrideWith((ref) => mockTimerRepo),
-    timerSessionLocalDataSourceProvider
-        .overrideWithValue(TimerSessionLocalDataSource(prefs)),
+    timerSessionLocalDataSourceProvider.overrideWithValue(
+      TimerSessionLocalDataSource(prefs),
+    ),
     fuelRepositoryProvider.overrideWith((ref) => mockFuelRepo),
     fuelLocalDataSourceProvider.overrideWithValue(FuelLocalDataSource(prefs)),
     todoRepositoryProvider.overrideWith((ref) => mockTodoRepo),
-    badgeLocalDataSourceProvider
-        .overrideWithValue(BadgeLocalDataSource(prefs)),
-    localTodoDataSourceProvider
-        .overrideWithValue(LocalTodoDataSource(prefs)),
+    badgeLocalDataSourceProvider.overrideWithValue(BadgeLocalDataSource(prefs)),
+    localTodoDataSourceProvider.overrideWithValue(LocalTodoDataSource(prefs)),
   ];
 
   /// 게스트 모드 오버라이드: 로컬 datasource 만 주입.
   List<Override> guestOverrides() => [
     isAuthenticatedProvider.overrideWith((ref) => false),
     timerSessionRepositoryProvider.overrideWith((ref) => mockTimerRepo),
-    timerSessionLocalDataSourceProvider
-        .overrideWithValue(TimerSessionLocalDataSource(prefs)),
+    timerSessionLocalDataSourceProvider.overrideWithValue(
+      TimerSessionLocalDataSource(prefs),
+    ),
     fuelLocalDataSourceProvider.overrideWithValue(FuelLocalDataSource(prefs)),
-    badgeLocalDataSourceProvider
-        .overrideWithValue(BadgeLocalDataSource(prefs)),
-    localTodoDataSourceProvider
-        .overrideWithValue(LocalTodoDataSource(prefs)),
+    badgeLocalDataSourceProvider.overrideWithValue(BadgeLocalDataSource(prefs)),
+    localTodoDataSourceProvider.overrideWithValue(LocalTodoDataSource(prefs)),
   ];
 
   group('TimerNotifier.stop() — 인증 모드', () {
-    test(
-      '인증 모드 stop: repo.createSession 이 idempotencyKey 포함하여 호출됨 '
-      '+ 정지 후 상태 초기화 (idempotencyKey 폐기)',
-      () async {
-        when(() => mockTimerRepo.createSession(
-              startedAt: any(named: 'startedAt'),
-              endedAt: any(named: 'endedAt'),
-              durationMinutes: any(named: 'durationMinutes'),
-              todoId: any(named: 'todoId'),
-              todoTitle: any(named: 'todoTitle'),
-              idempotencyKey: any(named: 'idempotencyKey'),
-            )).thenAnswer((_) async => _dummyResult());
-        // invalidate 후 rebuild 시 getFuel() 호출될 수 있으므로 mock
-        when(() => mockFuelRepo.getFuel())
-            .thenAnswer((_) async => _zeroFuel());
-        // invalidate 후 rebuild 시 getTodoList() 호출될 수 있으므로 mock
-        when(() => mockTodoRepo.getTodoList(
-              date: any(named: 'date'),
-              categoryId: any(named: 'categoryId'),
-            )).thenAnswer((_) async => []);
+    test('인증 모드 stop: repo.createSession 이 idempotencyKey 포함하여 호출됨 '
+        '+ 정지 후 상태 초기화 (idempotencyKey 폐기)', () async {
+      when(
+        () => mockTimerRepo.createSession(
+          startedAt: any(named: 'startedAt'),
+          endedAt: any(named: 'endedAt'),
+          durationMinutes: any(named: 'durationMinutes'),
+          todoId: any(named: 'todoId'),
+          todoTitle: any(named: 'todoTitle'),
+          idempotencyKey: any(named: 'idempotencyKey'),
+        ),
+      ).thenAnswer((_) async => _dummyResult());
+      // invalidate 후 rebuild 시 getFuel() 호출될 수 있으므로 mock
+      when(() => mockFuelRepo.getFuel()).thenAnswer((_) async => _zeroFuel());
+      // invalidate 후 rebuild 시 getTodoList() 호출될 수 있으므로 mock
+      when(
+        () => mockTodoRepo.getTodoList(
+          date: any(named: 'date'),
+          categoryId: any(named: 'categoryId'),
+        ),
+      ).thenAnswer((_) async => []);
 
-        container = ProviderContainer(overrides: authOverrides());
+      container = ProviderContainer(overrides: authOverrides());
 
-        final notifier = container.read(timerNotifierProvider.notifier);
-        _seedOneMinuteSession(notifier, idempotencyKey: 'IDEM-AUTH-1');
+      final notifier = container.read(timerNotifierProvider.notifier);
+      _seedOneMinuteSession(notifier, idempotencyKey: 'IDEM-AUTH-1');
 
-        final result = await notifier.stop();
+      final result = await notifier.stop();
 
-        // 반환값 존재 (1분 이상이므로)
-        expect(result, isNotNull);
-        expect(result!.todoTitle, '수학');
-        expect(result.sessionDuration.inMinutes, greaterThanOrEqualTo(1));
+      // 반환값 존재 (1분 이상이므로)
+      expect(result, isNotNull);
+      expect(result!.todoTitle, '수학');
+      expect(result.sessionDuration.inMinutes, greaterThanOrEqualTo(1));
 
-        // createSession 1회 호출 + idempotencyKey 전달 확인
-        final captured = verify(() => mockTimerRepo.createSession(
-              startedAt: any(named: 'startedAt'),
-              endedAt: any(named: 'endedAt'),
-              durationMinutes: any(named: 'durationMinutes'),
-              todoId: any(named: 'todoId'),
-              todoTitle: any(named: 'todoTitle'),
-              idempotencyKey: captureAny(named: 'idempotencyKey'),
-            )).captured;
-        expect(captured.first, 'IDEM-AUTH-1');
+      // createSession 1회 호출 + idempotencyKey 전달 확인
+      final captured = verify(
+        () => mockTimerRepo.createSession(
+          startedAt: any(named: 'startedAt'),
+          endedAt: any(named: 'endedAt'),
+          durationMinutes: any(named: 'durationMinutes'),
+          todoId: any(named: 'todoId'),
+          todoTitle: any(named: 'todoTitle'),
+          idempotencyKey: captureAny(named: 'idempotencyKey'),
+        ),
+      ).captured;
+      expect(captured.first, 'IDEM-AUTH-1');
 
-        // 정지 후 상태 초기화 (idempotencyKey 폐기)
-        expect(container.read(timerNotifierProvider).status, TimerStatus.idle);
-        expect(container.read(timerNotifierProvider).idempotencyKey, isNull);
-      },
-    );
+      // 정지 후 상태 초기화 (idempotencyKey 폐기)
+      expect(container.read(timerNotifierProvider).status, TimerStatus.idle);
+      expect(container.read(timerNotifierProvider).idempotencyKey, isNull);
+    });
 
-    test(
-      '인증 모드 stop: 404 LinkedTodoNotFound 시 todoId=null 로 1회 재시도',
-      () async {
-        var callCount = 0;
-        when(() => mockTimerRepo.createSession(
-              startedAt: any(named: 'startedAt'),
-              endedAt: any(named: 'endedAt'),
-              durationMinutes: any(named: 'durationMinutes'),
-              todoId: any(named: 'todoId'),
-              todoTitle: any(named: 'todoTitle'),
-              idempotencyKey: any(named: 'idempotencyKey'),
-            )).thenAnswer((_) async {
-          callCount++;
-          if (callCount == 1) throw const LinkedTodoNotFound();
-          return _dummyResult();
-        });
-        when(() => mockFuelRepo.getFuel())
-            .thenAnswer((_) async => _zeroFuel());
-        when(() => mockTodoRepo.getTodoList(
-              date: any(named: 'date'),
-              categoryId: any(named: 'categoryId'),
-            )).thenAnswer((_) async => []);
+    test('인증 모드 stop: 404 LinkedTodoNotFound 시 todoId=null 로 1회 재시도', () async {
+      var callCount = 0;
+      when(
+        () => mockTimerRepo.createSession(
+          startedAt: any(named: 'startedAt'),
+          endedAt: any(named: 'endedAt'),
+          durationMinutes: any(named: 'durationMinutes'),
+          todoId: any(named: 'todoId'),
+          todoTitle: any(named: 'todoTitle'),
+          idempotencyKey: any(named: 'idempotencyKey'),
+        ),
+      ).thenAnswer((_) async {
+        callCount++;
+        if (callCount == 1) throw const LinkedTodoNotFound();
+        return _dummyResult();
+      });
+      when(() => mockFuelRepo.getFuel()).thenAnswer((_) async => _zeroFuel());
+      when(
+        () => mockTodoRepo.getTodoList(
+          date: any(named: 'date'),
+          categoryId: any(named: 'categoryId'),
+        ),
+      ).thenAnswer((_) async => []);
 
-        container = ProviderContainer(overrides: authOverrides());
+      container = ProviderContainer(overrides: authOverrides());
 
-        final notifier = container.read(timerNotifierProvider.notifier);
-        _seedOneMinuteSession(
-          notifier,
-          todoId: 'todo-missing',
-          idempotencyKey: 'IDEM-RETRY-1',
-        );
+      final notifier = container.read(timerNotifierProvider.notifier);
+      _seedOneMinuteSession(
+        notifier,
+        todoId: 'todo-missing',
+        idempotencyKey: 'IDEM-RETRY-1',
+      );
 
-        // stop() 이 예외 없이 완료돼야 함 (retry 경로)
-        final result = await notifier.stop();
-        expect(result, isNotNull);
+      // stop() 이 예외 없이 완료돼야 함 (retry 경로)
+      final result = await notifier.stop();
+      expect(result, isNotNull);
 
-        // 총 2회 호출됨
-        expect(callCount, 2);
+      // 총 2회 호출됨
+      expect(callCount, 2);
 
-        // 두 번째 호출의 todoId 가 null 인지 검증 (captured 값 순서)
-        final calls = verify(() => mockTimerRepo.createSession(
-              startedAt: any(named: 'startedAt'),
-              endedAt: any(named: 'endedAt'),
-              durationMinutes: any(named: 'durationMinutes'),
-              todoId: captureAny(named: 'todoId'),
-              todoTitle: any(named: 'todoTitle'),
-              idempotencyKey: any(named: 'idempotencyKey'),
-            )).captured;
-        expect(calls.length, 2);
-        expect(calls[0], 'todo-missing'); // 첫 번째 호출: 원래 todoId
-        expect(calls[1], isNull);         // 두 번째 호출: null (재시도)
-      },
-    );
+      // 두 번째 호출의 todoId 가 null 인지 검증 (captured 값 순서)
+      final calls = verify(
+        () => mockTimerRepo.createSession(
+          startedAt: any(named: 'startedAt'),
+          endedAt: any(named: 'endedAt'),
+          durationMinutes: any(named: 'durationMinutes'),
+          todoId: captureAny(named: 'todoId'),
+          todoTitle: any(named: 'todoTitle'),
+          idempotencyKey: any(named: 'idempotencyKey'),
+        ),
+      ).captured;
+      expect(calls.length, 2);
+      expect(calls[0], 'todo-missing'); // 첫 번째 호출: 원래 todoId
+      expect(calls[1], isNull); // 두 번째 호출: null (재시도)
+    });
   });
 
   group('TimerNotifier.stop() — 게스트 모드', () {
-    test(
-      '게스트 모드 stop: repo.createSession 호출 안 됨, '
-      '로컬 세션 저장 + fuelNotifier.chargeFuel 경로 통과',
-      () async {
-        // 게스트 모드에서 timerSessionRepositoryProvider 는 mockTimerRepo 를 반환하지만,
-        // addSession / getSessions 는 stub 해줘야 `type 'Null' is not a subtype of Future<void>` 방지.
-        when(() => mockTimerRepo.addSession(any()))
-            .thenAnswer((_) async {});
-        when(() => mockTimerRepo.getSessions()).thenReturn([]);
+    test('게스트 모드 stop: repo.createSession 호출 안 됨, '
+        '로컬 세션 저장 + fuelNotifier.chargeFuel 경로 통과', () async {
+      // 게스트 모드에서 timerSessionRepositoryProvider 는 mockTimerRepo 를 반환하지만,
+      // addSession / getSessions 는 stub 해줘야 `type 'Null' is not a subtype of Future<void>` 방지.
+      when(() => mockTimerRepo.addSession(any())).thenAnswer((_) async {});
+      when(() => mockTimerRepo.getSessions()).thenReturn([]);
 
-        container = ProviderContainer(overrides: guestOverrides());
+      container = ProviderContainer(overrides: guestOverrides());
 
-        final notifier = container.read(timerNotifierProvider.notifier);
-        notifier.setSessionForTest(
-          status: TimerStatus.paused,
-          startTime: DateTime.now().subtract(const Duration(minutes: 5)),
-          accumulatedBeforePause: const Duration(minutes: 1),
-          idempotencyKey: 'IDEM-GUEST-1',
-        );
+      final notifier = container.read(timerNotifierProvider.notifier);
+      notifier.setSessionForTest(
+        status: TimerStatus.paused,
+        startTime: DateTime.now().subtract(const Duration(minutes: 5)),
+        accumulatedBeforePause: const Duration(minutes: 1),
+        idempotencyKey: 'IDEM-GUEST-1',
+      );
 
-        // fuel provider 가 로컬 repo 를 사용할 수 있도록 build 완료 대기
-        await container.read(fuelNotifierProvider.future);
+      // fuel provider 가 로컬 repo 를 사용할 수 있도록 build 완료 대기
+      await container.read(fuelNotifierProvider.future);
 
-        final result = await notifier.stop();
+      final result = await notifier.stop();
 
-        // 결과 존재
-        expect(result, isNotNull);
-        expect(result!.sessionDuration.inMinutes, greaterThanOrEqualTo(1));
+      // 결과 존재
+      expect(result, isNotNull);
+      expect(result!.sessionDuration.inMinutes, greaterThanOrEqualTo(1));
 
-        // 서버 createSession 호출 없음 (핵심 검증)
-        verifyNever(() => mockTimerRepo.createSession(
-              startedAt: any(named: 'startedAt'),
-              endedAt: any(named: 'endedAt'),
-              durationMinutes: any(named: 'durationMinutes'),
-              todoId: any(named: 'todoId'),
-              todoTitle: any(named: 'todoTitle'),
-              idempotencyKey: any(named: 'idempotencyKey'),
-            ));
+      // 서버 createSession 호출 없음 (핵심 검증)
+      verifyNever(
+        () => mockTimerRepo.createSession(
+          startedAt: any(named: 'startedAt'),
+          endedAt: any(named: 'endedAt'),
+          durationMinutes: any(named: 'durationMinutes'),
+          todoId: any(named: 'todoId'),
+          todoTitle: any(named: 'todoTitle'),
+          idempotencyKey: any(named: 'idempotencyKey'),
+        ),
+      );
 
-        // 로컬 addSession 이 1회 호출됐는지 확인
-        verify(() => mockTimerRepo.addSession(any())).called(1);
+      // 로컬 addSession 이 1회 호출됐는지 확인
+      verify(() => mockTimerRepo.addSession(any())).called(1);
 
-        // 정지 후 상태 초기화
-        expect(container.read(timerNotifierProvider).status, TimerStatus.idle);
-      },
-    );
+      // 정지 후 상태 초기화
+      expect(container.read(timerNotifierProvider).status, TimerStatus.idle);
+    });
   });
 
   group('TimerNotifier.stop() — 1분 미만 세션', () {
@@ -303,14 +306,16 @@ void main() {
       expect(result, isNull);
 
       // createSession 호출 없음
-      verifyNever(() => mockTimerRepo.createSession(
-            startedAt: any(named: 'startedAt'),
-            endedAt: any(named: 'endedAt'),
-            durationMinutes: any(named: 'durationMinutes'),
-            todoId: any(named: 'todoId'),
-            todoTitle: any(named: 'todoTitle'),
-            idempotencyKey: any(named: 'idempotencyKey'),
-          ));
+      verifyNever(
+        () => mockTimerRepo.createSession(
+          startedAt: any(named: 'startedAt'),
+          endedAt: any(named: 'endedAt'),
+          durationMinutes: any(named: 'durationMinutes'),
+          todoId: any(named: 'todoId'),
+          todoTitle: any(named: 'todoTitle'),
+          idempotencyKey: any(named: 'idempotencyKey'),
+        ),
+      );
 
       // 상태 초기화
       expect(container.read(timerNotifierProvider).status, TimerStatus.idle);

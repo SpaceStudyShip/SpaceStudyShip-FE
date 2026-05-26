@@ -10,6 +10,9 @@ void main() {
   });
 
   test('TodayStats.empty: 모두 0', () {
-    expect(TodayStats.empty(), const TodayStats(totalMinutes: 0, sessionCount: 0, streak: 0));
+    expect(
+      TodayStats.empty(),
+      const TodayStats(totalMinutes: 0, sessionCount: 0, streak: 0),
+    );
   });
 }

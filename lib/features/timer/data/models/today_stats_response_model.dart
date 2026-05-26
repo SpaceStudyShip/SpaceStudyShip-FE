@@ -19,8 +19,8 @@ class TodayStatsResponseModel with _$TodayStatsResponseModel {
       _$TodayStatsResponseModelFromJson(json);
 
   TodayStats toEntity() => TodayStats(
-        totalMinutes: totalMinutes,
-        sessionCount: sessionCount,
-        streak: streak,
-      );
+    totalMinutes: totalMinutes,
+    sessionCount: sessionCount,
+    streak: streak,
+  );
 }

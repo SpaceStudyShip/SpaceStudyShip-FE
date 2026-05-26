@@ -14,6 +14,7 @@ class TimerState with _$TimerState {
     DateTime? startTime,
     String? linkedTodoId,
     String? linkedTodoTitle,
+
     /// 인증 모드에서 stop() 시 POST 헤더로 전송할 idempotency key.
     /// start() 시 발급, stop() 성공 시 null 로 폐기, 실패 시 유지 (재시도용).
     String? idempotencyKey,

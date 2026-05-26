@@ -223,7 +223,7 @@ final currentFuelProvider = AutoDisposeProvider<AsyncValue<int>>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef CurrentFuelRef = AutoDisposeProviderRef<AsyncValue<int>>;
-String _$fuelNotifierHash() => r'1c00424056b20144ea6f72e33da9531a3b14cfd4';
+String _$fuelNotifierHash() => r'f7a0ac70a11225f4ab37f15fd02de41c78d56bf0';
 
 /// See also [FuelNotifier].
 @ProviderFor(FuelNotifier)

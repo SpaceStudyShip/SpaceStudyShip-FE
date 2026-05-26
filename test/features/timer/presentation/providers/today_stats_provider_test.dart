@@ -22,12 +22,15 @@ void main() {
 
   test('인증 모드: repo.getTodayStats() 결과 그대로 반환', () async {
     when(() => repo.getTodayStats()).thenAnswer(
-      (_) async => const TodayStats(totalMinutes: 180, sessionCount: 3, streak: 7),
+      (_) async =>
+          const TodayStats(totalMinutes: 180, sessionCount: 3, streak: 7),
     );
-    container = ProviderContainer(overrides: [
-      isAuthenticatedProvider.overrideWith((ref) => true),
-      timerSessionRepositoryProvider.overrideWith((ref) => repo),
-    ]);
+    container = ProviderContainer(
+      overrides: [
+        isAuthenticatedProvider.overrideWith((ref) => true),
+        timerSessionRepositoryProvider.overrideWith((ref) => repo),
+      ],
+    );
     final stats = await container.read(todayStatsNotifierProvider.future);
     expect(stats.totalMinutes, 180);
     expect(stats.streak, 7);
@@ -41,21 +44,23 @@ void main() {
       TimerSessionEntity(
         id: 's1',
         startedAt: todayNoon.subtract(const Duration(hours: 2)),
-        endedAt:   todayNoon.subtract(const Duration(hours: 1)),
+        endedAt: todayNoon.subtract(const Duration(hours: 1)),
         durationMinutes: 60,
       ),
       TimerSessionEntity(
         id: 's2',
         startedAt: todayNoon.subtract(const Duration(hours: 1)),
-        endedAt:   todayNoon,
+        endedAt: todayNoon,
         durationMinutes: 30,
       ),
     ]);
 
-    container = ProviderContainer(overrides: [
-      isAuthenticatedProvider.overrideWith((ref) => false),
-      timerSessionRepositoryProvider.overrideWith((ref) => repo),
-    ]);
+    container = ProviderContainer(
+      overrides: [
+        isAuthenticatedProvider.overrideWith((ref) => false),
+        timerSessionRepositoryProvider.overrideWith((ref) => repo),
+      ],
+    );
 
     final stats = await container.read(todayStatsNotifierProvider.future);
     expect(stats.sessionCount, 2);

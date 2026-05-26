@@ -20,7 +20,7 @@ class TimerSessionCreateResponseModel with _$TimerSessionCreateResponseModel {
       _$TimerSessionCreateResponseModelFromJson(json);
 
   TimerSessionCreateResult toEntity() => TimerSessionCreateResult(
-        session: session.toEntity(),
-        fuelCharged: fuelCharged,
-      );
+    session: session.toEntity(),
+    fuelCharged: fuelCharged,
+  );
 }

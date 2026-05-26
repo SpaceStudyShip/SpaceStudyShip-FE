@@ -52,11 +52,15 @@ class TimerSessionRepositoryImpl implements TimerSessionRepository {
   Future<TimerSessionPage> getSessionsPage(TimerSessionFilter filter) async {
     try {
       final response = await remote.getSessions(
-        startDate: filter.startDate != null ? _dateFmt.format(filter.startDate!) : null,
-        endDate:   filter.endDate   != null ? _dateFmt.format(filter.endDate!)   : null,
-        todoId:    filter.todoId,
-        page:      filter.page,
-        size:      filter.size,
+        startDate: filter.startDate != null
+            ? _dateFmt.format(filter.startDate!)
+            : null,
+        endDate: filter.endDate != null
+            ? _dateFmt.format(filter.endDate!)
+            : null,
+        todoId: filter.todoId,
+        page: filter.page,
+        size: filter.size,
       );
       return response.toEntity();
     } on DioException catch (e) {
@@ -76,15 +80,15 @@ class TimerSessionRepositoryImpl implements TimerSessionRepository {
 
   @override
   List<TimerSessionEntity> getSessions() => throw UnsupportedError(
-        'Server-backed repo does not support local getSessions(). '
-        'Use getSessionsPage(filter) for paginated server reads.',
-      );
+    'Server-backed repo does not support local getSessions(). '
+    'Use getSessionsPage(filter) for paginated server reads.',
+  );
 
   @override
   Future<void> addSession(TimerSessionEntity session) => throw UnsupportedError(
-        'Server-backed repo persists via createSession(); '
-        'addSession() is guest-only.',
-      );
+    'Server-backed repo persists via createSession(); '
+    'addSession() is guest-only.',
+  );
 
   @override
   Future<void> clearAll() async {

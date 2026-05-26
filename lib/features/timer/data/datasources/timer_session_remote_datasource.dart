@@ -25,10 +25,10 @@ abstract class TimerSessionRemoteDataSource {
   @GET(ApiEndpoints.timerSessions)
   Future<TimerSessionPageResponseModel> getSessions({
     @Query('startDate') String? startDate,
-    @Query('endDate')   String? endDate,
-    @Query('todoId')    String? todoId,
-    @Query('page')      int? page,
-    @Query('size')      int? size,
+    @Query('endDate') String? endDate,
+    @Query('todoId') String? todoId,
+    @Query('page') int? page,
+    @Query('size') int? size,
   });
 
   /// GET /api/timer-sessions/today-stats — 오늘 통계 (KST).

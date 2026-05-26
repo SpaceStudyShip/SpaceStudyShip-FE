@@ -207,7 +207,152 @@ class _TimerSessionsPageProviderElement
   TimerSessionFilter get filter => (origin as TimerSessionsPageProvider).filter;
 }
 
-String _$sortedDateGroupsHash() => r'4a6e1845ed47ce560ccabc6dffa3a5e5872a8f05';
+String _$timerHistoryPageHash() => r'c2c2e6f65aeb20a155c582dfc0b81dff0330577a';
+
+/// 기록 화면용 페이지 조회.
+/// 인증 모드: 서버 GET /api/timer-sessions?page=N&size=20
+/// 게스트 모드: 로컬 전체 세션을 startedAt 내림차순 정렬 후 클라이언트 슬라이스.
+///
+/// Copied from [timerHistoryPage].
+@ProviderFor(timerHistoryPage)
+const timerHistoryPageProvider = TimerHistoryPageFamily();
+
+/// 기록 화면용 페이지 조회.
+/// 인증 모드: 서버 GET /api/timer-sessions?page=N&size=20
+/// 게스트 모드: 로컬 전체 세션을 startedAt 내림차순 정렬 후 클라이언트 슬라이스.
+///
+/// Copied from [timerHistoryPage].
+class TimerHistoryPageFamily extends Family<AsyncValue<TimerSessionPage>> {
+  /// 기록 화면용 페이지 조회.
+  /// 인증 모드: 서버 GET /api/timer-sessions?page=N&size=20
+  /// 게스트 모드: 로컬 전체 세션을 startedAt 내림차순 정렬 후 클라이언트 슬라이스.
+  ///
+  /// Copied from [timerHistoryPage].
+  const TimerHistoryPageFamily();
+
+  /// 기록 화면용 페이지 조회.
+  /// 인증 모드: 서버 GET /api/timer-sessions?page=N&size=20
+  /// 게스트 모드: 로컬 전체 세션을 startedAt 내림차순 정렬 후 클라이언트 슬라이스.
+  ///
+  /// Copied from [timerHistoryPage].
+  TimerHistoryPageProvider call(int page) {
+    return TimerHistoryPageProvider(page);
+  }
+
+  @override
+  TimerHistoryPageProvider getProviderOverride(
+    covariant TimerHistoryPageProvider provider,
+  ) {
+    return call(provider.page);
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'timerHistoryPageProvider';
+}
+
+/// 기록 화면용 페이지 조회.
+/// 인증 모드: 서버 GET /api/timer-sessions?page=N&size=20
+/// 게스트 모드: 로컬 전체 세션을 startedAt 내림차순 정렬 후 클라이언트 슬라이스.
+///
+/// Copied from [timerHistoryPage].
+class TimerHistoryPageProvider
+    extends AutoDisposeFutureProvider<TimerSessionPage> {
+  /// 기록 화면용 페이지 조회.
+  /// 인증 모드: 서버 GET /api/timer-sessions?page=N&size=20
+  /// 게스트 모드: 로컬 전체 세션을 startedAt 내림차순 정렬 후 클라이언트 슬라이스.
+  ///
+  /// Copied from [timerHistoryPage].
+  TimerHistoryPageProvider(int page)
+    : this._internal(
+        (ref) => timerHistoryPage(ref as TimerHistoryPageRef, page),
+        from: timerHistoryPageProvider,
+        name: r'timerHistoryPageProvider',
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$timerHistoryPageHash,
+        dependencies: TimerHistoryPageFamily._dependencies,
+        allTransitiveDependencies:
+            TimerHistoryPageFamily._allTransitiveDependencies,
+        page: page,
+      );
+
+  TimerHistoryPageProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.page,
+  }) : super.internal();
+
+  final int page;
+
+  @override
+  Override overrideWith(
+    FutureOr<TimerSessionPage> Function(TimerHistoryPageRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: TimerHistoryPageProvider._internal(
+        (ref) => create(ref as TimerHistoryPageRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        page: page,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<TimerSessionPage> createElement() {
+    return _TimerHistoryPageProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is TimerHistoryPageProvider && other.page == page;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, page.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin TimerHistoryPageRef on AutoDisposeFutureProviderRef<TimerSessionPage> {
+  /// The parameter `page` of this provider.
+  int get page;
+}
+
+class _TimerHistoryPageProviderElement
+    extends AutoDisposeFutureProviderElement<TimerSessionPage>
+    with TimerHistoryPageRef {
+  _TimerHistoryPageProviderElement(super.provider);
+
+  @override
+  int get page => (origin as TimerHistoryPageProvider).page;
+}
+
+String _$sortedDateGroupsHash() => r'a7aa65fdd57b7cb8499e396e374719f137d9bb61';
 
 /// 전체 세션을 날짜별로 그룹화 (최신순 정렬)
 ///

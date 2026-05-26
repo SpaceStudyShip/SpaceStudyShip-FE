@@ -15,12 +15,14 @@ void main() {
   setUp(() {
     local = _MockLocal();
     repo = LocalTimerSessionRepositoryImpl(local);
-    registerFallbackValue(TimerSessionModel(
-      id: 'x',
-      startedAt: DateTime.utc(2026, 1, 1),
-      endedAt: DateTime.utc(2026, 1, 1, 1),
-      durationMinutes: 60,
-    ));
+    registerFallbackValue(
+      TimerSessionModel(
+        id: 'x',
+        startedAt: DateTime.utc(2026, 1, 1),
+        endedAt: DateTime.utc(2026, 1, 1, 1),
+        durationMinutes: 60,
+      ),
+    );
   });
 
   group('LocalTimerSessionRepositoryImpl', () {
@@ -45,12 +47,14 @@ void main() {
     test('addSession → local datasource에 위임', () async {
       when(() => local.addSession(any())).thenAnswer((_) async {});
 
-      await repo.addSession(TimerSessionEntity(
-        id: 's2',
-        startedAt: DateTime.utc(2026, 5, 25),
-        endedAt: DateTime.utc(2026, 5, 25, 1),
-        durationMinutes: 60,
-      ));
+      await repo.addSession(
+        TimerSessionEntity(
+          id: 's2',
+          startedAt: DateTime.utc(2026, 5, 25),
+          endedAt: DateTime.utc(2026, 5, 25, 1),
+          durationMinutes: 60,
+        ),
+      );
 
       verify(() => local.addSession(any())).called(1);
     });

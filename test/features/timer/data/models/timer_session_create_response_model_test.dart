@@ -9,7 +9,7 @@ void main() {
         'todoId': 'todo-1',
         'todoTitle': '수학',
         'startedAt': '2026-05-25T01:00:00Z',
-        'endedAt':   '2026-05-25T02:30:00Z',
+        'endedAt': '2026-05-25T02:30:00Z',
         'durationMinutes': 90,
       },
       'fuelCharged': 90,

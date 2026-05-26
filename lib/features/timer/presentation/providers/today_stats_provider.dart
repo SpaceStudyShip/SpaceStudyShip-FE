@@ -28,10 +28,13 @@ class TodayStatsNotifier extends _$TodayStatsNotifier {
 
     final todaySessions = sessions.where((s) {
       return s.startedAt.isAfter(today.subtract(const Duration(seconds: 1))) &&
-             s.startedAt.isBefore(tomorrow);
+          s.startedAt.isBefore(tomorrow);
     }).toList();
 
-    final totalMinutes = todaySessions.fold<int>(0, (sum, s) => sum + s.durationMinutes);
+    final totalMinutes = todaySessions.fold<int>(
+      0,
+      (sum, s) => sum + s.durationMinutes,
+    );
 
     return TodayStats(
       totalMinutes: totalMinutes,

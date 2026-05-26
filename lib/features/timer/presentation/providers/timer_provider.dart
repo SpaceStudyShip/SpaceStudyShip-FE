@@ -124,12 +124,12 @@ class TimerNotifier extends _$TimerNotifier with WidgetsBindingObserver {
     _timer?.cancel();
 
     final sessionDuration = state.elapsed;
-    final elapsedMinutes  = sessionDuration.inMinutes;
-    final endedAt         = DateTime.now();
-    final startedAt       = endedAt.subtract(sessionDuration);
-    final todoId          = state.linkedTodoId;
-    final todoTitle       = state.linkedTodoTitle;
-    final idempotencyKey  = state.idempotencyKey;
+    final elapsedMinutes = sessionDuration.inMinutes;
+    final endedAt = DateTime.now();
+    final startedAt = endedAt.subtract(sessionDuration);
+    final todoId = state.linkedTodoId;
+    final todoTitle = state.linkedTodoTitle;
+    final idempotencyKey = state.idempotencyKey;
 
     // 1분 미만 세션은 저장하지 않음 (서버 SESSION_TOO_SHORT 사전 차단 + 게스트 기존 로직과 동일).
     if (elapsedMinutes < 1) {
@@ -150,9 +150,9 @@ class TimerNotifier extends _$TimerNotifier with WidgetsBindingObserver {
         try {
           await repository.createSession(
             startedAt: startedAt,
-            endedAt:   endedAt,
+            endedAt: endedAt,
             durationMinutes: elapsedMinutes,
-            todoId:    todoId,
+            todoId: todoId,
             todoTitle: todoTitle,
             idempotencyKey: idempotencyKey!,
           );
@@ -160,9 +160,9 @@ class TimerNotifier extends _$TimerNotifier with WidgetsBindingObserver {
           // 404 → todoId 빼고 1회 재시도 (세션은 저장하되 Todo 미연결).
           await repository.createSession(
             startedAt: startedAt,
-            endedAt:   endedAt,
+            endedAt: endedAt,
             durationMinutes: elapsedMinutes,
-            todoId:    null,
+            todoId: null,
             todoTitle: todoTitle,
             idempotencyKey: idempotencyKey!,
           );

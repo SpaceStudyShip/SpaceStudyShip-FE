@@ -20,26 +20,33 @@ class TodayStatsNotifier extends _$TodayStatsNotifier {
       return repository.getTodayStats();
     }
 
-    // 게스트 모드: 로컬 계산
+    // 게스트 모드: 로컬 세션 fold (전체가 메모리에 있어 정확)
     final sessions = repository.getSessions();
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     final tomorrow = today.add(const Duration(days: 1));
+    final monthStart = DateTime(now.year, now.month, 1);
 
     final todaySessions = sessions.where((s) {
       return s.startedAt.isAfter(today.subtract(const Duration(seconds: 1))) &&
           s.startedAt.isBefore(tomorrow);
     }).toList();
 
-    final totalMinutes = todaySessions.fold<int>(
-      0,
-      (sum, s) => sum + s.durationMinutes,
-    );
+    final todayMinutes =
+        todaySessions.fold<int>(0, (sum, s) => sum + s.durationMinutes);
+    final lifetimeMinutes =
+        sessions.fold<int>(0, (sum, s) => sum + s.durationMinutes);
+    final monthlyMinutes = sessions
+        .where((s) => !s.startedAt.isBefore(monthStart))
+        .fold<int>(0, (sum, s) => sum + s.durationMinutes);
 
     return TodayStats(
-      totalMinutes: totalMinutes,
+      totalMinutes: todayMinutes,
       sessionCount: todaySessions.length,
       streak: todaySessions.isEmpty ? 0 : 1,
+      lifetimeMinutes: lifetimeMinutes,
+      lifetimeSessionCount: sessions.length,
+      monthlyMinutes: monthlyMinutes,
     );
   }
 }

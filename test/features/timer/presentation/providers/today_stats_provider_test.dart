@@ -22,8 +22,14 @@ void main() {
 
   test('인증 모드: repo.getTodayStats() 결과 그대로 반환', () async {
     when(() => repo.getTodayStats()).thenAnswer(
-      (_) async =>
-          const TodayStats(totalMinutes: 180, sessionCount: 3, streak: 7),
+      (_) async => const TodayStats(
+        totalMinutes: 180,
+        sessionCount: 3,
+        streak: 7,
+        lifetimeMinutes: 12450,
+        lifetimeSessionCount: 287,
+        monthlyMinutes: 1820,
+      ),
     );
     container = ProviderContainer(
       overrides: [
@@ -34,6 +40,7 @@ void main() {
     final stats = await container.read(todayStatsNotifierProvider.future);
     expect(stats.totalMinutes, 180);
     expect(stats.streak, 7);
+    expect(stats.lifetimeMinutes, 12450);
   });
 
   test('게스트 모드: 로컬 세션으로 직접 계산 (오늘 KST 기준)', () async {
@@ -66,5 +73,7 @@ void main() {
     expect(stats.sessionCount, 2);
     expect(stats.totalMinutes, 90);
     expect(stats.streak, 1);
+    expect(stats.lifetimeMinutes, 90); // 게스트는 전체 = today 합산
+    expect(stats.lifetimeSessionCount, 2);
   });
 }

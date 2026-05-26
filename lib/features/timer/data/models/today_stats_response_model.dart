@@ -13,6 +13,9 @@ class TodayStatsResponseModel with _$TodayStatsResponseModel {
     required int totalMinutes,
     required int sessionCount,
     required int streak,
+    required int lifetimeMinutes,
+    required int lifetimeSessionCount,
+    required int monthlyMinutes,
   }) = _TodayStatsResponseModel;
 
   factory TodayStatsResponseModel.fromJson(Map<String, dynamic> json) =>
@@ -22,5 +25,8 @@ class TodayStatsResponseModel with _$TodayStatsResponseModel {
     totalMinutes: totalMinutes,
     sessionCount: sessionCount,
     streak: streak,
+    lifetimeMinutes: lifetimeMinutes,
+    lifetimeSessionCount: lifetimeSessionCount,
+    monthlyMinutes: monthlyMinutes,
   );
 }

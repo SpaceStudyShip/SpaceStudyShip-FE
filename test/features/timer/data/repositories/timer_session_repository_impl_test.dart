@@ -174,11 +174,15 @@ void main() {
           totalMinutes: 180,
           sessionCount: 3,
           streak: 7,
+          lifetimeMinutes: 12450,
+          lifetimeSessionCount: 287,
+          monthlyMinutes: 1820,
         ),
       );
       final stats = await repo.getTodayStats();
       expect(stats.totalMinutes, 180);
       expect(stats.streak, 7);
+      expect(stats.lifetimeMinutes, 12450);
     });
   });
 

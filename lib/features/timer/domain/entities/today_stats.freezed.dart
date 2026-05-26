@@ -20,6 +20,9 @@ mixin _$TodayStats {
   int get totalMinutes => throw _privateConstructorUsedError;
   int get sessionCount => throw _privateConstructorUsedError;
   int get streak => throw _privateConstructorUsedError;
+  int get lifetimeMinutes => throw _privateConstructorUsedError;
+  int get lifetimeSessionCount => throw _privateConstructorUsedError;
+  int get monthlyMinutes => throw _privateConstructorUsedError;
 
   /// Create a copy of TodayStats
   /// with the given fields replaced by the non-null parameter values.
@@ -35,7 +38,14 @@ abstract class $TodayStatsCopyWith<$Res> {
     $Res Function(TodayStats) then,
   ) = _$TodayStatsCopyWithImpl<$Res, TodayStats>;
   @useResult
-  $Res call({int totalMinutes, int sessionCount, int streak});
+  $Res call({
+    int totalMinutes,
+    int sessionCount,
+    int streak,
+    int lifetimeMinutes,
+    int lifetimeSessionCount,
+    int monthlyMinutes,
+  });
 }
 
 /// @nodoc
@@ -56,6 +66,9 @@ class _$TodayStatsCopyWithImpl<$Res, $Val extends TodayStats>
     Object? totalMinutes = null,
     Object? sessionCount = null,
     Object? streak = null,
+    Object? lifetimeMinutes = null,
+    Object? lifetimeSessionCount = null,
+    Object? monthlyMinutes = null,
   }) {
     return _then(
       _value.copyWith(
@@ -70,6 +83,18 @@ class _$TodayStatsCopyWithImpl<$Res, $Val extends TodayStats>
             streak: null == streak
                 ? _value.streak
                 : streak // ignore: cast_nullable_to_non_nullable
+                      as int,
+            lifetimeMinutes: null == lifetimeMinutes
+                ? _value.lifetimeMinutes
+                : lifetimeMinutes // ignore: cast_nullable_to_non_nullable
+                      as int,
+            lifetimeSessionCount: null == lifetimeSessionCount
+                ? _value.lifetimeSessionCount
+                : lifetimeSessionCount // ignore: cast_nullable_to_non_nullable
+                      as int,
+            monthlyMinutes: null == monthlyMinutes
+                ? _value.monthlyMinutes
+                : monthlyMinutes // ignore: cast_nullable_to_non_nullable
                       as int,
           )
           as $Val,
@@ -86,7 +111,14 @@ abstract class _$$TodayStatsImplCopyWith<$Res>
   ) = __$$TodayStatsImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({int totalMinutes, int sessionCount, int streak});
+  $Res call({
+    int totalMinutes,
+    int sessionCount,
+    int streak,
+    int lifetimeMinutes,
+    int lifetimeSessionCount,
+    int monthlyMinutes,
+  });
 }
 
 /// @nodoc
@@ -106,6 +138,9 @@ class __$$TodayStatsImplCopyWithImpl<$Res>
     Object? totalMinutes = null,
     Object? sessionCount = null,
     Object? streak = null,
+    Object? lifetimeMinutes = null,
+    Object? lifetimeSessionCount = null,
+    Object? monthlyMinutes = null,
   }) {
     return _then(
       _$TodayStatsImpl(
@@ -121,6 +156,18 @@ class __$$TodayStatsImplCopyWithImpl<$Res>
             ? _value.streak
             : streak // ignore: cast_nullable_to_non_nullable
                   as int,
+        lifetimeMinutes: null == lifetimeMinutes
+            ? _value.lifetimeMinutes
+            : lifetimeMinutes // ignore: cast_nullable_to_non_nullable
+                  as int,
+        lifetimeSessionCount: null == lifetimeSessionCount
+            ? _value.lifetimeSessionCount
+            : lifetimeSessionCount // ignore: cast_nullable_to_non_nullable
+                  as int,
+        monthlyMinutes: null == monthlyMinutes
+            ? _value.monthlyMinutes
+            : monthlyMinutes // ignore: cast_nullable_to_non_nullable
+                  as int,
       ),
     );
   }
@@ -133,6 +180,9 @@ class _$TodayStatsImpl implements _TodayStats {
     required this.totalMinutes,
     required this.sessionCount,
     required this.streak,
+    required this.lifetimeMinutes,
+    required this.lifetimeSessionCount,
+    required this.monthlyMinutes,
   });
 
   @override
@@ -141,10 +191,16 @@ class _$TodayStatsImpl implements _TodayStats {
   final int sessionCount;
   @override
   final int streak;
+  @override
+  final int lifetimeMinutes;
+  @override
+  final int lifetimeSessionCount;
+  @override
+  final int monthlyMinutes;
 
   @override
   String toString() {
-    return 'TodayStats(totalMinutes: $totalMinutes, sessionCount: $sessionCount, streak: $streak)';
+    return 'TodayStats(totalMinutes: $totalMinutes, sessionCount: $sessionCount, streak: $streak, lifetimeMinutes: $lifetimeMinutes, lifetimeSessionCount: $lifetimeSessionCount, monthlyMinutes: $monthlyMinutes)';
   }
 
   @override
@@ -156,12 +212,25 @@ class _$TodayStatsImpl implements _TodayStats {
                 other.totalMinutes == totalMinutes) &&
             (identical(other.sessionCount, sessionCount) ||
                 other.sessionCount == sessionCount) &&
-            (identical(other.streak, streak) || other.streak == streak));
+            (identical(other.streak, streak) || other.streak == streak) &&
+            (identical(other.lifetimeMinutes, lifetimeMinutes) ||
+                other.lifetimeMinutes == lifetimeMinutes) &&
+            (identical(other.lifetimeSessionCount, lifetimeSessionCount) ||
+                other.lifetimeSessionCount == lifetimeSessionCount) &&
+            (identical(other.monthlyMinutes, monthlyMinutes) ||
+                other.monthlyMinutes == monthlyMinutes));
   }
 
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, totalMinutes, sessionCount, streak);
+  int get hashCode => Object.hash(
+    runtimeType,
+    totalMinutes,
+    sessionCount,
+    streak,
+    lifetimeMinutes,
+    lifetimeSessionCount,
+    monthlyMinutes,
+  );
 
   /// Create a copy of TodayStats
   /// with the given fields replaced by the non-null parameter values.
@@ -177,6 +246,9 @@ abstract class _TodayStats implements TodayStats {
     required final int totalMinutes,
     required final int sessionCount,
     required final int streak,
+    required final int lifetimeMinutes,
+    required final int lifetimeSessionCount,
+    required final int monthlyMinutes,
   }) = _$TodayStatsImpl;
 
   @override
@@ -185,6 +257,12 @@ abstract class _TodayStats implements TodayStats {
   int get sessionCount;
   @override
   int get streak;
+  @override
+  int get lifetimeMinutes;
+  @override
+  int get lifetimeSessionCount;
+  @override
+  int get monthlyMinutes;
 
   /// Create a copy of TodayStats
   /// with the given fields replaced by the non-null parameter values.

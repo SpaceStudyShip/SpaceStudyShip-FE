@@ -93,9 +93,9 @@ class _TimerHistoryScreenState extends ConsumerState<TimerHistoryScreen> {
                     right: 20.w,
                     bottom: AppSpacing.s24,
                   ),
-                  children: _groupByDate(page.items)
-                      .map(_buildDateGroup)
-                      .toList(),
+                  children: _groupByDate(
+                    page.items,
+                  ).map(_buildDateGroup).toList(),
                 ),
         ),
         if (page.totalPages > 1)

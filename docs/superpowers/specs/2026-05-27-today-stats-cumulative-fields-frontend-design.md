@@ -26,9 +26,12 @@
 
 ## 2. 솔루션 개요
 
-서버가 반환하기 시작한 누적 필드 3개를 클라이언트가 수신·노출한다. 인증 모드는 서버 값을 신뢰하고, 게스트 모드는 현재 로컬 합산 로직을 그대로 유지한다.
+서버가 반환하기 시작한 누적 필드 3개를 클라이언트가 수신·노출한다. `todayStatsNotifierProvider` 가 **단일 진실 소스(single source of truth)** 가 되도록 정리한다.
 
-`today_stats_provider.dart` 에 이미 존재하는 인증/게스트 분기 패턴을 그대로 활용한다 — 새 provider 를 만들지 않고 기존 `todayStatsNotifierProvider` 결과를 `study_stats_provider` 에서 끌어 쓴다.
+- **인증 모드**: 서버 응답을 그대로 신뢰 — 이미 동작 중.
+- **게스트 모드**: 기존에는 3필드만 채웠지만, 이제 로컬 세션을 fold 해서 6필드 모두 채운다. 이슈 명시("게스트 모드는 로컬 전체 세션이 메모리에 있어 정확함")와 일치.
+
+`study_stats_provider.dart` 의 누적 통계 3개 함수는 단순히 `todayStatsNotifierProvider.valueOrNull?.X ?? 0` 한 줄로 위임 — 자체 분기 로직 제거. 더 이상 `isAuthenticatedProvider` 를 watch 하지 않는다.
 
 ---
 
@@ -38,12 +41,14 @@
 |---|---|
 | `lib/features/timer/data/models/today_stats_response_model.dart` | 필드 3개 (`lifetimeMinutes`, `lifetimeSessionCount`, `monthlyMinutes`) 추가 + `toEntity()` 매핑 갱신 |
 | `lib/features/timer/domain/entities/today_stats.dart` | 동일 3필드 추가 + `TodayStats.empty()` 의 0 초기값 6필드로 확장 |
-| `lib/features/timer/presentation/providers/study_stats_provider.dart` | `totalStudyMinutes`, `totalSessionCount`, `monthlyStudyMinutes` 에 인증/게스트 분기 추가 |
+| `lib/features/timer/presentation/providers/today_stats_provider.dart` | **게스트 분기에서 6필드 모두 로컬 fold 로 채우도록 확장**. 컴파일 에러 회피 + 단일 진실 소스 보장 |
+| `lib/features/timer/presentation/providers/study_stats_provider.dart` | `totalStudyMinutes`, `totalSessionCount`, `monthlyStudyMinutes` 를 `todayStatsNotifierProvider` 위임 한 줄로 단순화. `isAuthenticatedProvider` watch 제거 |
 | `*.freezed.dart`, `*.g.dart` | `flutter pub run build_runner build --delete-conflicting-outputs` 로 재생성 |
 | `test/features/timer/data/models/today_stats_response_model_test.dart` | 새 필드 직렬화 + `toEntity()` 매핑 검증 추가 |
-| `test/features/timer/domain/entities/today_stats_test.dart` | 새 필드 + `empty()` 검증 추가 |
-| `test/features/timer/presentation/providers/study_stats_provider_test.dart` | **신규 파일**. 3개 provider 의 인증/게스트 분기 검증 |
-| `test/features/timer/presentation/providers/today_stats_provider_test.dart` | 회귀 가드 — 기존 케이스 통과 유지 (변경 없음) |
+| `test/features/timer/domain/entities/today_stats_test.dart` | 새 필드 + `empty()` 검증 추가, 기존 fixture 6필드로 확장 |
+| `test/features/timer/data/repositories/timer_session_repository_impl_test.dart` | **회귀 가드** — `TodayStatsResponseModel(...)` 직접 생성 fixture 6필드로 확장 |
+| `test/features/timer/presentation/providers/today_stats_provider_test.dart` | **회귀 가드** — `TodayStats(...)` 직접 생성 fixture 6필드로 확장 + 게스트 분기 새 필드 검증 보강 |
+| `test/features/timer/presentation/providers/study_stats_provider_test.dart` | **신규 파일**. `todayStatsNotifierProvider` override 만으로 3개 provider 검증 |
 
 ---
 
@@ -106,52 +111,79 @@ class TodayStats with _$TodayStats {
 }
 ```
 
-### 4.3 Provider 리팩터링 — `study_stats_provider.dart`
+### 4.3 today_stats_provider 게스트 분기 — 6필드 fold 로 확장
 
-3개 함수에 인증/게스트 분기 추가. 시그니처는 **동기 `int` 그대로 유지** — 인증 모드에서 `todayStatsNotifierProvider` 가 로딩 중이거나 에러일 때는 `valueOrNull?.X ?? 0` 패턴으로 0 fallback.
+Entity 가 6필드 `required` 가 되면서 현재 게스트 분기(`today_stats_provider.dart:39`) 가 컴파일 에러. 게스트 모드에서는 로컬 세션 전체가 메모리에 있으므로 fold 로 정확하게 계산 가능 — 이슈가 명시한 의도와 일치.
 
 ```dart
-import '../../../auth/presentation/providers/auth_provider.dart';
+@override
+Future<TodayStats> build() async {
+  final isAuthenticated = ref.watch(isAuthenticatedProvider);
+  final repository = ref.watch(timerSessionRepositoryProvider);
+
+  if (isAuthenticated) {
+    return repository.getTodayStats();
+  }
+
+  // 게스트 모드: 로컬 세션 fold
+  final sessions = repository.getSessions();
+  final now = DateTime.now();
+  final today = DateTime(now.year, now.month, now.day);
+  final tomorrow = today.add(const Duration(days: 1));
+  final monthStart = DateTime(now.year, now.month, 1);
+
+  final todaySessions = sessions.where((s) {
+    return s.startedAt.isAfter(today.subtract(const Duration(seconds: 1))) &&
+        s.startedAt.isBefore(tomorrow);
+  }).toList();
+
+  final todayMinutes =
+      todaySessions.fold<int>(0, (sum, s) => sum + s.durationMinutes);
+  final lifetimeMinutes =
+      sessions.fold<int>(0, (sum, s) => sum + s.durationMinutes);
+  final monthlyMinutes = sessions
+      .where((s) => !s.startedAt.isBefore(monthStart))
+      .fold<int>(0, (sum, s) => sum + s.durationMinutes);
+
+  return TodayStats(
+    totalMinutes: todayMinutes,
+    sessionCount: todaySessions.length,
+    streak: todaySessions.isEmpty ? 0 : 1,
+    lifetimeMinutes: lifetimeMinutes,
+    lifetimeSessionCount: sessions.length,
+    monthlyMinutes: monthlyMinutes,
+  );
+}
+```
+
+기존 streak 계산("오늘 세션 있으면 1, 없으면 0") 은 변경하지 않음 — 이슈 범위 밖.
+
+### 4.4 study_stats_provider 단순화 — `todayStatsNotifierProvider` 위임
+
+3개 함수를 한 줄로 단순화. 더 이상 `isAuthenticatedProvider` 를 watch 하지 않고, 분기 책임을 전부 `todayStatsNotifierProvider` 에 위임. 시그니처는 동기 `int` 그대로 유지 — 로딩/에러시 `valueOrNull?.X ?? 0` fallback.
+
+```dart
 import 'today_stats_provider.dart';
 
 @riverpod
 int totalStudyMinutes(Ref ref) {
-  if (ref.watch(isAuthenticatedProvider)) {
-    return ref.watch(todayStatsNotifierProvider).valueOrNull?.lifetimeMinutes ?? 0;
-  }
-  final sessions =
-      ref.watch(timerSessionListNotifierProvider).valueOrNull ?? [];
-  return sessions.fold<int>(0, (sum, s) => sum + s.durationMinutes);
+  return ref.watch(todayStatsNotifierProvider).valueOrNull?.lifetimeMinutes ?? 0;
 }
 
 @riverpod
 int totalSessionCount(Ref ref) {
-  if (ref.watch(isAuthenticatedProvider)) {
-    return ref.watch(todayStatsNotifierProvider).valueOrNull?.lifetimeSessionCount ?? 0;
-  }
-  final sessions =
-      ref.watch(timerSessionListNotifierProvider).valueOrNull ?? [];
-  return sessions.length;
+  return ref.watch(todayStatsNotifierProvider).valueOrNull?.lifetimeSessionCount ?? 0;
 }
 
 @riverpod
 int monthlyStudyMinutes(Ref ref) {
-  if (ref.watch(isAuthenticatedProvider)) {
-    return ref.watch(todayStatsNotifierProvider).valueOrNull?.monthlyMinutes ?? 0;
-  }
-  final sessions =
-      ref.watch(timerSessionListNotifierProvider).valueOrNull ?? [];
-  final now = DateTime.now();
-  final monthStart = DateTime(now.year, now.month, 1);
-  return sessions
-      .where((s) => !s.startedAt.isBefore(monthStart))
-      .fold<int>(0, (sum, s) => sum + s.durationMinutes);
+  return ref.watch(todayStatsNotifierProvider).valueOrNull?.monthlyMinutes ?? 0;
 }
 ```
 
 **손대지 않는 함수**: `todayStudyMinutes`, `weeklyStudyMinutes`, `currentStreak`. 이슈가 명시한 3개만 변경.
 
-### 4.4 무효화 트리거 — 변경 없음
+### 4.5 무효화 트리거 — 변경 없음
 
 `todayStatsNotifierProvider` 는 이미 4곳에서 invalidate 된다:
 
@@ -233,17 +265,26 @@ test('empty() — 6 필드 모두 0', () {
 
 ### 6.3 Provider 테스트 — `study_stats_provider_test.dart` (신규)
 
-`isAuthenticatedProvider` overrride + `todayStatsNotifierProvider` override + `timerSessionListNotifierProvider` override 로 4가지 시나리오 검증:
+`todayStatsNotifierProvider` override 만으로 3가지 시나리오 검증 — 인증/게스트 분기 책임이 todayStatsNotifierProvider 로 이동했으므로 study_stats_provider 자체는 위임만 검증:
 
-1. **인증 + todayStats 로드 완료** → `totalStudyMinutes = lifetimeMinutes`, `totalSessionCount = lifetimeSessionCount`, `monthlyStudyMinutes = monthlyMinutes`
-2. **인증 + todayStats 로딩 중** (AsyncLoading) → 세 provider 모두 0 반환
-3. **인증 + todayStats 에러** (AsyncError) → 세 provider 모두 0 반환 (valueOrNull fallback)
-4. **게스트 + 로컬 세션 N개** → 기존 합산 로직 결과
-5. **게스트 + 로컬 세션 비어있음** → 0 반환
+1. **todayStats 로드 완료** → `totalStudyMinutes = lifetimeMinutes`, `totalSessionCount = lifetimeSessionCount`, `monthlyStudyMinutes = monthlyMinutes`
+2. **todayStats 로딩 중** (`AsyncValue<TodayStats>.loading()` override) → 세 provider 모두 0 반환
+3. **todayStats 에러** (`AsyncValue<TodayStats>.error()` override) → 세 provider 모두 0 반환
 
-### 6.4 회귀 가드
+### 6.4 회귀 가드 — 컴파일 통과 위한 fixture 갱신
 
-`today_stats_provider_test.dart` 의 기존 2개 케이스 (인증 모드, 게스트 모드) 가 그대로 통과해야 한다. `TodayStats` 생성자에 필드 3개가 추가되므로 테스트 픽스처 업데이트 필요 (모두 0 으로) — 컴파일 통과만 확보.
+DTO/Entity 가 6필드 `required` 가 되면서 직접 생성자 호출하는 기존 테스트 파일들이 모두 컴파일 에러. 다음 4개 파일에서 fixture 를 6필드로 확장 — 추가 필드는 모두 0:
+
+| 파일:라인 | 현재 | 갱신 |
+|---|---|---|
+| `today_stats_test.dart:6` | `TodayStats(totalMinutes: 180, sessionCount: 3, streak: 7)` | 6필드. 추가 3필드는 0 또는 의미있는 값 |
+| `today_stats_test.dart:15` | `TodayStats(totalMinutes: 0, sessionCount: 0, streak: 0)` | 6필드 모두 0 — `empty()` 검증 케이스 |
+| `today_stats_provider_test.dart:26` | `TodayStats(totalMinutes: 180, sessionCount: 3, streak: 7)` | 인증 모드 케이스. 6필드 의미있는 값 |
+| `timer_session_repository_impl_test.dart:173-177` | `TodayStatsResponseModel(...)` 3필드 | 6필드 |
+
+추가로 `today_stats_provider_test.dart` 의 게스트 분기 케이스에 lifetime/monthly 검증 보강:
+
+- 오늘 세션 2개(60+30분) + 어제 세션 1개(40분) 시나리오 → `totalMinutes=90`, `lifetimeMinutes=130`, `lifetimeSessionCount=3`, `monthlyMinutes` (이번 달 시작 이후 합산값)
 
 ---
 
@@ -252,10 +293,10 @@ test('empty() — 6 필드 모두 0', () {
 다음은 이 이슈에서 **건드리지 않는다**. 별도 이슈로 다룰 사안:
 
 - `todayStudyMinutes`, `weeklyStudyMinutes`, `currentStreak` provider — 이슈가 지목한 3개만 변경.
-- `today_stats_provider.dart` 의 게스트 분기 — 현재 로컬 계산 그대로 유지.
-- `today_stats_provider.dart` 의 인증 분기 — 이미 `repository.getTodayStats()` 위임 패턴 동작 중.
-- 새 invalidate 트리거 — 기존 4곳으로 충분.
-- UI 신규 컴포넌트 — 시그니처가 동일해서 호출처 수정 불필요.
+- `today_stats_provider.dart` 게스트 분기의 **streak 계산 로직** — 현재 "오늘 있으면 1, 없으면 0" 단순 로직 그대로. lifetime/monthly 필드 추가만 진행.
+- `today_stats_provider.dart` 의 인증 분기 — 이미 `repository.getTodayStats()` 위임 패턴 동작 중. 변경 없음.
+- 새 invalidate 트리거 — 기존 4곳(timer save 1, auth 3) 으로 충분.
+- UI 신규 컴포넌트 — 시그니처가 동일해서 호출처(profile_screen, badge_provider) 수정 불필요.
 - 백엔드 작업 — 이미 완료, `docs/api-docs.json` 동기화 끝남.
 
 ---
@@ -265,5 +306,7 @@ test('empty() — 6 필드 모두 0', () {
 - [ ] `flutter pub run build_runner build --delete-conflicting-outputs` 성공
 - [ ] `flutter analyze` 경고 0
 - [ ] `flutter test test/features/timer/` 전부 통과
-- [ ] 기존 `today_stats_provider_test.dart` 회귀 없음 (TodayStats 생성자 인자 추가만 반영)
-- [ ] `git grep -n 'TodayStats('` 결과의 모든 호출처 — 신규 6필드 또는 `.empty()` 사용 일관
+- [ ] `git grep -n 'TodayStats('` 결과의 모든 호출처 — 신규 6필드 또는 `.empty()` 사용 일관 (§6.4 4개 파일 갱신 완료 여부 확인)
+- [ ] `git grep -n 'TodayStatsResponseModel('` 결과 — `timer_session_repository_impl_test.dart` 픽스처 6필드 갱신 완료
+- [ ] profile_screen / badge_provider 호출처 — 코드 미수정 상태로 정상 동작 (시그니처 동일)
+- [ ] flutter run 으로 인증 사용자 프로필 화면 진입 → "공부 시간" 카드가 누적값 표시 (서버 정확값 검증)

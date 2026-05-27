@@ -32,10 +32,14 @@ class TodayStatsNotifier extends _$TodayStatsNotifier {
           s.startedAt.isBefore(tomorrow);
     }).toList();
 
-    final todayMinutes =
-        todaySessions.fold<int>(0, (sum, s) => sum + s.durationMinutes);
-    final lifetimeMinutes =
-        sessions.fold<int>(0, (sum, s) => sum + s.durationMinutes);
+    final todayMinutes = todaySessions.fold<int>(
+      0,
+      (sum, s) => sum + s.durationMinutes,
+    );
+    final lifetimeMinutes = sessions.fold<int>(
+      0,
+      (sum, s) => sum + s.durationMinutes,
+    );
     final monthlyMinutes = sessions
         .where((s) => !s.startedAt.isBefore(monthStart))
         .fold<int>(0, (sum, s) => sum + s.durationMinutes);

@@ -24,13 +24,18 @@ int monthlyStudyMinutes(Ref ref) {
 /// 전체 총 공부 시간 (분) — todayStats 위임
 @riverpod
 int totalStudyMinutes(Ref ref) {
-  return ref.watch(todayStatsNotifierProvider).valueOrNull?.lifetimeMinutes ?? 0;
+  return ref.watch(todayStatsNotifierProvider).valueOrNull?.lifetimeMinutes ??
+      0;
 }
 
 /// 전체 세션 수 — todayStats 위임
 @riverpod
 int totalSessionCount(Ref ref) {
-  return ref.watch(todayStatsNotifierProvider).valueOrNull?.lifetimeSessionCount ?? 0;
+  return ref
+          .watch(todayStatsNotifierProvider)
+          .valueOrNull
+          ?.lifetimeSessionCount ??
+      0;
 }
 
 // === Streak ===

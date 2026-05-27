@@ -82,12 +82,17 @@ void main() {
 
   test('getTodayStats: GET 호출', () async {
     when(() => adapter.fetch(any(), any(), any())).thenAnswer(
-      (inv) async =>
-          jsonBody(200, '{"totalMinutes":180,"sessionCount":3,"streak":7}'),
+      (inv) async => jsonBody(
+        200,
+        '{"totalMinutes":180,"sessionCount":3,"streak":7,"lifetimeMinutes":12450,"lifetimeSessionCount":287,"monthlyMinutes":1820}',
+      ),
     );
 
     final res = await api.getTodayStats();
     expect(res.totalMinutes, 180);
     expect(res.streak, 7);
+    expect(res.lifetimeMinutes, 12450);
+    expect(res.lifetimeSessionCount, 287);
+    expect(res.monthlyMinutes, 1820);
   });
 }

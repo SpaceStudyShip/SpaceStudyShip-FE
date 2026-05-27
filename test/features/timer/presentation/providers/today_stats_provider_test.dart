@@ -22,8 +22,14 @@ void main() {
 
   test('인증 모드: repo.getTodayStats() 결과 그대로 반환', () async {
     when(() => repo.getTodayStats()).thenAnswer(
-      (_) async =>
-          const TodayStats(totalMinutes: 180, sessionCount: 3, streak: 7),
+      (_) async => const TodayStats(
+        totalMinutes: 180,
+        sessionCount: 3,
+        streak: 7,
+        lifetimeMinutes: 12450,
+        lifetimeSessionCount: 287,
+        monthlyMinutes: 1820,
+      ),
     );
     container = ProviderContainer(
       overrides: [
@@ -34,6 +40,7 @@ void main() {
     final stats = await container.read(todayStatsNotifierProvider.future);
     expect(stats.totalMinutes, 180);
     expect(stats.streak, 7);
+    expect(stats.lifetimeMinutes, 12450);
   });
 
   test('게스트 모드: 로컬 세션으로 직접 계산 (오늘 KST 기준)', () async {
@@ -66,5 +73,47 @@ void main() {
     expect(stats.sessionCount, 2);
     expect(stats.totalMinutes, 90);
     expect(stats.streak, 1);
+    expect(stats.lifetimeMinutes, 90); // 게스트는 전체 = today 합산
+    expect(stats.lifetimeSessionCount, 2);
+    expect(stats.monthlyMinutes, 90);
+  });
+
+  test('게스트 모드: 다일 streak 계산 — 오늘·어제·그저께 연속 공부', () async {
+    final now = DateTime.now();
+    final todayNoon = DateTime(now.year, now.month, now.day, 12, 0);
+    when(() => repo.getSessions()).thenReturn([
+      TimerSessionEntity(
+        id: 's-today',
+        startedAt: todayNoon,
+        endedAt: todayNoon.add(const Duration(hours: 1)),
+        durationMinutes: 60,
+      ),
+      TimerSessionEntity(
+        id: 's-yesterday',
+        startedAt: todayNoon.subtract(const Duration(days: 1)),
+        endedAt: todayNoon
+            .subtract(const Duration(days: 1))
+            .add(const Duration(hours: 1)),
+        durationMinutes: 60,
+      ),
+      TimerSessionEntity(
+        id: 's-day-before',
+        startedAt: todayNoon.subtract(const Duration(days: 2)),
+        endedAt: todayNoon
+            .subtract(const Duration(days: 2))
+            .add(const Duration(hours: 1)),
+        durationMinutes: 60,
+      ),
+    ]);
+
+    container = ProviderContainer(
+      overrides: [
+        isAuthenticatedProvider.overrideWith((ref) => false),
+        timerSessionRepositoryProvider.overrideWith((ref) => repo),
+      ],
+    );
+
+    final stats = await container.read(todayStatsNotifierProvider.future);
+    expect(stats.streak, 3);
   });
 }

@@ -26,6 +26,9 @@ mixin _$TodayStatsResponseModel {
   int get totalMinutes => throw _privateConstructorUsedError;
   int get sessionCount => throw _privateConstructorUsedError;
   int get streak => throw _privateConstructorUsedError;
+  int get lifetimeMinutes => throw _privateConstructorUsedError;
+  int get lifetimeSessionCount => throw _privateConstructorUsedError;
+  int get monthlyMinutes => throw _privateConstructorUsedError;
 
   /// Serializes this TodayStatsResponseModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -44,7 +47,14 @@ abstract class $TodayStatsResponseModelCopyWith<$Res> {
     $Res Function(TodayStatsResponseModel) then,
   ) = _$TodayStatsResponseModelCopyWithImpl<$Res, TodayStatsResponseModel>;
   @useResult
-  $Res call({int totalMinutes, int sessionCount, int streak});
+  $Res call({
+    int totalMinutes,
+    int sessionCount,
+    int streak,
+    int lifetimeMinutes,
+    int lifetimeSessionCount,
+    int monthlyMinutes,
+  });
 }
 
 /// @nodoc
@@ -68,6 +78,9 @@ class _$TodayStatsResponseModelCopyWithImpl<
     Object? totalMinutes = null,
     Object? sessionCount = null,
     Object? streak = null,
+    Object? lifetimeMinutes = null,
+    Object? lifetimeSessionCount = null,
+    Object? monthlyMinutes = null,
   }) {
     return _then(
       _value.copyWith(
@@ -82,6 +95,18 @@ class _$TodayStatsResponseModelCopyWithImpl<
             streak: null == streak
                 ? _value.streak
                 : streak // ignore: cast_nullable_to_non_nullable
+                      as int,
+            lifetimeMinutes: null == lifetimeMinutes
+                ? _value.lifetimeMinutes
+                : lifetimeMinutes // ignore: cast_nullable_to_non_nullable
+                      as int,
+            lifetimeSessionCount: null == lifetimeSessionCount
+                ? _value.lifetimeSessionCount
+                : lifetimeSessionCount // ignore: cast_nullable_to_non_nullable
+                      as int,
+            monthlyMinutes: null == monthlyMinutes
+                ? _value.monthlyMinutes
+                : monthlyMinutes // ignore: cast_nullable_to_non_nullable
                       as int,
           )
           as $Val,
@@ -98,7 +123,14 @@ abstract class _$$TodayStatsResponseModelImplCopyWith<$Res>
   ) = __$$TodayStatsResponseModelImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({int totalMinutes, int sessionCount, int streak});
+  $Res call({
+    int totalMinutes,
+    int sessionCount,
+    int streak,
+    int lifetimeMinutes,
+    int lifetimeSessionCount,
+    int monthlyMinutes,
+  });
 }
 
 /// @nodoc
@@ -122,6 +154,9 @@ class __$$TodayStatsResponseModelImplCopyWithImpl<$Res>
     Object? totalMinutes = null,
     Object? sessionCount = null,
     Object? streak = null,
+    Object? lifetimeMinutes = null,
+    Object? lifetimeSessionCount = null,
+    Object? monthlyMinutes = null,
   }) {
     return _then(
       _$TodayStatsResponseModelImpl(
@@ -137,6 +172,18 @@ class __$$TodayStatsResponseModelImplCopyWithImpl<$Res>
             ? _value.streak
             : streak // ignore: cast_nullable_to_non_nullable
                   as int,
+        lifetimeMinutes: null == lifetimeMinutes
+            ? _value.lifetimeMinutes
+            : lifetimeMinutes // ignore: cast_nullable_to_non_nullable
+                  as int,
+        lifetimeSessionCount: null == lifetimeSessionCount
+            ? _value.lifetimeSessionCount
+            : lifetimeSessionCount // ignore: cast_nullable_to_non_nullable
+                  as int,
+        monthlyMinutes: null == monthlyMinutes
+            ? _value.monthlyMinutes
+            : monthlyMinutes // ignore: cast_nullable_to_non_nullable
+                  as int,
       ),
     );
   }
@@ -149,6 +196,9 @@ class _$TodayStatsResponseModelImpl extends _TodayStatsResponseModel {
     required this.totalMinutes,
     required this.sessionCount,
     required this.streak,
+    required this.lifetimeMinutes,
+    required this.lifetimeSessionCount,
+    required this.monthlyMinutes,
   }) : super._();
 
   factory _$TodayStatsResponseModelImpl.fromJson(Map<String, dynamic> json) =>
@@ -160,10 +210,16 @@ class _$TodayStatsResponseModelImpl extends _TodayStatsResponseModel {
   final int sessionCount;
   @override
   final int streak;
+  @override
+  final int lifetimeMinutes;
+  @override
+  final int lifetimeSessionCount;
+  @override
+  final int monthlyMinutes;
 
   @override
   String toString() {
-    return 'TodayStatsResponseModel(totalMinutes: $totalMinutes, sessionCount: $sessionCount, streak: $streak)';
+    return 'TodayStatsResponseModel(totalMinutes: $totalMinutes, sessionCount: $sessionCount, streak: $streak, lifetimeMinutes: $lifetimeMinutes, lifetimeSessionCount: $lifetimeSessionCount, monthlyMinutes: $monthlyMinutes)';
   }
 
   @override
@@ -175,13 +231,26 @@ class _$TodayStatsResponseModelImpl extends _TodayStatsResponseModel {
                 other.totalMinutes == totalMinutes) &&
             (identical(other.sessionCount, sessionCount) ||
                 other.sessionCount == sessionCount) &&
-            (identical(other.streak, streak) || other.streak == streak));
+            (identical(other.streak, streak) || other.streak == streak) &&
+            (identical(other.lifetimeMinutes, lifetimeMinutes) ||
+                other.lifetimeMinutes == lifetimeMinutes) &&
+            (identical(other.lifetimeSessionCount, lifetimeSessionCount) ||
+                other.lifetimeSessionCount == lifetimeSessionCount) &&
+            (identical(other.monthlyMinutes, monthlyMinutes) ||
+                other.monthlyMinutes == monthlyMinutes));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, totalMinutes, sessionCount, streak);
+  int get hashCode => Object.hash(
+    runtimeType,
+    totalMinutes,
+    sessionCount,
+    streak,
+    lifetimeMinutes,
+    lifetimeSessionCount,
+    monthlyMinutes,
+  );
 
   /// Create a copy of TodayStatsResponseModel
   /// with the given fields replaced by the non-null parameter values.
@@ -205,6 +274,9 @@ abstract class _TodayStatsResponseModel extends TodayStatsResponseModel {
     required final int totalMinutes,
     required final int sessionCount,
     required final int streak,
+    required final int lifetimeMinutes,
+    required final int lifetimeSessionCount,
+    required final int monthlyMinutes,
   }) = _$TodayStatsResponseModelImpl;
   const _TodayStatsResponseModel._() : super._();
 
@@ -217,6 +289,12 @@ abstract class _TodayStatsResponseModel extends TodayStatsResponseModel {
   int get sessionCount;
   @override
   int get streak;
+  @override
+  int get lifetimeMinutes;
+  @override
+  int get lifetimeSessionCount;
+  @override
+  int get monthlyMinutes;
 
   /// Create a copy of TodayStatsResponseModel
   /// with the given fields replaced by the non-null parameter values.

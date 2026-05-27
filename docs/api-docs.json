@@ -386,7 +386,11 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/TimerSessionListResponse"
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": "UNAUTHENTICATED_REQUEST",
+                  "message": "로그인이 필요합니다."
                 }
               }
             }
@@ -450,7 +454,11 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/TimerSessionCreateResponse"
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": "INTERNAL_SERVER_ERROR",
+                  "message": "서버 내부 오류가 발생했습니다."
                 }
               }
             }
@@ -1282,7 +1290,11 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/TodayStatsResponse"
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": "UNAUTHENTICATED_REQUEST",
+                  "message": "로그인이 필요합니다."
                 }
               }
             }
@@ -1468,7 +1480,11 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/FuelTransactionListResponse"
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": "UNAUTHENTICATED_REQUEST",
+                  "message": "로그인이 필요합니다."
                 }
               }
             }
@@ -1478,7 +1494,11 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/FuelTransactionListResponse"
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": "INTERNAL_SERVER_ERROR",
+                  "message": "서버 내부 오류가 발생했습니다."
                 }
               }
             }

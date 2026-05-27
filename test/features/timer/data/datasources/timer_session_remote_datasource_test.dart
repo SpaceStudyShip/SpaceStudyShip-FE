@@ -92,5 +92,7 @@ void main() {
     expect(res.totalMinutes, 180);
     expect(res.streak, 7);
     expect(res.lifetimeMinutes, 12450);
+    expect(res.lifetimeSessionCount, 287);
+    expect(res.monthlyMinutes, 1820);
   });
 }

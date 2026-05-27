@@ -183,6 +183,8 @@ void main() {
       expect(stats.totalMinutes, 180);
       expect(stats.streak, 7);
       expect(stats.lifetimeMinutes, 12450);
+      expect(stats.lifetimeSessionCount, 287);
+      expect(stats.monthlyMinutes, 1820);
     });
   });
 

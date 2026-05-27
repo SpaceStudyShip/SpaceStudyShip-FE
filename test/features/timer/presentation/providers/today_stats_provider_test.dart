@@ -77,4 +77,43 @@ void main() {
     expect(stats.lifetimeSessionCount, 2);
     expect(stats.monthlyMinutes, 90);
   });
+
+  test('게스트 모드: 다일 streak 계산 — 오늘·어제·그저께 연속 공부', () async {
+    final now = DateTime.now();
+    final todayNoon = DateTime(now.year, now.month, now.day, 12, 0);
+    when(() => repo.getSessions()).thenReturn([
+      TimerSessionEntity(
+        id: 's-today',
+        startedAt: todayNoon,
+        endedAt: todayNoon.add(const Duration(hours: 1)),
+        durationMinutes: 60,
+      ),
+      TimerSessionEntity(
+        id: 's-yesterday',
+        startedAt: todayNoon.subtract(const Duration(days: 1)),
+        endedAt: todayNoon
+            .subtract(const Duration(days: 1))
+            .add(const Duration(hours: 1)),
+        durationMinutes: 60,
+      ),
+      TimerSessionEntity(
+        id: 's-day-before',
+        startedAt: todayNoon.subtract(const Duration(days: 2)),
+        endedAt: todayNoon
+            .subtract(const Duration(days: 2))
+            .add(const Duration(hours: 1)),
+        durationMinutes: 60,
+      ),
+    ]);
+
+    container = ProviderContainer(
+      overrides: [
+        isAuthenticatedProvider.overrideWith((ref) => false),
+        timerSessionRepositoryProvider.overrideWith((ref) => repo),
+      ],
+    );
+
+    final stats = await container.read(todayStatsNotifierProvider.future);
+    expect(stats.streak, 3);
+  });
 }

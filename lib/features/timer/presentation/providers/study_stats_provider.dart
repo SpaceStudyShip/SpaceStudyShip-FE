@@ -1,37 +1,16 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../utils/timer_format_utils.dart';
-import 'timer_session_provider.dart';
 import 'today_stats_provider.dart';
 
 part 'study_stats_provider.g.dart';
 
-// === 일별/주별 통계 ===
+// === 일별 통계 ===
 
-/// 오늘 공부 시간 (분)
+/// 오늘 공부 시간 (분) — todayStats 위임
 @riverpod
 int todayStudyMinutes(Ref ref) {
-  final sessions =
-      ref.watch(timerSessionListNotifierProvider).valueOrNull ?? [];
-  final today = normalizeDate(DateTime.now());
-
-  return sessions
-      .where((s) => normalizeDate(s.startedAt) == today)
-      .fold<int>(0, (sum, s) => sum + s.durationMinutes);
-}
-
-/// 이번 주 공부 시간 (분) — 최근 7일
-@riverpod
-int weeklyStudyMinutes(Ref ref) {
-  final sessions =
-      ref.watch(timerSessionListNotifierProvider).valueOrNull ?? [];
-  final now = DateTime.now();
-  final weekStart = normalizeDate(now.subtract(const Duration(days: 6)));
-
-  return sessions
-      .where((s) => !normalizeDate(s.startedAt).isBefore(weekStart))
-      .fold<int>(0, (sum, s) => sum + s.durationMinutes);
+  return ref.watch(todayStatsNotifierProvider).valueOrNull?.totalMinutes ?? 0;
 }
 
 // === 월별/전체 통계 ===
@@ -56,32 +35,8 @@ int totalSessionCount(Ref ref) {
 
 // === Streak ===
 
-/// 연속 공부 일수 (streak)
+/// 연속 공부 일수 (streak) — todayStats 위임
 @riverpod
 int currentStreak(Ref ref) {
-  final sessions =
-      ref.watch(timerSessionListNotifierProvider).valueOrNull ?? [];
-  if (sessions.isEmpty) return 0;
-
-  // 세션이 있는 날짜 집합
-  final studyDates =
-      sessions.map((s) => normalizeDate(s.startedAt)).toSet().toList()
-        ..sort((a, b) => b.compareTo(a)); // 최신순
-
-  final today = normalizeDate(DateTime.now());
-  final yesterday = today.subtract(const Duration(days: 1));
-
-  // 오늘 또는 어제 공부하지 않았으면 streak 0
-  if (studyDates.first != today && studyDates.first != yesterday) return 0;
-
-  int streak = 1;
-  for (int i = 1; i < studyDates.length; i++) {
-    final diff = studyDates[i - 1].difference(studyDates[i]).inDays;
-    if (diff == 1) {
-      streak++;
-    } else {
-      break;
-    }
-  }
-  return streak;
+  return ref.watch(todayStatsNotifierProvider).valueOrNull?.streak ?? 0;
 }

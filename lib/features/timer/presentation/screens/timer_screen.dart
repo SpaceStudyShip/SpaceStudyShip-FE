@@ -113,7 +113,7 @@ class _TimerScreenState extends ConsumerState<TimerScreen> {
               child: Consumer(
                 builder: (context, ref, _) {
                   final todayMinutes = ref.watch(todayStudyMinutesProvider);
-                  final weeklyMinutes = ref.watch(weeklyStudyMinutesProvider);
+                  final monthlyMinutes = ref.watch(monthlyStudyMinutesProvider);
                   final streak = ref.watch(currentStreakProvider);
                   return Padding(
                     padding: AppPadding.horizontal20,
@@ -134,9 +134,9 @@ class _TimerScreenState extends ConsumerState<TimerScreen> {
                             color: AppColors.spaceDivider,
                           ),
                           SpaceStatItem(
-                            icon: Icons.date_range_rounded,
-                            label: '이번 주',
-                            value: formatMinutes(weeklyMinutes),
+                            icon: Icons.calendar_month_rounded,
+                            label: '이번 달',
+                            value: formatMinutes(monthlyMinutes),
                           ),
                           Container(
                             width: 1,

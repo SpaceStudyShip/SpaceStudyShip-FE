@@ -7,7 +7,7 @@ part of 'today_stats_provider.dart';
 // **************************************************************************
 
 String _$todayStatsNotifierHash() =>
-    r'36b4b93510cf2738ac95809c6573d3a881c4410b';
+    r'fc66cbacb28f5be7cfe7947a9a6499f882c80921';
 
 /// 오늘 공부 통계 provider.
 /// 인증 모드: 서버 GET /api/timer-sessions/today-stats 결과 신뢰.

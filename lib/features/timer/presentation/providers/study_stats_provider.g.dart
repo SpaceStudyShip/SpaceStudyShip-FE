@@ -6,9 +6,9 @@ part of 'study_stats_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$todayStudyMinutesHash() => r'945b739e7bb40dbb04d6d397d4cecb7a2664bf79';
+String _$todayStudyMinutesHash() => r'c9211d1880bad4ccae60eca4b69c8ed6f0ba0b00';
 
-/// 오늘 공부 시간 (분)
+/// 오늘 공부 시간 (분) — todayStats 위임
 ///
 /// Copied from [todayStudyMinutes].
 @ProviderFor(todayStudyMinutes)
@@ -25,26 +25,6 @@ final todayStudyMinutesProvider = AutoDisposeProvider<int>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef TodayStudyMinutesRef = AutoDisposeProviderRef<int>;
-String _$weeklyStudyMinutesHash() =>
-    r'f972b83f62e0641552e1fe32d5d04482e9f55074';
-
-/// 이번 주 공부 시간 (분) — 최근 7일
-///
-/// Copied from [weeklyStudyMinutes].
-@ProviderFor(weeklyStudyMinutes)
-final weeklyStudyMinutesProvider = AutoDisposeProvider<int>.internal(
-  weeklyStudyMinutes,
-  name: r'weeklyStudyMinutesProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$weeklyStudyMinutesHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef WeeklyStudyMinutesRef = AutoDisposeProviderRef<int>;
 String _$monthlyStudyMinutesHash() =>
     r'46281f77813a3b09026ab3aa09dbc3733e907a72';
 
@@ -103,9 +83,9 @@ final totalSessionCountProvider = AutoDisposeProvider<int>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef TotalSessionCountRef = AutoDisposeProviderRef<int>;
-String _$currentStreakHash() => r'695c3e5cc1b3eef210917de2240ab38f7a862007';
+String _$currentStreakHash() => r'e7f3905bd5bd21ca744b530a63022031b5d2ad03';
 
-/// 연속 공부 일수 (streak)
+/// 연속 공부 일수 (streak) — todayStats 위임
 ///
 /// Copied from [currentStreak].
 @ProviderFor(currentStreak)

@@ -8,6 +8,7 @@ import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../../../core/widgets/animations/entrance_animations.dart';
 import '../../../../core/utils/login_prompt_helper.dart';
+import '../../../../core/widgets/feedback/app_loading.dart';
 import '../../../../core/widgets/feedback/app_snackbar.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../../../core/widgets/states/space_empty_state.dart';
@@ -42,29 +43,7 @@ class ExploreScreen extends ConsumerWidget {
     final currentFuelAsync = ref.watch(currentFuelProvider);
     final currentFuel = currentFuelAsync.valueOrNull ?? 0;
     final isGuest = ref.watch(isGuestProvider);
-    final planets = ref.watch(explorationNotifierProvider);
-
-    // 현재 위치: 가장 마지막으로 해금된 행성
-    var currentPlanetId = '';
-    for (int i = planets.length - 1; i >= 0; i--) {
-      if (planets[i].isUnlocked) {
-        currentPlanetId = planets[i].id;
-        break;
-      }
-    }
-
-    // 상단/하단 inset 계산 (AppBar + 바텀 네비 영역까지 별 배경 확장)
-    final topInset = MediaQuery.of(context).padding.top + kToolbarHeight;
-    final bottomInset =
-        MediaQuery.of(context).padding.bottom + FloatingNavMetrics.totalHeight;
-
-    // 맵 전체 높이 계산 (AppBar + 바텀 네비 영역 포함)
-    final mapHeight =
-        topInset +
-        _mapTopPadding +
-        (planets.length - 1) * _planetSpacing +
-        _mapBottomPadding +
-        bottomInset;
+    final planetsAsync = ref.watch(explorationNotifierProvider);
 
     return Scaffold(
       backgroundColor: AppColors.spaceBackground,
@@ -90,18 +69,43 @@ class ExploreScreen extends ConsumerWidget {
           ),
         ],
       ),
-      body: planets.isEmpty
-          ? _buildEmptyState()
-          : _buildSpaceMap(
-              context,
-              ref,
-              planets,
-              currentPlanetId,
-              currentFuel,
-              isGuest,
-              mapHeight,
-              topInset,
-            ),
+      body: planetsAsync.when(
+        loading: () => const Center(child: AppLoading()),
+        error: (_, _) => _buildEmptyState(),
+        data: (planets) {
+          if (planets.isEmpty) return _buildEmptyState();
+
+          var currentPlanetId = '';
+          for (int i = planets.length - 1; i >= 0; i--) {
+            if (planets[i].isUnlocked) {
+              currentPlanetId = planets[i].id;
+              break;
+            }
+          }
+
+          final topInset = MediaQuery.of(context).padding.top + kToolbarHeight;
+          final bottomInset =
+              MediaQuery.of(context).padding.bottom +
+              FloatingNavMetrics.totalHeight;
+          final mapHeight =
+              topInset +
+              _mapTopPadding +
+              (planets.length - 1) * _planetSpacing +
+              _mapBottomPadding +
+              bottomInset;
+
+          return _buildSpaceMap(
+            context,
+            ref,
+            planets,
+            currentPlanetId,
+            currentFuel,
+            isGuest,
+            mapHeight,
+            topInset,
+          );
+        },
+      ),
     );
   }
 
@@ -231,7 +235,8 @@ class ExploreScreen extends ConsumerWidget {
         .read(explorationNotifierProvider.notifier)
         .canUnlockPlanet(planet.id);
     if (!canUnlock) {
-      final planets = ref.read(explorationNotifierProvider);
+      final planets =
+          ref.read(explorationNotifierProvider).valueOrNull ?? const [];
       final targetIndex = planets.indexWhere((p) => p.id == planet.id);
       if (targetIndex > 0) {
         final prevPlanet = planets[targetIndex - 1];

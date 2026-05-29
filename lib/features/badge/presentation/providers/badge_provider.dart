@@ -8,6 +8,7 @@ import '../../domain/entities/badge_entity.dart';
 import '../../domain/repositories/badge_repository.dart';
 import '../../../timer/presentation/providers/study_stats_provider.dart';
 import '../../../fuel/presentation/providers/fuel_provider.dart';
+import '../../../exploration/domain/entities/exploration_node_entity.dart';
 import '../../../exploration/presentation/providers/exploration_provider.dart';
 
 part 'badge_provider.g.dart';
@@ -56,14 +57,20 @@ class BadgeNotifier extends _$BadgeNotifier {
     final fuelStateAsync = ref.read(fuelNotifierProvider);
     final fuelState = fuelStateAsync.valueOrNull;
     if (fuelState == null) return []; // 잔량 아직 로드 전이면 배지 해금 평가 skip
-    final planets = ref.read(explorationNotifierProvider);
+    final planets =
+        ref.read(explorationNotifierProvider).valueOrNull ??
+        const <ExplorationNodeEntity>[];
     final unlockedPlanets = planets.where((p) => p.isUnlocked).length;
 
-    // 지역 해금 수 계산
+    // 지역 해금 수 계산 — 행성 응답에 내장된 progress(=cleared) 합산.
+    // 지역은 해금 시 즉시 cleared 되므로 clearedChildren == 해금 지역 수.
+    // regionListNotifierProvider를 행성마다 read하면 인증 모드에서 미방문
+    // 행성의 지역 API가 연쇄 호출되므로, 캐시된 progress를 사용한다.
+    final explorationRepo = ref.read(explorationRepositoryProvider);
     int unlockedRegions = 0;
     for (final planet in planets) {
-      final regions = ref.read(regionListNotifierProvider(planet.id));
-      unlockedRegions += regions.where((r) => r.isUnlocked).length;
+      final progress = await explorationRepo.getProgress(planet.id);
+      unlockedRegions += progress.clearedChildren;
     }
 
     // 히든 배지: 현재 시간 체크

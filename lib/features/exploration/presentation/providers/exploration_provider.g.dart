@@ -28,31 +28,48 @@ final explorationLocalDataSourceProvider =
 // ignore: unused_element
 typedef ExplorationLocalDataSourceRef =
     AutoDisposeProviderRef<ExplorationLocalDataSource>;
-String _$explorationRepositoryHash() =>
-    r'66f9f50ab132d74e023d5b2f096d2a7fbfaa6444';
+String _$explorationRemoteDataSourceHash() =>
+    r'2c06143a1f3225df177493831d068e4c49ad1570';
 
-/// 현재: 게스트/소셜 로그인 모두 로컬 Repository 사용
-/// 향후: isGuest == false 시 ExplorationRemoteRepositoryImpl로 교체
-///
-/// Copied from [explorationRepository].
-@ProviderFor(explorationRepository)
-final explorationRepositoryProvider =
-    AutoDisposeProvider<ExplorationRepository>.internal(
-      explorationRepository,
-      name: r'explorationRepositoryProvider',
+/// See also [explorationRemoteDataSource].
+@ProviderFor(explorationRemoteDataSource)
+final explorationRemoteDataSourceProvider =
+    Provider<ExplorationRemoteDataSource>.internal(
+      explorationRemoteDataSource,
+      name: r'explorationRemoteDataSourceProvider',
       debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
           ? null
-          : _$explorationRepositoryHash,
+          : _$explorationRemoteDataSourceHash,
       dependencies: null,
       allTransitiveDependencies: null,
     );
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef ExplorationRepositoryRef =
-    AutoDisposeProviderRef<ExplorationRepository>;
+typedef ExplorationRemoteDataSourceRef =
+    ProviderRef<ExplorationRemoteDataSource>;
+String _$explorationRepositoryHash() =>
+    r'cc330188bf19edd52acd58225758621eada93bbc';
+
+/// 인증 사용자는 서버, 게스트는 로컬 Repository.
+///
+/// Copied from [explorationRepository].
+@ProviderFor(explorationRepository)
+final explorationRepositoryProvider = Provider<ExplorationRepository>.internal(
+  explorationRepository,
+  name: r'explorationRepositoryProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$explorationRepositoryHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef ExplorationRepositoryRef = ProviderRef<ExplorationRepository>;
 String _$explorationProgressHash() =>
-    r'4bd32186a295bcf4e19a15bcd2802e05deb0b4d6';
+    r'fed6d083e814c046242a76f06f72f82eb594dbc3';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -75,22 +92,39 @@ class _SystemHash {
   }
 }
 
-/// 특정 행성의 진행도
+/// 특정 행성의 진행도.
+///
+/// 행성 목록 변경 시 갱신. (regionListNotifier를 watch하면 인증 모드에서
+/// 행성마다 지역 API가 호출되므로 행성 목록만 watch한다 — 서버 progress는
+/// 행성 응답에 내장.)
 ///
 /// Copied from [explorationProgress].
 @ProviderFor(explorationProgress)
 const explorationProgressProvider = ExplorationProgressFamily();
 
-/// 특정 행성의 진행도
+/// 특정 행성의 진행도.
+///
+/// 행성 목록 변경 시 갱신. (regionListNotifier를 watch하면 인증 모드에서
+/// 행성마다 지역 API가 호출되므로 행성 목록만 watch한다 — 서버 progress는
+/// 행성 응답에 내장.)
 ///
 /// Copied from [explorationProgress].
-class ExplorationProgressFamily extends Family<ExplorationProgressEntity> {
-  /// 특정 행성의 진행도
+class ExplorationProgressFamily
+    extends Family<AsyncValue<ExplorationProgressEntity>> {
+  /// 특정 행성의 진행도.
+  ///
+  /// 행성 목록 변경 시 갱신. (regionListNotifier를 watch하면 인증 모드에서
+  /// 행성마다 지역 API가 호출되므로 행성 목록만 watch한다 — 서버 progress는
+  /// 행성 응답에 내장.)
   ///
   /// Copied from [explorationProgress].
   const ExplorationProgressFamily();
 
-  /// 특정 행성의 진행도
+  /// 특정 행성의 진행도.
+  ///
+  /// 행성 목록 변경 시 갱신. (regionListNotifier를 watch하면 인증 모드에서
+  /// 행성마다 지역 API가 호출되므로 행성 목록만 watch한다 — 서버 progress는
+  /// 행성 응답에 내장.)
   ///
   /// Copied from [explorationProgress].
   ExplorationProgressProvider call(String planetId) {
@@ -119,12 +153,20 @@ class ExplorationProgressFamily extends Family<ExplorationProgressEntity> {
   String? get name => r'explorationProgressProvider';
 }
 
-/// 특정 행성의 진행도
+/// 특정 행성의 진행도.
+///
+/// 행성 목록 변경 시 갱신. (regionListNotifier를 watch하면 인증 모드에서
+/// 행성마다 지역 API가 호출되므로 행성 목록만 watch한다 — 서버 progress는
+/// 행성 응답에 내장.)
 ///
 /// Copied from [explorationProgress].
 class ExplorationProgressProvider
-    extends AutoDisposeProvider<ExplorationProgressEntity> {
-  /// 특정 행성의 진행도
+    extends AutoDisposeFutureProvider<ExplorationProgressEntity> {
+  /// 특정 행성의 진행도.
+  ///
+  /// 행성 목록 변경 시 갱신. (regionListNotifier를 watch하면 인증 모드에서
+  /// 행성마다 지역 API가 호출되므로 행성 목록만 watch한다 — 서버 progress는
+  /// 행성 응답에 내장.)
   ///
   /// Copied from [explorationProgress].
   ExplorationProgressProvider(String planetId)
@@ -155,7 +197,10 @@ class ExplorationProgressProvider
 
   @override
   Override overrideWith(
-    ExplorationProgressEntity Function(ExplorationProgressRef provider) create,
+    FutureOr<ExplorationProgressEntity> Function(
+      ExplorationProgressRef provider,
+    )
+    create,
   ) {
     return ProviderOverride(
       origin: this,
@@ -172,7 +217,7 @@ class ExplorationProgressProvider
   }
 
   @override
-  AutoDisposeProviderElement<ExplorationProgressEntity> createElement() {
+  AutoDisposeFutureProviderElement<ExplorationProgressEntity> createElement() {
     return _ExplorationProgressProviderElement(this);
   }
 
@@ -193,13 +238,13 @@ class ExplorationProgressProvider
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 mixin ExplorationProgressRef
-    on AutoDisposeProviderRef<ExplorationProgressEntity> {
+    on AutoDisposeFutureProviderRef<ExplorationProgressEntity> {
   /// The parameter `planetId` of this provider.
   String get planetId;
 }
 
 class _ExplorationProgressProviderElement
-    extends AutoDisposeProviderElement<ExplorationProgressEntity>
+    extends AutoDisposeFutureProviderElement<ExplorationProgressEntity>
     with ExplorationProgressRef {
   _ExplorationProgressProviderElement(super.provider);
 
@@ -208,7 +253,7 @@ class _ExplorationProgressProviderElement
 }
 
 String _$explorationNotifierHash() =>
-    r'5bafbe44ee667f2899b03435d886b8781f1191d9';
+    r'd1d397d7c30fcb66b595cadda5bce2834e82ebec';
 
 /// 행성 목록 상태
 ///
@@ -218,7 +263,10 @@ String _$explorationNotifierHash() =>
 /// Copied from [ExplorationNotifier].
 @ProviderFor(ExplorationNotifier)
 final explorationNotifierProvider =
-    NotifierProvider<ExplorationNotifier, List<ExplorationNodeEntity>>.internal(
+    AsyncNotifierProvider<
+      ExplorationNotifier,
+      List<ExplorationNodeEntity>
+    >.internal(
       ExplorationNotifier.new,
       name: r'explorationNotifierProvider',
       debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -228,15 +276,15 @@ final explorationNotifierProvider =
       allTransitiveDependencies: null,
     );
 
-typedef _$ExplorationNotifier = Notifier<List<ExplorationNodeEntity>>;
+typedef _$ExplorationNotifier = AsyncNotifier<List<ExplorationNodeEntity>>;
 String _$regionListNotifierHash() =>
-    r'aee531fb3209715c68491f42d65e86bdfc8adee6';
+    r'582db187507042692eaf6acdd6bbe6ec0c4f8afe';
 
 abstract class _$RegionListNotifier
-    extends BuildlessAutoDisposeNotifier<List<ExplorationNodeEntity>> {
+    extends BuildlessAutoDisposeAsyncNotifier<List<ExplorationNodeEntity>> {
   late final String planetId;
 
-  List<ExplorationNodeEntity> build(String planetId);
+  FutureOr<List<ExplorationNodeEntity>> build(String planetId);
 }
 
 /// 특정 행성의 지역 목록 (행성 ID 기반 family)
@@ -248,7 +296,8 @@ const regionListNotifierProvider = RegionListNotifierFamily();
 /// 특정 행성의 지역 목록 (행성 ID 기반 family)
 ///
 /// Copied from [RegionListNotifier].
-class RegionListNotifierFamily extends Family<List<ExplorationNodeEntity>> {
+class RegionListNotifierFamily
+    extends Family<AsyncValue<List<ExplorationNodeEntity>>> {
   /// 특정 행성의 지역 목록 (행성 ID 기반 family)
   ///
   /// Copied from [RegionListNotifier].
@@ -288,7 +337,7 @@ class RegionListNotifierFamily extends Family<List<ExplorationNodeEntity>> {
 /// Copied from [RegionListNotifier].
 class RegionListNotifierProvider
     extends
-        AutoDisposeNotifierProviderImpl<
+        AutoDisposeAsyncNotifierProviderImpl<
           RegionListNotifier,
           List<ExplorationNodeEntity>
         > {
@@ -322,7 +371,7 @@ class RegionListNotifierProvider
   final String planetId;
 
   @override
-  List<ExplorationNodeEntity> runNotifierBuild(
+  FutureOr<List<ExplorationNodeEntity>> runNotifierBuild(
     covariant RegionListNotifier notifier,
   ) {
     return notifier.build(planetId);
@@ -345,7 +394,7 @@ class RegionListNotifierProvider
   }
 
   @override
-  AutoDisposeNotifierProviderElement<
+  AutoDisposeAsyncNotifierProviderElement<
     RegionListNotifier,
     List<ExplorationNodeEntity>
   >
@@ -370,14 +419,14 @@ class RegionListNotifierProvider
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 mixin RegionListNotifierRef
-    on AutoDisposeNotifierProviderRef<List<ExplorationNodeEntity>> {
+    on AutoDisposeAsyncNotifierProviderRef<List<ExplorationNodeEntity>> {
   /// The parameter `planetId` of this provider.
   String get planetId;
 }
 
 class _RegionListNotifierProviderElement
     extends
-        AutoDisposeNotifierProviderElement<
+        AutoDisposeAsyncNotifierProviderElement<
           RegionListNotifier,
           List<ExplorationNodeEntity>
         >

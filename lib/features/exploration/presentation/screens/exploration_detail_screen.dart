@@ -100,14 +100,24 @@ class _ExplorationDetailScreenState
   Widget build(BuildContext context) {
     final planet = ref.watch(
       explorationNotifierProvider.select(
-        (planets) => planets.where((p) => p.id == widget.planetId).firstOrNull,
+        (async) => async.valueOrNull
+            ?.where((p) => p.id == widget.planetId)
+            .firstOrNull,
       ),
     );
     if (planet == null) {
       return const Scaffold(backgroundColor: AppColors.spaceBackground);
     }
-    final regions = ref.watch(regionListNotifierProvider(widget.planetId));
-    final progress = ref.watch(explorationProgressProvider(widget.planetId));
+    final regions =
+        ref.watch(regionListNotifierProvider(widget.planetId)).valueOrNull ??
+        const <ExplorationNodeEntity>[];
+    final progress =
+        ref.watch(explorationProgressProvider(widget.planetId)).valueOrNull ??
+        ExplorationProgressEntity(
+          nodeId: widget.planetId,
+          clearedChildren: 0,
+          totalChildren: 0,
+        );
     final currentFuelAsync = ref.watch(currentFuelProvider);
     final currentFuel = currentFuelAsync.valueOrNull ?? 0;
 

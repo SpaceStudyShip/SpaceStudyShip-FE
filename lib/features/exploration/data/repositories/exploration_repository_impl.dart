@@ -2,21 +2,22 @@ import 'package:flutter/foundation.dart';
 
 import '../../domain/entities/exploration_node_entity.dart';
 import '../../domain/entities/exploration_progress_entity.dart';
+import '../../domain/entities/unlock_result_entities.dart';
 import '../../domain/repositories/exploration_repository.dart';
 import '../datasources/exploration_local_datasource.dart';
 import '../seed/exploration_seed_data.dart';
 
-/// 로컬 탐험 Repository 구현체
+/// 로컬 탐험 Repository 구현체 (게스트).
 ///
-/// 시드 데이터(정적) + SharedPreferences(상태)를 머지하여 완성된 Entity를 반환.
-/// 향후 백엔드 연동 시 ExplorationRemoteRepositoryImpl로 교체.
+/// 시드 데이터(정적) + SharedPreferences(상태)를 머지. 연료 차감은 Notifier가
+/// 별도 수행하므로 결과 엔티티의 currentFuel은 -1 센티넬.
 class ExplorationLocalRepositoryImpl implements ExplorationRepository {
   final ExplorationLocalDataSource _localDataSource;
 
   ExplorationLocalRepositoryImpl(this._localDataSource);
 
   @override
-  List<ExplorationNodeEntity> getPlanets() {
+  Future<List<ExplorationNodeEntity>> getPlanets() async {
     final states = _localDataSource.getAllStates();
     return ExplorationSeedData.planets.map((planet) {
       final state = states[planet.id];
@@ -30,7 +31,7 @@ class ExplorationLocalRepositoryImpl implements ExplorationRepository {
   }
 
   @override
-  ExplorationNodeEntity getPlanet(String planetId) {
+  Future<ExplorationNodeEntity> getPlanet(String planetId) async {
     final planet = ExplorationSeedData.getPlanet(planetId);
     final states = _localDataSource.getAllStates();
     final state = states[planetId];
@@ -43,7 +44,7 @@ class ExplorationLocalRepositoryImpl implements ExplorationRepository {
   }
 
   @override
-  List<ExplorationNodeEntity> getRegions(String planetId) {
+  Future<List<ExplorationNodeEntity>> getRegions(String planetId) async {
     final states = _localDataSource.getAllStates();
     return ExplorationSeedData.getRegions(planetId).map((region) {
       final state = states[region.id];
@@ -57,9 +58,8 @@ class ExplorationLocalRepositoryImpl implements ExplorationRepository {
   }
 
   @override
-  Future<void> unlockRegion(String regionId) async {
+  Future<RegionUnlockResultEntity> unlockRegion(String regionId) async {
     final now = DateTime.now();
-    // Region은 해금 = 클리어 (연료 소비만으로 탐험 완료)
     await _localDataSource.saveNodeState(
       ExplorationNodeState(
         nodeId: regionId,
@@ -68,13 +68,15 @@ class ExplorationLocalRepositoryImpl implements ExplorationRepository {
         unlockedAt: now,
       ),
     );
-
-    // 부모 행성의 자동 클리어 체크
-    await _checkPlanetAutoComplete(regionId);
+    final planetCleared = await _checkPlanetAutoComplete(regionId);
+    return RegionUnlockResultEntity(
+      planetCleared: planetCleared,
+      currentFuel: -1,
+    );
   }
 
   @override
-  Future<void> unlockPlanet(String planetId) async {
+  Future<PlanetUnlockResultEntity> unlockPlanet(String planetId) async {
     await _localDataSource.saveNodeState(
       ExplorationNodeState(
         nodeId: planetId,
@@ -82,11 +84,12 @@ class ExplorationLocalRepositoryImpl implements ExplorationRepository {
         unlockedAt: DateTime.now(),
       ),
     );
+    return const PlanetUnlockResultEntity(currentFuel: -1);
   }
 
   @override
-  ExplorationProgressEntity getProgress(String planetId) {
-    final regions = getRegions(planetId);
+  Future<ExplorationProgressEntity> getProgress(String planetId) async {
+    final regions = await getRegions(planetId);
     final cleared = regions.where((r) => r.isCleared).length;
     return ExplorationProgressEntity(
       nodeId: planetId,
@@ -100,10 +103,8 @@ class ExplorationLocalRepositoryImpl implements ExplorationRepository {
     await _localDataSource.clearAll();
   }
 
-  /// 부모 행성 자동 클리어 체크
-  ///
-  /// 모든 하위 지역이 클리어되면 행성도 자동으로 클리어 처리.
-  Future<void> _checkPlanetAutoComplete(String regionId) async {
+  /// 부모 행성 자동 클리어 체크. 새로 클리어되면 true.
+  Future<bool> _checkPlanetAutoComplete(String regionId) async {
     String? parentPlanetId;
     for (final entry in ExplorationSeedData.regions.entries) {
       if (entry.value.any((r) => r.id == regionId)) {
@@ -111,9 +112,9 @@ class ExplorationLocalRepositoryImpl implements ExplorationRepository {
         break;
       }
     }
-    if (parentPlanetId == null) return;
+    if (parentPlanetId == null) return false;
 
-    final regions = getRegions(parentPlanetId);
+    final regions = await getRegions(parentPlanetId);
     final allCleared = regions.every((r) => r.isCleared);
     if (allCleared) {
       await _localDataSource.saveNodeState(
@@ -124,7 +125,8 @@ class ExplorationLocalRepositoryImpl implements ExplorationRepository {
           unlockedAt: DateTime.now(),
         ),
       );
-      debugPrint('🎉 행성 $parentPlanetId 자동 클리어!');
+      debugPrint('행성 $parentPlanetId 자동 클리어');
     }
+    return allCleared;
   }
 }

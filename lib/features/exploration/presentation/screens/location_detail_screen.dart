@@ -40,16 +40,29 @@ class _LocationDetailScreenState extends ConsumerState<LocationDetailScreen> {
   late final PageController _pageController;
   int _currentPage = 0;
 
+  bool _didSetInitialPage = false;
+
   @override
   void initState() {
     super.initState();
-    // regionListNotifierProvider는 동기 StateNotifier로 항상 즉시 데이터 반환
-    final regions = ref.read(regionListNotifierProvider(widget.planetId));
+    _pageController = PageController(initialPage: 0);
+  }
+
+  /// regions 로드 후 initialRegionId 페이지로 1회 점프.
+  void _maybeSetInitialPage(List<ExplorationNodeEntity> regions) {
+    if (_didSetInitialPage || regions.isEmpty) return;
+    _didSetInitialPage = true;
     final initialIndex = regions.indexWhere(
       (r) => r.id == widget.initialRegionId,
     );
-    _currentPage = initialIndex >= 0 ? initialIndex : 0;
-    _pageController = PageController(initialPage: _currentPage);
+    if (initialIndex > 0) {
+      _currentPage = initialIndex;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && _pageController.hasClients) {
+          _pageController.jumpToPage(initialIndex);
+        }
+      });
+    }
   }
 
   @override
@@ -78,13 +91,24 @@ class _LocationDetailScreenState extends ConsumerState<LocationDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final regions = ref.watch(regionListNotifierProvider(widget.planetId));
-    final progress = ref.watch(explorationProgressProvider(widget.planetId));
+    final regions =
+        ref.watch(regionListNotifierProvider(widget.planetId)).valueOrNull ??
+        const <ExplorationNodeEntity>[];
+    _maybeSetInitialPage(regions);
+    final progress =
+        ref.watch(explorationProgressProvider(widget.planetId)).valueOrNull ??
+        ExplorationProgressEntity(
+          nodeId: widget.planetId,
+          clearedChildren: 0,
+          totalChildren: 0,
+        );
     final currentFuelAsync = ref.watch(currentFuelProvider);
     final currentFuel = currentFuelAsync.valueOrNull ?? 0;
     final planet = ref.watch(
       explorationNotifierProvider.select(
-        (planets) => planets.where((p) => p.id == widget.planetId).firstOrNull,
+        (async) => async.valueOrNull
+            ?.where((p) => p.id == widget.planetId)
+            .firstOrNull,
       ),
     );
 

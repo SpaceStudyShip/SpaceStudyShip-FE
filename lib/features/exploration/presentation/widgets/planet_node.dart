@@ -8,6 +8,7 @@ import '../../../../core/constants/spacing_and_radius.dart';
 import '../../../../core/constants/text_styles.dart';
 import '../../../../core/constants/toss_design_tokens.dart';
 import '../../domain/entities/exploration_node_entity.dart';
+import '../../domain/entities/exploration_progress_entity.dart';
 import '../providers/exploration_provider.dart';
 
 /// 맵 위 행성 노드 위젯
@@ -59,7 +60,13 @@ class _PlanetNodeState extends ConsumerState<PlanetNode>
   Widget build(BuildContext context) {
     final isLocked = !widget.node.isUnlocked;
     final isCleared = widget.node.isCleared;
-    final progress = ref.watch(explorationProgressProvider(widget.node.id));
+    final progress =
+        ref.watch(explorationProgressProvider(widget.node.id)).valueOrNull ??
+        ExplorationProgressEntity(
+          nodeId: widget.node.id,
+          clearedChildren: 0,
+          totalChildren: 0,
+        );
 
     return GestureDetector(
       onTapDown: (_) => setState(() => _isPressed = true),

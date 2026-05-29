@@ -8,6 +8,7 @@ import '../../domain/entities/badge_entity.dart';
 import '../../domain/repositories/badge_repository.dart';
 import '../../../timer/presentation/providers/study_stats_provider.dart';
 import '../../../fuel/presentation/providers/fuel_provider.dart';
+import '../../../exploration/domain/entities/exploration_node_entity.dart';
 import '../../../exploration/presentation/providers/exploration_provider.dart';
 
 part 'badge_provider.g.dart';
@@ -56,13 +57,17 @@ class BadgeNotifier extends _$BadgeNotifier {
     final fuelStateAsync = ref.read(fuelNotifierProvider);
     final fuelState = fuelStateAsync.valueOrNull;
     if (fuelState == null) return []; // 잔량 아직 로드 전이면 배지 해금 평가 skip
-    final planets = ref.read(explorationNotifierProvider);
+    final planets =
+        ref.read(explorationNotifierProvider).valueOrNull ??
+        const <ExplorationNodeEntity>[];
     final unlockedPlanets = planets.where((p) => p.isUnlocked).length;
 
     // 지역 해금 수 계산
     int unlockedRegions = 0;
     for (final planet in planets) {
-      final regions = ref.read(regionListNotifierProvider(planet.id));
+      final regions =
+          ref.read(regionListNotifierProvider(planet.id)).valueOrNull ??
+          const <ExplorationNodeEntity>[];
       unlockedRegions += regions.where((r) => r.isUnlocked).length;
     }
 

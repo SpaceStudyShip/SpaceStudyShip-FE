@@ -352,7 +352,7 @@ class AuthNotifier extends _$AuthNotifier {
       () => ref.read(localTodoDataSourceProvider).clearAll(),
       () => ref.read(timerSessionRepositoryProvider).clearAll(),
       () => ref.read(fuelLocalDataSourceProvider).clearAll(),
-      () => ref.read(explorationRepositoryProvider).clearAll(),
+      () => ref.read(explorationLocalDataSourceProvider).clearAll(),
       () => ref.read(badgeRepositoryProvider).clearAll(),
     ];
 

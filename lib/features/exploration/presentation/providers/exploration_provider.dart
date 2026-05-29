@@ -2,7 +2,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../../../core/network/dio_client.dart';
+import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../data/datasources/exploration_local_datasource.dart';
+import '../../data/datasources/exploration_remote_datasource.dart';
+import '../../data/repositories/exploration_remote_repository_impl.dart';
 import '../../data/repositories/exploration_repository_impl.dart';
 import '../../domain/entities/exploration_node_entity.dart';
 import '../../domain/entities/exploration_progress_entity.dart';
@@ -23,21 +27,26 @@ ExplorationLocalDataSource explorationLocalDataSource(Ref ref) {
   );
 }
 
+// === Remote DataSource ===
+
+@Riverpod(keepAlive: true)
+ExplorationRemoteDataSource explorationRemoteDataSource(Ref ref) {
+  return ExplorationRemoteDataSource(ref.watch(dioProvider));
+}
+
 // === Repository (auth 기반 스왑) ===
 
-/// 현재: 게스트/소셜 로그인 모두 로컬 Repository 사용
-/// 향후: isGuest == false 시 ExplorationRemoteRepositoryImpl로 교체
-@riverpod
+/// 인증 사용자는 서버, 게스트는 로컬 Repository.
+@Riverpod(keepAlive: true)
 ExplorationRepository explorationRepository(Ref ref) {
-  // 향후 백엔드 연동 시:
-  // final isGuest = ref.watch(isGuestProvider);
-  // if (!isGuest) {
-  //   return ExplorationRemoteRepositoryImpl(
-  //     ref.watch(explorationRemoteDataSourceProvider),
-  //   );
-  // }
-  final dataSource = ref.watch(explorationLocalDataSourceProvider);
-  return ExplorationLocalRepositoryImpl(dataSource);
+  if (ref.watch(isAuthenticatedProvider)) {
+    return ExplorationRemoteRepositoryImpl(
+      ref.watch(explorationRemoteDataSourceProvider),
+    );
+  }
+  return ExplorationLocalRepositoryImpl(
+    ref.watch(explorationLocalDataSourceProvider),
+  );
 }
 
 // === State Notifiers ===
@@ -49,17 +58,13 @@ ExplorationRepository explorationRepository(Ref ref) {
 @Riverpod(keepAlive: true)
 class ExplorationNotifier extends _$ExplorationNotifier {
   @override
-  List<ExplorationNodeEntity> build() {
-    final repository = ref.watch(explorationRepositoryProvider);
-    return repository.getPlanets();
+  Future<List<ExplorationNodeEntity>> build() async {
+    return ref.watch(explorationRepositoryProvider).getPlanets();
   }
 
-  /// 이전 행성이 해금되었는지 확인
-  ///
-  /// sortOrder 기준으로 바로 앞 행성이 해금 상태여야 true.
-  /// 첫 번째 행성(sortOrder 0)은 항상 true.
+  /// 이전 행성이 해금되었는지 (sortOrder 기준 바로 앞 행성 클리어 필요).
   bool canUnlockPlanet(String planetId) {
-    final planets = state;
+    final planets = state.valueOrNull ?? const <ExplorationNodeEntity>[];
     final targetIndex = planets.indexWhere((p) => p.id == planetId);
     if (targetIndex < 0) return false;
     if (targetIndex == 0) return true;
@@ -68,32 +73,30 @@ class ExplorationNotifier extends _$ExplorationNotifier {
 
   bool _isUnlocking = false;
 
-  /// 행성 해금 (순서 검증 + 연료 소비 + 상태 저장)
-  ///
-  /// 이전 행성 미해금 시 [StateError] throw.
-  /// 연료 부족 시 [InsufficientFuelException] throw.
+  /// 행성 해금 (순서 검증 + 연료 + 상태).
   Future<void> unlockPlanet(String planetId, int requiredFuel) async {
     if (_isUnlocking) return;
     _isUnlocking = true;
     try {
-      // 0. 순서 검증: 이전 행성이 해금되어야 함
       if (!canUnlockPlanet(planetId)) {
         throw StateError('이전 행성을 먼저 해금해야 합니다.');
       }
 
-      // 1. 연료 차감
-      await ref
-          .read(fuelNotifierProvider.notifier)
-          .consumeFuel(amount: requiredFuel, nodeId: planetId);
-
-      // 2. 해금 상태 저장
       final repository = ref.read(explorationRepositoryProvider);
-      await repository.unlockPlanet(planetId);
+      if (ref.read(isAuthenticatedProvider)) {
+        // 서버가 원자적으로 연료 차감 → 잔량 재조회만.
+        await repository.unlockPlanet(planetId);
+        ref.invalidate(fuelNotifierProvider);
+      } else {
+        // 게스트: 로컬 연료 차감 후 해금.
+        await ref
+            .read(fuelNotifierProvider.notifier)
+            .consumeFuel(amount: requiredFuel, nodeId: planetId);
+        await repository.unlockPlanet(planetId);
+      }
 
-      // 3. 상태 갱신
-      _reload();
+      await _reload();
 
-      // 배지 해금 체크 (탐험 기반) — 실패해도 탐험 해금에 영향 없음
       try {
         await ref.read(badgeNotifierProvider.notifier).checkAndUnlock();
       } catch (e) {
@@ -104,12 +107,13 @@ class ExplorationNotifier extends _$ExplorationNotifier {
     }
   }
 
-  /// 상태 새로고침 (지역 해금 후 행성 목록도 갱신)
-  void refresh() => _reload();
+  /// 상태 새로고침 (지역 해금 후 행성 목록 갱신).
+  Future<void> refresh() => _reload();
 
-  void _reload() {
-    final repository = ref.read(explorationRepositoryProvider);
-    state = repository.getPlanets();
+  Future<void> _reload() async {
+    state = await AsyncValue.guard(
+      () => ref.read(explorationRepositoryProvider).getPlanets(),
+    );
   }
 }
 
@@ -117,36 +121,33 @@ class ExplorationNotifier extends _$ExplorationNotifier {
 @riverpod
 class RegionListNotifier extends _$RegionListNotifier {
   @override
-  List<ExplorationNodeEntity> build(String planetId) {
-    final repository = ref.watch(explorationRepositoryProvider);
-    return repository.getRegions(planetId);
+  Future<List<ExplorationNodeEntity>> build(String planetId) async {
+    return ref.watch(explorationRepositoryProvider).getRegions(planetId);
   }
 
   bool _isUnlocking = false;
 
-  /// 지역 해금 (연료 소비 + 상태 저장 + 자동 클리어)
-  ///
-  /// 연료 부족 시 [InsufficientFuelException] throw.
+  /// 지역 해금 (연료 + 상태 + 자동 클리어).
   Future<void> unlockRegion(String regionId, int requiredFuel) async {
     if (_isUnlocking) return;
     _isUnlocking = true;
     try {
-      // 1. 연료 차감
-      await ref
-          .read(fuelNotifierProvider.notifier)
-          .consumeFuel(amount: requiredFuel, nodeId: regionId);
-
-      // 2. 해금 + 클리어 상태 저장
       final repository = ref.read(explorationRepositoryProvider);
-      await repository.unlockRegion(regionId);
+      if (ref.read(isAuthenticatedProvider)) {
+        await repository.unlockRegion(regionId);
+        ref.invalidate(fuelNotifierProvider);
+      } else {
+        await ref
+            .read(fuelNotifierProvider.notifier)
+            .consumeFuel(amount: requiredFuel, nodeId: regionId);
+        await repository.unlockRegion(regionId);
+      }
 
-      // 3. 지역 목록 갱신
-      state = repository.getRegions(planetId);
+      state = await AsyncValue.guard(() => repository.getRegions(planetId));
 
-      // 4. 행성 목록도 갱신 (자동 클리어 반영)
-      ref.read(explorationNotifierProvider.notifier).refresh();
+      // 행성 목록 갱신 (자동 클리어/progress 반영)
+      await ref.read(explorationNotifierProvider.notifier).refresh();
 
-      // 배지 해금 체크 (탐험 기반) — 실패해도 지역 해금에 영향 없음
       try {
         await ref.read(badgeNotifierProvider.notifier).checkAndUnlock();
       } catch (e) {
@@ -158,11 +159,16 @@ class RegionListNotifier extends _$RegionListNotifier {
   }
 }
 
-/// 특정 행성의 진행도
+/// 특정 행성의 진행도.
+///
+/// 행성 목록 변경 시 갱신. (regionListNotifier를 watch하면 인증 모드에서
+/// 행성마다 지역 API가 호출되므로 행성 목록만 watch한다 — 서버 progress는
+/// 행성 응답에 내장.)
 @riverpod
-ExplorationProgressEntity explorationProgress(Ref ref, String planetId) {
-  // regionListNotifier를 watch하여 지역 상태 변경 시 자동 갱신
-  ref.watch(regionListNotifierProvider(planetId));
-  final repository = ref.watch(explorationRepositoryProvider);
-  return repository.getProgress(planetId);
+Future<ExplorationProgressEntity> explorationProgress(
+  Ref ref,
+  String planetId,
+) {
+  ref.watch(explorationNotifierProvider);
+  return ref.watch(explorationRepositoryProvider).getProgress(planetId);
 }

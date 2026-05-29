@@ -106,8 +106,9 @@ class _LocationDetailScreenState extends ConsumerState<LocationDetailScreen> {
     final currentFuel = currentFuelAsync.valueOrNull ?? 0;
     final planet = ref.watch(
       explorationNotifierProvider.select(
-        (async) =>
-            async.valueOrNull?.where((p) => p.id == widget.planetId).firstOrNull,
+        (async) => async.valueOrNull
+            ?.where((p) => p.id == widget.planetId)
+            .firstOrNull,
       ),
     );
 

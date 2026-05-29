@@ -36,9 +36,9 @@ class RegionUnlockResponseModel with _$RegionUnlockResponseModel {
       _$RegionUnlockResponseModelFromJson(json);
 
   RegionUnlockResultEntity toEntity() => RegionUnlockResultEntity(
-        planetCleared: planetCleared,
-        currentFuel: currentFuel,
-      );
+    planetCleared: planetCleared,
+    currentFuel: currentFuel,
+  );
 }
 
 /// POST /api/explorations/planets/{planetId}/unlock 응답

@@ -20,15 +20,18 @@ abstract class ExplorationRemoteDataSource {
   /// 행성 하위 지역 목록 — 200 / 404 PLANET_NOT_FOUND
   @GET('/api/explorations/planets/{planetId}/regions')
   Future<List<RegionResponseModel>> getRegions(
-      @Path('planetId') String planetId);
+    @Path('planetId') String planetId,
+  );
 
   /// 지역 해금 — 200 / 400 / 404
   @POST('/api/explorations/regions/{regionId}/unlock')
   Future<RegionUnlockResponseModel> unlockRegion(
-      @Path('regionId') String regionId);
+    @Path('regionId') String regionId,
+  );
 
   /// 행성 해금 — 200 / 400 / 404
   @POST('/api/explorations/planets/{planetId}/unlock')
   Future<PlanetUnlockResponseModel> unlockPlanet(
-      @Path('planetId') String planetId);
+    @Path('planetId') String planetId,
+  );
 }

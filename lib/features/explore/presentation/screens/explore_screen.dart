@@ -83,11 +83,12 @@ class ExploreScreen extends ConsumerWidget {
             }
           }
 
-          final topInset =
-              MediaQuery.of(context).padding.top + kToolbarHeight;
-          final bottomInset = MediaQuery.of(context).padding.bottom +
+          final topInset = MediaQuery.of(context).padding.top + kToolbarHeight;
+          final bottomInset =
+              MediaQuery.of(context).padding.bottom +
               FloatingNavMetrics.totalHeight;
-          final mapHeight = topInset +
+          final mapHeight =
+              topInset +
               _mapTopPadding +
               (planets.length - 1) * _planetSpacing +
               _mapBottomPadding +

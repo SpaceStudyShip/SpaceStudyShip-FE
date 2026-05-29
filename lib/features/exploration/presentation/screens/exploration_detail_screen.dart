@@ -100,8 +100,9 @@ class _ExplorationDetailScreenState
   Widget build(BuildContext context) {
     final planet = ref.watch(
       explorationNotifierProvider.select(
-        (async) =>
-            async.valueOrNull?.where((p) => p.id == widget.planetId).firstOrNull,
+        (async) => async.valueOrNull
+            ?.where((p) => p.id == widget.planetId)
+            .firstOrNull,
       ),
     );
     if (planet == null) {

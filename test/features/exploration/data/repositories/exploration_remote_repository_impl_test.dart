@@ -32,20 +32,23 @@ void main() {
     progress: const ProgressResponseModel(clearedChildren: 1, totalChildren: 4),
   );
 
-  DioException unlockError(String code, {int? requiredFuel, int? currentFuel}) =>
-      DioException(
-        requestOptions: RequestOptions(path: '/api/explorations/regions/x/unlock'),
-        response: Response(
-          requestOptions: RequestOptions(path: '/x'),
-          statusCode: 400,
-          data: {
-            'code': code,
-            'message': 'msg',
-            if (requiredFuel != null) 'requiredFuel': requiredFuel,
-            if (currentFuel != null) 'currentFuel': currentFuel,
-          },
-        ),
-      );
+  DioException unlockError(
+    String code, {
+    int? requiredFuel,
+    int? currentFuel,
+  }) => DioException(
+    requestOptions: RequestOptions(path: '/api/explorations/regions/x/unlock'),
+    response: Response(
+      requestOptions: RequestOptions(path: '/x'),
+      statusCode: 400,
+      data: {
+        'code': code,
+        'message': 'msg',
+        if (requiredFuel != null) 'requiredFuel': requiredFuel,
+        if (currentFuel != null) 'currentFuel': currentFuel,
+      },
+    ),
+  );
 
   test('getPlanets — 매핑 + getProgress 캐시 사용', () async {
     when(() => remote.getPlanets()).thenAnswer((_) async => [planet('mars')]);
@@ -60,33 +63,41 @@ void main() {
     verify(() => remote.getPlanets()).called(1); // 단 1회
   });
 
-  test('unlockRegion INSUFFICIENT_FUEL → fuel InsufficientFuelException', () async {
-    when(() => remote.unlockRegion('seoul')).thenThrow(
-      unlockError('INSUFFICIENT_FUEL', requiredFuel: 10, currentFuel: 3),
-    );
+  test(
+    'unlockRegion INSUFFICIENT_FUEL → fuel InsufficientFuelException',
+    () async {
+      when(() => remote.unlockRegion('seoul')).thenThrow(
+        unlockError('INSUFFICIENT_FUEL', requiredFuel: 10, currentFuel: 3),
+      );
 
-    expect(
-      () => repo.unlockRegion('seoul'),
-      throwsA(
-        isA<InsufficientFuelException>()
-            .having((e) => e.requiredAmount, 'requiredAmount', 10)
-            .having((e) => e.available, 'available', 3),
-      ),
-    );
-  });
+      expect(
+        () => repo.unlockRegion('seoul'),
+        throwsA(
+          isA<InsufficientFuelException>()
+              .having((e) => e.requiredAmount, 'requiredAmount', 10)
+              .having((e) => e.available, 'available', 3),
+        ),
+      );
+    },
+  );
 
-  test('unlockRegion ALREADY_UNLOCKED → NodeAlreadyUnlockedException', () async {
-    when(() => remote.unlockRegion('seoul'))
-        .thenThrow(unlockError('ALREADY_UNLOCKED'));
-    expect(
-      () => repo.unlockRegion('seoul'),
-      throwsA(isA<NodeAlreadyUnlockedException>()),
-    );
-  });
+  test(
+    'unlockRegion ALREADY_UNLOCKED → NodeAlreadyUnlockedException',
+    () async {
+      when(
+        () => remote.unlockRegion('seoul'),
+      ).thenThrow(unlockError('ALREADY_UNLOCKED'));
+      expect(
+        () => repo.unlockRegion('seoul'),
+        throwsA(isA<NodeAlreadyUnlockedException>()),
+      );
+    },
+  );
 
   test('unlockPlanet 성공 → 결과 엔티티', () async {
     when(() => remote.unlockPlanet('mars')).thenAnswer(
-      (_) async => const PlanetUnlockResponseModel(fuelConsumed: 10, currentFuel: 40),
+      (_) async =>
+          const PlanetUnlockResponseModel(fuelConsumed: 10, currentFuel: 40),
     );
     final result = await repo.unlockPlanet('mars');
     expect(result.currentFuel, 40);

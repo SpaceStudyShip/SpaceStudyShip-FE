@@ -46,7 +46,11 @@ void main() {
     addTearDown(c.dispose);
     final ds = c.read(explorationLocalDataSourceProvider);
     await ds.saveNodeState(
-      const ExplorationNodeState(nodeId: 'japan', isUnlocked: true, isCleared: true),
+      const ExplorationNodeState(
+        nodeId: 'japan',
+        isUnlocked: true,
+        isCleared: true,
+      ),
     );
     await ds.clearAll();
     expect(ds.getAllStates(), isEmpty);

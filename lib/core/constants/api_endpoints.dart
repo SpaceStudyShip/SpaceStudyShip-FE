@@ -68,4 +68,23 @@ abstract class ApiEndpoints {
 
   /// 오늘 공부 통계 (KST)
   static const timerSessionsTodayStats = '/api/timer-sessions/today-stats';
+
+  // ============================================
+  // Exploration
+  // ============================================
+
+  /// 전체 행성 목록
+  static const explorationPlanets = '/api/explorations/planets';
+
+  /// 특정 행성 하위 지역 목록
+  static String explorationRegions(String planetId) =>
+      '/api/explorations/planets/$planetId/regions';
+
+  /// 지역 해금 (연료 소비)
+  static String explorationUnlockRegion(String regionId) =>
+      '/api/explorations/regions/$regionId/unlock';
+
+  /// 행성 해금 (연료 소비)
+  static String explorationUnlockPlanet(String planetId) =>
+      '/api/explorations/planets/$planetId/unlock';
 }

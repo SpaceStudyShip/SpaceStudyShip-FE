@@ -24,7 +24,6 @@ import '../../../exploration/presentation/providers/exploration_provider.dart';
 import '../../../fuel/presentation/providers/fuel_provider.dart';
 import '../../../timer/presentation/providers/timer_provider.dart';
 import '../../../timer/presentation/providers/timer_session_provider.dart';
-import '../../../timer/presentation/providers/today_stats_provider.dart';
 import '../../../todo/presentation/providers/todo_provider.dart';
 
 part 'auth_provider.g.dart';
@@ -328,10 +327,9 @@ class AuthNotifier extends _$AuthNotifier {
       final useCase = ref.read(signOutUseCaseProvider);
       await useCase.execute();
       // Timer 로컬 캐시 삭제 (인증 → 게스트 전환 시 이전 세션 데이터 노출 방지)
-      await ref.read(timerSessionRepositoryProvider).clearAll();
-      // 메모리 캐시 무효화
-      ref.invalidate(timerSessionListNotifierProvider);
-      ref.invalidate(todayStatsNotifierProvider);
+      await ref.read(timerSessionLocalDataSourceProvider).clearAll();
+      // state=null → isAuthenticated 재계산 → 의존 Provider 자동 리빌드.
+      // 수동 invalidate 는 authNotifier 자신을 watch 하는 Provider 라 순환 참조.
       state = const AsyncValue.data(null);
     } on FirebaseAuthException catch (e) {
       state = previous;
@@ -350,7 +348,7 @@ class AuthNotifier extends _$AuthNotifier {
     // CircularDependencyError 가 발생한다.
     final clearTasks = <Future<void> Function()>[
       () => ref.read(localTodoDataSourceProvider).clearAll(),
-      () => ref.read(timerSessionRepositoryProvider).clearAll(),
+      () => ref.read(timerSessionLocalDataSourceProvider).clearAll(),
       () => ref.read(fuelLocalDataSourceProvider).clearAll(),
       () => ref.read(explorationLocalDataSourceProvider).clearAll(),
       () => ref.read(badgeRepositoryProvider).clearAll(),
@@ -364,13 +362,15 @@ class AuthNotifier extends _$AuthNotifier {
       }
     }
 
-    // 메모리 캐시 무효화 (예외 발생 불가)
-    ref.invalidate(timerSessionListNotifierProvider);
-    ref.invalidate(todayStatsNotifierProvider);
-    ref.invalidate(todoListNotifierProvider);
-    ref.invalidate(categoryListNotifierProvider);
-    ref.invalidate(fuelNotifierProvider);
-    ref.invalidate(explorationNotifierProvider);
+    // 메모리 캐시 갱신.
+    // timer/todo/fuel/exploration 등 auth 의존 Provider 는 authNotifier 를 조상으로
+    // 가지므로 여기서 invalidate(또는 read/watch)하면 CircularDependencyError 가 난다
+    // (debug assert). 대신:
+    //   - autoDispose Provider(timer/todayStats/todo/category): 화면 재진입 시 비워진
+    //     로컬 저장소로 자동 리빌드되므로 명시적 무효화 불필요.
+    //   - keepAlive + auth 의존(fuel/exploration): 게스트 진입 시점엔 보통 미사용 상태라
+    //     다음 watch 때 새로 빌드된다.
+    //   - badge: auth 비의존 + keepAlive 라 명시적 invalidate 가 필요하고 안전하다.
     ref.invalidate(badgeNotifierProvider);
   }
 
@@ -457,10 +457,9 @@ class AuthNotifier extends _$AuthNotifier {
     try {
       await ref.read(withdrawUseCaseProvider).execute();
       // Timer 로컬 캐시 삭제 (인증 → 비로그인 전환 시 이전 세션 데이터 노출 방지)
-      await ref.read(timerSessionRepositoryProvider).clearAll();
-      // 메모리 캐시 무효화
-      ref.invalidate(timerSessionListNotifierProvider);
-      ref.invalidate(todayStatsNotifierProvider);
+      await ref.read(timerSessionLocalDataSourceProvider).clearAll();
+      // state=null → isAuthenticated 재계산 → 의존 Provider 자동 리빌드.
+      // 수동 invalidate 는 authNotifier 자신을 watch 하는 Provider 라 순환 참조.
       state = const AsyncValue.data(null);
     } catch (e, stack) {
       state = previous;
